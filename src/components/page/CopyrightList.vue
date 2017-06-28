@@ -1,0 +1,167 @@
+<template>
+  <div class="main">
+  	<table-component :tableOption="tableOption" :data="tableData"></table-component>
+  </div>
+</template>
+
+<script>
+import TableComponent from '@/components/common/TableComponent'
+
+const text1 = '测试';
+const text2 = '测试';
+const text3 = '测试';
+
+
+export default {
+  name: 'copyrightList',
+  data () {
+	return {
+		tableOption: {
+			'header_btn': [{
+				'type': 'custom',
+				'label': '新增',
+				'icon': 'plus',
+				click () {
+					alert("新增");
+				}
+			},
+			{
+				'type': 'custom',
+				'label': '删除',
+				'icon': 'delete',
+				click () {
+					alert("删除");
+				}
+			},
+			{
+				'type': 'dropdown',
+				'label': '数据',
+				'icon': '',
+				'items': [{
+					text: '设定筛选条件',
+					click () {
+						alert("设定筛选条件");
+					}
+				}]
+			},
+			{
+				'type': 'control',
+				'label': '字段'
+			}],
+			'is_search': false,//默认为true
+			'columns': [{
+				'show': true,
+				'type': 'selection'
+			},
+			{
+				'show': true,
+				'type': 'text',
+				'label': '案号',
+				'prop': 'text1',
+			},
+		  	{
+				'show': false,
+				'type': 'text',
+				'label': '地区',
+				'prop': 'text2'
+		  	},
+		  	{
+				'show': true,
+				'type': 'text',
+				'label': '客户',
+				'prop': 'text3'
+		  	},
+		  	{
+				'show': false,
+				'type': 'text',
+				'label': '类型',
+				'prop': 'text3'
+		  	},
+		  	{
+				'show': true,
+				'type': 'text',
+				'label': '名称',
+				'prop': 'text3'
+		  	},
+		  	{
+				'show': false,
+				'type': 'text',
+				'label': '委案日',
+				'prop': 'text3'
+		  	},
+		  	{
+				'show': true,
+				'type': 'text',
+				'label': '申请日',
+				'prop': 'text3'
+		  	},
+		  	{
+				'show': true,
+				'type': 'text',
+				'label': '受理号',
+				'prop': 'text3'
+		  	},
+		  	{
+				'show': false,
+				'type': 'text',
+				'label': '注册日',
+				'prop': 'text3'
+		  	},
+		  	{
+				'show': false,
+				'type': 'text',
+				'label': '注册号',
+				'prop': 'text3'
+		  	},
+		  	{
+				'show': false,
+				'type': 'text',
+				'label': '代理人'
+		  	},
+		  	{
+				'show': true,
+				'type': 'text',
+				'label': 'IPR'
+		  	},
+		  	{
+				'show': true,
+				'type': 'text',
+				'label': '当前状态'
+		  	},
+		  	{
+				'show': true,
+				'type': 'text',
+				'label': '备注'
+		  	},
+		  	{
+				'show': true,
+				'type': 'action',
+				'label': '操作',
+				'btns': [{
+					'label': '查看详情',
+					'icon': 'view',
+					click (row) {
+			 			console.log(row);
+					}
+				}]
+			}] 
+		},
+		tableData: [
+			{text1, text2, text3, id: 1},
+			{text1, text2, text3, id: 2},
+			{text1, text2, text3, id: 3},
+			{text1, text2, text3, id: 4},
+			{text1, text2, text3, id: 5},
+			{text1, text2, text3, id: 6},
+			{text1, text2, text3, id: 7},
+
+		]
+	};
+  },
+  components: { TableComponent }
+}
+</script>
+
+<!-- Add "scoped" attribute to limit CSS to this component only -->
+<style scoped lang="scss">
+</style>

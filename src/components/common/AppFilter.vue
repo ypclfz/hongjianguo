@@ -1,0 +1,207 @@
+<template>
+  <div class="app-filter" style="margin-bottom: 20px;" v-show="show">
+  	
+  			<div :class="index === multipled_index ? 'app-filter-row app-filter-row-multipled' : 'app-filter-row'" v-for="(row, index) in data" :key="row.key" v-if=" !control.get(row.key) ">
+		  		<div class="app-filter-label">
+		  			{{ row.label }}
+		  		</div>
+		  		<template v-if="index !== multipled_index">
+			  		<div class="app-filter-items">
+			  			<template v-if="row.tidy && row.tidy.length != 0">
+			  				<template v-if="more[row.key]">
+			  					<a class="app-filter-item" v-for="(item, ind) in row.items" :key="ind" @click="handleClick(row, item)">{{ item }}</a>
+			  				</template>
+			  				<template v-else>
+			  					<a class="app-filter-item" v-for="(item, ind) in row.tidy" :key="ind" @click="handleClick(row, item)">{{ item }}</a>
+			  				</template>
+			  			</template>
+			  			<template v-else>
+							<a class="app-filter-item" v-for="(item, ind) in row.items" :key="ind" @click="handleClick(row, item)">{{ item }}</a>
+			  			</template>
+			  			
+			  		</div>
+			  		<div class="app-filter-btns">
+			  			<template v-if="row.tidy && row.tidy.length != 0">
+			  				<el-button v-if="!(more[row.key])" @click="more[row.key] = true" size="mini" icon="caret-bottom">更多</el-button>
+			  				<el-button v-else-if="more[row.key]" @click="more[row.key] = false" size="mini" icon="caret-top">收起</el-button>
+			  			</template>
+			  			
+			  			<el-button v-if="row.multipled" size="mini" icon="plus" @click="handleMultipled(index)">多选</el-button>
+			  		</div>
+		  		</template>
+		  		<template v-else-if="index === multipled_index">
+		  			<div class="app-filter-items">
+						<el-checkbox-group v-model="checkList">
+	    					<el-checkbox v-for="(item2, ind2) in row.items" :label="item2" :key="ind2"></el-checkbox>
+	  					</el-checkbox-group>
+	  					<div style="text-align: center">
+							<el-button size="small" type="danger" :disabled="checkList.length == 0 ? true : false" @click="handleSure(row)">确认</el-button>
+							<el-button size="small" @click="handleCancel">取消</el-button>
+	  					</div>
+	  				</div>
+		  		</template>
+		  	</div>
+
+  		
+  </div>
+</template>
+
+<script>
+export default {
+  name: 'appFilter',
+  props: ['data'],
+  data () {
+  	const d = this;
+  	const more = {};
+
+  	for(let a of d.data) {
+  		if(a["key"] && a["tidy"] && a["tidy"]["length"] != 0) {
+  			more[a["key"]] = false;
+  		}
+  	}
+	return {
+	  multipled_index: -1,
+	  checkList: [],
+	  more
+	}
+  },
+  methods: {
+  	handleClick (row, item) {
+  		const d = this;
+
+  		const name = row.label;
+  		const key = row.key;
+  		const items = [item];
+
+  		d.$store.state.screen.push({name, key, items});
+
+  	},
+  	handleMultipled (index) {
+  		const d = this;
+  		
+  		d.multipled_index = index;
+  		d.checkList.length = 0;
+  	},
+  	handleCancel () {
+  		const d =this;
+
+  		d.multipled_index = -1;
+  		d.checkList.length = 0;
+  	},
+  	handleSure (row) {
+  		const d = this; 
+
+  		const name = row.label;
+  		const key = row.key;
+  		const items = [...d.checkList];
+
+  		d.$store.state.screen.push({name, key, items});
+  		d.multipled_index = -1;
+  		d.checkList.length = 0;
+  	},
+  	handleMore (key, flag) {
+  		
+  		console.log(key, flag);
+  		const d = this;
+  		d["more"][key] = flag;
+  	}
+  },
+  computed: {
+  	control () {
+  		const d = this;
+      const screen = d.$store.state.screen;
+      d.$emit('screenChange', screen);
+  		const m = new Map();
+
+  		for(let s of screen) {
+  			if(s["key"]) {
+  				m.set(s["key"], true);
+  			}
+  		}
+
+  		return m;
+  	},
+  	show () {
+  		let flag = false;
+  		for(let d of this.data) {
+  			if( !this.control.get(d["key"]) ) {
+  				flag = true;
+  				break;
+  			}
+  		}
+
+  		return flag;
+  	}
+  }
+}
+</script>
+
+<!-- Add "scoped" attribute to limit CSS to this component only -->
+<style scoped lang="scss">
+@mixin top_radius($radius) {
+	border-top-left-radius: $radius;
+	border-top-right-radius: $radius;
+}
+.app-filter {
+	width: 100%;
+	background-color: #deedf6;
+	@include top_radius(4px);
+	position: relative;
+}
+.app-filter {
+	width: 100%;
+}
+
+.app-filter-row {
+	position: relative;
+	overflow: hidden;
+	border-bottom: 1px solid #ddd;
+	border-right: 1px solid #ddd;
+  border-left: 1px solid #ddd;
+}
+.app-filter-row:first-child {
+	border-top: 1px solid #ddd;
+
+	@include top_radius(4px);
+}
+.app-filter-row:first-child .app-filter-label {
+	@include top_radius(4px);
+}
+
+
+.app-filter-label {
+	width: 100px;
+	float: left;
+	
+	padding-top: 10px;
+	padding-left: 10px; 
+	font-size: 14px;
+	font-weight: bold;
+	color: #707070;
+}
+.app-filter-items {
+	margin-left: 110px;
+	padding-right: 130px;
+	min-height: 40px;
+	line-height: 40px;
+	background-color: #f3f5f6;
+}
+.app-filter-btns {
+	position: absolute;
+	top: 5px;
+	right: 10px;
+}
+.app-filter-item {
+    font-size: 13px;
+    margin-left: 20px;
+    color: #005aa0;
+    cursor: pointer;
+}
+.app-filter-item:hover {
+	color: #e4393c;
+}
+.el-checkbox {
+	color: #005aa0;
+	margin-left: 20px;
+}
+</style>

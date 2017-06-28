@@ -1,0 +1,268 @@
+<template>
+  <div class="hjg-table">
+  	<div class="table-header">
+      <template v-for="btn in tableOption.header_btn">
+        <template v-if="btn.type == 'custom'">
+          <el-button class="table-header-btn" type="primary" :icon="btn.icon ? btn.icon : ''" @click="handleCommand(btn.click, $event)">{{ btn.label }}</el-button>
+        </template>
+
+        <template v-else-if="btn.type == 'control'">
+          <el-dropdown trigger="click" :hide-on-click="false" menu-align="start">
+            <el-button class="table-header-btn" type="primary" :icon="btn.icon ? btn.icon : 'menu'">
+              {{ btn.label }}<i class="el-icon-caret-bottom el-icon--right"></i>
+            </el-button>
+            <el-dropdown-menu slot="dropdown">
+              <el-dropdown-item v-for="(col, index) in tableControl" :key="index" v-if="col.type != 'selection' && col.type != 'action' && col.type != 'expand'">
+                <el-checkbox :label="col.label" v-model="col.show"></el-checkbox>
+              </el-dropdown-item>
+            </el-dropdown-menu>
+          </el-dropdown>
+        </template>
+
+        <template v-else-if="btn.type == 'dropdown'">
+          <el-dropdown trigger="click" menu-align="start">
+            <el-button class="table-header-btn" type="primary" :icon="btn.icon ? btn.icon : ''">
+              {{ btn.label }}<i class="el-icon-caret-bottom el-icon--right"></i>            
+            </el-button>
+            <el-dropdown-menu v-if="btn.items">
+              <el-dropdown-item v-for="(item,index) in btn.items" :key="index" :divided="item.divided"><div @click="item.click" style="margin: 0 -10px; padding: 0 10px;">{{ item.text }}</div></el-dropdown-item>
+            </el-dropdown-menu>
+          </el-dropdown>
+        </template>
+
+        <template v-else-if="btn.type = 'day'">
+          <div style="display: inline-block; margin-left: 10px;">
+            <el-date-picker type="date" placeholder="起始日期" size="mini" style="width: 110px" v-model="startTime" :picker-options="startOption"></el-date-picker>
+            <span>-</span>
+            <el-date-picker type="date" placeholder="结束日期" size="mini" style="width: 110px" v-model="endTime" :picker-options="endOption"></el-date-picker>
+            <el-button size="mini" @click="btn.search(startTime,endTime)">搜索</el-button>
+          </div>
+        </template>
+
+      </template>
+
+	  	<el-input
+        placeholder="搜索..."
+        icon="search"
+        :class="searchClass"
+        @focus="searchClass='table-search table-search-focus'"
+        @blur="searchClass='table-search'"
+        v-if="tableOption.is_search == undefined ? true : tableOption.is_search"
+	    ></el-input>
+    </div>
+    
+	<el-table 
+    :data="tableData" 
+    stripe 
+    border 
+    @selection-change="handleselectionChange" 
+    row-key="id" 
+    :default-sort="tableOption.default_sort ? tableOption.default_sort : {}"
+    @sort-change="sortChange"
+    @expand="handleExpand"
+  >
+    <template v-for="(col, index) in tableOption.columns">
+      
+      <template v-if="col.type == 'selection'">
+        <el-table-column type="selection"></el-table-column>
+      </template>
+
+      <template v-else-if="col.type == 'expand'">
+        <el-table-column type="expand">
+          <template scope="scope">
+            <table-render v-for="(val, key) in col.render" v-if="expandType == key" :render="val" :key="key" :scope="scope"></table-render>
+          </template>
+        </el-table-column>
+      </template>
+
+      <template v-else-if="col.type == 'text'">
+        <template v-if="col.render ? true : false">
+          <el-table-column :label="col.label" :prop="col.prop" v-if="tableControl[index]['show']" :sortable="col.sortable ? 'custom' : false" >
+            <template scope="scope">
+              <table-render :render="col.render[expandType]" :scope="scope"></table-render>
+            </template>
+          </el-table-column>
+        </template>
+        <template v-else>
+          <el-table-column :label="col.label" :prop="col.prop" v-if="tableControl[index]['show']" :sortable="col.sortable ? 'custom' : false">
+            
+          </el-table-column>
+        </template>
+      </template>
+      
+      <template v-else-if="col.type == 'array'">
+        <el-table-column :label="col.label" :prop="col.prop" v-if="tableControl[index]['show']">
+          <template scope="scope">
+            <el-tag v-for="(item, i) in arrayRender(scope['row'],col)" style="margin-left: 5px;" close-transition :key="i">{{ item }}</el-tag>
+          </template>
+        </el-table-column>
+      </template>
+
+      <template v-else-if="col.type == 'action'">
+        <el-table-column :label="col.label" align="center" :width="col.width">
+          <template scope="scope">
+            <template v-for="(btn, index) in col.btns">
+
+              <el-dropdown v-if="btn.type == 'dropdown'" :key="index" trigger="click" menu-align="start">
+                <el-button class="table-header-btn" :type="btn.btn_type ? btn.btn_type : ''" :size="btn.size ? btn.size : 'mini'" :icon="btn.icon ? btn.icon : ''">
+                  {{ btn.label }}<i class="el-icon-caret-bottom el-icon--right"></i>            
+                </el-button>
+                <el-dropdown-menu v-if="btn.items">
+                  <el-dropdown-item v-for="(item,index2) in btn.items" :key="index2" :divided="item.divided"><div @click="handleCommand(item.click, $event)" style="margin: 0 -10px; padding: 0 10px;">{{ item.text }}</div></el-dropdown-item>
+                </el-dropdown-menu>
+              </el-dropdown>
+              
+              <el-button v-else :type="btn.btn_type ? btn.btn_type : ''" :key="index" :size="btn.size ? btn.size : 'mini'" :icon="btn.icon" @click="handleActionCommand(btn.click, scope, $event)">{{ btn.label }}</el-button>
+
+            </template>
+          </template>
+        </el-table-column>
+      </template>
+
+    </template>
+	</el-table>
+	<el-pagination
+    v-if="totalNumber > pageSize"
+  	@current-change="handleCurrentChange"
+  	:current-page="currentPage"
+  	:page-size="pageSize"
+  	layout="total,  prev, pager, next, jumper"
+  	:total="totalNumber"
+  >
+  </el-pagination>
+  </div>
+</template>
+
+<script>
+import tableConst from '@/const/tableConst'
+const methods = Object.assign({}, tableConst.methods, {
+  handleExpand (a, b) {
+
+  },
+  handleCommand (func, event) {
+    if(func) {
+      func(event);
+    }
+  },
+  handleActionCommand (func, scope, event) {
+    if(func) {
+      func(scope.row, event)
+    }
+  },
+  arrayRender (row, col) {
+    return col.render ? 
+              col.render(row) : row[col.prop];  
+  }
+});
+export default {
+  name: 'table-component',
+  methods,
+  created() {
+    const d = this;
+
+    d.totalNumber = d.tableData.length;
+    d.pageData = d.getPageData(d.currentPage);
+  },
+  props: ['tableOption', 'data'],
+  computed: {
+    tableData () {
+      const d= this;
+      return d.data ? d.data : []; 
+    },
+    sortChange () {
+      const to = this.tableOption;
+      return to['sortChange'] ? to['sortChange'] : '';
+    },
+  },
+  data () {
+
+    const d = this;
+    const cols = d.tableOption.columns;
+    const tableControl = [];
+
+    for (let c of d.tableOption.columns) {
+
+      let show = c.show == undefined ? true : c.show;
+      let type = c.type;
+      let label = c.label;
+      tableControl.push({show, type, label});
+    }
+
+    const data = {
+      tableControl,
+      expandType: '',
+      searchClass: 'table-search',
+      startOption: {
+        disabledDate (time) {
+          let flag;
+
+          if(d.endTime == "") {
+            flag = time.getTime() < Date.now();  
+          }else {
+            flag = time.getTime() < d.endTime.getTime() + 8.64e7; 
+          }
+          return !flag;
+        }
+      },
+      endOption: {
+        disabledDate (time) {
+          let flag;
+
+          if(d.startTime == "") {
+            flag = time.getTime() < Date.now();
+          }else {
+            flag = time.getTime() < Date.now() && time.getTime() > d.startTime.getTime() - 8.64e7;
+          }
+
+          return !flag;
+        }
+      },
+      startTime: '',
+      endTime: '',
+    };
+
+    return Object.assign({}, tableConst.data, data);
+  },
+  components: {
+    'TableRender': {
+      render: function(h) {
+        return this.render(h, this.scope);
+      },
+      props: ['render', 'scope'],
+    }
+  }
+}
+</script>
+
+<!-- Add "scoped" attribute to limit CSS to this component only -->
+<style lang="scss">
+.table-header i.el-icon-menu {
+  font-size: 13px;
+}
+/*.el-table__expand-column {
+  display: none;
+}*/
+.hjg-table {
+  -moz-user-select:none; /*火狐*/
+  -webkit-user-select:none; /*webkit浏览器*/
+  -ms-user-select:none; /*IE10*/
+  -khtml-user-select:none; /*早期浏览器*/
+  user-select:none;
+}
+/*.table-header-btn {
+  margin: 0;
+  margin-right: 10px;
+}*/
+</style>
+<style scoped lang="scss">
+
+.el-button+.el-dropdown {
+  margin-left: 10px;
+}
+.el-dropdown+.el-button {
+  margin-left: 10px;
+}
+.el-dropdown+.el-dropdown {
+  margin-left: 10px;
+}
+</style>
