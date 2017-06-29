@@ -178,12 +178,12 @@ nav {
   overflow: hidden;
 }
 .table-search {
-  width: 150px;
+  width: 130px;
   float: right;
   transition: all 1s;
 }
 .table-search-focus  {
-  width: 250px;
+  width: 200px;
 }
 .el-pagination {
   text-align: right;
@@ -202,9 +202,29 @@ nav {
 .left .tree-search>input {
   border-radius: 0;
 }
+.dialog-mini .el-dialog {
+  width: 300px;
+}
+.dialog-small .el-dialog {
+  width: 600px;
+}
 .el-dropdown-menu__item {
   line-height: 25px;
   font-size: 14px;
-  font-family: "microsoft yahei", Helvetica, Tahoma, Arial, sans-serif
+  font-family: "microsoft yahei", Helvetica, Tahoma, Arial, sans-serif;
+  padding: 0 20px;
 }
+.el-dialog {
+  border-radius: 6px;
+  -webkit-box-shadow: 0 5px 15px rgba(0,0,0,.5);
+  box-shadow: 0 5px 15px rgba(0,0,0,.5);
+}
+.el-dialog__header {
+  border-bottom: 1px solid #e5e5e5;
+  padding: 20px 20px 15px;
+}
+.dialog-mini .el-dialog--tiny {
+  width: 300px;
+
+} 
 </style>

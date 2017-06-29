@@ -25,7 +25,7 @@
               {{ btn.label }}<i class="el-icon-caret-bottom el-icon--right"></i>            
             </el-button>
             <el-dropdown-menu v-if="btn.items">
-              <el-dropdown-item v-for="(item,index) in btn.items" :key="index" :divided="item.divided"><div @click="item.click" style="margin: 0 -10px; padding: 0 10px;">{{ item.text }}</div></el-dropdown-item>
+              <el-dropdown-item v-for="(item,index) in btn.items" :key="index" :divided="item.divided"><div @click="handleCommand(item.click, $event)" style="margin: 0 -20px; padding: 0 20px;">{{ item.text }}</div></el-dropdown-item>
             </el-dropdown-menu>
           </el-dropdown>
         </template>
@@ -79,7 +79,7 @@
         <template v-if="col.render ? true : false">
           <el-table-column :label="col.label" :prop="col.prop" v-if="tableControl[index]['show']" :sortable="col.sortable ? 'custom' : false" >
             <template scope="scope">
-              <table-render :render="col.render[expandType]" :scope="scope"></table-render>
+              <table-render :render="col.render" :scope="scope"></table-render>
             </template>
           </el-table-column>
         </template>

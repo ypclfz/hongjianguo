@@ -84,7 +84,7 @@ export default {
         ],
         'columns': [
 
-          { type: 'expand', render: (h, scope)=>{return h('h1', 'fire!!!')} },
+          { type: 'expand', render: {'': (h, scope)=>{return h('h1', 'fire!!!')} } },
           { type: 'selection' },
 
           { 
