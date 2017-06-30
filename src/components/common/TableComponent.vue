@@ -32,9 +32,7 @@
 
         <template v-else-if="btn.type = 'day'">
           <div style="display: inline-block; margin-left: 10px;">
-            <el-date-picker type="date" placeholder="起始日期" size="mini" style="width: 110px" v-model="startTime" :picker-options="startOption"></el-date-picker>
-            <span>-</span>
-            <el-date-picker type="date" placeholder="结束日期" size="mini" style="width: 110px" v-model="endTime" :picker-options="endOption"></el-date-picker>
+            <app-date-picker size='mini'></app-date-picker>
             <el-button size="mini" @click="btn.search(startTime,endTime)">搜索</el-button>
           </div>
         </template>
@@ -56,9 +54,10 @@
     stripe 
     border 
     @selection-change="handleselectionChange" 
-    row-key="id" 
+    :row-key="getRowKeys" 
     :default-sort="tableOption.default_sort ? tableOption.default_sort : {}"
     @sort-change="sortChange"
+    :expand-row-keys="expands"
     @expand="handleExpand"
   >
     <template v-for="(col, index) in tableOption.columns">
@@ -70,7 +69,8 @@
       <template v-else-if="col.type == 'expand'">
         <el-table-column type="expand">
           <template scope="scope">
-            <table-render v-for="(val, key) in col.render" v-if="expandType == key" :render="val" :key="key" :scope="scope"></table-render>
+            <slot name="expand" :row="scope.row">
+            </slot>
           </template>
         </el-table-column>
       </template>
@@ -85,7 +85,6 @@
         </template>
         <template v-else>
           <el-table-column :label="col.label" :prop="col.prop" v-if="tableControl[index]['show']" :sortable="col.sortable ? 'custom' : false">
-            
           </el-table-column>
         </template>
       </template>
@@ -135,9 +134,13 @@
 
 <script>
 import tableConst from '@/const/tableConst'
+import AppDatePicker from '@/components/common/AppDatePicker'
 const methods = Object.assign({}, tableConst.methods, {
   handleExpand (a, b) {
-
+    const fun = this.tableOption.expandFun;
+    if( fun ){
+      fun(a, b);
+    }
   },
   handleCommand (func, event) {
     if(func) {
@@ -150,8 +153,7 @@ const methods = Object.assign({}, tableConst.methods, {
     }
   },
   arrayRender (row, col) {
-    return col.render ? 
-              col.render(row) : row[col.prop];  
+    return col.render ? col.render(row) : row[col.prop];
   }
 });
 export default {
@@ -190,7 +192,10 @@ export default {
 
     const data = {
       tableControl,
-      expandType: '',
+      expands: [],
+      getRowKeys (row) {
+        return row.id;
+      },
       searchClass: 'table-search',
       startOption: {
         disabledDate (time) {
@@ -229,8 +234,12 @@ export default {
         return this.render(h, this.scope);
       },
       props: ['render', 'scope'],
-    }
-  }
+    },
+    AppDatePicker,
+  },
+  mounted () {
+    
+  },
 }
 </script>
 

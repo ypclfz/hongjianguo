@@ -23,6 +23,7 @@
               type="primary"
               :close-transition="false"
               @close="handleClose(index)"
+
             >
               {{ tag }}
             </el-tag>
@@ -225,6 +226,8 @@ nav {
 }
 .dialog-mini .el-dialog--tiny {
   width: 300px;
-
-} 
+}
+.el-dropdown-menu__item--divided:before {
+  margin: 0 -20px;
+}
 </style>
