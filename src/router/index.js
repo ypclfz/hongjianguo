@@ -9,31 +9,57 @@ import AppliedPatent from '@/components/page/AppliedPatent'
 import ApplyingPatent from '@/components/page/ApplyingPatent'
 import AddPatent from '@/components/page/AddPatent'
 import PatentDetail from '@/components/page/PatentDetail'
+import PatentStatistics from '@/components/page/PatentStatistics'
+import PatentNotice from '@/components/page/PatentNotice'
 import TrademarkList from '@/components/page/TrademarkList'
 import TrademarkNotice from '@/components/page/TrademarkNotice'
 import TrademarkStatistics from '@/components/page/TrademarkStatistics'
 import CopyrightList from '@/components/page/CopyrightList'
 import UserList from '@/components/page/UserList'
+//###################
+import CommonDetail from '@/components/page/CommonDetail'
+import Babel from '@/components/page_extension/CommonDetail_babel'
+import Control from '@/components/page_extension/CommonDetail_control'
+import Notice from '@/components/page_extension/CommonDetail_notice'
+import Fee from '@/components/page_extension/CommonDetail_fee'
+import Email from '@/components/page_extension/CommonDetail_email'
+import Documents from '@/components/page_extension/CommonDetail_documents'
+//#################
+
+//-------------------设置 begin-----------------
+import SettingAgency from '@/components/page/SettingAgency'
+import SettingCase from '@/components/page/SettingCase'
+
+//#################
+import SettingIndividual from '@/components/page/SettingIndividual'
+import SI_Base from '@/components/page_extension/SettingIndividual_base'
+import SI_Notice from '@/components/page_extension/SettingIndividual_notice'
+import SI_Email from '@/components/page_extension/SettingIndividual_email'
+
+import SettingJurisdiction from '@/components/page/SettingJurisdiction'
+import SettingRule from '@/components/page/SettingRule'
+
+//#################
+import SettingSystem from '@/components/page/SettingSystem'
+import SS_Base from '@/components/page_extension/SettingSystem_base'
+import SS_Email from '@/components/page_extension/SettingSystem_email'
+import SS_Number from '@/components/page_extension/SettingSystem_number'
+import SS_Case from '@/components/page_extension/SettingSystem_case'
+import SS_Fee from '@/components/page_extension/SettingSystem_fee'
+
+import SettingTemplate from '@/components/page/SettingTemplate'
+import SettingUser from '@/components/page/SettingUser'
+//-------------------设置 end---------------------
 
 Vue.use(Router);
-export default new Router({
+const router = new Router({
   routes: [
     //###重定向###
-    {
-      path: '/', redirect: '/statistics'
-    },
-    {
-      path: '/proposal', redirect: '/proposal/list'
-    },
-    {
-      path: '/task', redirect: '/task/pending'
-    },
-    {
-      path: '/patent', redirect: '/patent/applying'
-    },
-    {
-      path: '/trademark', redirect: '/trademark/list'
-    },
+    { path: '/', redirect: '/statistics' },
+    { path: '/proposal', redirect: '/proposal/list' },
+    { path: '/task', redirect: '/task/pending' },
+    { path: '/patent', redirect: '/patent/applying' },
+    { path: '/trademark', redirect: '/trademark/list' },
     //###重定向###
     {
       path: '/statistics',
@@ -74,6 +100,14 @@ export default new Router({
       component: PatentDetail,
       alias: ['/patent/applying/detail', '/patent/applied/detail']
     },{
+      path: '/patent/statistics',
+      name: 'PatentStatistics',
+      component: PatentStatistics,
+    },{
+      path: '/patent/notice',
+      name: 'PatentNotice',
+      component: PatentNotice,
+    },{
       path: '/trademark/list',
       name: 'TrademarkList',
       component: TrademarkList
@@ -81,18 +115,73 @@ export default new Router({
       path: '/trademark/notice',
       name: 'TrademarkNotice',
       component: TrademarkNotice
-    }, {
+    },
+    {
       path:'/trademark/statistics',
       name: 'TrademarkStatistics',
       component: TrademarkStatistics
-    }, {
+    }, 
+    {
       path: '/copyright/list',
       name: 'CopyrightList',
       component: CopyrightList
-    }, {
+    }, 
+    {
       path: '/userList',
       name: 'UserList',
       component: UserList,
+    }, 
+    {
+      path: '/commonDetail/:id',
+      name: 'CommonDetail',
+      component: CommonDetail,
+      children: [
+        { path: 'babel', name: 'Babel', component: Babel },
+        { path: 'control', name: 'Control', component: Control },
+        { path: 'notice', name: 'Notice', component: Notice },
+        { path: 'fee', name: 'Fee', component: Fee },
+        { path: 'email', name: 'Email', component: Email },
+        { path: 'documents', name: 'Documents', component: Documents },
+      ],
+      alias: ['/patent/applied/detail/:id', '/trademark/list/detail/:id', '/copyright/list/detail/:id']
     },
+    { path: '/setting/agency', name: 'SettingAgency', component: SettingAgency },
+    { path: '/setting/case', name: 'SettingCase', component: SettingAgency },
+    { path: '/setting/individual', redirect: '/setting/individual__' },
+    { 
+      path: '/setting/individual__',
+      component: SettingIndividual,
+      children: [
+        { path: '', redirect: 'base' },
+        { path: 'base', component: SI_Base },
+        { path: 'email', component: SI_Email },
+        { path: 'notice', component: SI_Notice },
+      ] 
+    },
+    { path: '/setting/jurisdiction', name: 'SettingJurisdiction', component: SettingJurisdiction },
+    { path: '/setting/rule', name: 'SettingRule', component: SettingRule },
+    { path: '/setting/system', redirect: '/setting/system__' },
+    { 
+      path: '/setting/system__',
+      component: SettingSystem,
+      children: [
+        { path: '', redirect: 'base' },
+        { path: 'base', component: SS_Base },
+        { path: 'case', component: SS_Case },
+        { path: 'email', component: SS_Email },
+        { path: 'fee', component: SS_Fee },
+        { path: 'number', component: SS_Number },
+      ] 
+    },
+    { path: '/setting/template', name: 'SettingTemplate', component: SettingTemplate },
+    { path: '/setting/user', name: 'SettingUser', component: SettingUser },
   ]
-})
+});
+router.beforeEach((to, from, next)=>{
+  const store = this.a.app.$store;
+  if(store) {
+    store.commit('clearScreen');
+  }
+  next();
+});
+export default router

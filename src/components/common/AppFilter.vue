@@ -1,48 +1,45 @@
 <template>
   <div class="app-filter" style="margin-bottom: 20px;" v-show="show">
-  	
-  			<div :class="index === multipled_index ? 'app-filter-row app-filter-row-multipled' : 'app-filter-row'" v-for="(row, index) in data" :key="row.key" v-if=" !control.get(row.key) ">
-		  		<div class="app-filter-label">
-		  			{{ row.label }}
-		  		</div>
-		  		<template v-if="index !== multipled_index">
-			  		<div class="app-filter-items">
-			  			<template v-if="row.tidy && row.tidy.length != 0">
-			  				<template v-if="more[row.key]">
-			  					<a class="app-filter-item" v-for="(item, ind) in row.items" :key="ind" @click="handleClick(row, item)">{{ item }}</a>
-			  				</template>
-			  				<template v-else>
-			  					<a class="app-filter-item" v-for="(item, ind) in row.tidy" :key="ind" @click="handleClick(row, item)">{{ item }}</a>
-			  				</template>
-			  			</template>
-			  			<template v-else>
-							<a class="app-filter-item" v-for="(item, ind) in row.items" :key="ind" @click="handleClick(row, item)">{{ item }}</a>
-			  			</template>
-			  			
-			  		</div>
-			  		<div class="app-filter-btns">
-			  			<template v-if="row.tidy && row.tidy.length != 0">
-			  				<el-button v-if="!(more[row.key])" @click="more[row.key] = true" size="mini" icon="caret-bottom">更多</el-button>
-			  				<el-button v-else-if="more[row.key]" @click="more[row.key] = false" size="mini" icon="caret-top">收起</el-button>
-			  			</template>
-			  			
-			  			<el-button v-if="row.multipled" size="mini" icon="plus" @click="handleMultipled(index)">多选</el-button>
-			  		</div>
-		  		</template>
-		  		<template v-else-if="index === multipled_index">
-		  			<div class="app-filter-items">
-						<el-checkbox-group v-model="checkList">
-	    					<el-checkbox v-for="(item2, ind2) in row.items" :label="item2" :key="ind2"></el-checkbox>
-	  					</el-checkbox-group>
-	  					<div style="text-align: center">
-							<el-button size="small" type="danger" :disabled="checkList.length == 0 ? true : false" @click="handleSure(row)">确认</el-button>
-							<el-button size="small" @click="handleCancel">取消</el-button>
-	  					</div>
-	  				</div>
-		  		</template>
-		  	</div>
-
-  		
+  	<div :class="index === multipled_index ? 'app-filter-row app-filter-row-multipled' : 'app-filter-row'" v-for="(row, index) in filterList" :key="row.key" v-if=" !control.get(row.key) ">
+  		<div class="app-filter-label">
+  			{{ row.label }}
+  		</div>
+  		<template v-if="index !== multipled_index">
+	  		<div class="app-filter-items">
+	  			<template v-if="row.tidy && row.tidy.length != 0">
+	  				<template v-if="more[row.key]">
+	  					<a class="app-filter-item" v-for="(item, ind) in row.items" :key="ind" @click="handleClick(row, item)">{{ item }}</a>
+	  				</template>
+	  				<template v-else>
+	  					<a class="app-filter-item" v-for="(item, ind) in row.tidy" :key="ind" @click="handleClick(row, item)">{{ item }}</a>
+	  				</template>
+	  			</template>
+	  			<template v-else>
+					<a class="app-filter-item" v-for="(item, ind) in row.items" :key="ind" @click="handleClick(row, item)">{{ item.label }}</a>
+	  			</template>
+	  			
+	  		</div>
+	  		<div class="app-filter-btns">
+	  			<template v-if="row.tidy && row.tidy.length != 0">
+	  				<el-button v-if="!(more[row.key])" @click="more[row.key] = true" size="mini" icon="caret-bottom">更多</el-button>
+	  				<el-button v-else-if="more[row.key]" @click="more[row.key] = false" size="mini" icon="caret-top">收起</el-button>
+	  			</template>
+	  			
+	  			<el-button v-if="row.multipled" size="mini" icon="plus" @click="handleMultipled(index)">多选</el-button>
+	  		</div>
+  		</template>
+  		<template v-else-if="index === multipled_index">
+  			<div class="app-filter-items">
+				  <el-checkbox-group v-model="checkList">
+  					<el-checkbox v-for="(item2, ind2) in row.items" :label="ind2" :key="ind2">{{ item2.label }}</el-checkbox>
+					</el-checkbox-group>
+					<div style="text-align: center">
+					<el-button size="small" type="danger" :disabled="checkList.length == 0 ? true : false" @click="handleSure(row)">确认</el-button>
+					<el-button size="small" @click="handleCancel">取消</el-button>
+					</div>
+				</div>
+  		</template>
+  	</div> 		
   </div>
 </template>
 
@@ -54,26 +51,30 @@ export default {
   	const d = this;
   	const more = {};
 
+    
+
+    
+
   	for(let a of d.data) {
   		if(a["key"] && a["tidy"] && a["tidy"]["length"] != 0) {
   			more[a["key"]] = false;
   		}
   	}
-	return {
-	  multipled_index: -1,
-	  checkList: [],
-	  more
-	}
+
+  	return {
+  	  multipled_index: -1,
+      checkList: [], 
+  	  more,
+  	}
   },
   methods: {
   	handleClick (row, item) {
-  		const d = this;
 
   		const name = row.label;
   		const key = row.key;
   		const items = [item];
 
-  		d.$store.state.screen.push({name, key, items});
+  		this.$store.commit('addScreen', {name, key, items});
 
   	},
   	handleMultipled (index) {
@@ -89,37 +90,25 @@ export default {
   		d.checkList.length = 0;
   	},
   	handleSure (row) {
-  		const d = this; 
+  		const d = this;
+      const set = new Set(this.checkList);
 
   		const name = row.label;
   		const key = row.key;
-  		const items = [...d.checkList];
+  		const items = row.items.filter((item, index)=>set.has(index));
 
-  		d.$store.state.screen.push({name, key, items});
+  		this.$store.commit('addScreen', {name, key, items});
   		d.multipled_index = -1;
   		d.checkList.length = 0;
   	},
   	handleMore (key, flag) {
-  		
-  		console.log(key, flag);
   		const d = this;
   		d["more"][key] = flag;
   	}
   },
   computed: {
   	control () {
-  		const d = this;
-      const screen = d.$store.state.screen;
-      d.$emit('screenChange', screen);
-  		const m = new Map();
-
-  		for(let s of screen) {
-  			if(s["key"]) {
-  				m.set(s["key"], true);
-  			}
-  		}
-
-  		return m;
+      return this.$store.getters.screen_control;
   	},
   	show () {
   		let flag = false;
@@ -131,7 +120,26 @@ export default {
   		}
 
   		return flag;
-  	}
+  	},
+    filterList () {
+      const filterList = [];
+      for(let a of this.data) {
+        const arr = [];
+        for(let t of a.items) {
+          arr.push({
+            label: t.label != undefined ? t.label : t, 
+            value: t.value != undefined 
+                    ? t.value 
+                    : t.label != undefined
+                      ? t.label 
+                      : t,
+          });
+        }
+        filterList.push(Object.assign({}, a, {items: arr}));
+      }
+
+      return filterList;
+    },
   }
 }
 </script>

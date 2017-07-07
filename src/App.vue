@@ -15,15 +15,14 @@
           <el-breadcrumb-item v-for="item in select_arr" :to="item.path" :key="item.path">
             <i :class="item.icon"></i>{{ item.text }}
           </el-breadcrumb-item>
-          <el-breadcrumb-item v-if="screen_arr.length != 0" class="container-nav-screen">
+          <el-breadcrumb-item v-if="screen_label.length != 0" class="container-nav-screen">
             <el-tag 
-              v-for="(tag, index) in screen_arr"
+              v-for="(tag, index) in screen_label"
               :closable="true"
               :key="tag" 
               type="primary"
               :close-transition="false"
               @close="handleClose(index)"
-
             >
               {{ tag }}
             </el-tag>
@@ -43,14 +42,26 @@ export default {
   computed: {
     select () {
       const d = this;
-      const path = d.$route.path;
-      
+      let path = d.$route.path;
+      const params = d.$route.params;
+      if(params['id']) {
+        path = path.split(`/${params['id']}`)[0];
+      }else {
+        path = path.split("__")[0];
+      }
+
       return menu.map[path];
     },
     select_arr () {
       const d = this;
       const arr = [];
-      const path = d.$route.path;
+      let path = d.$route.path;
+      const params = d.$route.params;
+      if(params['id']) {
+        path = path.split(`/${params['id']}`)[0];
+      }else {
+        path = path.split("__")[0];
+      }
       const arr2 = path.split("/");
 
       for(let i = 0; i < arr2.length; i++) {
@@ -60,15 +71,8 @@ export default {
 
       return arr;
     },
-    screen_arr () {
-      const d = this;
-      const screen = d.$store.state.screen;
-      const arr = [];
-      for(let s of screen) {
-        arr.push(s["name"] + "：" + s["items"].join("、"));
-      }
-
-      return arr;
+    screen_label () {
+      return this.$store.getters.screen_label;
     },
     navL_height () {
       return "height:" + (window.innerHeight - 50) + "px";
@@ -82,8 +86,7 @@ export default {
   },
   methods: {
     handleClose: function (index) {
-      const d = this;
-      d.$store.state.screen.splice(index, 1);
+      this.$store.commit('removeScreen', index);
     }
   },
   components: { AppMenu }
@@ -127,6 +130,7 @@ nav {
   z-index: 2;
 }
 .nav-left {
+  overflow-y: auto;
   width: $navL_width;
   position: fixed;
   top: $nav_height;

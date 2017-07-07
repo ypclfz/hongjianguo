@@ -1,21 +1,21 @@
 <template>
   <div class="main">
   	<app-tag :tags="tags">
-		<div slot="A">
-			<el-form label-width="150px">
-				<el-form-item label="内部卷号："><span></span></el-form-item>
-				<el-form-item label="案件名称："><span></span></el-form-item>
-				<el-form-item label="专利类型："><span>19221684</span></el-form-item>
-				<el-form-item label="客户名称："><span>19221684</span></el-form-item>
-				<el-form-item label="申请人新增："><span>19221684</span></el-form-item>
-			</el-form>
-		</div>
-		<div slot="B">
-			内容二
-		</div>
-		<div slot="C">
-			内容三
-		</div>
+  		<div slot="A">
+  			<el-form label-width="150px">
+  				<el-form-item label="内部卷号："><span></span></el-form-item>
+  				<el-form-item label="案件名称："><span></span></el-form-item>
+  				<el-form-item label="专利类型："><span>19221684</span></el-form-item>
+  				<el-form-item label="客户名称："><span>19221684</span></el-form-item>
+  				<el-form-item label="申请人新增："><span>19221684</span></el-form-item>
+  			</el-form>
+  		</div>
+  		<div slot="B">
+  			内容二
+  		</div>
+  		<div slot="C">
+  			内容三
+  		</div>
   	</app-tag>
   </div>
 </template>

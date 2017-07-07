@@ -12,6 +12,20 @@
           
         </table-component>
       </div>
+      <el-dialog :visible.sync="dialogScreenVisible" title="设置筛选条件" class="dialog-small">
+        <el-form label-width="80px">
+          <el-form-item label="分所"><el-input></el-input></el-form-item>
+          <el-form-item label="案源人"><el-input></el-input></el-form-item>
+          <el-form-item label="客户名称"><el-input></el-input></el-form-item>
+          <el-form-item label="申请地区"><el-input></el-input></el-form-item>
+          <el-form-item label="专利类型"><el-input></el-input></el-form-item>
+          <el-form-item label="案件状态"><el-input></el-input></el-form-item>
+          <el-form-item label="委案日"><app-date-picker></app-date-picker></el-form-item>
+          <el-form-item label="申请日"><app-date-picker></app-date-picker></el-form-item>
+          <el-form-item label="授权日"><app-date-picker></app-date-picker></el-form-item>
+          <el-form-item><el-button>载入</el-button></el-form-item>
+        </el-form>
+      </el-dialog>
     </div>
   </div>
 </template>
@@ -20,6 +34,7 @@
 import AppFilter from '@/components/common/AppFilter'
 import TableComponent from '@/components/common/TableComponent'
 import AppTree from '@/components/common/AppTree'
+import AppDatePicker from '@/components/common/AppDatePicker'
 
 const text1 = '测试';
 const text2 = '测试';
@@ -34,6 +49,7 @@ export default {
   },
   data () {
     return {
+      dialogScreenVisible: false,
       filterData: [
         {
           label: '标签',
@@ -70,7 +86,7 @@ export default {
             label: '数据',
             icon: '',
             items: [
-              {text: '筛选', click: ()=>{alert("筛选")}},
+              {text: '筛选', click: ()=>{ this.dialogScreenVisible = true; }},
               {text: '导出', click: ()=>{alert("导出")}},
               {text: '删除', click: ()=>{alert("删除")},  divided: true},
               {text: '放弃申请', click: ()=>{alert("放弃申请")}},
@@ -187,7 +203,7 @@ export default {
       },
     };
   },
-  components: {  AppFilter, TableComponent, AppTree}
+  components: {  AppFilter, TableComponent, AppTree, AppDatePicker }
 }
 </script>
 <style>

@@ -1,8 +1,8 @@
 export default {
 	data: {
 		pageData: [],
-		totalNumber: 0,
 		pageSize: 5,
+    pageSizes: [5, 10, 20, 40],
 		currentPage: 1,
 		tableSelect: []
 	},

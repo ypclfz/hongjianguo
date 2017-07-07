@@ -1,7 +1,15 @@
 <template>
 	<div class="main">
-    <app-filter :data="filterParameter" @screenChange="screenChange"></app-filter>
-		<table-component :tableOption="tableOption" :data="tableData" ref="table"></table-component>
+    <app-filter :data="filterParameter"></app-filter>
+		<table-component :tableOption="tableOption" :data="tableData" ref="table">
+      <template slot="expand" scope="scope">
+        <el-steps :space="200" :active="1">
+          <el-step title="步骤 1" description="这是一段很长很长很长的描述性文字"></el-step>
+          <el-step title="步骤 2" description="这是一段很长很长很长的描述性文字"></el-step>
+          <el-step title="步骤 3" description="这是一段很长很长很长的描述性文字"></el-step>
+        </el-steps>
+      </template>
+    </table-component>
   </div>
 </template>
 
@@ -52,36 +60,48 @@ export default {
         })
         .catch(()=>{console.log("取消")});
     },
-    screenChange (screen) {
-      console.log(screen);
-    },
     sortChange (col) {
       console.log(col);
+      this.urlOption.sort_field = col.prop;
+      this.urlOption.sort = col.order == 'descending' ? 'desc' : 'asc';
+    },
+    handleStatus (status) {
+      this.urlOption.status = status; 
     },
     timeSearch (startTime, endTime) {
       if( startTime && endTime ) {
-        console.log(this.getDay(startTime));
-        console.log(this.getDay(endTime));
+        this.urlOption.time = [this.getDay(startTime), this.getDay(endTime)];
       }else {
-        this.$alert("请选择日期", {type: 'warning', closeOnClickModal: true});
+        this.$alert("请选择日期范围", {type: 'warning', closeOnClickModal: true});
       }
     },
+    timeClear () {
+      if(this.urlOption.time.length != 0) this.urlOption.time = []; 
+    },
     getDay (t) {
+      t = new Date(t);
       return t.getFullYear() + "-" + (t.getMonth() + 1) + "-" + t.getDate();
     },
+    updateTableData () {
+
+    }
   },
   data () {
     return {
       tableOption: {
         'header_btn': [
-            { type: 'custom', label: '新增', icon: 'plus', click: this.add },
-            { type: 'custom', label: '删除', icon: 'delete', click: this.bulkDelete },
-            { type: 'control', label: '字段' },
-            { type: 'day', search: this.timeSearch },
+          { type: 'custom', label: '新增', icon: 'plus', click: this.add },
+          { type: 'custom', label: '删除', icon: 'delete', click: this.bulkDelete },
+          { type: 'control', label: '字段' },
+          { type: 'date', search: this.timeSearch, clear: this.timeClear },
         ],
+        'handleCurrentChange': (page)=>{ this.urlOption.page = page; }, 
+        'handleSizeChange': (pagesize)=>{ this.urlOption.pagesize = pagesize; },
+        'handleSearch': (val)=>{ this.urlOption.keyword = val; },
         'default_sort': {prop: 'create_time', order: 'descending'},
         'sortChange': this.sortChange,
         'columns': [
+          { type: 'expand'},
           { type: 'selection'},
           { type: 'text', label: '提案时间', prop: 'create_time', sortable: true,},
           { type: 'text', label: '案件名称', prop: 'title',sortable: true },
@@ -124,18 +144,56 @@ export default {
         }, 
         {
           label: '提案人',
-          key: 'user1',
-          items: ['提案人一', '提案人二','提案人三'],
+          key: 'proposer',
+          items: [
+            {label: '提案人一', value: 1},
+            {label: '提案人二', value: 2},
+            {label: '提案人三', value: 3},
+          ], 
           multipled: true
         },
         {
           label: '发明人',
-          key: 'user2',
-          items: ['发明人一', '发明人二', '发明人三'],
+          key: 'inventor',
+          items: [
+            {label: '提案人一', value: 1},
+            {label: '提案人二', value: 2},
+            {label: '提案人三', value: 3}
+          ],
           multipled: true
         }
-      ]
+      ],
+      urlOption: {
+        page: 1,
+        pagesize: 5,
+        status: 1,
+        keyword: '',
+        tag: [],
+        proposer: [],
+        inventor: [],
+        time: [],
+        sort_field: '',
+        sort: '',
+      },
     }
+  },
+  computed: {
+    screen_value () {
+      return this.$store.getters.screen_value;
+    }
+  },
+  watch: {
+    screen_value () {
+      const map = this.screen_value;
+      const arr = ['tag', 'proposer', 'inventor'];
+      arr.forEach( (v)=>{ this.urlOption[v] = map.has(v) ? map.get(v) : []; } );
+    },
+    urlOption: {
+      handler: function () {
+        console.log("bbbb");
+      },
+      deep: true,
+    },
   },
   created () {
 

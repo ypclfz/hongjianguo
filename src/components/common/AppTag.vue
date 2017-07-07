@@ -1,10 +1,10 @@
 <template>
   <div class="app-tag">
   	<ul class="app-tag-menu">
-  		<li :class="item.key == key ? 'active' : ''" v-for="item in tags" @click="key = item.key"><div>{{ item.text }}</div></li>
+  		<li :class="item.key == key ? 'active' : ''" v-for="item in tags" @click="change(item.key)"><div>{{ item.text }}</div></li>
   	</ul>
   	<div class="app-tag-content">
-  		<slot v-for="item in tags" v-if="key == item.key" :name="item.key">
+  		<slot>
   		</slot>
 	  </div>
   </div>
@@ -14,18 +14,17 @@
 export default {
   name: 'appTag',
   props: ['tags'],
-  data () {
-    const d = this; 
-    let key = '';
-    for(let t of d.tags) {
-      if(t["active"]) {
-        key = t["key"];
-      }
+  computed: {
+    key () {
+      return this.$route.path.split("/").pop();
     }
-    key = key ? key : d.tags["key"]; 
-
-    return {
-      key,
+  },
+  methods: {
+    change (key) {
+      const arr = this.$route.path.split("/");
+      arr.pop();
+      arr.push(key); 
+      this.$router.push(arr.join("/"));
     }
   }
 }

@@ -40,15 +40,20 @@ menu.data = [
 		type: 'submenu',
 		children: [
 			{
-				text: '申请中',
-				path: '/patent/applying',
-				icon: 'iconfont icon-patent-applying',
-				type: 'item'
-			},{
-				text: '已申请',
+				text: '专利管理',
 				path: '/patent/applied',
 				icon: 'iconfont icon-patent-applied',
-				type: 'item'
+				type: 'item',
+			},{
+				text: '专利统计',
+				path: '/patent/statistics',
+				icon: '',
+				type: 'item',
+			},{
+				text: '通知书管理',
+				path: '/patent/notice',
+				icon: '',
+				type: 'item',
 			},{
 				text: '新建专利',
 				path: '/patent/add',
@@ -124,6 +129,95 @@ menu.data = [
 				type: 'none'
 			}
 		]
+	},
+	{
+		text: '设置',
+		path: '/setting',
+		icon: 'iconfont icon-task',
+		type: 'submenu',
+		children: [{
+			text: '我的个人设置',
+			path: '/setting/individual',
+			icon: '',
+			type: 'item'
+		},{
+			text: '用户管理',
+			path: '/setting/user',
+			icon: '',
+			type: 'item'
+		},{
+			text: '用户权限管理',
+			path: '/setting/jurisdiction',
+			icon: '',
+			type: 'item'
+		},{
+			text: '代理机构管理',
+			path: '/setting/agency',
+			icon: '',
+			type: 'item'
+		},{
+			text: '案件类型管理',
+			path: '/setting/case',
+			icon: '',
+			type: 'item'
+		},{
+			text: '系统设置',
+			path: '/setting/system',
+			icon: '',
+			type: 'item'
+		},{
+			text: '模板管理',
+			path: '/setting/template',
+			icon: '',
+			type: 'item'
+		},{
+			text: '发文规则',
+			path: '/setting/rule',
+			icon: '',
+			type: 'item'
+		}]
+	},
+	{
+		text: '费用',
+		path: '/fee',
+		icon: 'iconfont icon-task',
+		type: 'submenu',
+		children: [{
+			text: '应收明细',
+			path: '/fee/receivable',
+			icon: '',
+			type: 'item',
+		},{
+			text: '请款单',
+			path: '/fee/bill',
+			icon: '',
+			type: 'item',
+		},{
+			text: '应付明细',
+			path: '/fee/expense',
+			icon: '',
+			type: 'item',
+		},{
+			text: '付款单',
+			path: '/fee/payment',
+			icon: '',
+			type: 'item',
+		},{
+			text: '年费监控',
+			path: '/fee/monitor',
+			icon: '',
+			type: 'item',
+		},{
+			text: '年费通知',
+			path: '/fee/notice',
+			icon: '',
+			type: 'item',
+		},{
+			text: '授权费',
+			path: '/fee/authority',
+			icon: '',
+			type: 'item',
+		}]
 	}
 ];
 
@@ -133,6 +227,7 @@ menu.map = {
 	'/patent/applied/detail': {text: '专利详情', icon: '', path: '/patent/applied/detail'},
 	'/patent/applying/detail': {text: '专利详情', icon: '', path: '/patent/applying/detail'},
 	'/proposal/list/edit': {text: '提案编辑', icon: '', path: '/proposal/list/edit'},
+	'/trademark/list/detail': {text: '商标详情', icon: '', path: '/trademark/list/detail/babel'},
 };
 tailRecursion(menu.data);
 

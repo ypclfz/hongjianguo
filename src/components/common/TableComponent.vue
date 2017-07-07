@@ -30,21 +30,24 @@
           </el-dropdown>
         </template>
 
-        <template v-else-if="btn.type = 'day'">
+        <template v-else-if="btn.type == 'date'">
           <div style="display: inline-block; margin-left: 10px;">
-            <app-date-picker size='mini'></app-date-picker>
-            <el-button size="mini" @click="btn.search(startTime,endTime)">搜索</el-button>
+            <app-date-picker size='mini' v-model="date"></app-date-picker>
+            <el-button size="mini" @click="btn.search(date[0],date[1])">搜索</el-button>
+            <el-button size="mini" @click="timeClear(btn)" style="margin: 0px;">清空</el-button>
           </div>
         </template>
 
       </template>
 
 	  	<el-input
+        v-model="search_value"
         placeholder="搜索..."
         icon="search"
         :class="searchClass"
         @focus="searchClass='table-search table-search-focus'"
         @blur="searchClass='table-search'"
+        @click="handleSearch"
         v-if="tableOption.is_search == undefined ? true : tableOption.is_search"
 	    ></el-input>
     </div>
@@ -98,7 +101,7 @@
       </template>
 
       <template v-else-if="col.type == 'action'">
-        <el-table-column :label="col.label" align="center" :width="col.width">
+        <el-table-column :label="col.label ? col.label : '操作'" align="center" :width="col.width">
           <template scope="scope">
             <template v-for="(btn, index) in col.btns">
 
@@ -110,7 +113,9 @@
                   <el-dropdown-item v-for="(item,index2) in btn.items" :key="index2" :divided="item.divided"><div @click="handleCommand(item.click, $event)" style="margin: 0 -10px; padding: 0 10px;">{{ item.text }}</div></el-dropdown-item>
                 </el-dropdown-menu>
               </el-dropdown>
-              
+
+              <el-button v-else-if="btn.type == 'edit'" :type="btn.btn_type ? btn.btn_type : 'text'" :key="index" :size="btn.size ? btn.size : 'mini'" icon="edit" @click="handleActionCommand(btn.click, scope, $event)">编辑</el-button>
+
               <el-button v-else :type="btn.btn_type ? btn.btn_type : ''" :key="index" :size="btn.size ? btn.size : 'mini'" :icon="btn.icon" @click="handleActionCommand(btn.click, scope, $event)">{{ btn.label }}</el-button>
 
             </template>
@@ -120,12 +125,15 @@
 
     </template>
 	</el-table>
+  <!--v-if="totalNumber > pageSize"-->
 	<el-pagination
-    v-if="totalNumber > pageSize"
+    
   	@current-change="handleCurrentChange"
+    @size-change="handleSizeChange"
   	:current-page="currentPage"
   	:page-size="pageSize"
-  	layout="total,  prev, pager, next, jumper"
+    :page-sizes="pageSizes"
+  	layout="total, sizes, prev, pager, next, jumper"
   	:total="totalNumber"
   >
   </el-pagination>
@@ -149,12 +157,37 @@ const methods = Object.assign({}, tableConst.methods, {
   },
   handleActionCommand (func, scope, event) {
     if(func) {
-      func(scope.row, event)
+      func(scope.row, event);
     }
   },
   arrayRender (row, col) {
     return col.render ? col.render(row) : row[col.prop];
-  }
+  },  
+  handleCurrentChange (currentPage) {
+    this.currentPage = currentPage;
+    const func = this.tableOption.handleCurrentChange;
+    if(func) {
+      func(currentPage);
+    }
+  },
+  handleSizeChange (size) {
+    this.pageSize = size;
+    const func = this.tableOption.handleSizeChange;
+    if(func) {
+      func(size);
+    }
+  },
+  handleSearch () {
+    const func = this.tableOption.handleSearch;
+    if(func && this.search_value) {
+      func(this.search_value);
+    }
+  },
+  timeClear (btn) {
+
+    this.date.splice(0,2);
+    btn.clear();
+  },
 });
 export default {
   name: 'table-component',
@@ -170,6 +203,10 @@ export default {
     tableData () {
       const d= this;
       return d.data ? d.data : []; 
+    },
+    totalNumber () {
+      const d = this;
+      return d.data ? d.data.length : [];
     },
     sortChange () {
       const to = this.tableOption;
@@ -197,33 +234,8 @@ export default {
         return row.id;
       },
       searchClass: 'table-search',
-      startOption: {
-        disabledDate (time) {
-          let flag;
-
-          if(d.endTime == "") {
-            flag = time.getTime() < Date.now();  
-          }else {
-            flag = time.getTime() < d.endTime.getTime() + 8.64e7; 
-          }
-          return !flag;
-        }
-      },
-      endOption: {
-        disabledDate (time) {
-          let flag;
-
-          if(d.startTime == "") {
-            flag = time.getTime() < Date.now();
-          }else {
-            flag = time.getTime() < Date.now() && time.getTime() > d.startTime.getTime() - 8.64e7;
-          }
-
-          return !flag;
-        }
-      },
-      startTime: '',
-      endTime: '',
+      date: ['',''],
+      search_value: '',
     };
 
     return Object.assign({}, tableConst.data, data);

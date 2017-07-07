@@ -1,15 +1,33 @@
 <template>
   <div class="app-date-picker" style="display: inline-block;">
-        <el-date-picker type="date" placeholder="起始日期" :size=size :style="sizeFormate.get(size)" v-model="startTime" :picker-options="startOption"></el-date-picker>
+        <el-date-picker type="date" placeholder="起始日期" :size=size :style="sizeFormate.get(size)" :value="value[0]" @input="startUpdate" :picker-options="startOption"></el-date-picker>
         <span>-</span>
-        <el-date-picker type="date" placeholder="结束日期" :size=size :style="sizeFormate.get(size)" v-model="endTime" :picker-options="endOption"></el-date-picker>
+        <el-date-picker type="date" placeholder="结束日期" :size=size :style="sizeFormate.get(size)" :value="value[1]"  @input="endUpdate" :picker-options="endOption"></el-date-picker>
   </div>
 </template>
 
 <script>
 export default {
   name: 'appDatePicker',
-  props: ['size'],
+  props: ['size', 'value'],
+  methods: {
+		startUpdate (val) {
+    	this.startTime = val;
+			const s = this.startTime ? this.startTime.getTime() : '';
+			const e = this.endTime ? this.endTime.getTime() : ''; 
+    	const arr = [s, e];
+    	console.log('startUpdate');
+    	this.$emit("input", arr);
+    },
+    endUpdate (val) {
+    	this.endTime = val;
+			const s = this.startTime ? this.startTime.getTime() : '';
+			const e = this.endTime ? this.endTime.getTime() : '';
+    	const arr = [s, e];
+    	console.log('endUpdate');
+    	this.$emit("input", arr);
+    }
+  },
   data () {
   	const sizeFormate = new Map();
   	const d = this;

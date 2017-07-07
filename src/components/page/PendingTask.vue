@@ -59,7 +59,7 @@
         </el-form-item>
       </el-form>
     </el-dialog>
-
+    
     <el-dialog title="将选中任务转给以下任务处理人" :visible.sync="dialogTurnoutVisible" class="dialog-mini">
       <el-form label-position="top">
         <el-form-item label="任务处理人">
@@ -83,10 +83,10 @@
         <el-form-item label="案件类型"><el-input></el-input></el-form-item>
         <el-form-item label="任务类型"><el-input></el-input></el-form-item>
         <el-form-item label="案件负责人"><el-input></el-input></el-form-item>
-        <el-form-item label="指定完成时间"><el-input></el-input></el-form-item>
-        <el-form-item label="官方绝限"><el-input></el-input></el-form-item>
-        <el-form-item label="客户期限"><el-input></el-input></el-form-item>
-        <el-form-item label="完成时间"><el-input></el-input></el-form-item>
+        <el-form-item label="指定完成时间"><app-date-picker v-model="screenForm.time1"></app-date-picker></el-form-item>
+        <el-form-item label="官方绝限"><app-date-picker v-model="screenForm.time2"></app-date-picker></el-form-item>
+        <el-form-item label="客户期限"><app-date-picker v-model="screenForm.time3"></app-date-picker></el-form-item>
+        <el-form-item label="完成时间"><app-date-picker v-model="screenForm.time4"></app-date-picker></el-form-item>
         <el-form-item style="margin-bottom: 0px;"><el-button>载入</el-button></el-form-item>
       </el-form>
     </el-dialog>
@@ -96,6 +96,7 @@
 <script>
 import AppFilter from '@/components/common/AppFilter'
 import TableComponent from '@/components/common/TableComponent'
+import AppDatePicker from '@/components/common/AppDatePicker'
 import Edit from '@/components/page_extension/PendingTask_edit'
 import Detail from '@/components/page_extension/PendingTask_detail'
 import Finish from '@/components/page_extension/PendingTask_finish'
@@ -119,21 +120,26 @@ export default {
       dialogSettingVisible: false,
       expandOldType: '',
       expandType: '',
-      expandStatus: new Map(),
+      screenForm: {
+        time1: [],
+        time2: [],
+        time3: [],
+        time4: [],
+      },
       checkedTest: [],
       filterData: [
         {
-          'label': '任务阶段：',
+          'label': '任务阶段',
           'key': 'jd',
           'items': ['专利撰稿','专利内审中', '发明人审核'],
         },
         {
-          'label': '完成期限：',
+          'label': '完成期限',
           'key': 'time',
           'items': ['已过期', '本周', '下月'],
         },
         {
-          'label': '是否一撰：',
+          'label': '是否一撰',
           'key': 'is',
           'items': ['仅显示一撰', '二撰及以后'],
         }
@@ -223,7 +229,7 @@ export default {
       ],
     };
   },
-  components: { AppFilter, TableComponent, Edit, Detail, Finish },
+  components: { AppFilter, TableComponent, AppDatePicker, Edit, Detail, Finish },
 } 
 </script>
 <style>

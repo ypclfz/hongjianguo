@@ -1,11 +1,22 @@
 <template>
   <div class="main">
 	<table-component :tableOption="tableOption" :data=tableData></table-component>
+	<el-dialog :visible.sync="dialogScreenVisible" title="设置筛选条件" class="dialog-small">
+		<el-form label-width="80px">
+			<el-form-item label="客户名称"><el-input></el-input></el-form-item>
+			<el-form-item label="申请地区"><el-input></el-input></el-form-item>
+			<el-form-item label="案件状态"><el-input></el-input></el-form-item>
+			<el-form-item label="委案日"><app-date-picker></app-date-picker></el-form-item>
+			<el-form-item label="申请日"><app-date-picker></app-date-picker></el-form-item>
+			<el-form-item><el-button>筛选</el-button></el-form-item>
+		</el-form>
+	</el-dialog>
   </div>
 </template>
 
 <script>
 import TableComponent from '@/components/common/TableComponent'
+import AppDatePicker from '@/components/common/AppDatePicker'
 
 const text1 = '测试';
 const text2 = '测试';
@@ -15,6 +26,7 @@ export default {
   name: 'trademarkList', 
   data () {
 	return {
+		dialogScreenVisible: false,
 		tableOption: {
 			'header_btn': [{
 				'type': 'custom',
@@ -38,9 +50,7 @@ export default {
 				'icon': '',
 				'items': [{
 					text: '设定筛选条件',
-					click () {
-						alert("设定筛选条件");
-					}
+					click: ()=>{ this.dialogScreenVisible = true; },
 				}]
 			},
 			{
@@ -117,31 +127,11 @@ export default {
 				'type': 'text',
 				'label': '商品分类'
 		  	},
-		  	{
-				'show': false,
-				'type': 'text',
-				'label': '商品描述'
-		  	},
-		  	{
-				'show': false,
-				'type': 'text',
-				'label': '详细分类'
-		  	},
-		  	{
-				'show': true,
-				'type': 'text',
-				'label': '代理人'
-		  	},
-		  	{
-				'show': true,
-				'type': 'text',
-				'label': 'IPR'
-		  	},
-		  	{
-		  		'show': true,
-		  		'type': 'text',
-		  		'label': '当前状态',
-		  	},
+		  	{ 'show': false, 'type': 'text', 'label': '商品描述' },
+		  	{ 'show': false, 'type': 'text', 'label': '详细分类' },
+		  	{ 'show': true, 'type': 'text', 'label': '代理人' },
+		  	{ 'show': true, 'type': 'text', 'label': 'IPR' },
+		  	{ 'show': true, 'type': 'text', 'label': '当前状态' },
 		  	{
 				'show': true,
 				'type': 'action',
@@ -149,9 +139,7 @@ export default {
 				'btns': [{
 					'label': '查看详情',
 					'icon': 'view',
-					click (row) {
-			 			console.log(row);
-					}
+					'click': (row)=>{ this.$router.push(`/trademark/list/detail/${row.id}/babel`); }, 
 				}]
 			}] 
 		},
@@ -166,7 +154,7 @@ export default {
 		]
 	};
   },
-  components: { TableComponent }
+  components: { TableComponent, AppDatePicker }
 }
 </script>
 
