@@ -183,16 +183,6 @@ menu.data = [
 		icon: 'iconfont icon-task',
 		type: 'submenu',
 		children: [{
-			text: '应收明细',
-			path: '/fee/receivable',
-			icon: '',
-			type: 'item',
-		},{
-			text: '请款单',
-			path: '/fee/bill',
-			icon: '',
-			type: 'item',
-		},{
 			text: '应付明细',
 			path: '/fee/expense',
 			icon: '',
@@ -208,13 +198,8 @@ menu.data = [
 			icon: '',
 			type: 'item',
 		},{
-			text: '年费通知',
-			path: '/fee/notice',
-			icon: '',
-			type: 'item',
-		},{
-			text: '授权费',
-			path: '/fee/authority',
+			text: '奖励',
+			path: '/fee/hortation',
 			icon: '',
 			type: 'item',
 		}]

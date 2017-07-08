@@ -103,7 +103,11 @@
       <template v-else-if="col.type == 'action'">
         <el-table-column :label="col.label ? col.label : '操作'" align="center" :width="col.width">
           <template scope="scope">
-            <template v-for="(btn, index) in col.btns">
+            <template v-if="col.btns_render != undefined ? true : false">
+              <slot :name="col.btns_render" :row="scope.row">
+              </slot>
+            </template>
+            <template v-else v-for="(btn, index) in col.btns">
 
               <el-dropdown v-if="btn.type == 'dropdown'" :key="index" trigger="click" menu-align="start">
                 <el-button class="table-header-btn" :type="btn.btn_type ? btn.btn_type : ''" :size="btn.size ? btn.size : 'mini'" :icon="btn.icon ? btn.icon : ''">

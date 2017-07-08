@@ -8,7 +8,7 @@
 import TableComponent from '@/components/common/TableComponent' 
 
 export default {
-  name: 'commonDeatailNotice',
+  name: 'feeMonitor',
   data () {
 	return {
 	  option: {},

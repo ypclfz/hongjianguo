@@ -1,6 +1,10 @@
 <template>
   <div class="main">
-  	<table-component :tableOption="option1" :data="tableData1"></table-component>
+  	<table-component :tableOption="option1" :data="tableData1">
+		<template slot="action" scope="scope">
+			<el-button type="text" size='mini' @click='toggle(scope.row)'>{{ show == scope.row.id ? '隐藏任务详情' : '显示任务详情'}}</el-button>
+		</template>
+  	</table-component>
   	<template v-if="show ? true : false">
   		<table-component :tableOption="option2" :data="tableData2"></table-component>
   	</template>
@@ -24,12 +28,8 @@ export default {
 		  		{ type: 'text', label: '负责人' },
 		  		{ 
 		  			type: 'action', 
-		  			label: '操作', 
-		  			btns: [{
-		  				'label': '显示任务详情',
-		  				'btn_type': 'text',
-		  				'click': (row)=>{ this.show = row.id },
-		  			}]
+		  			label: '操作',
+		  			btns_render: 'action'
 		  		},
 		  	]
 		  },
@@ -66,6 +66,11 @@ export default {
 		  tableData2: [],
 		  show: null,
 		};
+  },
+  methods: {
+  	toggle ({id}) {
+  		this.show = this.show == id ? null : id;
+  	}
   },
   components: { TableComponent },
 }
