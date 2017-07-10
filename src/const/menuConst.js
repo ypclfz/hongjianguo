@@ -41,7 +41,7 @@ menu.data = [
 		children: [
 			{
 				text: '专利管理',
-				path: '/patent/applied',
+				path: '/patent/list',
 				icon: 'iconfont icon-patent-applied',
 				type: 'item',
 			},{

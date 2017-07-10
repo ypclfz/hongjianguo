@@ -234,4 +234,7 @@ nav {
 .el-dropdown-menu__item--divided:before {
   margin: 0 -20px;
 }
+.el-select {
+  width: 100%;
+}
 </style>

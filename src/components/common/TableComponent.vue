@@ -82,7 +82,7 @@
         <template v-if="col.render ? true : false">
           <el-table-column :label="col.label" :prop="col.prop" v-if="tableControl[index]['show']" :sortable="col.sortable ? 'custom' : false" >
             <template scope="scope">
-              <table-render :render="col.render" :scope="scope"></table-render>
+              <table-render :render="col.render" :scope="scope" :prop="col.prop"></table-render>
             </template>
           </el-table-column>
         </template>
@@ -165,7 +165,8 @@ const methods = Object.assign({}, tableConst.methods, {
     }
   },
   arrayRender (row, col) {
-    return col.render ? col.render(row) : row[col.prop];
+    const arr = row[col.prop];
+    return col.render ? col.render(arr) : arr;
   },  
   handleCurrentChange (currentPage) {
     this.currentPage = currentPage;
@@ -247,9 +248,9 @@ export default {
   components: {
     'TableRender': {
       render: function(h) {
-        return this.render(h, this.scope);
+        return this.render(h, this.scope.row[this.prop], this.scope.row, this.prop);
       },
-      props: ['render', 'scope'],
+      props: ['render', 'scope', 'prop'],
     },
     AppDatePicker,
   },

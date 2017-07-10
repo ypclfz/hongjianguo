@@ -9,8 +9,10 @@ import VueResource from 'vue-resource'
 import 'element-ui/lib/theme-default/index.css'
 import './fonts/iconfont.css'
 import axios from 'axios'
+import tool from './const/tool'
 
-Vue.prototype.$axios = axios
+Vue.prototype.$axios = axios;
+Vue.prototype.$tool = tool;
 
 
 Vue.config.productionTip = false;

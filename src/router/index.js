@@ -5,7 +5,7 @@ import Proposal from '@/components/page/Proposal'
 import AddProposal from '@/components/page/AddProposal'
 import CheckProposal from '@/components/page/CheckProposal'
 import PendingTask from '@/components/page/PendingTask'
-import AppliedPatent from '@/components/page/AppliedPatent'
+import PatentList from '@/components/page/PatentList'
 import ApplyingPatent from '@/components/page/ApplyingPatent'
 import AddPatent from '@/components/page/AddPatent'
 import PatentDetail from '@/components/page/PatentDetail'
@@ -29,15 +29,16 @@ import Documents from '@/components/page_extension/CommonDetail_documents'
 //-------------------设置 begin-----------------
 import SettingAgency from '@/components/page/SettingAgency'
 import SettingCase from '@/components/page/SettingCase'
+import SettingJurisdiction from '@/components/page/SettingJurisdiction'
+import SettingRule from '@/components/page/SettingRule'
+import SettingTemplate from '@/components/page/SettingTemplate'
+import SettingUser from '@/components/page/SettingUser'
 
 //#################
 import SettingIndividual from '@/components/page/SettingIndividual'
 import SI_Base from '@/components/page_extension/SettingIndividual_base'
 import SI_Notice from '@/components/page_extension/SettingIndividual_notice'
 import SI_Email from '@/components/page_extension/SettingIndividual_email'
-
-import SettingJurisdiction from '@/components/page/SettingJurisdiction'
-import SettingRule from '@/components/page/SettingRule'
 
 //#################
 import SettingSystem from '@/components/page/SettingSystem'
@@ -46,9 +47,6 @@ import SS_Email from '@/components/page_extension/SettingSystem_email'
 import SS_Number from '@/components/page_extension/SettingSystem_number'
 import SS_Case from '@/components/page_extension/SettingSystem_case'
 import SS_Fee from '@/components/page_extension/SettingSystem_fee'
-
-import SettingTemplate from '@/components/page/SettingTemplate'
-import SettingUser from '@/components/page/SettingUser'
 //-------------------设置 end---------------------
 
 Vue.use(Router);
@@ -83,9 +81,9 @@ const router = new Router({
       name: 'PendingTask',
       component: PendingTask
     },{
-      path: '/patent/applied',
-      name: 'AppliedPatent',
-      component: AppliedPatent
+      path: '/patent/list',
+      name: 'PattentList',
+      component: PatentList
     },{
       path: '/patent/applying',
       name: 'ApplyingPatent',
