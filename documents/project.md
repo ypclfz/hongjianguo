@@ -74,13 +74,13 @@ request {
     //基本信息
     id:"1",//保存现有专利时提供，新增专利，请填写0或不提供
     category:"1",  //案件类型patent  1 trademark 2  copyright 3 other 4 默认值 patent
-    type:"1", //案件次类型invention 1 utility 2 design  3 
-    area:["CN","US"],  //申请地区类型，2位国家代码的数组
-    serial:["22288"],  //案号
-    title:"标题", //案件标题
-    project:"1",//项目ID
-    attachments:["id"],//文件ID数组
-    remark:"remark",//备注信息
+    #type:"1", //案件次类型invention 1 utility 2 design  3 
+    #area:["CN","US"],  //申请地区类型，2位国家代码的数组
+    #serial:"22288",  //案号
+    #title:"标题", //案件标题
+    #project:"1",//项目ID
+    #attachments:["id"],//文件ID数组
+    #remark:"remark",//备注信息
 
     //部分、分类、申请人、发明人、提案人以及IPR
     department:"1",//部门ID

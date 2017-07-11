@@ -13,7 +13,7 @@
       @after-leave="afterLeave"
     >
     	<div class="app-collapse-content" v-show="show">
-    		<slot></slot>
+    		<slot style="margin-top: 20px;"></slot>
     	</div>
     </transition>
 	</div>
@@ -21,7 +21,7 @@
 
 <script>
 export default {
-  name: 'hello',
+  name: 'appCollapse',
   props: ['col-title'],
   methods: {
     enter(el) {
@@ -62,7 +62,7 @@ export default {
 </script>
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
-<style scoped lang="scss">
+<style lang="scss">
 .app-collapse * {
   -moz-box-sizing: border-box;
   box-sizing: border-box;
@@ -98,6 +98,9 @@ export default {
   border-top: none;
   border-bottom-left-radius: 4px;
   border-bottom-right-radius: 4px;
+  padding-left: 20px;
+  padding-right: 20px;
+  padding-top: 20px;
 
 }
 .app-collapse-control {

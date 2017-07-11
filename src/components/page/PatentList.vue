@@ -111,6 +111,12 @@ export default {
           { show: false, type: 'array', label: '标签', prop: 'tag' },
           { show: false, type: 'text', label: '技术分类', prop: 'class', render: (h, text)=>h('div', text.name) },
           { show: false, type: 'text', label: '备注', prop: 'remark' },
+          { 
+            type: 'action',
+            btns: [
+              { type: 'detail', click: ({id})=>{ this.$router.push(`/patent/list/detail/${id}`); } }
+            ], 
+          },
         ] 
       },
       tableData: [

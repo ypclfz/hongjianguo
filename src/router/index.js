@@ -7,7 +7,7 @@ import CheckProposal from '@/components/page/CheckProposal'
 import PendingTask from '@/components/page/PendingTask'
 import PatentList from '@/components/page/PatentList'
 import ApplyingPatent from '@/components/page/ApplyingPatent'
-import AddPatent from '@/components/page/AddPatent'
+import PatentAdd from '@/components/page/PatentAdd'
 import PatentDetail from '@/components/page/PatentDetail'
 import PatentStatistics from '@/components/page/PatentStatistics'
 import PatentNotice from '@/components/page/PatentNotice'
@@ -90,8 +90,8 @@ const router = new Router({
       component: ApplyingPatent
     },{
       path: '/patent/add',
-      name: 'AddPatent',
-      component: AddPatent,
+      name: 'PatentAdd',
+      component: PatentAdd,
     },{
       path: '/patent/detail',
       name: 'PatentDetail',
@@ -128,20 +128,20 @@ const router = new Router({
       path: '/userList',
       name: 'UserList',
       component: UserList,
-    }, 
+    },
     {
       path: '/commonDetail/:id',
-      name: 'CommonDetail',
       component: CommonDetail,
       children: [
-        { path: 'babel', name: 'Babel', component: Babel },
-        { path: 'control', name: 'Control', component: Control },
-        { path: 'notice', name: 'Notice', component: Notice },
-        { path: 'fee', name: 'Fee', component: Fee },
-        { path: 'email', name: 'Email', component: Email },
-        { path: 'documents', name: 'Documents', component: Documents },
+        { path: '', redirect: 'babel' },
+        { path: 'babel', component: Babel },
+        { path: 'control', component: Control },
+        { path: 'notice', component: Notice },
+        { path: 'fee', component: Fee },
+        { path: 'email', component: Email },
+        { path: 'documents', component: Documents },
       ],
-      alias: ['/patent/applied/detail/:id', '/trademark/list/detail/:id', '/copyright/list/detail/:id']
+      alias: ['/patent/list/detail/:id', '/trademark/list/detail/:id', '/copyright/list/detail/:id']
     },
     { path: '/setting/agency', name: 'SettingAgency', component: SettingAgency },
     { path: '/setting/case', name: 'SettingCase', component: SettingAgency },

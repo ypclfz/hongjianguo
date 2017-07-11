@@ -26,7 +26,9 @@ export default {
   },
   created () {
   	const path = this.$route.path;
+  	const id = this.$route.params.id;
   	this.$store.commit('setDetailType', path);
+  	this.$store.dispatch('refreshDetailData', id);
   },
   components: { AppTag },
 }
