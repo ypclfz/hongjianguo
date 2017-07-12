@@ -21,11 +21,12 @@ export default {
 		  	'is_search': false,
 		  	'columns': [
 		  		{ type: 'text', label: '任务名称', prop: 'name' },
-		  		{ type: 'text', label: '开始时间' },
-		  		{ type: 'text', label: '指定期限' },
-		  		{ type: 'text', label: '法定期限' },
-		  		{ type: 'text', label: '完成时间' },
-		  		{ type: 'text', label: '负责人' },
+		  		{ type: 'text', label: '开始时间', prop: 'start_time' },
+		  		{ type: 'text', label: '结束时间', prop: 'end_time' },
+		  		{ type: 'text', label: '指定期限', prop: 'duetime' },
+		  		{ type: 'text', label: '法定期限', prop: 'deadline' },
+		  		{ type: 'text', label: '负责人', prop: 'charger' },
+		  		{ type: 'text', label: '状态', prop: 'status' },
 		  		{ 
 		  			type: 'action', 
 		  			label: '操作',
@@ -57,12 +58,6 @@ export default {
 		  	 	},
 		  	]
 		  },
-		  tableData1: [
-		  	{ name: '任务一', id: 1 },
-		  	{ name: '任务二', id: 2 },
-		  	{ name: '任务三', id: 3 },
-		  	{ name: '任务四', id: 4 },
-		  ],
 		  tableData2: [],
 		  show: null,
 		};
@@ -70,6 +65,11 @@ export default {
   methods: {
   	toggle ({id}) {
   		this.show = this.show == id ? null : id;
+  	}
+  },
+  computed: {
+  	tableData1 () {
+  		return this.store.getters.detail_data.tasks;
   	}
   },
   components: { TableComponent },

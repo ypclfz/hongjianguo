@@ -237,4 +237,7 @@ nav {
 .el-select {
   width: 100%;
 }
+.el-input__inner {
+  height: 37px;
+}
 </style>
