@@ -2,6 +2,7 @@ import Vue from 'vue'
 import Router from 'vue-router'
 import Home from '@/components/page/Home'
 import Proposal from '@/components/page/Proposal'
+import InventorList from '@/components/page/InventorList'
 import AddProposal from '@/components/page/AddProposal'
 import CheckProposal from '@/components/page/CheckProposal'
 import PendingTask from '@/components/page/PendingTask'
@@ -63,7 +64,13 @@ const router = new Router({
       path: '/statistics',
       name: 'Home',
       component: Home
-    },{
+    },
+    {
+      path: '/inventorList',
+      name: 'InventorList',
+      component: InventorList
+    },
+    {
     	path: '/proposal/list',
     	name: 'Proposal',
     	component: Proposal

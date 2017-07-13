@@ -91,8 +91,13 @@ const state = {
 }
 
 const getters = {
-	detail_type: state=>state.type,
-	detail_data: state=>state.data,
+  detail_type: state=>state.type,
+  detailBase: state=>state.data ? state.data.detail : null,
+  detailTasks: state=>state.data ? state.data.tasks : [],
+  detailNotices: state=>state.data ? state.data.notices : [],
+  detailFees: state=>state.data ? state.data.fees : [],
+  detailMails: state=>state.data ? state.data.mails : [],
+  detailDocuments: state=>state.data ? state.data.documents : [],
 }
 
 const mutations = {
@@ -110,16 +115,18 @@ const mutations = {
 }
 
 const actions = {
-	refreshDetailData({ commit, state }) {
+	refreshDetailData({ commit, state }, {id, func}) {
 		if(state.type == 'patent') {
 			setTimeout(function() {
 				if( !response.status ) {
-					this.alert(response.info);
 					commit('setDetailData', null);
 				}else {
-					commit('setDetailData', response.data);
+					commit('setDetailData', JSON.parse(JSON.stringify(response.data)));
 				}
-			},1000);
+        if(func) {
+          func();
+        }
+			},2000);
 		}
 	}
 }

@@ -9,7 +9,7 @@
         <template v-else-if="btn.type == 'control'">
           <el-dropdown trigger="click" :hide-on-click="false" menu-align="start">
             <el-button class="table-header-btn" type="primary" :icon="btn.icon ? btn.icon : 'menu'">
-              {{ btn.label }}<i class="el-icon-caret-bottom el-icon--right"></i>
+              {{ btn.label ? btn.label : '字段'}}<i class="el-icon-caret-bottom el-icon--right"></i>
             </el-button>
             <el-dropdown-menu slot="dropdown">
               <el-dropdown-item v-for="(col, index) in tableControl" :key="index" v-if="col.type != 'selection' && col.type != 'action' && col.type != 'expand'">
@@ -36,6 +36,14 @@
             <el-button size="mini" @click="btn.search(date[0],date[1])">搜索</el-button>
             <el-button size="mini" @click="timeClear(btn)" style="margin: 0px;">清空</el-button>
           </div>
+        </template>
+
+        <template v-else-if="btn.type == 'add'">
+          <el-button class="table-header-btn" type="primary" icon="plus" @click="handleCommand(btn.click, $event)">添加</el-button>
+        </template>
+
+        <template v-else-if="btn.type == 'filter'">
+          <el-button class="table-header-btn" type="primary" icon="document" @click="handleCommand(btn.click, $event)">筛选</el-button>
         </template>
 
       </template>
@@ -121,6 +129,12 @@
               <el-button v-else-if="btn.type == 'edit'" :type="btn.btn_type ? btn.btn_type : 'text'" :key="index" :size="btn.size ? btn.size : 'mini'" icon="edit" @click="handleActionCommand(btn.click, scope, $event)">编辑</el-button>
 
               <el-button v-else-if="btn.type == 'detail'" :type="btn.btn_type ? btn.btn_type : 'text'" :key="index" :size="btn.size ? btn.size : 'mini'" icon="information" @click="handleActionCommand(btn.click, scope, $event)" >详情</el-button>
+
+              <el-button v-else-if="btn.type == 'delete'" :type="btn.btn_type ? btn.btn_type : 'text'" :key="index" :size="btn.size ? btn.size : 'mini'" icon="delete" @click="handleActionCommand(btn.click, scope, $event)" >删除</el-button>
+
+              <el-button v-else-if="btn.type == 'download'" :type="btn.btn_type ? btn.btn_type : 'text'" :key="index" :size="btn.size ? btn.size : 'mini'" icon="share" @click="handleActionCommand(btn.click, scope, $event)" >下载</el-button>
+
+              <el-button v-else-if="btn.type == 'view'" :type="btn.btn_type ? btn.btn_type : 'text'" :key="index" :size="btn.size ? btn.size : 'mini'" icon="view" @click="handleActionCommand(btn.click, scope, $event)" >查看</el-button>
 
               <el-button v-else :type="btn.btn_type ? btn.btn_type : ''" :key="index" :size="btn.size ? btn.size : 'mini'" :icon="btn.icon" @click="handleActionCommand(btn.click, scope, $event)">{{ btn.label }}</el-button>
 

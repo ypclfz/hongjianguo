@@ -1,5 +1,5 @@
 <template>
-  <div class="main">
+  <div class="main" v-loading.fullscreen.lock='loading' element-loading-text="拼命加载中">
   	<app-tag :tags="tags">
 			<router-view></router-view>
 		</app-tag>
@@ -13,7 +13,6 @@ export default {
   name: 'commonDetail',
   data () {
 		return {
-		  msg: 'Welcome to Your Vue.js App',
 		  tags: [
 		  	{ 'text': '基本信息', key: 'babel' },
 		  	{ 'text': '流程管理', key: 'control' },
@@ -21,14 +20,16 @@ export default {
 		  	{ 'text': '所有费用', key: 'fee' },
 		  	{ 'text': '往來邮件', key: 'email' },
 		  	{ 'text': '其他文档', key: 'documents' },
-		  ]
+		  ],
+		  loading: true,
 		}
   },
   created () {
   	const path = this.$route.path;
   	const id = this.$route.params.id;
+  	const func = ()=>{ this.loading = false };
   	this.$store.commit('setDetailType', path);
-  	this.$store.dispatch('refreshDetailData', id);
+  	this.$store.dispatch('refreshDetailData', { id, func });
   },
   components: { AppTag },
 }

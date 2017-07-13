@@ -7,6 +7,12 @@ menu.data = [
 		icon: 'iconfont icon-statistics',
 		type: 'item'
 	},
+	{ 
+		text: '发明人管理',
+		path: '/inventorList',
+		icon: '',
+		type: 'item',
+	},
 	{
 		text: '用户管理',
 		path: '/userList',

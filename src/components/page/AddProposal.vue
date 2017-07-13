@@ -190,9 +190,11 @@ export default {
     },
     addInventor () {
       this.formData.inventors.push({id: '', percent: ''});
+      this.$refs.form.validateField('inventors');
     },
     deleteInventor (index) {
       this.formData.inventors.splice(index, 1);
+      this.$refs.form.validateField('inventors');
     },
     treeShow () {
       
@@ -286,9 +288,6 @@ export default {
             
           },
         },
-        // inventors (cb) {
-        //   console.log(this.value),
-        // },
         'proposer': {required: true, message: '技术联系人不能为空', trigger: 'change'},
         'attachments': {type: 'array', required: true, message: '附件不能为空', trigger: 'change'}
       	

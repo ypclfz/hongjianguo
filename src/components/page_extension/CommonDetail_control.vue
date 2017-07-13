@@ -1,6 +1,6 @@
 <template>
   <div class="main">
-  	<table-component :tableOption="option1" :data="tableData1">
+  	<table-component :tableOption="option" :data="tableData">
 		<template slot="action" scope="scope">
 			<el-button type="text" size='mini' @click='toggle(scope.row)'>{{ show == scope.row.id ? '隐藏任务详情' : '显示任务详情'}}</el-button>
 		</template>
@@ -17,13 +17,13 @@ export default {
   name: 'hello',
   data () {
 		return {
-		  option1: {
+		  option: {
 		  	'is_search': false,
 		  	'columns': [
 		  		{ type: 'text', label: '任务名称', prop: 'name' },
 		  		{ type: 'text', label: '开始时间', prop: 'start_time' },
 		  		{ type: 'text', label: '结束时间', prop: 'end_time' },
-		  		{ type: 'text', label: '指定期限', prop: 'duetime' },
+		  		{ type: 'text', label: '指定期限', prop: 'due_time' },
 		  		{ type: 'text', label: '法定期限', prop: 'deadline' },
 		  		{ type: 'text', label: '负责人', prop: 'charger' },
 		  		{ type: 'text', label: '状态', prop: 'status' },
@@ -68,8 +68,8 @@ export default {
   	}
   },
   computed: {
-  	tableData1 () {
-  		return this.store.getters.detail_data.tasks;
+  	tableData () {
+  		return this.$store.getters.detailTasks;
   	}
   },
   components: { TableComponent },

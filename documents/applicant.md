@@ -24,7 +24,7 @@ response {
     status:1,
     info:"信息提示",
     data:[
-        {
+        {   id: '',
             type:"1",  //申请人类型5个人 3工矿企业 1大专院校 2科研单位 4事业单位
             name:"name",//申请人姓名
             identity:"identity",//证件号码

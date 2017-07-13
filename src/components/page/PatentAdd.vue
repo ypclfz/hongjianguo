@@ -29,7 +29,7 @@ export default {
   name: 'patentAdd',
   data () {
     return {
-      id: this.data ? this.data.id : 0,
+      id: 0,
       type_in: this.type ? this.type : 'add',
     }
   },
@@ -47,32 +47,29 @@ export default {
     addCheck () {
       return '';
     },
-  },
-  mounted () {
-    if(this.detail) {
-      const copy = this.$tool.deepCopy(this.detail);
-      keys.forEach((d)=>{this.$refs[d].setForm(copy)});
-    }
-  },
-  computed: {
-    detail () {  
-      console.log(this.$store.getters.detail_data);
-      if( this.type_in == 'edit' && this.$store.getters.detail_data) {
-        return this.$store.getters.detail_data.detail;
-      }else {
-        return null;
+    refreshForm (val) {
+      if( this.type_in == 'edit' && val) {
+        const copy = this.$tool.deepCopy(val);
+        this.id = copy.id;
+        keys.forEach((d)=>{this.$refs[d].setForm(copy)});
       }
     }
   },
-  // watch: {
-  //   detail (val) {
-  //     if(val) {
-  //       const copy = this.$tool.deepCopy(data.detail);
-  //       console.log(copy);
-  //       keys.forEach(d=>this.$refs[d].setForm(copy));
-  //     }
-  //   }
-  // },
+  computed: {
+    detail () {
+      return this.$store.getters.detailBase;
+    } 
+  },
+  watch: {
+    'detail': {
+      handler: function(val) {
+        this.refreshForm(val);
+      }
+    }   
+  },
+  mounted () {
+    this.refreshForm(this.detail);
+  },
   components: { PaBase, Person, Expand, Case }
 }
 </script>

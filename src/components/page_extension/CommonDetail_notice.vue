@@ -12,6 +12,7 @@ export default {
   data () {
   	return {
   	  option: {
+        'is_search': false,
         'columns': [
           { type: 'text', label: '通知书名称', prop: 'name' },
           { type: 'text', label: '发文日期', prop: 'mail_date' },
@@ -25,19 +26,28 @@ export default {
                 'a', 
                 {
                   attrs: {
-                    href: row.view_url
+                    href: row.view_url,
+                    target: '_blank'
                   }
                 },
                 `${row.name}.${row.ext}`)
             }
+          },
+          {
+            type: 'action',
+            btns: [
+              { type: 'download', click: (row)=>{ window.open(row.download_url) } },
+              { type: 'delete',  click: (row)=>{ this.$alert(row.id) } },
+              { type: 'view', click: (row)=>{ window.open(row.view_url) } },
+            ]
           }
         ]
       },
   	}
   },
   computed: {
-    tableData () {
-      return this.$store.getters.detail_data.notices;
+    tableData () { 
+      return this.$store.getters.detailNotices; 
     }
   },
   components: { TableComponent }
