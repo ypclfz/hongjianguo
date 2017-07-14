@@ -1,12 +1,12 @@
 <template>
-	<el-dialog :title="titile" :visible.sync="dialogVisible">
-		<el-form label-width="80px;">
+	<el-dialog :title="title" :visible.sync="dialogVisible">
+		<el-form label-width="100px" :model="form" :rules="rules" ref="form">
 
-			<el-form-item label="申请人姓名">
+			<el-form-item label="申请人姓名" prop="name">
 				<el-input v-model='form.name'></el-input>
 			</el-form-item>
 			
-			<el-form-item label="申请人类型">
+			<el-form-item label="申请人类型" prop="type">
 				<el-select v-model="form.type">
 					<el-option
 						v-for="item in option.type"
@@ -17,31 +17,31 @@
 				</el-select>
 			</el-form-item>
 
-			<el-form-item label="证件号码">
+			<el-form-item label="证件号码" prop="identity">
 				<el-input v-model="form.identity"></el-input>
 			</el-form-item>
 
-			<el-form-item label="地区">
+			<el-form-item label="地区" prop="area">
 				<el-input v-model="form.area"></el-input>
 			</el-form-item>
 
-			<el-form-item label="省份">
-				<el-input v-model="province"></el-input>
+			<el-form-item label="省份" prop="province">
+				<el-input v-model="form.province"></el-input>
 			</el-form-item>
 
-			<el-form-item label="城市">
+			<el-form-item label="城市" prop="city">
 				<el-input v-model="form.city"></el-input>
 			</el-form-item>
 
-			<el-form-item label="详细地址">
+			<el-form-item label="详细地址" prop="address">
 				<el-input v-model="form.address"></el-input>
 			</el-form-item>
 
-			<el-form-item label="邮编">
+			<el-form-item label="邮编" prop="city">
 				<el-input v-model="form.city"></el-input>
 			</el-form-item>
 
-			<el-form-item label="费用备案">
+			<el-form-item label="费用备案" prop="fee_discount">
 				<el-select v-model="form.fee_discount">
 					<el-option 
 						v-for="item in option.fee_discount"
@@ -52,11 +52,11 @@
 				</el-select>
 			</el-form-item>
 
-			<el-form-item label="英文姓名">
+			<el-form-item label="英文姓名" prop="ename">
 				<el-input v-model="form.ename"></el-input>
 			</el-form-item>
 
-			<el-form-item label="英文地址">
+			<el-form-item label="英文地址" prop="eaddress">
 				<el-input v-model="form.eaddress"></el-input>
 			</el-form-item>
 
@@ -79,6 +79,7 @@ export default {
   data () {
 		return {
 		  type: '',
+		  id: null,
 		  form: {
 		  	type: '',
 		  	name: '',
@@ -104,36 +105,59 @@ export default {
 		  		{ label: '未完成', value: '0' },
 		  		{ label: '已完成', value: '1' },
 		  	],
-		  }
+		  },
 		  dialogVisible: false,
+		  rules: {},
 		}
   },
-  computed () {
+  computed: {
   	title () {
-  		return type == 'add' 
-  						? '新增申请人'
-  						: type == 'edit'
-  							? '编辑申请人'
-  							: '设置筛选条件';
-  	}
+  		const t = this.type;
+  		return t == 'add'
+  							? '新增申请人' 
+  							: t == 'edit'
+  								? '编辑申请人'
+  								: '设置筛选条件';
+  	},
   },
-  methods () {
-  	show (type, data) {
-  		type = type ? type : 'add';
+  methods: {
+  	show ( type='add', data ) {
   		this.type = type;
-  		if( type == 'add' ) {
+      this.dialogVisible = true;
+     
+      this.$tool.clearObj(this.form);
+      this.id = type == 'edit' ? data.id : '0';
+  		
+      if( type == 'edit' || type == 'filter' ) {
+        const copy = this.$tool.deepCopy(data);
+  			this.$tool.coverObj(this.form, copy);
+  	  }
+  	},
+    open () {
 
-  		}else if( type == 'edit' ) {
-
-  		}else if( type == '' )
+    },
+  	close () {
+  		this.$refs.form.resetFields();
   	},
   	submit () {
-
+  		this.$refs.form.validate((valid)=>{
+  			if(valid) {
+  				const id = this.id;
+  				console.log(Object.assign({}, this.form, { id }));
+  				this.$emit('refreshTableData');
+  			}
+  		});
   	},
   	filter () {
-
+  		const copy = this.$tool.deepCopy(this.form);
+  		this.$emit('refreshFilter', copy);
+      this.dialogVisible = false;
+      this.$emit('refreshTableData', true);
   	},
   	clear () {
+  		this.$emit('refreshFilter', {});
+      this.dialogVisible = false;
+      this.$emit('refreshTableData', true);
   	}
   }
 }

@@ -1,32 +1,32 @@
 <template>
-  <el-dialog :title="title" :visible.sync="dialogVisible" @open="open">
+  <el-dialog :title="title" :visible.sync="dialogVisible" @open="open" @close="close">
   	<el-form label-width="100px" ref="form" :model="form" :rules="type == 'add' || type == 'edit' ? rules : {}">
   		
   		<el-form-item label="发明人姓名" prop="name">
   			<el-input v-model='form.name' placeholder='请输入发明人姓名'></el-input>
   		</el-form-item>
 
-			<el-form-item label="证件号码">
+			<el-form-item label="证件号码" prop="identity">
 				<el-input v-model="form.identity" placeholder="请输入证件号码"></el-input>
 			</el-form-item>
 
-			<el-form-item label="地区">
+			<el-form-item label="地区" prop="area">
 				<el-input v-model="form.area" placeholder="请输入地区"></el-input>
 			</el-form-item>
 
-			<el-form-item label="手机">
+			<el-form-item label="手机" prop="mobile">
 				<el-input v-model="form.mobile" placeholder="情输入手机号码"></el-input>
 			</el-form-item>
 
-			<el-form-item label="邮箱">
+			<el-form-item label="邮箱" prop="email">
 				<el-input v-model="form.email" placeholder="请输入邮箱"></el-input>
 			</el-form-item>
 
-			<el-form-item label="不公开姓名">
+			<el-form-item label="不公开姓名" prop="public_name">
 				<el-input v-model="form.public_name" placeholder="请输入不公开姓名"></el-input>
 			</el-form-item>
 
-			<el-form-item label="英文姓名">
+			<el-form-item label="英文姓名" prop="name_en">
 				<el-input v-model="form.name_en" placeholder="请输入英文姓名"></el-input>
 			</el-form-item>
 
@@ -78,18 +78,20 @@ export default {
   methods: {
   	show ( type='add', data ) {
   		this.type = type;
-  		this.dialogVisible = true;
-  		if(type == 'add') {
-  			this.$tool.clearObj(this.form);
-  		}
-
-  		// if( this.$refs.form ) {
-  		// 	this.$refs.form.resetFields();	
-  		// }
+      this.dialogVisible = true;
+     
+      this.$tool.clearObj(this.form);
+      this.id = type == 'edit' ? data.id : '0';
   		
-  		
+      if( type == 'edit' || type == 'filter' ) {
+        const copy = this.$tool.deepCopy(data);
+  			this.$tool.coverObj(this.form, copy);
+  	  }
   	},
-  	open () {
+    open () {
+
+    },
+  	close () {
   		this.$refs.form.resetFields();
   	},
   	submit () {
@@ -103,10 +105,14 @@ export default {
   	},
   	filter () {
   		const copy = this.$tool.deepCopy(this.form);
-  		this.$emit('refreshFilter', form);
+  		this.$emit('refreshFilter', copy);
+      this.dialogVisible = false;
+      this.$emit('refreshTableData', true);
   	},
   	clear () {
-  		this.$emit('clearFilter');
+  		this.$emit('refreshFilter', {});
+      this.dialogVisible = false;
+      this.$emit('refreshTableData', true);
   	}
   }
 }

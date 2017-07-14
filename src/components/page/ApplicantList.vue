@@ -1,15 +1,13 @@
 <template>
   <div class="main">
-	<table-component :tableOption="option" :data="tableData"></table-component>
-	<add ref="add" @refreshTableData="refreshTableData"></add>
-	<filter ref="filter" @refreshTableData="refreshTableData" @refreshFilter="refreshFilter"></filter>
+	<table-component :tableOption="option" :data="tableData" ref="table" @refreshTableData="refreshTableData"></table-component>
+	<pop-panel ref="pop" @refreshTableData="refreshTableData" @refreshFilter="refreshFilter"></pop-panel>
   </div>
 </template>
 
 <script>
 import TableComponent from '@/components/common/TableComponent'
-import Add from '@/components/page_extension/ApplicantList_add'
-import Filter from '@/components/page_extension/ApplicantList_filter' 
+import PopPanel from '@/components/page_extension/ApplicantList_pop'
 
 export default {
   name: 'applicantList',
@@ -17,27 +15,29 @@ export default {
 		return {
 		  option: {
 		  	'header_btn': [
-		  		{ type: 'add', click: ()=>{alert('新增')} },
-		  		{ type: 'filter', click: ()=>{alert('过滤')} },
+		  		{ type: 'add', click: this.addPopUp },
+		  		{ type: 'delete', click: this.delete_s },
+		  		{ type: 'filter', click: this.filterPopUp },
 		  		{ type: 'control' },
 		  	],
 		  	'columns': [
-		  		{ type: 'text', label: '申请人姓名', prop: 'name' },
-		  		{ type: 'text', label: '申请人类型', prop: 'type' },
-		  		{ type: 'text', label: '证件号码', prop: 'identity' },
-		  		{ type: 'text', label: '地区', prop: 'area' },
-		  		{ type: 'text', label: '省份', prop: 'province' },
-		  		{ type: 'text', label: '城市', prop: 'city' },
-		  		{ type: 'text', label: '详细地址', prop: 'address' },
-		  		{ type: 'text', label: '邮编', prop: 'postcode' },
-		  		{ type: 'text', label: '费用备案', prop: 'fee_discount' },
-		  		{ type: 'text', label: '英文姓名', prop: 'ename' },
-		  		{ type: 'text', label: '英文地址', prop: 'eaddress' },
+		  		{ type: 'selection' },
+		  		{ type: 'text', label: '申请人姓名', prop: 'name', sortable: true },
+		  		{ type: 'text', label: '申请人类型', prop: 'type', sortable: true },
+		  		{ type: 'text', label: '证件号码', prop: 'identity', sortable: true },
+		  		{ type: 'text', label: '地区', prop: 'area', sortable: true },
+		  		{ type: 'text', label: '省份', prop: 'province', sortable: true },
+		  		{ type: 'text', label: '城市', prop: 'city', sortable: true },
+		  		{ type: 'text', label: '详细地址', prop: 'address', sortable: true },
+		  		{ type: 'text', label: '邮编', prop: 'postcode', sortable: true },
+		  		{ type: 'text', label: '费用备案', prop: 'fee_discount', sortable: true },
+		  		{ type: 'text', label: '英文姓名', prop: 'ename', sortable: true },
+		  		{ type: 'text', label: '英文地址', prop: 'eaddress', sortable: true },
 		  		{ 
 		  			type: 'action',
 		  			btns: [
-		  				{ type: 'edit', click: ()=>{ alert('编辑') } },
-		  				{ type: 'delete', click: ()=>{ alert('删除') } },
+		  				{ type: 'edit', click: this.editPopUp },
+		  				{ type: 'delete', click: this.delete },
 		  			] 
 		  		}
 		  	],
@@ -52,38 +52,41 @@ export default {
 	      city:"city",//城市代码
 	      address:"address",//详细地址
 	      postcode:"postcode",//邮编
-	      fee_discount:"fee_discount",//费用备案 0未完成 1已完成
-	      //英文信息
+	      fee_discount:"0",//费用备案 0未完成 1已完成
 	      ename:"ename",//英文姓名
 	      eaddress:"eaddress",//英文地址
 	    }],
 	    filter: {},
 		}
   },
-  method: {
+  methods: {
   	addPopUp () {
-  		this.$refs.add.show();
+  		this.$refs.pop.show();
   	},
   	filterPopUp () {
-  		this.$refs.filter.show(this.filter);
+  		this.$refs.pop.show('filter', this.filter);
   	},
   	editPopUp (col) {
-  		this.$refs.add.show('edit', col);
+  		this.$refs.pop.show('edit', col);
   	},
-  	delete () {
+  	delete (col) {
+  		this.$alert(`删除${col.id}`);
+  	},
+  	delete_s () {
+  		this.$alert('批量删除');
+  	},
+  	refreshTableData (flag) {
+  		if(flag) {
+        this.$refs.table.reset();
+      }
 
+      console.log(Object.assign({}, this.$refs.table.requesOption, this.filter));
   	},
-  	sort () {
-
-  	},
-  	refreshTableData (data) {
-  		this.tableData = data;
-  	},
-  	refreshFilter (filter) {
-  		this.filter = filter;
-  	}
+    refreshFilter (filter) {
+      this.filter = filter;
+    }
   },
-  components: { TableComponent, Add, Filter }
+  components: { TableComponent, PopPanel }
 }
 </script>
 

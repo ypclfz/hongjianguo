@@ -240,4 +240,7 @@ nav {
 .el-input__inner {
   height: 37px;
 }
+.table-header-btn .el-icon-menu::before {
+  font-size: 12px;
+}
 </style>

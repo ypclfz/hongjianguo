@@ -42,6 +42,10 @@
           <el-button class="table-header-btn" type="primary" icon="plus" @click="handleCommand(btn.click, $event)">添加</el-button>
         </template>
 
+        <template v-else-if="btn.type == 'delete'">
+          <el-button class="table-header-btn" type="primary" icon="delete" @click="handleCommand(btn.click, $event)">删除</el-button>
+        </template>
+
         <template v-else-if="btn.type == 'filter'">
           <el-button class="table-header-btn" type="primary" icon="document" @click="handleCommand(btn.click, $event)">筛选</el-button>
         </template>
@@ -67,7 +71,7 @@
     @selection-change="handleselectionChange" 
     :row-key="getRowKeys" 
     :default-sort="tableOption.default_sort ? tableOption.default_sort : {}"
-    @sort-change="sortChange"
+    @sort-change="handleSortChange"
     :expand-row-keys="expands"
     @expand="handleExpand"
   >
@@ -150,9 +154,9 @@
     
   	@current-change="handleCurrentChange"
     @size-change="handleSizeChange"
-  	:current-page="currentPage"
-  	:page-size="pageSize"
-    :page-sizes="pageSizes"
+  	:current-page.sync="page"
+  	:page-size="pagesize"
+    :page-sizes="pagesizes"
   	layout="total, sizes, prev, pager, next, jumper"
   	:total="totalNumber"
   >
@@ -185,30 +189,45 @@ const methods = Object.assign({}, tableConst.methods, {
     return col.render ? col.render(arr) : arr;
   },  
   handleCurrentChange (currentPage) {
-    this.currentPage = currentPage;
-    const func = this.tableOption.handleCurrentChange;
+    const func = this.tableOption.currentChange;
     if(func) {
       func(currentPage);
     }
+    this.$emit('refreshTableData');
   },
   handleSizeChange (size) {
-    this.pageSize = size;
-    const func = this.tableOption.handleSizeChange;
+    this.pagesize = size;
+    const func = this.tableOption.sizeChange;
     if(func) {
       func(size);
     }
+    this.$emit('refreshTableData');
+  },
+  handleSortChange ({column, prop, order}) {
+    this.sort.field = prop;
+    this.sort.order = order;
+    const func = this.tableOption.sortChange;
+    if(func) {
+      func(column, prop, order);
+    }
+    this.$emit('refreshTableData');
   },
   handleSearch () {
     const func = this.tableOption.handleSearch;
     if(func && this.search_value) {
       func(this.search_value);
     }
+    this.$emit('refreshTableData');
   },
   timeClear (btn) {
 
     this.date.splice(0,2);
     btn.clear();
   },
+  reset () {
+    this.page = 1;
+    this.search_value = "";
+  }
 });
 export default {
   name: 'table-component',
@@ -229,10 +248,23 @@ export default {
       const d = this;
       return d.data ? d.data.length : [];
     },
-    sortChange () {
-      const to = this.tableOption;
-      return to['sortChange'] ? to['sortChange'] : '';
-    },
+    requesOption () {
+      const obj = {
+        page: this.page,
+        pagesize: this.pagesize,
+      };
+
+      if(this.search_value) {
+        obj.keyword = this.search_value;
+      }
+
+      if(this.sort.field) {
+        obj.sort = this.sort;
+        obj.sort = { field: this.sort.field, order: this.sort.order == 'descending' ? 'desc' : 'asc' };
+      }
+
+      return obj;
+    }
   },
   data () {
 
@@ -257,6 +289,9 @@ export default {
       searchClass: 'table-search',
       date: ['',''],
       search_value: '',
+      page: 1,
+      pagesize: 5,
+      sort: {field: null, order: null},
     };
 
     return Object.assign({}, tableConst.data, data);

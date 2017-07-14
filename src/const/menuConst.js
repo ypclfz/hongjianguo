@@ -14,6 +14,12 @@ menu.data = [
 		type: 'item',
 	},
 	{
+		text: '申请人管理',
+		path: '/applicantList',
+		icon: '',
+		type: 'item'
+	},
+	{
 		text: '用户管理',
 		path: '/userList',
 		icon: '',
