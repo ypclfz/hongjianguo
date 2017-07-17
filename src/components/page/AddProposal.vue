@@ -4,7 +4,7 @@
 	  		<el-col :span="18">
 		  		<el-form label-width="100px" :rules="formRules" :model="formData" ref="form">
 						<el-form-item label="案件名称" prop="title">
-							<el-input v-model="formData.title" placeholder="请输入案件名称">
+							<el-input v-model="formData.title" placeholder="请输入案件名称" readonly>
               </el-input>
 						</el-form-item>
 						<el-form-item label="案件摘要" prop="abstract">
@@ -13,30 +13,7 @@
 						
 						<el-form-item label="发明人" prop="inventors">
 
-              <el-row v-for="(item, index) in formData.inventors" :key="index" style="margin-bottom:5px;">
-                <el-col :span="12">
-                  <el-select placeholder="请选择发明人" v-model="item.id">
-                    <el-option 
-                      v-for="item in option.inventors" 
-                      :key="item.label" 
-                      :label="item.label" 
-                      :value="item.value">
-                    </el-option>
-                  </el-select>
-                </el-col>
-                <el-col :span="5" :offset="1">
-                  <el-autocomplete placeholder="贡献率" :fetch-suggestions="handleFetch" v-model="item.percent" style="width: 100%">
-                    <template slot="append">%</template>
-                  </el-autocomplete>
-                </el-col>
-                <el-col :span="5" :offset="1">
-                  <el-button size="small" v-if="index != 0" @click="deleteInventor(index)">删除</el-button>
-                </el-col>
-              </el-row>
-
-              <el-row>
-                <el-button type='text' @click="addInventor">添加发明人</el-button>
-              </el-row>
+              <inventors v-model="formData.inventors" @addInventor="addInventor" @deleteInventor="deleteInventor"></inventors>
 
 						</el-form-item>
 
@@ -48,7 +25,7 @@
                       :label="item.label" 
                       :value="item.value">
                 </el-option>
-              ></el-select> 
+              </el-select> 
             </el-form-item>
             <el-form-item label="技术分类">
               <el-input readonly @focus="treeShow" :value="tecText"></el-input>
@@ -56,7 +33,7 @@
 						<el-form-item label="标签" prop="tags">
 							<el-select  multiple filterable allow-create placeholder="请选择标签" v-model="formData.tags">
 		            <el-option
-		              v-for="item in lbOptions"
+		              v-for="item in tagOptions"
 		              :key="item.value"
 		              :label="item.label"
 		              :value="item.value">
@@ -128,6 +105,7 @@
 const url = 'http://www.zhiq.wang/proposal/save';
 const tagUrl = 'http://www.zhiq.wang/tag/lists';
 const fileDelete = 'http://www.zhiq.wang/file/delete';
+import Inventors from '@/components/form_extension/Inventors'
 
 //https://jsonplaceholder.typicode.com/posts/
 export default {
@@ -189,7 +167,7 @@ export default {
       ])
     },
     addInventor () {
-      this.formData.inventors.push({id: '', percent: ''});
+      this.formData.inventors.push({inventor: '', percent: ''});
       this.$refs.form.validateField('inventors');
     },
     deleteInventor (index) {
@@ -232,7 +210,7 @@ export default {
         abstract: '',
         proposer: '',
         inventors: [
-          { id: '', percent: '' },
+          { inventor: '', percent: '' },
         ],
         tags: [],
         attachments: [],
@@ -258,7 +236,7 @@ export default {
             const reg = /^[1-9][0-9]*$/;
             
             for(let d of b) {
-              if( !d.id || !d.percent ) {
+              if( !d.inventor || !d.percent ) {
                 msg = '请完整填写发明人字段';
                 break;
               }
@@ -302,12 +280,11 @@ export default {
           { label: '提案人一', value: '1' },
           { label: '提案人二', value: '2' },
           { label: '提案人三', value: '3' },
-        ]
+        ],
+        'percent': [ '10', '20', '30', '40', '50', '60', '70', '80', '90', '100' ],
       },
       inventors: [
         { label: '红坚果', value: 1 }
-      ],
-      lbOptions: [
       ],
       dialogVisible: false,
       treeData: {
@@ -333,23 +310,14 @@ export default {
   },
   created () {
 
-    this.$http.get(tagUrl).then(
-      data=>{
-        const body = data.body;
-        const option = [];  
-        if(body.status) {
-          for(let d of body.tags) {
-            option.push({label: d.tag, value: d.tag});
-          }
-
-          this.lbOptions.push(...option);
-        }
-      }, 
-      error=>{console.log(error)});
-
     if(this.$route.path == '/proposal/list/edit'){
       this.formData = this.$route.query;
       this.page_type = 'edit';
+    }
+  },
+  computed: {
+    tagOptions () {
+      return this.$store.getters.tagOptions;
     }
   },
   watch: {
@@ -365,7 +333,8 @@ export default {
         this.page_type = 'add';
       }
     }
-  }
+  },
+  components: { Inventors },
 
 }
 </script>

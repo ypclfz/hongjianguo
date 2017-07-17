@@ -17,7 +17,11 @@ const response = {
             public_number:"CN10452587A",//公开号
             issue_number:"CN104566A",//授权号
             applicant: ['1'],//申请人
-            inventor: ['1'],//发明人
+            inventor: [
+                { inventor: '1', percent: '50' },
+                { inventor: '2', percent: '25' },
+                { inventor: '3', percent: '25' },
+            ],//发明人
             agency: '1',//代理机构
             agent: '1',//代理人
             status: '1',//状态

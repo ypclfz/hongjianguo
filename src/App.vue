@@ -89,6 +89,9 @@ export default {
       this.$store.commit('removeScreen', index);
     }
   },
+  created () {
+    this.$store.dispatch('refreshTags');
+  },
   components: { AppMenu }
 }
 </script>

@@ -22,9 +22,7 @@
           </el-select>
         </el-form-item>
         <el-form-item label="发明人">
-          <el-select v-model="form.inventor" placeholder="请选择发明人" multiple>
-						<el-option v-for="item in option.inventor" :key="item.value" :label="item.label" :value="item.value"></el-option>
-          </el-select>
+          <inventors v-model="form.inventor" @addInventor="addInventor" @deleteInventor="deleteInventor"></inventors>
         </el-form-item>
         <el-form-item label="提案人">
           <el-select v-model="form.proposer" placeholder="请选择提案人" multiple>
@@ -42,6 +40,7 @@
 
 <script>
 import AppCollapse from '@/components/common/AppCollapse'
+import Inventors from '@/components/form_extension/Inventors'
 
 export default {
   name: 'patentAddPerson',
@@ -52,7 +51,7 @@ export default {
 			  tag: [],
 			  class: '',
 			  applicant: [],
-			  inventor: [],
+			  inventor: [ {inventor: '', percent: ''} ],
 			  proposer: [],
 			  ipr: '',
 			},
@@ -94,9 +93,15 @@ export default {
   methods: {
   	setForm (data) {
   		this.$tool.coverObj(this.form, data);
+  	},
+  	addInventor () {
+  		this.form.inventor.push({ inventor: '', percent: '' });
+  	},
+  	deleteInventor (index) {
+  		this.form.inventor.splice( index, 1 );
   	}
   },
-  components: { AppCollapse }
+  components: { AppCollapse, Inventors }
 }
 </script>
 
