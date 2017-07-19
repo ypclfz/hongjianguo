@@ -40,7 +40,7 @@
 
 <script>
 import AppCollapse from '@/components/common/AppCollapse'
-import Inventors from '@/components/form_extension/Inventors'
+import Inventors from '@/components/form/Inventors'
 
 export default {
   name: 'patentAddPerson',

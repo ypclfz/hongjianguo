@@ -9,7 +9,7 @@
 </template>
 
 <script>
-import Inventor from '@/components/form_extension/Inventor'
+import Inventor from '@/components/form/Inventor'
 
 export default {
   name: 'inventors',

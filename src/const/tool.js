@@ -20,5 +20,24 @@ export default {
 			obj[key] = obj1[key] == undefined ? obj[key] : obj1[key];
 		}
 		return obj;
+	},
+	searchTree (arr, id) {
+
+		return f(arr);
+
+		function f(a) {
+			let i = a.length;
+			while( i-- ) {
+				const d = a[i];
+				if(d.id == id) {
+					return {arr: a, index: i};
+				}else if(d.children && d.children.length != 0) {
+					const o  = f(d.children);
+					if(o) {
+						return o;
+					}
+				}
+			}
+		}
 	}
 }

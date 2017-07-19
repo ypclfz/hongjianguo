@@ -4,7 +4,7 @@ import Home from '@/components/page/Home'
 import Proposal from '@/components/page/Proposal'
 import InventorList from '@/components/page/InventorList'
 import ApplicantList from '@/components/page/ApplicantList'
-import AddProposal from '@/components/page/AddProposal'
+import ProposalCommon from '@/components/page/ProposalCommon'
 import CheckProposal from '@/components/page/CheckProposal'
 import PendingTask from '@/components/page/PendingTask'
 import PatentList from '@/components/page/PatentList'
@@ -18,6 +18,7 @@ import TrademarkNotice from '@/components/page/TrademarkNotice'
 import TrademarkStatistics from '@/components/page/TrademarkStatistics'
 import CopyrightList from '@/components/page/CopyrightList'
 import UserList from '@/components/page/UserList'
+import Technology from '@/components/page/Technology'
 //###################
 import CommonDetail from '@/components/page/CommonDetail'
 import Babel from '@/components/page_extension/CommonDetail_babel'
@@ -82,9 +83,9 @@ const router = new Router({
     	component: Proposal
     },{
       path: '/proposal/add',
-      name: 'AddProposal',
-      alias: ['/proposal/list/edit'],
-      component: AddProposal
+      name: 'ProposalCommon',
+      component: ProposalCommon,
+      alias: ['/proposal/detail', '/task/pending/proposal_check']
     },{
       path: '/task/pending/check',
       name: 'CheckProposal',
@@ -110,7 +111,8 @@ const router = new Router({
       name: 'PatentDetail',
       component: PatentDetail,
       alias: ['/patent/applying/detail', '/patent/applied/detail']
-    },{
+    },
+    {
       path: '/patent/statistics',
       name: 'PatentStatistics',
       component: PatentStatistics,
@@ -141,6 +143,11 @@ const router = new Router({
       path: '/userList',
       name: 'UserList',
       component: UserList,
+    },
+    {
+      path: '/tclass',
+      name: 'Technology',
+      component: Technology,
     },
     {
       path: '/commonDetail/:id',

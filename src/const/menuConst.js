@@ -23,7 +23,13 @@ menu.data = [
 		text: '用户管理',
 		path: '/userList',
 		icon: '',
-		type: 'item'
+		type: 'item',
+	},
+	{
+		text: '技术分类管理',
+		path: '/tclass',
+		icon: '',
+		type: 'item',
 	},
 	{
 		text: '提案',

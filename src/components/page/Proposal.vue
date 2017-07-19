@@ -1,7 +1,7 @@
 <template>
 	<div class="main">
     <app-filter :data="filterParameter"></app-filter>
-		<table-component :tableOption="tableOption" :data="tableData" ref="table">
+		<table-component :tableOption="tableOption" :data="tableData" ref="table" @refreshTableData="refreshTableData">
       <template slot="expand" scope="scope">
         <el-steps :space="200" :active="1">
           <el-step title="步骤 1" description="这是一段很长很长很长的描述性文字"></el-step>
@@ -21,16 +21,8 @@ const url = 'http://www.zhiq.wang/proposal/lists';
 const delete_url = 'http://www.zhiq.wang/proposal/lists';
 const tag_url = 'http://www.zhiq.wang/tag/lists';
 export default {
-  name: 'proposal',
+  name: 'proposalList',
   methods: {
-    bulkDelete () {
-      const s = this.$refs.table.getSelection();
-      if(s["length"] == 0) {
-        this.$alert("请选择需要删除的提案", {type: 'warning', closeOnClickModal: true});
-      }else {
-        this.$confirm("确认删除?", {type: 'warning', closeOnClickModal: false}).then(()=>{console.log("删除")}).catch(()=>{console.log("取消")});
-      }
-    },
     add () {
       this.$router.push('/proposal/add');
     },
@@ -60,13 +52,13 @@ export default {
         })
         .catch(()=>{console.log("取消")});
     },
-    sortChange (col) {
-      console.log(col);
-      this.urlOption.sort_field = col.prop;
-      this.urlOption.sort = col.order == 'descending' ? 'desc' : 'asc';
-    },
-    handleStatus (status) {
-      this.urlOption.status = status; 
+    bulkDelete () {
+      const s = this.$refs.table.getSelection();
+      if(s["length"] == 0) {
+        this.$alert("请选择需要删除的提案", {type: 'warning', closeOnClickModal: true});
+      }else {
+        this.$confirm("确认删除?", {type: 'warning', closeOnClickModal: false}).then(()=>{console.log("删除")}).catch(()=>{console.log("取消")});
+      }
     },
     timeSearch (startTime, endTime) {
       if( startTime && endTime ) {
@@ -82,26 +74,23 @@ export default {
       t = new Date(t);
       return t.getFullYear() + "-" + (t.getMonth() + 1) + "-" + t.getDate();
     },
-    updateTableData () {
-
-    }
+    refreshTableData (option) {
+      console.log(Object.assign({}, option, this.filter));
+    },
   },
   data () {
     return {
       tableOption: {
         'header_btn': [
-          { type: 'custom', label: '新增', icon: 'plus', click: this.add },
-          { type: 'custom', label: '删除', icon: 'delete', click: this.bulkDelete },
+          { type: 'add', click: this.add },
+          { type: 'delete', click: this.bulkDelete },
           { type: 'control', label: '字段' },
           { type: 'date', search: this.timeSearch, clear: this.timeClear },
         ],
-        'handleCurrentChange': (page)=>{ this.urlOption.page = page; }, 
-        'handleSizeChange': (pagesize)=>{ this.urlOption.pagesize = pagesize; },
-        'handleSearch': (val)=>{ this.urlOption.keyword = val; },
-        'default_sort': {prop: 'create_time', order: 'descending'},
+        'default_sort': { prop: 'create_time', order: 'descending' },
         'sortChange': this.sortChange,
         'columns': [
-          { type: 'expand'},
+          { type: 'expand' },
           { type: 'selection'},
           { type: 'text', label: '提案时间', prop: 'create_time', sortable: true,},
           { type: 'text', label: '案件名称', prop: 'title',sortable: true },
@@ -134,7 +123,9 @@ export default {
           },
         ]
       },
-      tableData: [],
+      tableData: [
+
+      ],
       filterParameter: [
         {
           label: '标签',
@@ -163,56 +154,53 @@ export default {
           multipled: true
         }
       ],
-      urlOption: {
-        page: 1,
-        pagesize: 5,
-        status: 1,
-        keyword: '',
+      filter: {
         tag: [],
         proposer: [],
         inventor: [],
         time: [],
-        sort_field: '',
-        sort: '',
       },
     }
   },
   computed: {
     screen_value () {
       return this.$store.getters.screen_value;
+    },
+    tagOptions () {
+      return this.$store.getters.tagOptions;
     }
   },
   watch: {
     screen_value () {
+
       const map = this.screen_value;
       const arr = ['tag', 'proposer', 'inventor'];
-      arr.forEach( (v)=>{ this.urlOption[v] = map.has(v) ? map.get(v) : []; } );
+      arr.forEach( (v)=>{ this.filter[v] = map.has(v) ? map.get(v) : []; } );
+      this.$refs.table.refresh();
+
     },
-    urlOption: {
-      handler: function () {
-        console.log("bbbb");
-      },
-      deep: true,
-    },
+    tagOptions () {
+      this.filterParameter[0].items = this.$tool.deepCopy(this.$store.getters.tagOptions);
+    }
   },
   created () {
-
-    this.$http.post(url, {'tag': '标签一'}).then(data=>{ data.status ? this.tableData = data.body.list : this.$alert('获取表格数据失败') }, error=>{console.log(error)});
+    this.filterParameter[0].items = this.$tool.deepCopy(this.$store.getters.tagOptions);
+    // this.$http.post(url, {'tag': '标签一'}).then(data=>{ data.status ? this.tableData = data.body.list : this.$alert('获取表格数据失败') }, error=>{console.log(error)});
     
-    this.$http.get(tag_url)
-      .then(data=>{
-        const body = data.body; 
-        if(body.status) {
-          const arr = [];
-          for(let d of body.tags) {
-            arr.push(d["tag"]);
-          }
-          this.filterParameter[0].items.push(...arr);
-        }else {
-          this.$alert('获取标签列表失败!');
-        }
-      },
-      error=>{console.log(error)});
+    // this.$http.get(tag_url)
+    //   .then(data=>{
+    //     const body = data.body; 
+    //     if(body.status) {
+    //       const arr = [];
+    //       for(let d of body.tags) {
+    //         arr.push(d["tag"]);
+    //       }
+    //       this.filterParameter[0].items.push(...arr);
+    //     }else {
+    //       this.$alert('获取标签列表失败!');
+    //     }
+    //   },
+    //   error=>{console.log(error)});
   },
   components: { TableComponent, AppFilter } 
 }

@@ -4,7 +4,7 @@
 	  		<el-col :span="18">
 		  		<el-form label-width="100px" :rules="formRules" :model="formData" ref="form">
 						<el-form-item label="案件名称" prop="title">
-							<el-input v-model="formData.title" placeholder="请输入案件名称" readonly>
+							<el-input v-model="formData.title" placeholder="请输入案件名称" >
               </el-input>
 						</el-form-item>
 						<el-form-item label="案件摘要" prop="abstract">
@@ -30,6 +30,9 @@
             <el-form-item label="技术分类">
               <el-input readonly @focus="treeShow" :value="tecText"></el-input>
             </el-form-item>
+            <el-form-item label="产品名称">
+              <el-input v-model="formData.product"></el-input>
+            </el-form-item>
 						<el-form-item label="标签" prop="tags">
 							<el-select  multiple filterable allow-create placeholder="请选择标签" v-model="formData.tags">
 		            <el-option
@@ -41,25 +44,11 @@
 		          </el-select>
 						</el-form-item>
 						<el-form-item label="附件" prop="attachments">
-							
-                <el-upload
-					        class="upload-demo"
-                  drag
-                  :on-success="handleUploadSuccess"
-                  :on-remove="handleUploadRemove"
-					        action="http://www.zhiq.wang/file/upload"
-					        multiple
-                >
-  						        <i class="el-icon-upload"></i>
-  						        <div class="el-upload__text">将文件拖到此处，或<em>点击上传</em></div>
-<!--   						        <div class="el-upload__tip" slot="tip">备注：提案人请主要上传如下相关附件<br>1、技术交底书：专利必须上传此文件。从本发明的技术领域、背景技术、所解决的技术问题、技术方案介绍、有益效果等方面来介绍本发明；此类文件命名：技术交底书名称+技术交底书，如：一种手机装置技术交底书.doc<br>2、技术附图：揭露本发明技术的电子图档文件；此类文件命名： 技术附图名称+技术附图，如：一种手机摄像装置的技术附图.doc<br>3、签名文件：签名文件，授权书，宣誓书,主要是美国案需要使用<br>4、其他文件：其他与发明相关的技术文件或者证明文件</div> -->
-  					     </el-upload>
-               
+               <upload v-model="formData.attachments"></upload>
 						</el-form-item>
 						<el-form-item>
-						   <el-button type="primary" @click="createProposal">提交审核</el-button>
-               <el-button>暂存</el-button>
-               <el-button @click="cancelEdit" v-if="page_type == 'add' ? false : true">取消</el-button>
+						   <el-button type="primary" @click="createProposal">提交</el-button>
+               <el-button>保存</el-button>
 <!-- 						   <el-button>取消</el-button> -->
 						</el-form-item>
 			  	</el-form>
@@ -98,26 +87,27 @@
           <el-button @click="treeCancel">取消</el-button>
         </div>
       </el-dialog>
+      <pc-submit ref="submit"></pc-submit>
   	</div>
 </template>
 
 <script>
+import PcSubmit from '@/components/page_extension/ProposalCommon_submit'
+import Inventors from '@/components/form/Inventors'
+import Upload from '@/components/form/Upload'
+
 const url = 'http://www.zhiq.wang/proposal/save';
 const tagUrl = 'http://www.zhiq.wang/tag/lists';
 const fileDelete = 'http://www.zhiq.wang/file/delete';
-import Inventors from '@/components/form_extension/Inventors'
-
 //https://jsonplaceholder.typicode.com/posts/
 export default {
-  name: 'addProposal',
+  name: 'proposalCommon',
   methods: {
   	createProposal: function() {
   		const d = this;
   		d.$refs.form.validate((valid)=>{
-  			if(valid) {
-          d.$http.post(url, d.formData).then((data)=>{console.log(data); this.$router.push('/proposal/list')}, (error)=>{console.log(error)});
-  			}else {
-  				d.$alert("请正确填写提案字段", {type: 'error', closeOnClickModal: true});
+        if(valid) {
+          d.$refs.submit.show();
   			}
   		});
   	},
@@ -128,42 +118,21 @@ export default {
         {value: '联系人一'},
       ]);
     },
-    handleUploadSuccess (p, f) {
-      if(p.status) {
-        f.customId = p.file.uid;
-        this.formData.attachments.push(p.file.uid);
-      }else {
-        this.$alert(p.info);
-      }
-    },
-    handleUploadRemove (f) {
-      const id = f.customId;
-
-      this.$http.post(fileDelete, { id });
-
-      const arr = this.formData.attachments;
-      for(let i = 0; i < arr.length; i++) {
-        if(arr[i] == id) {
-          arr.splice(i,1);
-          break;
-        }
-      }
-    },
     cancelEdit() {
       this.$router.push('/proposal/list');
     },
     handleFetch (val, cb) {
       cb([
-        {value: '10'},
-        {value: '20'},
-        {value: '30'},
-        {value: '40'},
-        {value: '50'},
-        {value: '60'},
-        {value: '70'},
-        {value: '80'},
-        {value: '90'},
-        {value: '100'},
+        { value: '10' },
+        { value: '20' },
+        { value: '30' },
+        { value: '40' },
+        { value: '50' },
+        { value: '60' },
+        { value: '70' },
+        { value: '80' },
+        { value: '90' },
+        { value: '100' },
       ])
     },
     addInventor () {
@@ -204,7 +173,6 @@ export default {
   },
   data () {
     return {
-      page_type: 'add',
       formData: {
         title: '',
         abstract: '',
@@ -214,7 +182,8 @@ export default {
         ],
         tags: [],
         attachments: [],
-        class: '',   
+        class: '',
+        product: '',   
       },
       formRules: {
       	'title': [
@@ -227,7 +196,7 @@ export default {
           {max: 1000, message: '长度不能超过1000个字符', trigger: 'blur' }  
         ],
         'inventors': { 
-          type: 'array', 
+          type: 'array',
           required: true,
           trigger: 'change', 
           validator: (a,b,c)=>{ 
@@ -261,6 +230,8 @@ export default {
 
             if(msg) {
               c(msg);              
+            }else {
+              c();
             }
 
             
@@ -312,29 +283,23 @@ export default {
 
     if(this.$route.path == '/proposal/list/edit'){
       this.formData = this.$route.query;
-      this.page_type = 'edit';
     }
   },
   computed: {
+    type () {
+      const type = this.$store.getters.proposalType;
+      return type ? type : 'add';
+    },
     tagOptions () {
       return this.$store.getters.tagOptions;
     }
   },
   watch: {
     $route () {
-      if(this.$route.path == '/proposal/add') {
-        this.formData.title = '';
-        this.formData.abstract = '';
-        this.formData.proposer = '';
-        this.formData.inventors = [];
-        this.formData.tags = [];
-        this.formData.attachments = [];
-
-        this.page_type = 'add';
-      }
+      this.$store.commit('setProposalType', this.$store.path);
     }
   },
-  components: { Inventors },
+  components: { Inventors, PcSubmit, Upload },
 
 }
 </script>

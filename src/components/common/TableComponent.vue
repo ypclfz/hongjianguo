@@ -193,7 +193,8 @@ const methods = Object.assign({}, tableConst.methods, {
     if(func) {
       func(currentPage);
     }
-    this.$emit('refreshTableData');
+
+    this.$emit('refreshTableData', this.getRequestOption() );
   },
   handleSizeChange (size) {
     this.pagesize = size;
@@ -201,7 +202,8 @@ const methods = Object.assign({}, tableConst.methods, {
     if(func) {
       func(size);
     }
-    this.$emit('refreshTableData');
+
+    this.$emit('refreshTableData', this.getRequestOption() );
   },
   handleSortChange ({column, prop, order}) {
     this.sort.field = prop;
@@ -210,14 +212,16 @@ const methods = Object.assign({}, tableConst.methods, {
     if(func) {
       func(column, prop, order);
     }
-    this.$emit('refreshTableData');
+
+    this.$emit('refreshTableData', this.getRequestOption() );
   },
   handleSearch () {
     const func = this.tableOption.handleSearch;
     if(func && this.search_value) {
       func(this.search_value);
     }
-    this.$emit('refreshTableData');
+
+    this.$emit('refreshTableData', this.getRequestOption() );
   },
   timeClear (btn) {
 
@@ -227,6 +231,15 @@ const methods = Object.assign({}, tableConst.methods, {
   reset () {
     this.page = 1;
     this.search_value = "";
+  },
+  refresh () {
+    this.page = 1;
+    this.search_value = "";
+    this.$emit('refreshTableData', this.getRequestOption() );
+  },
+  getRequestOption () {
+    const copy = this.$tool.deepCopy(this.requesOption);
+    return copy;
   }
 });
 export default {
@@ -264,6 +277,12 @@ export default {
       }
 
       return obj;
+    }
+  },
+  watch: {
+    'requesOption': {
+      handler: function () {  },
+      deep: true,
     }
   },
   data () {
