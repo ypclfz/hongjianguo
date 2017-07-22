@@ -4,7 +4,7 @@
       drag
       :on-success="handleUploadSuccess"
       :on-remove="handleUploadRemove"
-      action="http://www.zhiq.wang/file/upload"
+      action="/api/files"
       multiple
     >
 			<i class="el-icon-upload"></i>

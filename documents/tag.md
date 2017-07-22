@@ -1,5 +1,5 @@
 # 1、获取所有标签
-接口URL:http://www.zhiq.wang/tag/lists;  
+接口URL:http://www.zhiq.wang/tags;  
 接口调用方式：post/get;  
 @return json `{"status":1,"tags":[{"tag":"标签1","count":1},{"tag":"标签3","count":1},{"tag":"标签2","count":1}]}`，其中count表示被标记该标签的提案/专利的数量
 

@@ -229,7 +229,8 @@ menu.map = {
 	'/task/pending/check': {text: '提案审核', icon: 'iconfont icon-task-check', 'path': '/task/pending/check'},
 	'/patent/applied/detail': {text: '专利详情', icon: '', path: '/patent/applied/detail'},
 	'/patent/list/detail': {text: '专利详情', icon: '', path: '/patent/applying/detail'},
-	'/proposal/list/edit': {text: '提案编辑', icon: '', path: '/proposal/list/edit'},
+	'/proposal/edit': {text: '提案编辑', icon: '', path: '/proposal/edit'},
+	'/proposal/detail': {text: '提案详情', icon: '', path: '/proposal/detail'},
 	'/trademark/list/detail': {text: '商标详情', icon: '', path: '/trademark/list/detail/babel'},
 };
 tailRecursion(menu.data);

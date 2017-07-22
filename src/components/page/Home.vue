@@ -36,14 +36,7 @@ export default {
     }
   },
   created () {
-    this.$http.post('http://www.zhiq.wang/index/login',{'username': 'hongjianguo', 'password': 'hongjianguo'}).then(response => {
-
-    
-    console.log(response);
-
-  }, response => {
-    console.log(response);
-  });
+    this.$axios.post('/api/index/login',{'username': 'Shawn', 'password': 'u5/vpsgWLohjhN5sd7MIZ7vSkqLC9nyma0RlWQ4oTM78HfPClnwlfvJJJxGtT7RMW6MAZog7qsdd90pd0949gIU7KR3PXYNWP1KOqu6GBWQIMrTnFktDkT+L9G6pZLZ/1i5W1W9FCmPeSFtHlQx/AaMxQh+57R/6lZqXN93gS2hwfaRuPtNyq/lQlN0bJOX1UpOzS3mXpvgcPEcmhPQUOxSZ3fJ/EvRTMY286WrnWWa+qbWjMNJt5GZkPcXCX58nzilX+LVFqekhILpOO4I1yxCNohPrPBTaNKKZr9UIaA9DEDZg80kn43cASpDGvygZp+GqLUXPjHr6o5SCn0uJyw=='});
   },
   components: { AppFilter }
 }

@@ -9,6 +9,11 @@
           <el-step title="步骤 3" description="这是一段很长很长很长的描述性文字"></el-step>
         </el-steps>
       </template>
+      <template slot="action" scope="scope">
+        <el-button icon="information" size="mini" @click="detail(scope.row)" v-if="scope.row.status">详情</el-button>
+        <el-button icon="edit" size="mini" @click="edit(scope.row)" v-else>编辑</el-button>
+        <el-button icon="delete" size="mini" @click="delete(scope.row)">删除</el-button>
+      </template>
     </table-component>
   </div>
 </template>
@@ -52,6 +57,9 @@ export default {
         })
         .catch(()=>{console.log("取消")});
     },
+    detail (row) {
+      this.$router.push({path: '/proposal/detail', query: {id: row.id}});
+    },
     bulkDelete () {
       const s = this.$refs.table.getSelection();
       if(s["length"] == 0) {
@@ -75,7 +83,9 @@ export default {
       return t.getFullYear() + "-" + (t.getMonth() + 1) + "-" + t.getDate();
     },
     refreshTableData (option) {
-      console.log(Object.assign({}, option, this.filter));
+      const params = Object.assign({}, option, this.filter);
+      console.log(params);
+      this.$axios.get('/api/proposals', { params }).then(response=>{this.tableData = response.data.proposals});
     },
   },
   data () {
@@ -85,41 +95,37 @@ export default {
           { type: 'add', click: this.add },
           { type: 'delete', click: this.bulkDelete },
           { type: 'control', label: '字段' },
-          { type: 'date', search: this.timeSearch, clear: this.timeClear },
+          { type: 'date', key: 'time' },
         ],
         'default_sort': { prop: 'create_time', order: 'descending' },
         'sortChange': this.sortChange,
         'columns': [
           { type: 'expand' },
           { type: 'selection'},
-          { type: 'text', label: '提案时间', prop: 'create_time', sortable: true,},
+          { type: 'text', label: '创建时间', prop: 'create_time', sortable: true },
+          { type: 'text', label: '更新时间', prop: 'update_time', sortable: true },
           { type: 'text', label: '案件名称', prop: 'title',sortable: true },
-          { type: 'text', label: '案件摘要', prop: 'abstract'},
-          { type: 'text', label: '技术联系人', prop: 'proposer', sortable: true },
+          { type: 'text', label: '案件摘要', prop: 'abstract', sortable: true },
+          { 
+            type: 'text', 
+            label: '技术联系人', 
+            prop: 'proposer',
+            sortable: true,
+            render:  (h,item)=>{return h('span', item.name)},
+          },
           { 
             type: 'array', label: '发明人', prop: 'inventors',
-            render: ({inventors})=>{
-              const arr = [];
-              for(let d of inventors) {
-                arr.push(d["name"]);
-              }
-              return arr;
+            render: (arr)=>{
+             return arr.map(d=>d.name);
             }
           },
           { type: 'array', label: '标签', prop: 'tags' },
-          { type: 'text', label: '案件状态', prop: 'status', sortable: true },
+          { type: 'text', label: '备注', prop: 'remark' },
+          // { type: 'text', label: '案件状态', prop: 'status', sortable: true },
           {
             type: 'action', 
             label: '操作', 
-            btns: [{
-              label: '编辑',
-              icon: 'edit',
-              click: this.edit,
-            },{
-              label: '删除',
-              icon: 'delete',
-              click: this.delete,
-            }]
+            btns_render: 'action',
           },
         ]
       },
@@ -155,10 +161,9 @@ export default {
         }
       ],
       filter: {
-        tag: [],
-        proposer: [],
-        inventor: [],
-        time: [],
+        tags: '',
+        proposer: '',
+        inventors: '',
       },
     }
   },
@@ -174,8 +179,8 @@ export default {
     screen_value () {
 
       const map = this.screen_value;
-      const arr = ['tag', 'proposer', 'inventor'];
-      arr.forEach( (v)=>{ this.filter[v] = map.has(v) ? map.get(v) : []; } );
+      const arr = ['tags', 'proposer', 'inventors'];
+      arr.forEach( (v)=>{ this.filter[v] = map.has(v) ? map.get(v).join(',') : ""; } );
       this.$refs.table.refresh();
 
     },
@@ -184,7 +189,8 @@ export default {
     }
   },
   created () {
-    this.filterParameter[0].items = this.$tool.deepCopy(this.$store.getters.tagOptions);
+    // this.filterParameter[0].items = this.$tool.deepCopy(this.$store.getters.tagOptions);
+    // this.$axios.get('/api/proposals').then(response=>{this.tableData = response.data.proposals});
     // this.$http.post(url, {'tag': '标签一'}).then(data=>{ data.status ? this.tableData = data.body.list : this.$alert('获取表格数据失败') }, error=>{console.log(error)});
     
     // this.$http.get(tag_url)

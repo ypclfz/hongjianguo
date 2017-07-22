@@ -3,6 +3,7 @@ import Vuex from 'vuex'
 import filter from '@/store/modules/filter-label.js'
 import detail from '@/store/modules/common-detail.js'
 import tags from '@/store/modules/tags.js'
+import table from '@/store/modules/table-common.js'
 Vue.use(Vuex);
 
 const store = new Vuex.Store({
@@ -14,6 +15,7 @@ const store = new Vuex.Store({
     filter,
     detail,
     tags,
+    table,
   },
   mutations: {
     setDragId (state, id) {

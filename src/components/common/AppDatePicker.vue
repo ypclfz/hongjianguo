@@ -1,8 +1,8 @@
 <template>
   <div class="app-date-picker" style="display: inline-block;">
-        <el-date-picker type="date" placeholder="起始日期" :size=size :style="sizeFormate.get(size)" :value="value[0]" @input="startUpdate" :picker-options="startOption"></el-date-picker>
+        <el-date-picker type="date" placeholder="起始日期" :size=size :style="sizeFormate.get(size)" :value="date[0]" @input="startUpdate" :picker-options="startOption"></el-date-picker>
         <span>-</span>
-        <el-date-picker type="date" placeholder="结束日期" :size=size :style="sizeFormate.get(size)" :value="value[1]"  @input="endUpdate" :picker-options="endOption"></el-date-picker>
+        <el-date-picker type="date" placeholder="结束日期" :size=size :style="sizeFormate.get(size)" :value="date[1]"  @input="endUpdate" :picker-options="endOption"></el-date-picker>
   </div>
 </template>
 
@@ -12,12 +12,12 @@ export default {
   props: ['size', 'value'],
   methods: {
 		startUpdate (val) {
-    	this.startTime = val;
+			this.startTime = val;
 			const s = this.startTime ? this.startTime.getTime() : '';
 			const e = this.endTime ? this.endTime.getTime() : ''; 
-    	const arr = [s, e];
-    	console.log('startUpdate');
-    	this.$emit("input", arr);
+			const arr = [s, e];
+			console.log('startUpdate');
+			this.$emit("input", arr);
     },
     endUpdate (val) {
     	this.endTime = val;
@@ -27,6 +27,14 @@ export default {
     	console.log('endUpdate');
     	this.$emit("input", arr);
     }
+  },
+  computed: {
+  	date () {
+  		const v = this.value;
+  		return !v || v[0] == undefined || v[1] == undefined 
+  					 	? ['', '']
+  						: [...v];
+  	}
   },
   data () {
   	const sizeFormate = new Map();

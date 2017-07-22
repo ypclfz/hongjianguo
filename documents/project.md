@@ -1,32 +1,32 @@
 # 1、专利列表
-    requestUrl=http://www.zhiq.wang/project/lists;  
-method=POST/GET;  
+requestUrl=http://www.zhiq.wang/project/lists;  
+method=POST;  
 request {
     category:"1",  //案件类型patent  1 trademark 2  copyright 3 other 4 默认值 patent
     type:["1","2"], //案件次类型invention 1 utility 2 design  3 
     area:["CN","US"],  //申请地区类型，2位国家代码的数组
     serial:["22288"],  //案号
     title:"标题", //案件标题
-    entrust_date_start:"2017-07-07", //委案日起始日期#
-    entrust_date_end:"2017-07-07", //委案日结束日期#
-    application_date_start:"2017-07-07", //申请日起始日期#
-    application_date_end:"2017-07-07", //申请日结束日期#
-    public_date_start:"2017-07-07", //公开日起始日期#
-    public_date_end:"2017-07-07", //公开日结束日期#
-    issue_date_start:"2017-07-07", //授权日起始日期#
-    issue_date_end:"2017-07-07", //授权日起始日期#
+    entrust_date_start:"2017-07-07", //委案日起始日期
+    entrust_date_end:"2017-07-07", //委案日结束日期
+    application_date_start:"2017-07-07", //申请日起始日期
+    application_date_end:"2017-07-07", //申请日结束日期
+    public_date_start:"2017-07-07", //公开日起始日期
+    public_date_end:"2017-07-07", //公开日结束日期
+    issue_date_start:"2017-07-07", //授权日起始日期
+    issue_date_start:"2017-07-07", //授权日起始日期
     application_number:"2017302865763",//申请号
     public_number:"CN10452587A",//公开号
-    applicant:["1"],//申请人ID数组#
-    inventor:["1"],//发明人ID数组#
-    agency:["1"],//代理机构ID数组#
+    applicant:["1"],//申请人ID数组
+    inventor:["1"],//发明人ID数组
+    agency:["1"],//代理机构ID数组
     agent:["1"],//代理人ID数组
     agency_serial:"19888",//代理所案号
-    status:["1"],//案件状态数组#
-    proposer:["1"],//提案人ID数组#
+    status:["1"],//案件状态数组
+    proposer:["1"],//提案人ID数组
     department:"1",//部门ID
-    ipr:["1"],//IPR ID数组#
-    tag:["tag1","tag2"],//标签数组#
+    ipr:["1"],//IPR ID数组
+    tag:["tag1","tag2"],//标签数组
     class:"1",//分类ID
     keyword:"关键字",//关键字
     page:"1",//页码
@@ -39,29 +39,29 @@ response {
     info:"信息提示",
     data:[
         {
-            id:"1:,//案件ID#
-            serial:"22288",//案号#
-            area:"CN",//地区#
-            type:"1",//案件类型#
-            title:"	验票机",#
-            entrust_date:"2017-07-07",//委案日#
-            application_date:"2017-07-07",//申请日#
-            public_date:"2017-07-07",//公开日#
-            issue_date:"2017-07-07",//授权日#
-            applicaton_number:"2017302865763",//申请号#
-            public_number:"CN10452587A",//公开号#
-            issue_number:"CN104566A",授权号#
-            applicant:[{id:"id",name:"name"}],//申请人#
-            inventor:[{id:"id",name:"name"}],//发明人#
-            agency:{id:"id",name:"name"},//代理机构#
-            agent:{id:"id,name:"name"},//代理人#
-            status:{id:"id",name:"name"},//状态#
-            proposer:{id:"id",name:"name"},//提案人#
-            department:{id:"id",name:"name"},//所属部门#
-            ipr:{id:"id",name:"name"},//负责IPR#
-            tag:["tag1"],//标签#
-            class:{id:"id",name:"name"},//技术分类#
-            remark:"remark",//备注#
+            id:"1:,//案件ID
+            serial:"22288",//案号
+            area:"CN",//地区
+            type:"1",//案件类型 
+            title:"	验票机",
+            entrust_date:"2017-07-07",//委案日
+            application_date:"2017-07-07",//申请日
+            public_date:"2017-07-07",//公开日
+            issue_date:"2017-07-07",//授权日
+            applicaton_number:"2017302865763",//申请号
+            public_number:"CN10452587A",//公开号
+            issue_number:"CN104566A",授权号
+            applicant:[{id:"id",name:"name"}],//申请人
+            inventor:[{id:"id",name:"name"}],//发明人
+            agency:{id:"id",name:"name"},//代理机构
+            agent:{id:"id,name:"name"},//代理人
+            status:{id:"id",name:"name"},//状态
+            proposer:{id:"id",name:"name"},//提案人
+            department:{id:"id",name:"name"},//所属部门
+            ipr:{id:"id",name:"name"},//负责IPR
+            tag:["tag1"],//标签
+            class:{id:"id",name:"name"},//技术分类
+            remark:"remark",//备注
         }
     ]
 }

@@ -33,7 +33,7 @@
         <template v-else-if="btn.type == 'date'">
           <div style="display: inline-block; margin-left: 10px;">
             <app-date-picker size='mini' v-model="date"></app-date-picker>
-            <el-button size="mini" @click="btn.search(date[0],date[1])">搜索</el-button>
+            <el-button size="mini" @click="timeSearch(btn)">搜索</el-button>
             <el-button size="mini" @click="timeClear(btn)" style="margin: 0px;">清空</el-button>
           </div>
         </template>
@@ -67,7 +67,7 @@
 	<el-table 
     :data="tableData" 
     stripe 
-    border 
+    :border="tableOption.is_border != undefined ? tableOption.is_border : true" 
     @selection-change="handleselectionChange" 
     :row-key="getRowKeys" 
     :default-sort="tableOption.default_sort ? tableOption.default_sort : {}"
@@ -115,7 +115,7 @@
       <template v-else-if="col.type == 'action'">
         <el-table-column :label="col.label ? col.label : '操作'" align="center" :width="col.width">
           <template scope="scope">
-            <template v-if="col.btns_render != undefined ? true : false">
+            <template v-if="col.btns_render != undefined">
               <slot :name="col.btns_render" :row="scope.row">
               </slot>
             </template>
@@ -151,7 +151,7 @@
 	</el-table>
   <!--v-if="totalNumber > pageSize"-->
 	<el-pagination
-    
+    v-if="tableOption.is_pagination == undefined ? true : tableOption.is_search"
   	@current-change="handleCurrentChange"
     @size-change="handleSizeChange"
   	:current-page.sync="page"
@@ -194,16 +194,16 @@ const methods = Object.assign({}, tableConst.methods, {
       func(currentPage);
     }
 
-    this.$emit('refreshTableData', this.getRequestOption() );
+    this.update();
   },
   handleSizeChange (size) {
-    this.pagesize = size;
+    this.$store.commit('setPageSize', size);
     const func = this.tableOption.sizeChange;
     if(func) {
       func(size);
     }
 
-    this.$emit('refreshTableData', this.getRequestOption() );
+    this.reset();
   },
   handleSortChange ({column, prop, order}) {
     this.sort.field = prop;
@@ -213,7 +213,7 @@ const methods = Object.assign({}, tableConst.methods, {
       func(column, prop, order);
     }
 
-    this.$emit('refreshTableData', this.getRequestOption() );
+    this.reset();
   },
   handleSearch () {
     const func = this.tableOption.handleSearch;
@@ -221,50 +221,60 @@ const methods = Object.assign({}, tableConst.methods, {
       func(this.search_value);
     }
 
-    this.$emit('refreshTableData', this.getRequestOption() );
+    this.reset();
   },
-  timeClear (btn) {
+  timeSearch ({search}) {
+    if(search) {
+      search();
+    }
 
-    this.date.splice(0,2);
-    btn.clear();
+    this.reset()
   },
-  reset () {
-    this.page = 1;
-    this.search_value = "";
-  },
-  refresh () {
-    this.page = 1;
-    this.search_value = "";
-    this.$emit('refreshTableData', this.getRequestOption() );
+  timeClear ({clear}) {
+    if(clear) {
+      clear();
+    }
+
+    this.date = [];
+    this.reset();
   },
   getRequestOption () {
     const copy = this.$tool.deepCopy(this.requesOption);
     return copy;
+  },
+  update () {
+    this.$emit('refreshTableData', this.getRequestOption() );
+  },
+  reset () {
+    this.page = 1;
+    this.update();
+  },
+  refresh () {
+    this.page = 1;
+    this.search_value = "";
+    this.update();
   }
 });
 export default {
-  name: 'table-component',
+  name: 'tableComponent',
   methods,
   created() {
     const d = this;
-
-    d.totalNumber = d.tableData.length;
-    d.pageData = d.getPageData(d.currentPage);
   },
   props: ['tableOption', 'data'],
   computed: {
     tableData () {
-      const d= this;
-      return d.data ? d.data : []; 
+      const d = this;
+      return d.data ? d.data.data : []; 
     },
     totalNumber () {
       const d = this;
-      return d.data ? d.data.length : [];
+      return d.data ? d.data.total : 0;
     },
     requesOption () {
       const obj = {
         page: this.page,
-        pagesize: this.pagesize,
+        listRows: this.pagesize,
       };
 
       if(this.search_value) {
@@ -272,11 +282,15 @@ export default {
       }
 
       if(this.sort.field) {
-        obj.sort = this.sort;
-        obj.sort = { field: this.sort.field, order: this.sort.order == 'descending' ? 'desc' : 'asc' };
+        const field = this.sort.field;
+        const order = this.sort.order == 'descending' ? 'desc' : 'asc';
+        obj.sort = `${field}-${order}`;
       }
 
       return obj;
+    },
+    pagesize () {
+      return this.$store.getters.pagesize;
     }
   },
   watch: {
@@ -306,10 +320,9 @@ export default {
         return row.id;
       },
       searchClass: 'table-search',
-      date: ['',''],
+      date: [],
       search_value: '',
       page: 1,
-      pagesize: 5,
       sort: {field: null, order: null},
     };
 

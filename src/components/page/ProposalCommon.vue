@@ -3,38 +3,37 @@
   		<el-row>
 	  		<el-col :span="18">
 		  		<el-form label-width="100px" :rules="formRules" :model="formData" ref="form">
+            <el-form-item label="创建时间" v-if="type == 'detail'">
+              {{ formData.create_time }}
+            </el-form-item>
+            <el-form-item label="更新时间" v-if="type == 'detail'">
+              {{ formData.update_time }}
+            </el-form-item>
 						<el-form-item label="案件名称" prop="title">
-							<el-input v-model="formData.title" placeholder="请输入案件名称" >
+							<el-input v-model="formData.title" placeholder="请输入案件名称" :disabled="type == 'detail'">
               </el-input>
 						</el-form-item>
 						<el-form-item label="案件摘要" prop="abstract">
-							<el-input type="textarea" v-model="formData.abstract" placeholder="请输入案件摘要"></el-input>
+							<el-input type="textarea" v-model="formData.abstract" placeholder="请输入案件摘要" :disabled="type == 'detail'"></el-input>
 						</el-form-item>
 						
 						<el-form-item label="发明人" prop="inventors">
 
-              <inventors v-model="formData.inventors" @addInventor="addInventor" @deleteInventor="deleteInventor"></inventors>
+              <inventors v-model="formData.inventors" @addInventor="addInventor" @deleteInventor="deleteInventor" :disabled="type == 'detail'"></inventors>
 
 						</el-form-item>
 
             <el-form-item label="提案人" prop="proposer">
-              <el-select v-model="formData.proposer">
-                <el-option 
-                      v-for="item in option.proposer" 
-                      :key="item.label" 
-                      :label="item.label" 
-                      :value="item.value">
-                </el-option>
-              </el-select> 
+              <proposer v-model="formData.proposer"></proposer>
             </el-form-item>
             <el-form-item label="技术分类">
-              <el-input readonly @focus="treeShow" :value="tecText"></el-input>
+              <el-input readonly @focus="treeShow" :value="tecText" :disabled="type == 'detail'"  ></el-input>
             </el-form-item>
             <el-form-item label="产品名称">
-              <el-input v-model="formData.product"></el-input>
+              <el-input v-model="formData.product" :disabled="type == 'detail'"></el-input>
             </el-form-item>
 						<el-form-item label="标签" prop="tags">
-							<el-select  multiple filterable allow-create placeholder="请选择标签" v-model="formData.tags">
+							<el-select  multiple filterable allow-create placeholder="请选择标签" v-model="formData.tags" :disabled="type == 'detail'">
 		            <el-option
 		              v-for="item in tagOptions"
 		              :key="item.value"
@@ -43,12 +42,18 @@
 		            </el-option>
 		          </el-select>
 						</el-form-item>
-						<el-form-item label="附件" prop="attachments">
+            <el-form-item label="备注" prop="remark">
+              <el-input type="textarea" v-model="formData.remark" :disabled="type == 'detail'"></el-input>
+            </el-form-item>
+						<el-form-item label="附件" prop="attachments" v-if="type != 'detail'">
                <upload v-model="formData.attachments"></upload>
 						</el-form-item>
-						<el-form-item>
+            <el-form-item label="附件" v-else>
+              <table-component :data="attachmentsData" :tableOption="tableOption"></table-component>
+            </el-form-item>
+						<el-form-item  v-if="type != 'detail'">
 						   <el-button type="primary" @click="createProposal">提交</el-button>
-               <el-button>保存</el-button>
+               <el-button @click="addProposal">保存</el-button>
 <!-- 						   <el-button>取消</el-button> -->
 						</el-form-item>
 			  	</el-form>
@@ -92,18 +97,42 @@
 </template>
 
 <script>
+import TableComponent from '@/components/common/TableComponent'
 import PcSubmit from '@/components/page_extension/ProposalCommon_submit'
 import Inventors from '@/components/form/Inventors'
+import Proposer from '@/components/form/Proposer'
 import Upload from '@/components/form/Upload'
 
-const url = 'http://www.zhiq.wang/proposal/save';
+
+const typeMap = new Map([['/proposal/add', 'add'], ['/proposal/edit', 'edit'], ['/proposal/detail', 'detail']]);
+const url = '/api/proposals';
 const tagUrl = 'http://www.zhiq.wang/tag/lists';
 const fileDelete = 'http://www.zhiq.wang/file/delete';
+const formData = {
+  title: '',
+  abstract: '',
+  proposer: '',
+  remark: '',
+  inventors: [
+    { id: '', share: '' },
+  ],
+  tags: [],
+  attachments: [],
+  class: '',
+  product: '', 
+}
 //https://jsonplaceholder.typicode.com/posts/
 export default {
   name: 'proposalCommon',
   methods: {
-  	createProposal: function() {
+    addProposal () {
+      this.$axios
+        .post('/api/proposals', this.formData)
+        .then(response=>{console.log(response)})
+        .catch(error=>{console.log(error)});
+
+    },
+  	createProposal () {
   		const d = this;
   		d.$refs.form.validate((valid)=>{
         if(valid) {
@@ -117,6 +146,9 @@ export default {
         {value: '联系人一'},
         {value: '联系人一'},
       ]);
+    },
+    querySearchAsync () {
+
     },
     cancelEdit() {
       this.$router.push('/proposal/list');
@@ -136,7 +168,7 @@ export default {
       ])
     },
     addInventor () {
-      this.formData.inventors.push({inventor: '', percent: ''});
+      this.formData.inventors.push({id: '', share: ''});
       this.$refs.form.validateField('inventors');
     },
     deleteInventor (index) {
@@ -169,21 +201,28 @@ export default {
     },
     treeCancel () {
       this.dialogVisible = false;
+    },
+    refreshCommon () {
+      console.log('aaaaaaa');
+      const t = this.type;
+      if( t == 'detail' || t== 'edit' ) {
+        const id = this.$route.query.id;
+        this.$axios.get(`${url}/${id}`).then(response=>{
+          const data = response.data.proposal;
+          const { inventors, proposer } = data;
+          data.inventors = inventors.map((d)=>{return {id: d.id, share: d.share}});
+          data.proposer = proposer.uid;
+          this.formData = data;
+        });
+      }else {
+        this.formData = this.$tool.deepCopy(formData);
+      }
     }
   },
   data () {
     return {
       formData: {
-        title: '',
-        abstract: '',
-        proposer: '',
-        inventors: [
-          { inventor: '', percent: '' },
-        ],
-        tags: [],
-        attachments: [],
-        class: '',
-        product: '',   
+          
       },
       formRules: {
       	'title': [
@@ -205,7 +244,7 @@ export default {
             const reg = /^[1-9][0-9]*$/;
             
             for(let d of b) {
-              if( !d.inventor || !d.percent ) {
+              if( !d.id || !d.share ) {
                 msg = '请完整填写发明人字段';
                 break;
               }
@@ -214,7 +253,7 @@ export default {
             if( !msg ) {
               for(let d of b) {
                 let n;
-                let flag = !!( reg.test(d.percent) && (n = Number.parseInt(d.percent)) && n >= 10 && n <= 100 && (number += n) );
+                let flag = !!( reg.test(d.share) && (n = Number.parseInt(d.share)) && n >= 10 && n <= 100 && (number += n) );
                 if( !flag ) { 
                   msg = '贡献率应为10-100的数字';
                   break;
@@ -232,31 +271,42 @@ export default {
               c(msg);              
             }else {
               c();
-            }
-
-            
+            }            
           },
         },
-        'proposer': {required: true, message: '技术联系人不能为空', trigger: 'change'},
+        'proposer': { type: 'number', required: true, message: '联系人不能为空', trigger: 'change' },
         'attachments': {type: 'array', required: true, message: '附件不能为空', trigger: 'change'}
       	
       },
       option: {
-        'inventors': [
-          { label: '发明人一', value: '1'},
-          { label: '发明人二', value: '2'},
-          { label: '发明人三', value: '3'},
-        ],
         'proposer': [
-          { label: '提案人一', value: '1' },
-          { label: '提案人二', value: '2' },
-          { label: '提案人三', value: '3' },
+          { label: '提案人一', value: 1 },
+          { label: '提案人二', value: 2 },
+          { label: '提案人三', value: 3 },
         ],
         'percent': [ '10', '20', '30', '40', '50', '60', '70', '80', '90', '100' ],
       },
       inventors: [
         { label: '红坚果', value: 1 }
       ],
+      tableOption: {
+        'is_search': false,
+        'is_pagination': false,
+        'is_border': false,
+        'columns': [
+          { type: 'text', label: '附件名称', prop: 'name' },
+          { type: 'text', label: '附件格式', prop: 'ext' },
+          { type: 'text', label: '附件大小 ', prop: 'size' },
+          { 
+            type: 'action', 
+            label: '详情',
+            btns: [
+              {type: 'view', click: ({viewUrl})=>{window.open(viewUrl)}},
+              {type: 'download', click: ({downloadUr})=>{window.open(downloadUr)}},
+            ],
+          }
+        ]
+      },
       dialogVisible: false,
       treeData: {
         'data': [
@@ -280,26 +330,27 @@ export default {
     }
   },
   created () {
-
-    if(this.$route.path == '/proposal/list/edit'){
-      this.formData = this.$route.query;
-    }
+    this.refreshCommon();
   },
   computed: {
     type () {
-      const type = this.$store.getters.proposalType;
-      return type ? type : 'add';
+      const type = typeMap.get(this.$route.path);
+      return type;
     },
     tagOptions () {
       return this.$store.getters.tagOptions;
+    },
+    attachmentsData () {
+      const d = this.formData.attachments;
+      return { total: d.length, data: d };
     }
   },
   watch: {
     $route () {
-      this.$store.commit('setProposalType', this.$store.path);
+      this.refreshCommon();
     }
   },
-  components: { Inventors, PcSubmit, Upload },
+  components: { TableComponent, Inventors, PcSubmit, Upload, Proposer },
 
 }
 </script>

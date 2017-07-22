@@ -85,7 +85,7 @@ const router = new Router({
       path: '/proposal/add',
       name: 'ProposalCommon',
       component: ProposalCommon,
-      alias: ['/proposal/detail', '/task/pending/proposal_check']
+      alias: ['/proposal/detail', '/task/pending/proposal_check', '/proposal/edit'],
     },{
       path: '/task/pending/check',
       name: 'CheckProposal',
