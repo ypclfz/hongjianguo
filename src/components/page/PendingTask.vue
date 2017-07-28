@@ -1,7 +1,13 @@
 <template>
   <div class="main">
-    <app-filter :data="filterData"></app-filter>
-    <table-component :tableOption="tableOption" :data="tableData" ref="table">
+    <app-collapse col-title="任务查询" default-close> 
+      <strainer
+        @query="strainerQuery"
+        @clear="strainerClear"
+      ></strainer>
+    </app-collapse>
+     <app-filter :data="appFilterData"></app-filter>
+    <table-component :tableOption="tableOption" :data="tableData" @refreshTableData="refreshTableData" ref="table">
       <template scope="scope" slot="expand">
         <edit :row="scope.row" v-show="expandType == 'edit'"></edit>
         <detail :row="scope.row" v-show="expandType  == 'detail'"></detail>
@@ -76,34 +82,26 @@
         </el-form-item>
       </el-form>
     </el-dialog>
-
-    <el-dialog title="设置任务筛选条件" :visible.sync="dialogScreenVisible" class="dialog-small">
-      <el-form label-width='100px'>
-        <el-form-item label="客户名称"><el-input></el-input></el-form-item>
-        <el-form-item label="案件类型"><el-input></el-input></el-form-item>
-        <el-form-item label="任务类型"><el-input></el-input></el-form-item>
-        <el-form-item label="案件负责人"><el-input></el-input></el-form-item>
-        <el-form-item label="指定完成时间"><app-date-picker v-model="screenForm.time1"></app-date-picker></el-form-item>
-        <el-form-item label="官方绝限"><app-date-picker v-model="screenForm.time2"></app-date-picker></el-form-item>
-        <el-form-item label="客户期限"><app-date-picker v-model="screenForm.time3"></app-date-picker></el-form-item>
-        <el-form-item label="完成时间"><app-date-picker v-model="screenForm.time4"></app-date-picker></el-form-item>
-        <el-form-item style="margin-bottom: 0px;"><el-button>载入</el-button></el-form-item>
-      </el-form>
-    </el-dialog>
   </div>
 </template>
 
 <script>
+import axiosMixins from '@/mixins/axios-mixins'
 import AppFilter from '@/components/common/AppFilter'
+import AppCollapse from '@/components/common/AppCollapse'
 import TableComponent from '@/components/common/TableComponent'
 import AppDatePicker from '@/components/common/AppDatePicker'
 import Edit from '@/components/page_extension/PendingTask_edit'
 import Detail from '@/components/page_extension/PendingTask_detail'
 import Finish from '@/components/page_extension/PendingTask_finish'
+import Strainer from '@/components/page_extension/PendingTask_strainer'
 import $ from 'jquery'
+
+const url = '/api/tasks';
 
 export default {
   name: 'pendingTask',
+  mixins: [axiosMixins],
   methods: {
     dropGenrator(str) {
       return (row, element)=>{       
@@ -111,6 +109,55 @@ export default {
         $(element.target).parents("tr").find(".el-table__expand-icon").click();  
       }
     },
+    taskDelete ({title, id}) {
+      this.$confirm(`此操作将永久删除${title}, 是否继续？`)
+        .then(()=>{
+          this.$tool.axiosDelete(`${url}/${id}`, (d)=>{
+            if(d.status) {
+              this.$refs.table.update();
+            }else {
+              this.$alert(d.info);
+            }
+          })
+        })
+        .catch(()=>{});
+    },
+    strainerQuery (form) {
+      const arr = ['due_time', 'deadline', 'end_time'];
+      arr.forEach(d=>{
+        form[d] = form[d].join(',');
+      })
+
+      this.filter = form;
+    },
+    strainerClear () {
+      this.filter = {};
+    },
+    refreshTableData (option) {
+      const params = Object.assign({}, this.filter, option, this.screen_value);
+
+      this.axiosGet({url, params, success: data=>{
+          this.tableData = data.tasks;
+          this.filters = data.tasks.filters;
+      }});
+
+      // this.$axios
+      //   .get(url, { params })
+      //   .then(response=>{
+      //     const d = response.data;
+      //     if(d.status) {
+      //       this.tableData = d.tasks;
+      //       this.filters = d.tasks.filters;
+      //     }else {
+      //       this.$alert('请求数据失败！');
+      //     }
+      //   })
+      //   .catch(error=>{
+      //     console.log(error);
+      //     this.$alert('网络错误！');
+      //   })
+    },
+    
   },
   data () {
     return {
@@ -118,32 +165,11 @@ export default {
       dialogTurnoutVisible: false,
       dialogAddVisible: false,
       dialogSettingVisible: false,
+      filter: {},
+      filters: {},
       expandOldType: '',
       expandType: '',
-      screenForm: {
-        time1: [],
-        time2: [],
-        time3: [],
-        time4: [],
-      },
       checkedTest: [],
-      filterData: [
-        {
-          'label': '任务阶段',
-          'key': 'jd',
-          'items': ['专利撰稿','专利内审中', '发明人审核'],
-        },
-        {
-          'label': '完成期限',
-          'key': 'time',
-          'items': ['已过期', '本周', '下月'],
-        },
-        {
-          'label': '是否一撰',
-          'key': 'is',
-          'items': ['仅显示一撰', '二撰及以后'],
-        }
-      ],
       tableOption: {
         'header_btn': [
           { type: 'custom', label: '新增', icon: 'plus', click: ()=>{ this.dialogAddVisible = true; } },
@@ -178,26 +204,21 @@ export default {
         'columns': [
           { type: 'expand' },
           { type: 'selection'},
-          { type: 'text', label: '案号', prop: 'number'},
-          { type: 'text', label: '地区'},
-          { type: 'text', label: '案件类型'},
-          { type: 'text', label: '客户'},
-          { type: 'text', label: '案件名称', show: false},
-          { type: 'text', label: '申请号', show: false},
-          { type: 'text', label: '注册号/专利号', show: false},
-          { type: 'text', label: '任务名称'},
-          { type: 'text', label: '任务开始时间'},
-          { type: 'text', label: '指定完成时间'},
-          { type: 'text', label: '官方绝限', show: false},
-          { type: 'text', label: '客户绝限', show: false},
-          { type: 'text', label: '完成时间', show: false},
-          { type: 'text', label: '任务处理人'},
-          { type: 'text', label: '案件负责人', show: false},
-          { type: 'text', label: '任务来源', show: false},
-          { type: 'text', label: '任务来源', show: false},
-          { type: 'text', label: '撰稿人/外代', show: false},
-          { type: 'text', label: '任务状态', show: false},
-          { type: 'text', label: '备注', show: false},
+          { type: 'text', label: '案号', prop: 'serial'},
+          { type: 'text', label: '案件名称', prop: 'title'},
+          { type: 'text', label: '任务名称', prop: 'name' },
+          { type: 'text', label: 'IPR', prop: 'ipr'},
+          { type: 'text', label: '案件负责人', prop: 'person_in_charge', show: false},
+          { type: 'text', label: '任务来源', prop: 'sender_name', show: false},
+          { type: 'text', label: '代理机构名称', prop: 'agency', show: false},
+          { type: 'text', label: '代理人名称', prop: 'agent'},
+          { type: 'text', label: '申请日', prop: 'apd'},
+          { type: 'text', label: '申请号', prop: 'apn'},
+          { type: 'text', label: '开始时间', prop: 'start_time', show: false},
+          { type: 'text', label: '法定期限', prop: 'deadline', show: false},
+          { type: 'text', label: '指定期限', prop: 'due_time', show: false},
+          { type: 'text', label: '完成时间', prop: 'end_time'},
+          { type: 'text', label: '任务状态', prop: 'status', show: false},
           { 
             type: 'action', 
             label: '操作',
@@ -216,20 +237,64 @@ export default {
               { btn_type: 'text', label: '编辑', click: this.dropGenrator('edit') },
               { btn_type: 'text', label: '详情', click: this.dropGenrator('detail') },
               { btn_type: 'text', label: '线上完成', click: this.dropGenrator('finish') },
+              { type: 'delete', click: this.taskDelete },
             ],
           }
         ],
       },
-      tableData: [
-        { number: '测试数据1', id: 1 },
-        { number: '测试数据2', id: 2 },
-        { number: '测试数据3', id: 3 },
-        { number: '测试数据4', id: 4 },
-        { number: '测试数据5', id: 5 },
-      ],
+      tableData: [],
     };
   },
-  components: { AppFilter, TableComponent, AppDatePicker, Edit, Detail, Finish },
+  computed: {
+    appFilterData () {
+      const f = this.filters;
+      const filterArr = [
+        {
+          label: '代理人',
+          key: 'agents',
+          items: [],
+        },
+        {
+          label: '指定完成时间',
+          key: 'duetime',
+          items: [],
+        },
+        {
+          label: '任务阶段',
+          key: 'roles',
+          items: [],
+        }
+      ];
+      filterArr.forEach(d=>{
+        const item = f[d.key];
+        if(item) {
+          item.forEach(d2=>{
+            d.items.push({label: d2.name, value: d2.id});
+          });
+        }
+      });
+      return filterArr;     
+    },
+    screen_value () {
+      const m = new Map([['agents', 'project_agent'],['duetime', 'due_time'],['roles', 'task_def_id']]);
+      const obj = {};
+
+      this.$store.getters.screen_value.forEach((d,k)=>{obj[m.get(k)] = d[0]});
+      return obj;
+    }
+  },
+  watch: {
+    screen_value () {
+      this.$refs.table.refresh();
+    },
+    filter () {
+      this.$refs.table.refresh();
+    }
+  },
+  created () {
+    this.refreshTableData();
+  },
+  components: { AppFilter, TableComponent, AppDatePicker, Edit, Detail, Finish, Strainer, AppCollapse },
 } 
 </script>
 <style>

@@ -5,6 +5,8 @@
       :on-success="handleUploadSuccess"
       :on-remove="handleUploadRemove"
       action="/api/files"
+      :on-preview="onPreview"
+      :file-list="fileList"
       multiple
     >
 			<i class="el-icon-upload"></i>
@@ -18,37 +20,48 @@
 	  props: {
 	  	'value': {
 	  		type: Array,
-	  		default: [],
+	  		default () {
+	  			return [];
+	  		},
+	  	},
+	  	'fileList': {
+	  		type: Array,
+	  		default () {
+	  			return [];
+	  		}
 	  	}
 	  },
 	  data () {
-			return {}
+		return {};
 	  },
 	  methods: {
 	  	handleUploadSuccess (p, f) {
 	      if(p.status) {
+	      	const id = p.file.id;
 	      	const copy = [...this.value];
-	      	const uid = p.file.uid;
 	      	
-	      	f.customId = uid;
-	      	copy.push(uid);
+	      	f.id = id;
+	      	copy.push(id);
 	      	this.$emit('input', copy);
 	      }else {
 	        this.$alert(p.info);
 	      }
 	    },
+	    onPreview (file) {
+	    	window.open(file.downloadUrl);
+	    },
 	    handleUploadRemove (f) {
-	      // const id = f.customId;
+	      const id = f.id;
+	      const v = this.value;
+	      let i = v.length;
 
-	      // this.$http.post(fileDelete, { id });
+	      while(i--) {
+	      	if(v[i] == id) break;
+	      }
+	      const copy = [...v];
+	      copy.splice(i, 1);
+	      this.$emit('input', copy);
 
-	      // const arr = this.formData.attachments;
-	      // for(let i = 0; i < arr.length; i++) {
-	      //   if(arr[i] == id) {
-	      //     arr.splice(i,1);
-	      //     break;
-	      //   }
-	      // }
 	    },
 	  }
 	}

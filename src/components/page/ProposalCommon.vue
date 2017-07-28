@@ -1,13 +1,13 @@
-<template>
+ <template>
   	<div class="main">
   		<el-row>
 	  		<el-col :span="18">
 		  		<el-form label-width="100px" :rules="formRules" :model="formData" ref="form">
             <el-form-item label="创建时间" v-if="type == 'detail'">
-              {{ formData.create_time }}
+              {{ create_time }}
             </el-form-item>
             <el-form-item label="更新时间" v-if="type == 'detail'">
-              {{ formData.update_time }}
+              {{ update_time }}
             </el-form-item>
 						<el-form-item label="案件名称" prop="title">
 							<el-input v-model="formData.title" placeholder="请输入案件名称" :disabled="type == 'detail'">
@@ -24,13 +24,13 @@
 						</el-form-item>
 
             <el-form-item label="提案人" prop="proposer">
-              <proposer v-model="formData.proposer"></proposer>
+              <proposer v-model="formData.proposer" :disabled="type == 'detail'"></proposer>
             </el-form-item>
-            <el-form-item label="技术分类">
-              <el-input readonly @focus="treeShow" :value="tecText" :disabled="type == 'detail'"  ></el-input>
+            <el-form-item label="技术分类" prop="classification">
+              <el-input readonly @focus="$refs.classificationTree.show()" :value="classificationText" :disabled="type == 'detail'"  ></el-input>
             </el-form-item>
-            <el-form-item label="产品名称">
-              <el-input v-model="formData.product" :disabled="type == 'detail'"></el-input>
+            <el-form-item label="产品名称" prop="products">
+              <el-input readonly @focus="$refs.productTree.show()" :value="productText" :disabled="type == 'detail'"></el-input>
             </el-form-item>
 						<el-form-item label="标签" prop="tags">
 							<el-select  multiple filterable allow-create placeholder="请选择标签" v-model="formData.tags" :disabled="type == 'detail'">
@@ -46,15 +46,15 @@
               <el-input type="textarea" v-model="formData.remark" :disabled="type == 'detail'"></el-input>
             </el-form-item>
 						<el-form-item label="附件" prop="attachments" v-if="type != 'detail'">
-               <upload v-model="formData.attachments"></upload>
+               <upload v-model="formData.attachments" :file-list="attachments"></upload>
 						</el-form-item>
             <el-form-item label="附件" v-else>
               <table-component :data="attachmentsData" :tableOption="tableOption"></table-component>
             </el-form-item>
 						<el-form-item  v-if="type != 'detail'">
-						   <el-button type="primary" @click="createProposal">提交</el-button>
-               <el-button @click="addProposal">保存</el-button>
-<!-- 						   <el-button>取消</el-button> -->
+						   <el-button type="primary" :disabled="btn_disabled">提交</el-button>
+               <el-button @click="save" :disabled="btn_disabled">暂存</el-button>
+						   <el-button @click="cancel" :disabled="btn_disabled">取消</el-button>
 						</el-form-item>
 			  	</el-form>
 		  	</el-col>
@@ -73,31 +73,33 @@
             <li><i class="iconfont icon-ppt"></i><a href="#">15分钟如何写一个专利底稿.pptx</a></li>
           </ul>
 		  	</el-col>
-	  	</el-row> 
-      <el-dialog title="选择技术分类" :visible.sync="dialogVisible">
-        <el-tree
-          :data="treeData.data"
-          :props="treeData.props"
-          show-checkbox
-          default-expand-all
-          check-strictly
-          node-key="id"
-          ref="tree"
-          @check-change='treeChange'
-          style="border-radius: 5px;"
-        >
-        </el-tree>
-        <div style="margin-top: 15px;">
-          <el-button type="primary" @click="treeSave">保存</el-button>
-          <el-button @click="treeCancel">取消</el-button>
-        </div>
-      </el-dialog>
+	  	</el-row>
+      <pop-tree 
+        title="选择技术分类"
+        :data="classificationData" 
+        :props="props" 
+        :label.sync="classificationText" 
+        :value.sync="formData.classification" 
+        ref="classificationTree"
+      >
+      </pop-tree> 
+      <pop-tree 
+        title="选择产品分类"
+        :data="productData"
+        :props="props"
+        :label.sync="productText"
+        :value.sync="formData.products"
+        multiple
+        ref="productTree"
+      >
+      </pop-tree> 
       <pc-submit ref="submit"></pc-submit>
   	</div>
 </template>
 
 <script>
 import TableComponent from '@/components/common/TableComponent'
+import PopTree from '@/components/common/PopTree'
 import PcSubmit from '@/components/page_extension/ProposalCommon_submit'
 import Inventors from '@/components/form/Inventors'
 import Proposer from '@/components/form/Proposer'
@@ -109,17 +111,7 @@ const url = '/api/proposals';
 const tagUrl = 'http://www.zhiq.wang/tag/lists';
 const fileDelete = 'http://www.zhiq.wang/file/delete';
 const formData = {
-  title: '',
-  abstract: '',
-  proposer: '',
-  remark: '',
-  inventors: [
-    { id: '', share: '' },
-  ],
-  tags: [],
-  attachments: [],
-  class: '',
-  product: '', 
+
 }
 //https://jsonplaceholder.typicode.com/posts/
 export default {
@@ -128,9 +120,42 @@ export default {
     addProposal () {
       this.$axios
         .post('/api/proposals', this.formData)
-        .then(response=>{console.log(response)})
+        .then(response=>{
+          const d = response.data;
+          if(d.status) {
+            this.$router.push('/proposal/list');
+          }else {
+            this.$alert("添加失败\n请重试！");
+            this.btn_disabled = false;
+          }
+        })
         .catch(error=>{console.log(error)});
-
+    },
+    updateProposal () {
+      this.$axios
+        .put(`/api/proposals/${this.id}`, this.formData)
+        .then(response=>{
+          const d = response.data;
+          if(d.status) {
+            this.$router.push('/proposal/list');
+          }else {
+            this.$alert("编辑失败\n请重试！");
+            this.btn_disabled = false;
+          }
+        })
+        .catch(error=>{console.log(error)});
+    },
+    save () {
+      this.$refs.form.validate(valid=>{
+        if(valid) {
+          this.btn_disabled = true;
+          this.type == 'add' ? this.addProposal() : this.updateProposal();    
+        }
+      });
+      
+    },
+    cancel () {
+      this.$router.push('/proposal/list');
     },
   	createProposal () {
   		const d = this;
@@ -150,23 +175,6 @@ export default {
     querySearchAsync () {
 
     },
-    cancelEdit() {
-      this.$router.push('/proposal/list');
-    },
-    handleFetch (val, cb) {
-      cb([
-        { value: '10' },
-        { value: '20' },
-        { value: '30' },
-        { value: '40' },
-        { value: '50' },
-        { value: '60' },
-        { value: '70' },
-        { value: '80' },
-        { value: '90' },
-        { value: '100' },
-      ])
-    },
     addInventor () {
       this.formData.inventors.push({id: '', share: ''});
       this.$refs.form.validateField('inventors');
@@ -175,55 +183,68 @@ export default {
       this.formData.inventors.splice(index, 1);
       this.$refs.form.validateField('inventors');
     },
-    treeShow () {
-      
-      this.dialogVisible = true;
-      if(this.$refs.tree) {
-        this.$refs.tree.setCheckedKeys([this.formData.class]);
-      }
-
-    },
-    treeChange (a, b) {
-      if(b) {
-        this.$refs.tree.setCheckedKeys([a.id]);
-      }
-    },
-    treeSave () {
-      const arr = this.$refs.tree.getCheckedNodes();
-      if(arr[0]) {
-        this.tecText = arr[0]['label'];
-        this.formData.class = arr[0]['id'];
-      }else {
-        this.tecText = '';
-        this.formData.class = '';
-      }
-      this.dialogVisible = false;
-    },
-    treeCancel () {
-      this.dialogVisible = false;
-    },
     refreshCommon () {
-      console.log('aaaaaaa');
       const t = this.type;
+
       if( t == 'detail' || t== 'edit' ) {
         const id = this.$route.query.id;
+        this.id = id;
         this.$axios.get(`${url}/${id}`).then(response=>{
           const data = response.data.proposal;
-          const { inventors, proposer } = data;
+          const { inventors, proposer, classification, products, attachments } = data;
+          
           data.inventors = inventors.map((d)=>{return {id: d.id, share: d.share}});
           data.proposer = proposer.uid;
-          this.formData = data;
+
+          if(t == 'detail') {
+            this.create_time = data.create_time;
+            this.update_time = data.update_time;
+          }
+          
+          if(classification) {
+            data.classification = classification.id;
+            this.classificationText = classification.name;
+          }
+
+          if(products.length != 0) {
+            const {name, id} = this.$tool.splitObj(products, ['name', 'id']);
+            data.products = id;
+            this.productText = name.join('；');
+          }
+
+          if( attachments.length != 0) {
+            this.attachments = attachments;
+            data.attachments = attachments.map(d=>d.id);
+          }
+          
+          this.$tool.coverObj(this.formData, data);
         });
       }else {
-        this.formData = this.$tool.deepCopy(formData);
+        this.$refs.form.resetFields();
+        this.formData 
+        this.classificationText = this.productText = '';
       }
     }
   },
   data () {
     return {
-      formData: {
-          
+      id: '',
+      formData:  { 
+        title: '',
+        abstract: '',
+        proposer: '',
+        remark: '',
+        inventors: [
+          { id: '', share: '' },
+        ],
+        tags: [],
+        attachments: [],
+        classification: '',
+        products: [], 
       },
+      attachments: [],
+      create_time: '',
+      update_time: '',
       formRules: {
       	'title': [
       		{required: true, message: '案件名不能为空',trigger: 'blur'},
@@ -274,21 +295,15 @@ export default {
             }            
           },
         },
-        'proposer': { type: 'number', required: true, message: '联系人不能为空', trigger: 'change' },
+        'proposer': [
+          { type: 'number', required: true, message: '联系人不能为空', trigger: 'change' },
+        ],
         'attachments': {type: 'array', required: true, message: '附件不能为空', trigger: 'change'}
       	
       },
       option: {
-        'proposer': [
-          { label: '提案人一', value: 1 },
-          { label: '提案人二', value: 2 },
-          { label: '提案人三', value: 3 },
-        ],
         'percent': [ '10', '20', '30', '40', '50', '60', '70', '80', '90', '100' ],
       },
-      inventors: [
-        { label: '红坚果', value: 1 }
-      ],
       tableOption: {
         'is_search': false,
         'is_pagination': false,
@@ -307,29 +322,16 @@ export default {
           }
         ]
       },
-      dialogVisible: false,
-      treeData: {
-        'data': [
-          {
-            id: '1',
-            label: '空调技术',
-            children: [
-              { id: '1-1', label: '空调制冷' },
-              { id: '1-2', label: '空调制热' },
-            ]
-          },
-          { id: '2', label: '飞机' },
-        ],
-        props: {
-          label: 'label',
-          children: 'children',
-        }
+      classificationText: '',
+      productText: '',
+      props: {
+        label: 'name',
+        children: 'children',
       },
-      tecText: '',
-      test: '',
+      btn_disabled: false,
     }
   },
-  created () {
+  mounted () {
     this.refreshCommon();
   },
   computed: {
@@ -341,8 +343,14 @@ export default {
       return this.$store.getters.tagOptions;
     },
     attachmentsData () {
-      const d = this.formData.attachments;
+      const d = this.attachments;
       return { total: d.length, data: d };
+    },
+    classificationData () {
+      return this.$store.getters.classificationData;
+    },
+    productData () {
+      return this.$store.getters.productData;
     }
   },
   watch: {
@@ -350,7 +358,7 @@ export default {
       this.refreshCommon();
     }
   },
-  components: { TableComponent, Inventors, PcSubmit, Upload, Proposer },
+  components: { PopTree, TableComponent, Inventors, PcSubmit, Upload, Proposer },
 
 }
 </script>

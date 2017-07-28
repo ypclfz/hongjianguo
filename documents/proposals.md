@@ -6,7 +6,7 @@ request {
     abstract:"abstract",//摘要,不能超过1000字符
     attachments:['fileid'],//附件
     proposer:"1",//提案人
-    inventors:[{id:"1",share:"10"}],//id 发明人ID，share 发明人贡献占比
+    inventors:[id:"1",share:"10"],//id 发明人ID，share 发明人贡献占比
     tags:["tag"],//标签
     classification:"1",//技术分类ID
 } 
@@ -58,7 +58,7 @@ reponse {
 }
 
 # 4、删除提案
-requestUrl:http://www.zhiq.wang/proposals
+requestUrl:http://www.zhiq.wang/proposals/:id
 method:DELETE;
 response{
     status:1, //状态，0表示请求失败，1表示请求成功
@@ -77,56 +77,11 @@ request {
     classification:"1",//技术分类ID，多个分类用逗号隔开
     product:"1",//产品分类ID，多个分类用逗号隔开
     proposer:"1",//提案人ID，多个提案人ID用逗号隔开
-	//branch:"1",//部门ID,暂未启用，多个部门ID用逗号隔开
+	branch:"1",//部门ID,暂未启用，多个部门ID用逗号隔开
     tags:"tag",//标签，多个标签用逗号隔开
     inventors:"1",//发明人ID，多个发明人ID用逗号隔开
-	sort:"field-order",//field表示字段，取值为id,status,title,abstract,classification,product,proposer,create_time,update_time,delete_time,remark,tag,inventor order取值为asc（升序），desc（降序），多个排序采用逗号隔开
-} 
-abstract
-:
-"案件测试"
-attachments
-:
-[]
-branch
-:
-""
-classification
-:
-""
-create_time
-:
-"2017-06-26 10:14:30"
-delete_time
-:
-""
-id
-:
-14
-inventors
-:
-[]
-products
-:
-[]
-proposer
-:
-{uid: 1, name: "红坚果", mobile: "18098976299", email: "hongjianguo@hongjianguo.com"}
-remark
-:
-""
-status
-:
-1
-tags
-:
-["标签1", "标签3", "标签2"]
-title
-:
-"案件测试"
-update_time
-:
-"1970-01-01 08:00:00" 
+	sort:"field-order",//field表示字段，取值为id,status,title,abstract,classification,proposer,create_time,update_time,delete_time,remark order取值为asc（升序），desc（降序），多个排序采用逗号隔开
+}  
 response {
     status:1,
     info:"信息提示",

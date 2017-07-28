@@ -16,7 +16,7 @@
 接口URL:http://www.zhiq.wang/member/lists;  
 接口调用方式：post/get;  
 @param integer page:分页号码，如果不提供，默认为1  
-@param integer pagesize:分页数量，如果不提供默认为20  
+@param integer listRows:分页数量，如果不提供默认为20  
 @param string keyword(可选）,关键字，用于匹配用户姓名、email、手机等字段  
 @param integer department(可选)，部门id   
 @param string sort_field(可选)，排序字段，可取的值为nickname,mobile,email,department  

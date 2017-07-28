@@ -4,10 +4,11 @@
     @input="handleInput"
     filterable
     remote
-    placeholder="请输入提案人关键词"
+    placeholder="请输入关键词"
     :disabled="disabled"
     :remote-method="remoteMethod"
     :loading="loading"
+    :multiple="multiple"
 	>
 		<el-option
 			v-for="item in options"
@@ -21,13 +22,21 @@
 
 	<script>
 	export default {
-	  name: 'proposer',
+	  name: 'inventorSelect',
 	  props: {
-	  	'value': [Number, String],
+	  	'value': [Number, String, Array],
 	  	'defaultOptions': {
 	  		type: Array,
 	  	},
 	  	'disabled': {
+	  		type: Boolean,
+	  		default: false,
+	  	},
+	  	'default': {
+	  		type: Boolean,
+	  		default: false,
+	  	},
+	  	'multiple': {
 	  		type: Boolean,
 	  		default: false,
 	  	}
@@ -36,7 +45,7 @@
 			return {
 				query: '',
 				options: [],
-				loading: false,
+			  loading: false,
 			}
 	  },
 	  methods: {
@@ -47,9 +56,12 @@
 	  		const params = { keyword };
 
 	  		this.loading = true;
-	  		this.$axios.get('/api/members', {params}).then(response=>{
+	  		this.$axios.get('/api/inventors', { params }).then(response=>{
 	  			this.loading = false;
-	  			this.options = response.data.members.data.map(d=>{return {id: d.uid, name: d.username}});
+	  			this.options = response.data.data.data;
+	  			if(this.default) {
+	  				this.options.unshift({id: '', name: '未选择'});
+	  			}
 	  		});
 	  	}
 	  },

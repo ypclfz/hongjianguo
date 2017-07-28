@@ -1,30 +1,71 @@
 <template>
 	<div class="main">
-    <app-filter :data="filterParameter"></app-filter>
-		<table-component :tableOption="tableOption" :data="tableData" ref="table" @refreshTableData="refreshTableData">
-      <template slot="expand" scope="scope">
-        <el-steps :space="200" :active="1">
-          <el-step title="步骤 1" description="这是一段很长很长很长的描述性文字"></el-step>
-          <el-step title="步骤 2" description="这是一段很长很长很长的描述性文字"></el-step>
-          <el-step title="步骤 3" description="这是一段很长很长很长的描述性文字"></el-step>
-        </el-steps>
-      </template>
-      <template slot="action" scope="scope">
-        <el-button icon="information" size="mini" @click="detail(scope.row)" v-if="scope.row.status">详情</el-button>
-        <el-button icon="edit" size="mini" @click="edit(scope.row)" v-else>编辑</el-button>
-        <el-button icon="delete" size="mini" @click="delete(scope.row)">删除</el-button>
-      </template>
-    </table-component>
+    <app-collapse style="margin-bottom: 20px;" col-title="提案筛选" default-close>
+   
+      <el-form label-width="80px">
+        <el-row>
+          <el-col :span="12">
+            <el-form-item label="提案标题">
+              <el-input></el-input>
+            </el-form-item>
+            <el-form-item label="技术分类">
+              <classification v-model="classification" multiple></classification>
+            </el-form-item>
+            <el-form-item label="产品分类">
+              <product v-model="product" multiple></product>
+            </el-form-item>
+          </el-col>
+          <el-col :span="12">
+            <el-form-item label="发明人">
+              <inventor-select v-model="inventors" multiple></inventor-select>
+            </el-form-item>
+            <el-form-item label="提案人">
+              <member v-model="proposer" multiple></member>
+            </el-form-item>
+            <el-form-item label="标签">
+              <tag v-model="tags" multiple></tag>
+            </el-form-item>
+          </el-col>
+        </el-row>
+        <el-row style="text-align: center">
+          <el-button type="info" size="small" @click="query">查询</el-button>
+          <el-button type="danger" size="small" @click="clear" style="margin-left: 20px">清空</el-button>
+        </el-row>
+      </el-form>
+   
+    </app-collapse>
+    		<table-component :tableOption="tableOption" :data="tableData" ref="table" @refreshTableData="refreshTableData">
+          <template slot="expand" scope="scope">
+            <el-steps :space="200" :active="1">
+              <el-step title="步骤 1" description="这是一段很长很长很长的描述性文字"></el-step>
+              <el-step title="步骤 2" description="这是一段很长很长很长的描述性文字"></el-step>
+              <el-step title="步骤 3" description="这是一段很长很长很长的描述性文字"></el-step>
+            </el-steps>
+          </template>
+          <template slot="action" scope="scope">
+            <el-button icon="information" size="mini" @click="detail(scope.row)" v-if="scope.row.status">详情</el-button>
+            <el-button icon="edit" size="mini" @click="edit(scope.row)" v-else>编辑</el-button>
+            <el-button icon="delete" size="mini" @click="deleteSingle(scope.row)">删除</el-button>
+          </template>
+        </table-component>
+
   </div>
 </template>
 
 <script>
 import TableComponent from '@/components/common/TableComponent'
 import AppFilter from '@/components/common/AppFilter'
+import AppCollapse from '@/components/common/AppCollapse'
+import Classification from '@/components/form/Classification'
+import Product from '@/components/form/Product'
+import InventorSelect from '@/components/form/InventorSelect'
+import Member from '@/components/form/Member'
+import Tag from '@/components/form/Tag'
 
 const url = 'http://www.zhiq.wang/proposal/lists';
 const delete_url = 'http://www.zhiq.wang/proposal/lists';
 const tag_url = 'http://www.zhiq.wang/tag/lists';
+const strainerArr = ['classification', 'product', 'proposer', 'tags', 'inventors'];
 export default {
   name: 'proposalList',
   methods: {
@@ -32,30 +73,29 @@ export default {
       this.$router.push('/proposal/add');
     },
     edit (row) {
-      const arr = [];
-      for(let a of row.inventors) {
-        arr.push(a.name);
-      }
-      row.inventors = arr;
-      this.$router.push({path: '/proposal/list/edit', query: row});
+      this.$router.push({path: '/proposal/edit', query: {id: row.id}});
     },
-    delete (row) {
-      this.$confirm(`确认删除${row.title}?`, {type: 'warning', closeOnClickModal: false})
+    deleteSingle (row) {
+      this.$confirm(`删除后不可恢复，确认删除“${row.title}”?`, {type: 'warning'})
         .then(()=>{
-          this.$http.post(delete_url, {id: row.id}).then(data=>{
-            
-            const body = data.body;
-            if(body.status) {
-              this.tableData = body.list;
-            }else {
-              this.$alert("删除失败");
-            }
-          }).catch(err=>{
-            console.log(err);
-            this.$alert("网络请求错误");
-          });
+          this.$axios
+            .delete(`/api/proposals/${row.id}`)
+            .then(response=>{
+              console.log(response);
+              const d = response.data;
+
+              if(d.status) {
+                this.$refs.table.refresh();
+              }else {
+                this.$alert("删除失败！", {type: 'error'});
+              }
+            })
+            .catch(err=>{
+              console.log(err);
+              this.$alert("网络错误！", {type: 'error'});
+            });
         })
-        .catch(()=>{console.log("取消")});
+        .catch(()=>{})
     },
     detail (row) {
       this.$router.push({path: '/proposal/detail', query: {id: row.id}});
@@ -68,19 +108,21 @@ export default {
         this.$confirm("确认删除?", {type: 'warning', closeOnClickModal: false}).then(()=>{console.log("删除")}).catch(()=>{console.log("取消")});
       }
     },
-    timeSearch (startTime, endTime) {
-      if( startTime && endTime ) {
-        this.urlOption.time = [this.getDay(startTime), this.getDay(endTime)];
-      }else {
-        this.$alert("请选择日期范围", {type: 'warning', closeOnClickModal: true});
-      }
+    query () {
+      const obj = {};
+      
+      obj.title = this.title;
+      strainerArr.forEach(d=>{obj[d] = this[d].join(',')});
+
+      this.filter = obj;
+      this.$refs.table.refresh();
     },
-    timeClear () {
-      if(this.urlOption.time.length != 0) this.urlOption.time = []; 
-    },
-    getDay (t) {
-      t = new Date(t);
-      return t.getFullYear() + "-" + (t.getMonth() + 1) + "-" + t.getDate();
+    clear () {
+      this.title = "";
+      strainerArr.forEach(d=>{this[d] = []});
+
+      this.filter = {};
+      this.$refs.table.refresh();
     },
     refreshTableData (option) {
       const params = Object.assign({}, option, this.filter);
@@ -95,7 +137,6 @@ export default {
           { type: 'add', click: this.add },
           { type: 'delete', click: this.bulkDelete },
           { type: 'control', label: '字段' },
-          { type: 'date', key: 'time' },
         ],
         'default_sort': { prop: 'create_time', order: 'descending' },
         'sortChange': this.sortChange,
@@ -161,54 +202,19 @@ export default {
         }
       ],
       filter: {
-        tags: '',
-        proposer: '',
-        inventors: '',
       },
-    }
-  },
-  computed: {
-    screen_value () {
-      return this.$store.getters.screen_value;
-    },
-    tagOptions () {
-      return this.$store.getters.tagOptions;
-    }
-  },
-  watch: {
-    screen_value () {
-
-      const map = this.screen_value;
-      const arr = ['tags', 'proposer', 'inventors'];
-      arr.forEach( (v)=>{ this.filter[v] = map.has(v) ? map.get(v).join(',') : ""; } );
-      this.$refs.table.refresh();
-
-    },
-    tagOptions () {
-      this.filterParameter[0].items = this.$tool.deepCopy(this.$store.getters.tagOptions);
+      title: '',
+      classification: [],
+      product: [],
+      proposer: [],
+      tags: [],
+      inventors: [],
     }
   },
   created () {
-    // this.filterParameter[0].items = this.$tool.deepCopy(this.$store.getters.tagOptions);
-    // this.$axios.get('/api/proposals').then(response=>{this.tableData = response.data.proposals});
-    // this.$http.post(url, {'tag': '标签一'}).then(data=>{ data.status ? this.tableData = data.body.list : this.$alert('获取表格数据失败') }, error=>{console.log(error)});
     
-    // this.$http.get(tag_url)
-    //   .then(data=>{
-    //     const body = data.body; 
-    //     if(body.status) {
-    //       const arr = [];
-    //       for(let d of body.tags) {
-    //         arr.push(d["tag"]);
-    //       }
-    //       this.filterParameter[0].items.push(...arr);
-    //     }else {
-    //       this.$alert('获取标签列表失败!');
-    //     }
-    //   },
-    //   error=>{console.log(error)});
   },
-  components: { TableComponent, AppFilter } 
+  components: { TableComponent, AppFilter, AppCollapse, Classification, Product, InventorSelect, Member, Tag } 
 }
 </script>
 

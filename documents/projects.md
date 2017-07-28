@@ -30,8 +30,8 @@ request {
     class:"1",//分类ID
     keyword:"关键字",//关键字
     page:"1",//页码
-    pagesize:"20",//每页数据条数
-    sort:[{field:"title",order:"asc"}],//field可能取值为以上字段外keyword,page,pagesize外的所有字段，asc升序，desc 降序
+    listRows:"20",//每页数据条数
+    sort:[{field:"title",order:"asc"}],//field可能取值为以上字段外keyword,page,listRows外的所有字段，asc升序，desc 降序
 }
 
 response {

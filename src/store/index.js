@@ -1,21 +1,31 @@
 import Vue from 'vue'
 import Vuex from 'vuex'
+import axios from 'axios'
 import filter from '@/store/modules/filter-label.js'
 import detail from '@/store/modules/common-detail.js'
 import tags from '@/store/modules/tags.js'
 import table from '@/store/modules/table-common.js'
+import product from '@/store/modules/product.js'
+import classification from '@/store/modules/classification.js'
+import branch from '@/store/modules/branch.js'
+import ipr from '@/store/modules/ipr.js'
 Vue.use(Vuex);
 
 const store = new Vuex.Store({
   strict: true,
-  state: {   
+  state: {
     dragId: null,
+    axios,
   },
   modules: {
     filter,
     detail,
     tags,
     table,
+    product,
+    classification,
+    branch,
+    ipr,
   },
   mutations: {
     setDragId (state, id) {

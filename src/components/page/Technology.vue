@@ -58,30 +58,6 @@ export default {
 		  expand: [],
 		  description: '',
 		  testTree: {
-		  	props: {
-		  		label: 'name',
-		  		children: 'children',
-		  	},
-		  	data: [{
-		  		id: '1',
-		  		name: '技术1',
-		  		description: '技术1描述',
-		  		children: [{
-	  				id: '1-1',
-	  				name: '技术1-1',
-	  				description: '技术1-1描述',
-	  			},
-	  			{
-	  				id: '1-2',
-	  				name: '技术1-2',
-	  				description: '技术1-2描述',
-	  			}]
-		  	},
-		  	{
-		  		id: '2',
-		  		name: '技术2',
-		  		description: '技术2描述',
-		  	}]
 		  },
 		}
   },

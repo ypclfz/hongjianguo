@@ -2,18 +2,21 @@
 	<div class="app-collapse" style="width: 100%">
 		<div class="app-collapse-header" :style="headerStyle">
 			<h3 class="app-collapse-title">{{ colTitle }}</h3>
-			<div class="app-collapse-control" @click="show = !show">
+			<div class="app-collapse-control" @click="toggle">
 				<i :class="toggleClass"></i>
 			</div>
 		</div>
     <transition 
       name="fade"
+      @before-enter="beforeEnter"
       @enter="enter"
+      @after-enter="afterEnter"
+      @before-leave="beforeLeave"
       @leave="leave"
       @after-leave="afterLeave"
     >
     	<div class="app-collapse-content" v-show="show">
-    		<slot style="margin-top: 20px;"></slot>
+    		<div class="app-collapse-content-inner"><slot style="margin-top: 20px;"></slot></div>
     	</div>
     </transition>
 	</div>
@@ -22,55 +25,75 @@
 <script>
 export default {
   name: 'appCollapse',
-  props: ['col-title'],
+  props: {
+    'colTitle': {
+      type: String,
+      default: '',
+    },
+    'defaultClose': {
+      type: Boolean,
+      default: false,
+    }
+  },
   methods: {
-    enter(el) {
-      const d = this;
-      d.toggleClass = 'el-icon-minus';
-      d.headerStyle = "";
-        
-      setTimeout(function() {el.style.height = d["original_height"] + "px"}, 0);
+    beforeEnter (el) {
+      el.removeAttribute('style');
+      el.style.height = '0px';
+      el.style.overflow = 'hidden'; 
+    },
+    enter (el) {
+      if(el.scrollHeight !== 0) {
+        el.style.height = el.scrollHeight + 'px';
+      }
+    },
+    afterEnter(el) {
+      el.removeAttribute('style');
+    },
+    beforeLeave (el) {     
+      el.style.height = el.scrollHeight + 'px';
+      el.style.overflow = 'hidden';  
     },
     leave(el) {
-      const d = this;
-      d.toggleClass = 'el-icon-plus';
-
-      el.style.height = "0px";
+      if (el.scrollHeight !== 0) {
+        el.style.height = 0;
+      }
     },
-    afterLeave() {
-      const d = this;
-      d.headerStyle = "border-radius: 4px;"
+    afterLeave(el) {
+      el.removeAttribute('style');
+      el.style.display = 'none';
+    },
+    toggle () {
+      this.show = !this.show;
+      this.toggleClass = this.toggleClass == 'el-icon-plus' ? 'el-icon-minus' : 'el-icon-plus';
     }
   },
   data () {
     return {
-      toggleClass: 'el-icon-minus',
-      show: true,
-      original_height: 0,
+      toggleClass: this.defaultClose ? 'el-icon-plus' : 'el-icon-minus',
+      show: !this.defaultClose,
       content_height: 'auto',
-      headerStyle: ''
+      headerStyle: '',
+      height: '',
     }
   },
-  mounted () {
-    const d = this; 
-    const content = d.$el.querySelector(".app-collapse-content");
+  mounted () { 
+    const content = this.$el.querySelector(".app-collapse-content");
     
-    d["original_height"] = content.clientHeight;
-    content.style.height = d["original_height"] + "px";
+    this.height = content.clientHeight;
   }
 }
 </script>
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style lang="scss">
-.app-collapse * {
+/*.app-collapse * {
   -moz-box-sizing: border-box;
   box-sizing: border-box;
   outline: none !important;
-}
+}*/
 .app-collapse {
 	position: relative;
-    margin-bottom: 25px;
+    margin-bottom: 15px;
     border-radius: 4px;
     border: 0;
     box-shadow: none;
@@ -91,17 +114,17 @@ export default {
     margin: 0;
     margin-right: 10px;
     padding: 12px 0;
-    min-height: 42px
+    /*min-height: 42px*/
 }
 .app-collapse-content {
 	border: 1px solid #e4e9eb;
   border-top: none;
   border-bottom-left-radius: 4px;
   border-bottom-right-radius: 4px;
-  padding-left: 20px;
-  padding-right: 20px;
-  padding-top: 20px;
-
+ 
+}
+.app-collapse-content-inner {
+  padding: 10px 15px;
 }
 .app-collapse-control {
 	width: auto;
@@ -133,6 +156,5 @@ export default {
 
 .fade-enter-active, .fade-leave-active {
   transition: height .5s;
-  overflow: hidden;
 }
 </style>

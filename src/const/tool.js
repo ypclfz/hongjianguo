@@ -39,5 +39,20 @@ export default {
 				}
 			}
 		}
+	},
+	splitObj (arr, keys) {
+		const result = {};
+		
+		for(let k of keys) {
+			result[k] = [];
+		}
+
+		for(let a of arr) {
+			for(let k of keys) {
+				result[k].push(a[k]);
+			}
+		}
+
+		return result;
 	}
 }

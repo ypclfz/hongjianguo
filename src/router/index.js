@@ -19,6 +19,7 @@ import TrademarkStatistics from '@/components/page/TrademarkStatistics'
 import CopyrightList from '@/components/page/CopyrightList'
 import UserList from '@/components/page/UserList'
 import Technology from '@/components/page/Technology'
+import Branch from '@/components/page/Branch'
 //###################
 import CommonDetail from '@/components/page/CommonDetail'
 import Babel from '@/components/page_extension/CommonDetail_babel'
@@ -148,6 +149,11 @@ const router = new Router({
       path: '/tclass',
       name: 'Technology',
       component: Technology,
+    },
+    {
+      path: '/branch',
+      name: 'Branch',
+      component: Branch,
     },
     {
       path: '/commonDetail/:id',

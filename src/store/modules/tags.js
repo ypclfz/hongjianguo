@@ -1,32 +1,34 @@
-import axios from 'axios'
-const url = 'http://www.zhiq.wang/tag/lists';
+const url = '/api/tags';
 const state = {
-  tags: [],
+  data: [],
 }
 
 const getters = {
-	tagOptions: state=>state.tags,
+	tagOptions: state=>{
+		return state.data.map( d=>{return {label: d.tag, value: d.tag} } );
+	},
 }
 
 const mutations = {
 	setTags (state, tags) {
-		const t = state.tags;
-		tags.forEach(d=>{t.push({ label: d.tag, value: d.tag })});
+		state.data = tags;
 	}
 }
 
 const actions = {
-	refreshTags ({ commit }) {
-		axios.get(url)
-			.then(response=>{
-				const d = response.data;
-				if(d.status){
-					commit('setTags', d.tags);
-				}else {
-					slert('请求标签数据失败');
-				}
-			})
-			.catch(error=>{console.log(error)});
+	refreshTags ({commit, rootState}) {
+		
+		rootState.axios
+		.get(url)
+		.then(response=>{
+			const d = response.data;
+			if(d.status){
+				commit('setTags', d.tags);
+			}else {
+				alert('请求标签数据失败');
+			}
+		})
+		.catch(error=>{console.log(error)});
 	}
 }
 

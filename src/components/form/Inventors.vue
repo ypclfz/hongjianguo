@@ -16,7 +16,9 @@ export default {
   props: {
   	'value': {
   		type: Array,
-  		default: [{ id: '', share: '' }],
+  		default: function () {
+        return [{id: '', share: ''}];
+      },
   	},
     'disabled': {
       type: Boolean,

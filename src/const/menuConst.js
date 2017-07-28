@@ -17,7 +17,13 @@ menu.data = [
 		text: '申请人管理',
 		path: '/applicantList',
 		icon: '',
-		type: 'item'
+		type: 'item',
+	},
+	{
+		text: '部门设置',
+		path: '/branch',
+		icon: '',
+		type: 'item',
 	},
 	{
 		text: '用户管理',

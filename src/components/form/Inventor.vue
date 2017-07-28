@@ -9,6 +9,7 @@
         placeholder="请输入发明人关键词"
         :remote-method="remoteMethod"
         :loading="loading"
+        :disabled="disabled"
       >
         <el-option 
           v-for="item in option.inventors"
@@ -113,6 +114,9 @@ export default {
     idBlur () {
       console.log('blur');
     }
+  },
+  created () {
+    this.remoteMethod('');
   }
 }
 </script>

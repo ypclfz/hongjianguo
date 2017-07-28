@@ -8,6 +8,7 @@
     :disabled="disabled"
     :remote-method="remoteMethod"
     :loading="loading"
+    :multiple="multiple"
 	>
 		<el-option
 			v-for="item in options"
@@ -21,13 +22,17 @@
 
 	<script>
 	export default {
-	  name: 'proposer',
+	  name: 'member',
 	  props: {
-	  	'value': [Number, String],
+	  	'value': [Number, String, Array],
 	  	'defaultOptions': {
 	  		type: Array,
 	  	},
 	  	'disabled': {
+	  		type: Boolean,
+	  		default: false,
+	  	},
+	  	'multiple': {
 	  		type: Boolean,
 	  		default: false,
 	  	}

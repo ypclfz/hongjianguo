@@ -89,8 +89,21 @@ export default {
       this.$store.commit('removeScreen', index);
     }
   },
+  beforeCreated () {
+
+  },
   created () {
-    this.$store.dispatch('refreshTags');
+    this.$axios.post('/api/login',{'username': 'Shawn', 'password': 'u5/vpsgWLohjhN5sd7MIZ7vSkqLC9nyma0RlWQ4oTM78HfPClnwlfvJJJxGtT7RMW6MAZog7qsdd90pd0949gIU7KR3PXYNWP1KOqu6GBWQIMrTnFktDkT+L9G6pZLZ/1i5W1W9FCmPeSFtHlQx/AaMxQh+57R/6lZqXN93gS2hwfaRuPtNyq/lQlN0bJOX1UpOzS3mXpvgcPEcmhPQUOxSZ3fJ/EvRTMY286WrnWWa+qbWjMNJt5GZkPcXCX58nzilX+LVFqekhILpOO4I1yxCNohPrPBTaNKKZr9UIaA9DEDZg80kn43cASpDGvygZp+GqLUXPjHr6o5SCn0uJyw=='})
+      .then(()=>{
+
+        this.$store.dispatch('refreshTags');
+        this.$store.dispatch('refreshProduct');
+        this.$store.dispatch('refreshClassification');
+        this.$store.dispatch('refreshBranch');
+        this.$store.dispatch('refreshIpr');
+          
+      });
+    
   },
   components: { AppMenu }
 }

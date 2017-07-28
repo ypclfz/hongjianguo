@@ -51,10 +51,6 @@ export default {
   	const d = this;
   	const more = {};
 
-    
-
-    
-
   	for(let a of d.data) {
   		if(a["key"] && a["tidy"] && a["tidy"]["length"] != 0) {
   			more[a["key"]] = false;
