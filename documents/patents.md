@@ -70,7 +70,7 @@ request {
 response {
     status:1, //状态，0表示请求失败，1表示请求成功
     info:"信息提示",
-} 
+}
 
 # 3、专利详情
 requestUrl:http://www.zhiq.wang/patents/:id;  
@@ -79,7 +79,6 @@ reponse {
     status:1,//状态，0表示请求失败，1表示请求成功
     info:"提示信息",//status为0时才出现
     patent:{ //status为1时才出现
-        
     }
 }
 

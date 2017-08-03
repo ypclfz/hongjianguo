@@ -34,47 +34,14 @@ export default {
   data () {
 		return {
 			form: {
-			  department: '',
-			  tag: [],
-			  class: '',
-			  applicant: [],
-			  inventor: [ {inventor: '', percent: ''} ],
-			  proposer: [],
-			  ipr: '',
+			  ipr_id: '',
+			  applicants: [],
+			  inventors: [{id: '', share: ''}],
+			  project_id: '',
+			  products: [],
+			  classification_id: '',
+			  tags: [],
 			},
-			option: {
-				department: [
-					{ label: '部门一', value: '1' },
-					{ label: '部门二', value: '2' },
-					{ label: '部门三', value: '3' },
-				],
-				tag: ['标签一', '标签二', '标签三'],
-				class: [
-					{ label: '类别一', value: '1' },
-					{ label: '类别二', value: '2' },
-					{ label: '类别三', value: '3' },
-				],
-				applicant: [
-					{ label: '申请人一', value: '1' },
-					{ label: '申请人二', value: '2' },
-					{ label: '申请人三', value: '3' },
-				],
-				inventor: [
-					{ label: '发明人一', value: '1' },
-					{ label: '发明人二', value: '2' },
-					{ label: '发明人三', value: '3' },
-				],
-				proposer: [
-					{ label: '提案人一', value: '1' },
-					{ label: '提案人二', value: '2' },
-					{ label: '提案人三', value: '3' },
-				],
-				ipr: [
-					{ label: 'IPR一', value: '1' },
-					{ label: 'IPR二', value: '2' },
-					{ label: 'IPR三', value: '3' },
-				],
-			}
 		}
   },
   methods: {

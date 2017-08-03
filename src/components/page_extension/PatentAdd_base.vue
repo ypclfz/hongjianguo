@@ -57,14 +57,13 @@ export default {
 		return {
 		  form: {
 		  	title: '',
-		  	type: '',
-		  	area: [],
-		  	serial: '',
-		  	project: '',
-		  	attachments: [],
+		  	abstract: '',
 		  	proposals: [],
-		  	remark: '',
+		  	area: [],
+		  	type: '',
 		  	extension: [],
+		  	remark: '',
+		  	attachments: [],
 		  },
 		  option: {
 		  	type: [

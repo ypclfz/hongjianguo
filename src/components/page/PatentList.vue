@@ -1,8 +1,7 @@
 <template>
   <div class="main">
-
-    <table-component :tableOption="tableOption" :data="tableData"></table-component>
-    <!-- <pl-filter @refreshFilter="refreshFilter" :formData="form" ref="filter"></pl-filter> -->
+    <strainer v-model="filter" @refresh="refresh"></strainer>
+    <table-component :tableOption="tableOption" :data="tableData" @refreshTableData="refreshTableData" ref="table"></table-component>
   </div>
 </template>
 
@@ -11,9 +10,9 @@ import AppFilter from '@/components/common/AppFilter'
 import TableComponent from '@/components/common/TableComponent'
 import AppTree from '@/components/common/AppTree'
 import AppDatePicker from '@/components/common/AppDatePicker'
-import PlFilter from '@/components/page_extension/PatentList_filter'
+import Strainer from '@/components/page_extension/PatentList_strainer'
 
-const urlList = 'http://www.zhiq.wang/project/lists';
+const URL = '/api/patents';
 
 export default {
   name: 'patentList',
@@ -85,7 +84,7 @@ export default {
             label: '发明人',
             prop: 'inventors',
             render: arr=>{
-              return arr.map(d=>`${d.name}: ${d.share}%`)
+              return arr.map(d=>`${d.name}: ${d.share}%`);
             },
           },
           {
@@ -102,70 +101,12 @@ export default {
         ] 
       },
       tableData: [],
-      treeOption: {
-        data: [{
-          label: '一级 1',
-          type: 'department',
-          children: [{
-            label: '二级 1-1',
-            type: 'department',
-            children: [{
-              label: '三级 1-1-1',
-              type: 'staff'
-            }]
-          }]
-        }, {
-          label: '一级 2',
-          type: 'department',
-          children: [{
-            label: '二级 2-1',
-            type: 'department',
-            children: [{
-              label: '三级 2-1-1',
-              type: 'staff'
-            }]
-          }, {
-            label: '二级 2-2',
-            type: 'department',
-            children: [{
-              label: '三级 2-2-1',
-              type: 'staff'
-            }]
-          }]
-        }, {
-          label: '一级 3',
-          type: 'department',
-          children: [{
-            label: '二级 3-1',
-            type: 'department',
-            children: [{
-              label: '三级 3-1-1',
-              type: 'staff',
-            }]
-          }, {
-            label: '二级 3-2',
-            type: 'department',
-            children: [{
-              label: '三级 3-2-1',
-              type: 'staff',
-            }]
-          }]
-        }],
-        props: {
-          children: 'children',
-          label: 'label',
-        }
-      },
-      form: {
-        tag: [],
-        keyword: '',
-      }
+      filter: {},
     };
   },
   methods: {
-    refreshFilter (filter) {
-      const copy = this.$tool.deepCopy(filter);
-      this.form = Object.assign({}, this.form, copy);
+    refresh () {
+      this.$refs.table.refresh();
     },
     refreshTableData () {
 
@@ -193,7 +134,7 @@ export default {
     }]
       }
   },
-  components: {  AppFilter, TableComponent, AppTree, AppDatePicker, PlFilter }
+  components: {  AppFilter, TableComponent, AppTree, AppDatePicker, Strainer }
 }
 </script>
 <style>
