@@ -61,7 +61,7 @@ export default {
   	show () {
   		this.dialogVisible = true;
   		this.$nextTick(()=>{
-  			const value = this.multiple ? [...this.value] : [this.value]; 
+  			const value = this.multiple ? this.value : [this.value]; 
     		this.$refs.tree.setCheckedKeys(value);
     	});
   	},

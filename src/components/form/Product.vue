@@ -1,8 +1,8 @@
 <template>
 	<div>
-	  <el-input readonly @focus="$refs.tree.show()" :value="productText" :disabled="disabled"  ></el-input>
+	  <el-input placeholder="选择产品分类" readonly @focus="$refs.tree.show()" :value="productText" :disabled="disabled"  ></el-input>
 	  <pop-tree 
-	    title="选择技术分类"
+	    title="选择产品分类"
 	    :data="productData" 
 	    :props="props"
 	    :value="value"
@@ -52,7 +52,7 @@ export default {
   		if(this.multiple) {
   			t = v.length != 0 ? v.map(d=>map.get(d)).join("；") : '';
   		}else {
-  			t = v ? map.get(d) : '';
+  			t = v ? map.get(v) : '';
   		}
 
   		return t;

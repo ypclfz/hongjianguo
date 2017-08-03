@@ -25,9 +25,6 @@
 	  name: 'member',
 	  props: {
 	  	'value': [Number, String, Array],
-	  	'defaultOptions': {
-	  		type: Array,
-	  	},
 	  	'disabled': {
 	  		type: Boolean,
 	  		default: false,
@@ -39,7 +36,6 @@
 	  },
 	  data () {
 			return {
-				query: '',
 				options: [],
 				loading: false,
 			}
@@ -53,9 +49,9 @@
 	  		const params = { keyword };
 
 	  		this.loading = true;
-	  		this.$axios.get('/api/members', {params}).then(response=>{
+	  		this.$axios.get('/api/proposals', { params }).then(response=>{
 	  			this.loading = false;
-	  			this.options = response.data.members.data.map(d=>{return {id: d.id, name: d.username}});
+	  			this.options = response.data.members.data.map(d=>{return {id: d.id, name: d.title}});
 	  		});
 	  	}
 	  },

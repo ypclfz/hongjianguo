@@ -6,7 +6,7 @@
         <el-row>
           <el-col :span="12">
             <el-form-item label="提案标题">
-              <el-input></el-input>
+              <el-input v-model="title"></el-input>
             </el-form-item>
             <el-form-item label="技术分类">
               <classification v-model="classification" multiple></classification>
@@ -164,7 +164,8 @@ export default {
           { type: 'text', label: '备注', prop: 'remark' },
           // { type: 'text', label: '案件状态', prop: 'status', sortable: true },
           {
-            type: 'action', 
+            type: 'action',
+            width: '170px', 
             label: '操作', 
             btns_render: 'action',
           },

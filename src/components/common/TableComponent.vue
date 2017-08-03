@@ -264,12 +264,12 @@ export default {
   props: ['tableOption', 'data'],
   computed: {
     tableData () {
-      const d = this;
-      return d.data ? d.data.data : []; 
+      const d = this.data;
+      return d ? d.data : []; 
     },
     totalNumber () {
-      const d = this;
-      return d.data ? d.data.total : 0;
+      const d = this.data;
+      return d && d.total ? d.total : 0;
     },
     requesOption () {
       const obj = {

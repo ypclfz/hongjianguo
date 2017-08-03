@@ -101,6 +101,7 @@ export default {
         this.$store.dispatch('refreshClassification');
         this.$store.dispatch('refreshBranch');
         this.$store.dispatch('refreshIpr');
+        this.$store.dispatch('refreshArea');
           
       });
     

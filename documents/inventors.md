@@ -44,7 +44,7 @@ response {
             create_time:"2017-01-01",//创建时间
             update_time:"2017-01-01",//更新时间
             editor:{
-                uid:"2",//上传者用户ID
+                id:"2",//上传者用户ID
                 name:"name",//上传用户名称
             }
         }]

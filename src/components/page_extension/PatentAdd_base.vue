@@ -4,39 +4,35 @@
 			<el-form-item label="案件标题">
 				<el-input v-model="form.title" placeholder="请填写案件标题"></el-input>
 			</el-form-item>
+			<el-form-item label="案件摘要">
+				<el-input v-model="form.abstract" type="textarea"></el-input>
+			</el-form-item>
+	    <el-form-item label="相关提案">
+	      <proposal v-model="form.proposals" multiple></proposal>
+	    </el-form-item>
+	    <el-form-item label="申请地区">
+	    	<area v-model="form.area" multiple></area>
+	    </el-form-item>
 	    <el-form-item label="案件类型">
 	      <el-select v-model="form.type" placeholder="请选择案件类型">
 					<el-option v-for="item in option.type" :key="item.value" :label="item.label" :value="item.value"></el-option>
 	      </el-select>
 	    </el-form-item>
-	    <el-form-item label="申请地区">
-	      <el-select v-model="form.area" placeholder="请选择案件类型" multiple>
-					<el-option v-for="item in option.area" :key="item.value" :label="item.label" :value="item.value"></el-option>
-	      </el-select>
-	    </el-form-item>
-	    <el-form-item label="案号">
-	      <el-input v-model="form.serial" placeholder="请填写案号"></el-input>
-	    </el-form-item>
-	    <el-form-item label="所属项目">
-	      <el-select v-model="form.project" placeholder="请选择所属项目">
-					<el-option v-for="item in option.project" :key="item.value" :label="item.label" :value="item.value"></el-option>
-	      </el-select>
-	    </el-form-item>
-	    <el-form-item label="附件">
-	    	<el-upload
-	        class="upload-demo"
-          drag
-          :on-success="handleUploadSuccess"
-          :on-remove="handleUploadRemove"
-	        action="http://www.zhiq.wang/file/upload"
-	        multiple
-        >
-			    <i class="el-icon-upload"></i>
-			    <div class="el-upload__text">将文件拖到此处，或<em>点击上传</em></div>
-		    </el-upload>
+	    <el-form-item label="额外要求">
+	    	<el-checkbox-group v-model="extension" v-if="extensionSet.length != 0">
+			    <el-checkbox 
+			    	v-for="item in extensionSet" 
+			    	:key="item.label"
+			    	:label="item.label"
+			    >{{ item.text }}</el-checkbox>
+			  </el-checkbox-group>
+			  <span v-else>暂无可选项</span>
 	    </el-form-item>
 	    <el-form-item label="备注">
-	      <el-input type="textarea" v-model="form.remark"></el-input>
+	      <el-input v-model="form.remark" type="textarea"></el-input>
+	    </el-form-item>
+	    <el-form-item label="附件">
+	    	<upload v-model="form.attachments"></upload>
 	    </el-form-item>
 	  </el-form>
   </app-collapse>
@@ -44,6 +40,16 @@
 
 <script>
 import AppCollapse from '@/components/common/AppCollapse'
+import Area from '@/components/form/Area'
+import Proposal from '@/components/form/proposal'
+import Upload from '@/components/form/upload'
+
+const extensionHash = [
+	{ text: '是否同时申请实用新型', label: 'is_utility', area: 'CN', type: 1 },
+	{ text: '是否请求提前公开', label: 'is_utility', area: 'CN', type: 1 },
+	{ text: '是否同时提出实审请求', label: 'is_utility', area: 'CN', type: 1 },
+	{ text: '是否同时提出保密审查请求', label: 'is_utility', area: 'CN', type: [1,2] },
+] 
 
 export default {
   name: 'patentAddBase',
@@ -56,25 +62,38 @@ export default {
 		  	serial: '',
 		  	project: '',
 		  	attachments: [],
+		  	proposals: [],
 		  	remark: '',
+		  	extension: [],
 		  },
 		  option: {
 		  	type: [
-		  		{ label: 'inventor', value: '1' }, 
-		  		{ label: 'utility', value: '2' }, 
-		  		{ label: 'design', value: '3' }, 
-		  	],
-		  	area: [
-		  		{ label: '中国', value: 'CN' },
-		  		{ label: '美国', value: 'US' },
-		  	],
-		  	project: [
-		  		{ label: '项目一', value: '1' },
-		  		{ label: '项目二', value: '2' },
-		  		{ label: '项目三', value: '3' },
+		  		{ label: '发明专利', value: 1 }, 
+		  		{ label: '实用新型', value: 2 }, 
+		  		{ label: '外观设计', value: 3 }, 
 		  	]
 		  },
 		}
+  },
+  computed: {
+  	extensionSet () {
+  		const area = this.form.area.join(',');
+  		const type = this.form.type;
+  		const arr = [];
+  		extensionHash.forEach(d=>{
+  			const areaReg = new RegExp(d.area);
+  			const typeArr = typeof d.type == 'object' ? d.type : [d.type];
+  			if ( areaReg.test(area) ) {
+  				for (let t of typeArr) {
+  					if(t == type) {
+  						arr.push({ text: d.text, label: d.label });
+  						break;
+  					}
+  				}
+  			}
+  		})
+  		return arr;
+  	}
   },
   methods: {
   	checkForm () {
@@ -90,7 +109,7 @@ export default {
 
   	}
   },
-  components: { AppCollapse }
+  components: { AppCollapse, Area, Proposal, Upload }
 }
 </script>
 

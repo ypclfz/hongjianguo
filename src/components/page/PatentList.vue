@@ -1,16 +1,8 @@
 <template>
   <div class="main">
-    <div class="row">
-      <div class="left">
-        <app-tree :option="treeOption"></app-tree>
-      </div>
-      <div class="right">
-        <app-filter :data="filterData"></app-filter>
-        <table-component :tableOption="tableOption" :data="tableData">         
-        </table-component>
-      </div>
-    </div>
-    <pl-filter @refreshFilter="refreshFilter" :formData="form" ref="filter"></pl-filter>
+
+    <table-component :tableOption="tableOption" :data="tableData"></table-component>
+    <!-- <pl-filter @refreshFilter="refreshFilter" :formData="form" ref="filter"></pl-filter> -->
   </div>
 </template>
 
@@ -21,9 +13,6 @@ import AppTree from '@/components/common/AppTree'
 import AppDatePicker from '@/components/common/AppDatePicker'
 import PlFilter from '@/components/page_extension/PatentList_filter'
 
-const text1 = '测试';
-const text2 = '测试';
-const text3 = '测试';
 const urlList = 'http://www.zhiq.wang/project/lists';
 
 export default {
@@ -73,45 +62,38 @@ export default {
         'columns': [
 
           { type: 'selection' },
-
+          { type: 'text', label: '专利状态', prop: 'status', render: (h,item)=>h('span', item ? '正常' : '暂停处理') },
+          { type: 'text', label: '专利标题', prop: 'title', sortable: true },
+          { type: 'text', label: '专利摘要', prop: 'abstract'},
+          { type: 'text', label: '备注' },
+          { type: 'text', label: '创建时间', prop: 'create_time', sortable: true },
+          { type: 'text', label: '更新时间', prop: 'update_time', sortable: true },
+          { type: 'text', label: '删除时间', prop: 'delete_time', sortable: true },
+          { type: 'text', label: '技术分类', prop: 'classification', sortable: true, render: (h,item)=>h('span', item.name) },
+          { type: 'text', label: '部门名称', prop: 'branch', sortable: true, render:  (h,item)=>h('span', item.name) },
+          { type: 'text', label: '产品名称', prop: 'product', sortable: true, render: (h,item)=>h('span', item.name) },
           { 
-            type: 'text', 
-            label: '案号', 
-            prop: 'serial', 
-            render: (h, text, row)=>{ return h(
-              'div',
-              {
-                style: { cursor: 'move' },
-                attrs: { draggable: true,  'data-id': row.id },
-                on: { dragstart: (e)=>{ this.$store.commit('setDragId', e.target.dataset.id) } },
-              },
-              text,
-            )}            
+            type: 'array', 
+            label: '专利人', 
+            prop: 'proposer', 
+            render: arr=>{
+              return arr.map(d=>d.name);
+            },
           },
-          { type: 'text', label: '地区', prop: 'area' },
-          { type: 'text', label: '专利类型', prop: 'type'},
-          { type: 'text', label: '客户'},
-          { show: false, type: 'text', label: '交底书名称' },
-          { type: 'text', label: '标题', prop: 'title'},
-          { show: false, type: 'text', label: '委案日', prop: 'entrust_date'},
-          { type: 'text', label: '申请日', prop: 'application_date' },
-          { type: 'text', label: '申请号', prop: 'applicaton_number' },
-          { show: false, type: 'text', label: '公开日', prop: 'public_date' },
-          { show: false, type: 'text', label: '授权日', prop: 'issue_date' },
-          { show: false, type: 'text', label: '公开号', prop: 'public_number' },
-          { show: false, type: 'text', label: '授权号', prop: 'issue_number' },
-          { show: false, type: 'array_name', label: '申请人', prop: 'applicant', render: (arr)=>arr.map((d)=>d.name) },
-          { show: false, type: 'array_name', label: '发明人', prop: 'inventor', render: (arr)=>arr.map((d)=>d.name) },
-          { show: false, type: 'text', label: '代理机构', prop: 'agency', render: (h,text)=>h('div', text.name) },
-          { show: false, type: 'text', label: '代理人', prop: 'agent', render: (h,text)=>h('div', text.name) },
-          { show: false, type: 'text', label: '状态', prop: 'status', render: (h, text)=>h('div', text.name) },
-          { show: false, type: 'text', label: '提案人', prop: 'proposer', render: (h, text)=>h('div', text.name) },
-          { show: false, type: 'text', label: '所属部门', prop: 'department', render: (h, text)=>h('div', text.name) },
-          { show: false, type: 'text', label: '负责IPR', prop: 'ipr', render: (h, text)=>h('div', text.name) },
-          { show: false, type: 'array', label: '标签', prop: 'tag' },
-          { show: false, type: 'text', label: '技术分类', prop: 'class', render: (h, text)=>h('div', text.name) },
-          { show: false, type: 'text', label: '备注', prop: 'remark' },
-          { 
+          {
+            type: 'array',
+            label: '发明人',
+            prop: 'inventors',
+            render: arr=>{
+              return arr.map(d=>`${d.name}: ${d.share}%`)
+            },
+          },
+          {
+            type: 'array',
+            label: '标签',
+            prop: 'tags',
+          },
+          {
             type: 'action',
             btns: [
               { type: 'detail', click: ({id})=>{ this.$router.push(`/patent/list/detail/${id}`); } }
@@ -119,15 +101,7 @@ export default {
           },
         ] 
       },
-      tableData: [
-        { serial: text1, text2, text3, id: 1},
-        { serial: text1, text2, text3, id: 2},
-        { serial: text1, text2, text3, id: 3},
-        { serial: text1, text2, text3, id: 4},
-        { serial: text1, text2, text3, id: 5},
-        { serial: text1, text2, text3, id: 6},
-        { serial: text1, text2, text3, id: 7}
-      ],
+      tableData: [],
       treeOption: {
         data: [{
           label: '一级 1',
@@ -196,6 +170,28 @@ export default {
     refreshTableData () {
 
     }
+  },
+  created () {
+    this.tableData = {
+    total:1,//总数
+    data:[{
+      id:"1",//专利ID
+      status:"1",//专利状态，1-正常 0-暂停处理
+      title:"title",//专利标题
+      abstract:"1",  //专利摘要
+      remark:"remark",//备注
+      create_time:"create_time",//创建时间
+      update_time:"update_time",//更新时间
+      delete_time:"delete_time",//删除时间
+      branch:{id:"部门ID",name:"部门名称"},
+      product:{id:1,name:"产品名称",remark:"备注"},//
+      proposer:[{id:"用户ID",name:"专利人姓名",mobile:"专利人手机",email:"专利人邮箱"}],//专利人
+      classification:{id:"技术分类ID",name:"技术分类名称",description:"技术分类描述"},
+      product:{id:"产品ID",name:"产品名称",remark:"产品描述"},
+      tags:["tag"],//标签
+      inventors:[{id:"发明人ID",name:"发明人姓名",share:"发明人份额",sort:"发明人排序"}],//发明人
+    }]
+      }
   },
   components: {  AppFilter, TableComponent, AppTree, AppDatePicker, PlFilter }
 }

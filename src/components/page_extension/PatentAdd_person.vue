@@ -1,40 +1,27 @@
 <template>
   <app-collapse col-title="人员与分类">
       <el-form label-width="80px">
-        <el-form-item label="部门">
-          <el-select v-model="form.department" placeholder="请选择部门">
-						<el-option v-for="item in option.department" :key="item.value" :label="item.label" :value="item.value"></el-option>
-          </el-select>
-        </el-form-item>
+      	<el-form-item label="IPR">
+      		<ipr v-model="form.ipr_id"></ipr>
+      	</el-form-item>
+      	<el-form-item label="申请人">
+					<applicant v-model="form.applicants" multiple></applicant>
+      	</el-form-item >
+      	<el-form-item label="发明人">
+					<inventors v-model="form.inventors" multiple></inventors>
+      	</el-form-item>
+      	<el-form-item label="项目分类">
+      		<project v-model="form.project_id"></project>
+      	</el-form-item>
+      	<el-form-item label="产品分类">
+      		<product v-model="form.products" multiple></product>
+      	</el-form-item>
+      	<el-form-item label="技术分类">
+					<classification v-model="form.classification"></classification>
+      	</el-form-item>        
         <el-form-item label="标签">
-          <el-select v-model="form.tag" placeholder="请选择标签" multiple>
-						<el-option v-for="(item, index) in option.tag" :key="index" :label="item" :value="item"></el-option>
-          </el-select>
+        	<tag v-model="form.tags" multiple></tag>
         </el-form-item>
-        <el-form-item label="分类">
-          <el-select v-model="form.class" placeholder="请选择分类">
-						<el-option v-for="item in option.class" :key="item.value" :label="item.label" :value="item.value"></el-option>
-          </el-select>
-        </el-form-item>
-        <el-form-item label="申请人">
-          <el-select v-model="form.applicant" placeholder="请选择申请人" multiple>
-						<el-option v-for="item in option.applicant" :key="item.value" :label="item.label" :value="item.value"></el-option>
-          </el-select>
-        </el-form-item>
-        <el-form-item label="发明人">
-          <inventors v-model="form.inventor" @addInventor="addInventor" @deleteInventor="deleteInventor"></inventors>
-        </el-form-item>
-        <el-form-item label="提案人">
-          <el-select v-model="form.proposer" placeholder="请选择提案人" multiple>
-						<el-option v-for="item in option.proposer" :key="item.value" :label="item.label" :value="item.value"></el-option>
-          </el-select>
-        </el-form-item>
-        <el-form-item label="IPR">
-          <el-select v-model="form.ipr" placeholder="请选择IPR">
-						<el-option v-for="item in option.ipr" :key="item.value" :label="item.label" :value="item.value"></el-option>
-          </el-select>
-        </el-form-item>
-      </el-form>
     </app-collapse>
 </template>
 

@@ -1,48 +1,222 @@
 # 1、用户登陆
-接口URL:http://www.zhiq.wang/index/login;  
-接口调用方式：post;  
-需要的参数：  
-@param string username(必须),用户名  
-@param string password(必须),密码  
-@ return json {"status":1,"info":"info"} status 1 表示登陆成功 0表示登陆失败
+requestUrl:http://www.zhiq.wang/login;  
+Method:POST;  
+request{
+	username:"username",
+	password:"password",//password 采用RSA非对称算法加密
+}  
+response{
+	status:"1",//状态，1成功，0失败
+	info:"info",//提示信息
+}
 
 # 2、用户登出
-接口URL:http://www.zhiq.wang/member/logout;  
-接口调用方式：post/get;
-需要的参数：无
-@ return json {"status":1,"info":"成功退出"} 
+requestUrl:http://www.zhiq.wang/logout;  
+Method:GET;  
+response{
+	status:"1",//状态，1成功，0失败
+	info:"info",//提示信息
+}
 
-# 3、获取用户列表
-接口URL:http://www.zhiq.wang/member/lists;  
-接口调用方式：post/get;  
-@param integer page:分页号码，如果不提供，默认为1  
-@param integer listRows:分页数量，如果不提供默认为20  
-@param string keyword(可选）,关键字，用于匹配用户姓名、email、手机等字段  
-@param integer department(可选)，部门id   
-@param string sort_field(可选)，排序字段，可取的值为nickname,mobile,email,department  
-@param string sort(如果填写了sort_field，则sort必须填写), asc升序,desc降序  
+# 3、新增用户
+requestUrl:http://www.zhiq.wang/members;  
+Method:POST;  
+request{
+	username:"username",//必填
+	password:"password",//password 采用RSA非对称算法加密
+	name:"name",//呢称 
+	email:"email",//邮箱，可选
+	mobile:"mobile",//手机，可选
+	weixin:"weixin",//微信号，可选
+	qq:"qq",//手机号，可选
+	abbr:"abbr",//代码，可选
+	role:"用户角色",//1发明人2-IPR 3流程 10代理机构 11 代理人 12代理机构流程 13 代理机构财务，这些选项是固定的
+} 
+response {
+	status:"1",//状态，1成功，0失败
+	info:"info",//提示信息
+	member:{
+		id:"id",
+		username:"username",//必填
+		name:"name",//呢称 
+		email:"email",//邮箱，可选
+		mobile:"mobile",//手机，可选
+		weixin:"weixin",//微信号，可选
+		qq:"qq",//手机号，可选
+		abbr:"abbr",//代码，可选
+		role:"用户角色"
+	}
+}
 
-# 4、新增/保存用户
-接口URL:http://www.zhiq.wang/member/save;  
-接口调用方式：post;  
-@param integer uid, 用户ID，保存用户时提供  
-@param string username（必须）,用户名  
-@param string password（必须），密码  
-@param string nickname（可选）,呢称  
-@param string email（可选）,邮箱  
-@param string mobile（可选）,手机号  
-@param string weixin（可选）,微信号 
-@param string qq（可选）,QQ   
-@param integer department（可选）,部ID
+# 4、更新用户
+requestUrl:http://www.zhiq.wang/members/:id;  
+Method:PUT;  
+request{
+	username:"username",//必填
+	password:"password",//password 采用RSA非对称算法加密暂未实现)
+	name:"name",//呢称 
+	email:"email",//邮箱，可选
+	mobile:"mobile",//手机，可选
+	weixin:"weixin",//微信号，可选
+	qq:"qq",//手机号，可选
+	abbr:"abbr",//代码，可选
+	role:"用户角色",//1发明人2-IPR 3流程 10代理机构 11 代理人 12代理机构流程 13 代理机构财务，这些选项是固定的
+} 
+response {
+	status:"1",//状态，1成功，0失败
+	info:"info",//提示信息
+	member:{
+		id:"id",
+		username:"username",//必填
+		name:"name",//呢称 
+		email:"email",//邮箱，可选
+		mobile:"mobile",//手机，可选
+		weixin:"weixin",//微信号，可选
+		qq:"qq",//手机号，可选
+		abbr:"abbr",//代码，可选
+		role:"用户角色"
+	}
+}
 
-# 5、获取指定用户信息
-接口URL:http://www.zhiq.wang/member/get;  
-接口调用方式：post/get;   
-@param integer uid（必须）, 用户ID   
-@ return json ["status"=>1,"user"=>$user];["status"=>0,"info"=>"用户不存在或被禁用"];
+# 5、删除指定用户
+requestUrl:http://www.zhiq.wang/members/:id;  
+Method:DELETE;  
+response{
+	status:"1",//状态，1成功，0失败
+	info:"info",//提示信息
+}
 
-# 6、删除指定用户
-接口URL:http://www.zhiq.wang/member/delete;  
-接口调用方式：post/get; 
-@param integer/array[integer] uid（必须）, 用户ID或用户ID数组  
-@ return json ["status"=>1,"info"=>"删除用户成功"]; ["status"=>0,"user"=>"删除用户失败"];
+# 6、用户详情
+requestUrl:http://www.zhiq.wang/members/:id;  
+Method:GET;  
+response{
+	status:"1",//状态，1成功，0失败
+	info:"info",//提示信息
+	member:{
+		id:"id",
+		name:"name",
+		username:"username",
+		email:"email",
+		mobile:"mobile",
+		qq:"qq",
+		role:"role",
+		status:"1",
+		weixin:"weixin"
+		branch:{
+			id:"id",
+			name:"name",
+			description:"description"
+		},
+		groups:[{
+			id:"id",
+			name:"name"
+		}],
+	}
+}
+
+# 7、获取用户列表
+requestUrl:http://www.zhiq.wang/members;  
+Method:GET;  
+request {
+    page:"1",//分页，
+    listRows:"20",//分页数量，默认值20
+	username:"用户名",//取值为1-专利 2-商标，3-版本 4-项目
+	name:"用户名称",
+    email:"email",
+	mobile:"mobile",
+	weixin:"weixin",
+	qq:"qq",
+	role:"用户角色",//时间区间 2017-01-01|2017-12-31; 只填起始时间 2017-01-01| 只填结束时间 |2017-12-31
+	status:"状态",//1 正常 0 禁用
+	branch_id:"部门ID",//部门可以通过/branches接口拉取
+	keyword:"关键词",//支持检索：username name email mobile weixin qq字段
+	sort:"field-order",//field表示字段，取值为username、name、email、mobile、weixin、qq、role、status、branch_id order取值为asc（升序），desc（降序），多个排序采用逗号隔开
+}  
+
+response {
+    status:1,
+    info:"信息提示",
+    members:{
+        total:"2",//总数
+        per_page:"20",//每页数量
+        current_page:"1",//当前页
+        last_page:"2",//最后页
+        data:[{
+            id:"id",
+			name:"name",
+			username:"username",
+			email:"email",
+			mobile:"mobile",
+			qq:"qq",
+			role:"role",
+			status:"1",
+			weixin:"weixin"
+			branch:{
+				id:"id",
+				name:"name",
+				description:"description"
+			},
+			groups:[{
+				id:"id",
+				name:"name"
+			}],
+			children:[{
+				id:"id",//用户ID
+				name:"name",//用户名称
+			}]
+        }]
+    }
+}
+
+# 8、获取IPR列表
+requestUrl:http://www.zhiq.wang/iprs;  
+Method:GET;  
+request {
+    page:"1",//分页，
+    listRows:"20",//分页数量，默认值20
+	username:"用户名",/
+	name:"用户名称",
+    email:"email",
+	mobile:"mobile",
+	weixin:"weixin",
+	qq:"qq",
+	role:"用户角色",//时间区间 2017-01-01|2017-12-31; 只填起始时间 2017-01-01| 只填结束时间 |2017-12-31
+	status:"状态",//1 正常 0 禁用
+	branch_id:"部门ID",//部门可以通过/branches接口拉取
+	keyword:"关键词",//支持检索：username name email mobile weixin qq字段
+	sort:"field-order",//field表示字段，取值为username、name、email、mobile、weixin、qq、role、status、branch_id order取值为asc（升序），desc（降序），多个排序采用逗号隔开
+}  
+
+response {
+    status:1,
+    info:"信息提示",
+    members:{
+        total:"2",//总数
+        per_page:"20",//每页数量
+        current_page:"1",//当前页
+        last_page:"2",//最后页
+        data:[{
+            id:"id",
+			name:"name",
+			username:"username",
+			email:"email",
+			mobile:"mobile",
+			qq:"qq",
+			role:"role",
+			status:"1",
+			weixin:"weixin"
+			branch:{
+				id:"id",
+				name:"name",
+				description:"description"
+			},
+			groups:[{
+				id:"id",
+				name:"name"
+			}],
+        }]
+    }
+}
+
+
+

@@ -1,15 +1,36 @@
 # 1、新增专利
+(is_utility:"是否同时申请实用新型",//该选项在area=CN,type=1时才出现；
+is_pre_public:"是否请求提前公开",//该选项在area=CN,type=1时才出现；
+is_exam_request:"是否同时提出实审请求",//该选项在area=CN,type=1时才出现；
+is_secure_check:"是否同时提出保密审查请求",//该选项在area=CN,type=1/2时才出现；)
+
 requestUrl:http://www.zhiq.wang/patents;  
 method：POST;  
 request {
-    title:"name",//标题，不能超过150个字符
-    abstract:"abstract",//摘要,不能超过1000字符
-    attachments:['fileid'],//附件
-    proposer:"1",//专利人
-    inventors:[id:"1",share:"10"],//id 发明人ID，share 发明人贡献占比
-    tags:["tag"],//标签
-    classification:"1",//技术分类ID
-} 
+			
+	title:"案件名称",
+	abstract:"案件摘要",
+	proposals:[1,2],//提案ID
+	area:["CN","US"],//申请地区
+	type:"案件类型",// 1发明专利 2 实用新型 3 外观设计
+	extension: ['is_utility', 'is_pre_public'],
+	remark:"备注",
+	attachments:[1,2],//附件ID数组
+	
+	ipr_id:"IPR ID"
+	applicants:[1,2],//申请人ID数组
+	inventors:[{id:1,share:50}],//发明人ID数组
+	project_id:"项目ID",
+	products:[1,2],//产品ID数组
+	classification_id:"分类ID",
+	tags:["标签1"],//标签数组
+	
+	#priorities:[{area:"CN",apn:"201510422563.4",date:"2017-01-01"}],//优先权信息
+	#relative_projects:[{
+		id:"相关案件ID",
+		type:"相关类型",//下拉菜单  1要求优先权 2 分案申请 3部分连续案 6要求同日送件
+	}],
+}
 response {
     status:1, //状态，0表示请求失败，1表示请求成功
     info:"信息提示",
@@ -19,13 +40,32 @@ response {
 requestUrl:http://www.zhiq.wang/patents/:id;  
 method：PUT;  
 request {
-    title:"name",//标题，不能超过150个字符
-    abstract:"abstract",//摘要,不能超过1000字符
-    attachments:['fileid'],//附件
-    proposer:"1",//专利人
-    inventors:[{id:"1",share:"10"}],//id 发明人ID，share 发明人贡献占比
-    tags:["tag"],//标签
-    classification:"1",//技术分类ID
+    title:"案件名称",
+	abstract:"案件摘要",
+	area:["CN","US"],//申请地区
+	type:"案件类型",// 1发明专利 2 实用新型 3 外观设计 
+	products:[1,2],//产品ID数组
+	classification:"分类ID",
+	tags:["标签1"],//标签数组
+	project_id:"项目ID",
+	
+	is_pct:"是否是PCT"// 0否 1是
+	is_utility:"是否同时申请实用新型",//该选项在area=CN,type=1时才出现；
+	is_pre_public:"是否请求提前公开",//该选项在area=CN,type=1时才出现；
+	is_exam_request:"是否同时提出实审请求",//该选项在area=CN,type=1时才出现；
+	is_secure_check:"是否同时提出保密审查请求",//该选项在area=CN,type=1/2时才出现；
+	
+	ipr:"IPR ID"
+	applicants:[1,2],//申请人ID数组
+	inventors:[1,2],//发明人ID数组
+	attachments:[1,2],//附件ID数组
+	
+	priorities:[{area:"CN",apn:"201510422563.4",date:"2017-01-01"}],//优先权信息
+	relative_projects:[{
+		id:"相关案件ID",
+		type:"相关类型",//下拉菜单  1要求优先权 2 分案申请 3部分连续案 6要求同日送件
+	}],
+	remark:"备注",
 } 
 response {
     status:1, //状态，0表示请求失败，1表示请求成功
@@ -38,22 +78,8 @@ method：GET;
 reponse {
     status:1,//状态，0表示请求失败，1表示请求成功
     info:"提示信息",//status为0时才出现
-    proposal:{ //status为1时才出现
-        id:"1",//专利ID
-        title:"name",//标题，不能超过150个字符
-        abstract:"abstract",//摘要,不能超过1000字符
-        attachments:[{
-            id:"1",//文件ID
-            name:"name", //文件名称
-            viewUrl:"viewUrl",//查看地址
-            downloadUrl:"downloadUrl",//下载地址
-            ext:"ext",//文件格式
-            size:"size",//文件大小
-        }],//附件
-        proposer:{id:"1",name:"name"},//专利人
-        inventors:[{id:"1",share:"10"}],//id 发明人ID，share 发明人贡献占比
-        tags:["tag"],//标签
-        classification:{id:"1",name:"name"},//技术分类
+    patent:{ //status为1时才出现
+        
     }
 }
 
@@ -101,7 +127,7 @@ response {
 			delete_time:"delete_time",//删除时间
 			branch:{id:"部门ID",name:"部门名称"},
             product:{id:1,name:"产品名称",remark:"备注"},//
-            proposer:{uid:"用户ID",name:"专利人姓名",mobile:"专利人手机",email:"专利人邮箱"},//专利人
+            proposer:{id:"用户ID",name:"专利人姓名",mobile:"专利人手机",email:"专利人邮箱"},//专利人
             attachments:[{id:"文件ID",name:"附件名称",ext:"附件格式",size:"附件大小",viewUrl:"查看地址，为空则不能直接查看",downloadUrl:"下载地址"}]
             classification:{id:"技术分类ID",name:"技术分类名称",description:"技术分类描述"}
             product:{id:"产品ID",name:"产品名称",remark:"产品描述"}
@@ -110,3 +136,5 @@ response {
         }]
     }
 }
+
+# 6、专利的分案

@@ -13,6 +13,7 @@ request {
 response {
     status:1, //状态，0表示请求失败，1表示请求成功
     info:"信息提示",
+	id:"任务ID",//返回的任务ID，如果用户选择提交，首先通过/tasks/:id/nexttast接口获取完成任务表单的初始数据，显示表单后提交；
 }
 
 # 2、更新提案
@@ -30,6 +31,7 @@ request {
 response {
     status:1, //状态，0表示请求失败，1表示请求成功
     info:"信息提示",
+	id:"任务ID",//返回的任务ID，如果用户选择提交，首先通过/tasks/:id/nexttast接口获取完成任务表单的初始数据，显示表单后提交；
 } 
 
 # 3、提案详情
@@ -101,7 +103,7 @@ response {
 			delete_time:"delete_time",//删除时间
 			branch:{id:"部门ID",name:"部门名称"},
             product:{id:1,name:"产品名称",remark:"备注"},//
-            proposer:{uid:"用户ID",name:"提案人姓名",mobile:"提案人手机",email:"提案人邮箱"},//提案人
+            proposer:{id:"用户ID",name:"提案人姓名",mobile:"提案人手机",email:"提案人邮箱"},//提案人
             attachments:[{id:"文件ID",name:"附件名称",ext:"附件格式",size:"附件大小",viewUrl:"查看地址，为空则不能直接查看",downloadUrl:"下载地址"}]
             classification:{id:"技术分类ID",name:"技术分类名称",description:"技术分类描述"}
             product:{id:"产品ID",name:"产品名称",remark:"产品描述"}
@@ -110,3 +112,6 @@ response {
         }]
     }
 }
+
+# 6、两个及以上的提案合并立案
+在前端页面上需要提供菜单/按钮，选择两个及以上提案后，选择合并立案，立案方式与单个提案递交相同，可以采用选择的任一提案保存接口返回的任务ID进行提交，提交时next值设为6（此节点，其他字段均可不提供），但提交的参数里需要增加proposals:[所有提案ID的数组];

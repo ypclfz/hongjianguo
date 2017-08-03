@@ -11,7 +11,7 @@
       <template scope="scope" slot="expand">
         <edit :row="scope.row" v-show="expandType == 'edit'"></edit>
         <detail :row="scope.row" v-show="expandType  == 'detail'"></detail>
-        <finish :row="scope.row" v-show="expandType  == 'finish'"></finish>
+        <task-finish :id="scope.row.id" v-show="expandType  == 'finish'"></task-finish>
       </template>
     </table-component>
 
@@ -91,6 +91,7 @@ import AppFilter from '@/components/common/AppFilter'
 import AppCollapse from '@/components/common/AppCollapse'
 import TableComponent from '@/components/common/TableComponent'
 import AppDatePicker from '@/components/common/AppDatePicker'
+import TaskFinish from '@/components/common/TaskFinish'
 import Edit from '@/components/page_extension/PendingTask_edit'
 import Detail from '@/components/page_extension/PendingTask_detail'
 import Finish from '@/components/page_extension/PendingTask_finish'
@@ -127,7 +128,6 @@ export default {
       arr.forEach(d=>{
         form[d] = form[d].join(',');
       })
-
       this.filter = form;
     },
     strainerClear () {
@@ -261,7 +261,7 @@ export default {
         },
         {
           label: '任务阶段',
-          key: 'roles',
+          key: 'flownodes',
           items: [],
         }
       ];
@@ -294,7 +294,7 @@ export default {
   created () {
     this.refreshTableData();
   },
-  components: { AppFilter, TableComponent, AppDatePicker, Edit, Detail, Finish, Strainer, AppCollapse },
+  components: { AppFilter, TableComponent, AppDatePicker, Edit, Detail, Finish, Strainer, AppCollapse, TaskFinish },
 } 
 </script>
 <style>

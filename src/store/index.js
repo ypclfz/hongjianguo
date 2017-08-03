@@ -9,6 +9,7 @@ import product from '@/store/modules/product.js'
 import classification from '@/store/modules/classification.js'
 import branch from '@/store/modules/branch.js'
 import ipr from '@/store/modules/ipr.js'
+import area from '@/store/modules/area.js'
 Vue.use(Vuex);
 
 const store = new Vuex.Store({
@@ -26,6 +27,7 @@ const store = new Vuex.Store({
     classification,
     branch,
     ipr,
+    area,
   },
   mutations: {
     setDragId (state, id) {
