@@ -156,6 +156,19 @@ const router = new Router({
       component: Branch,
     },
     {
+      path: '/patent/list/detail',
+      component: CommonDetail,
+      children: [
+        { path: '', redirect: 'base' },
+        { path: 'base', component: PatentAdd },
+        { path: 'control', component: Control },
+        { path: 'notice', component: Notice },
+        { path: 'fee', component: Fee },
+        { path: 'email', component: Email },
+        { path: 'documents', component: Documents },
+      ]
+    },
+    {
       path: '/commonDetail/:id',
       component: CommonDetail,
       children: [

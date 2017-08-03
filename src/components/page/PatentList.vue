@@ -6,6 +6,7 @@
 </template>
 
 <script>
+import AxiosMixins from '@/mixins/axios-mixins'
 import AppFilter from '@/components/common/AppFilter'
 import TableComponent from '@/components/common/TableComponent'
 import AppTree from '@/components/common/AppTree'
@@ -16,6 +17,7 @@ const URL = '/api/patents';
 
 export default {
   name: 'patentList',
+  mixins: [ AxiosMixins ],
   computed: {
     leftHeight () {
       return document.querySelector(".row").clientHeight;
@@ -95,7 +97,8 @@ export default {
           {
             type: 'action',
             btns: [
-              { type: 'detail', click: ({id})=>{ this.$router.push(`/patent/list/detail/${id}`); } }
+              { type: 'detail', click: this.detail },
+              { type: 'delete', click: this.delete },
             ], 
           },
         ] 
@@ -108,8 +111,24 @@ export default {
     refresh () {
       this.$refs.table.refresh();
     },
-    refreshTableData () {
-
+    refreshTableData (option) {
+      const url = URL;
+      const params = Object.assign({}, option, this.filter);
+      const success = d=>{this.tableData = d.patents};
+      this.axiosGet({url, params, success});
+    },
+    delete ({title, id}) {
+      this.$confirm(`删除后不可恢复，确认删除‘${title}’吗？`)
+        .then(()=>{
+          const url=`${URL}/${id}`;
+          this.axiosDelete(url);    
+        })
+        .catch(()=>{});
+    },
+    detail ({id}) {
+      const path = '/patent/list/detail'; 
+      const query = { id };
+      this.$router.push({ path, query });
     }
   },
   created () {

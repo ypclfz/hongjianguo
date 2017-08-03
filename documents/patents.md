@@ -79,6 +79,127 @@ reponse {
     status:1,//状态，0表示请求失败，1表示请求成功
     info:"提示信息",//status为0时才出现
     patent:{ //status为1时才出现
+		id:"专利ID",//不需要要显示
+		serial:"案号",
+		type:"专利类型",
+		area:"CN",
+		title:"标题",
+		abstract:"摘要",
+		apd:"申请日",
+		apn:"申请号",
+		public_date:"公开日",
+		public_number:"公开日",
+		pre_exam_ok_date:"初审合格日",
+		sub_exam_start_date:"进入实审日",
+		issue_date:"公告日",
+		issue_number:"公告号",
+		
+		ipr:{id: 2, name: "Shawn", mobile: "18098976299", email: "shawn@iwdoing.com"},
+		agency:"代理机构名称"
+		agency_serial:"代理机构案号",
+		
+		main_ipc:"主国际分类号",
+		pct_apd:"国际申请日",
+		pct_no:"国际申请号",
+		pct_priority_date:"国际优先权日",
+		pct_public_date:"国际公开日",
+		pct_public_language:"国际公开语言",
+		pct_public_no:"国际公开号",
+		board_number:"复审委内编号",
+		is_biological:"是否与生物相关",
+		is_division:"是否是分案申请",
+		is_exam_request:"是否提出实质审查请求",
+		is_genetic:"是否依赖于遗传资源",
+		is_leakage:"是否不丧失新颖性公开",
+		is_pre_public:"是否提前公开",
+		is_priority:"是否要求优先权",
+		is_secure_check:"是否保密审查",
+		is_sequence:"是否有序列表",
+		is_utility:"是否同日申请了同样的实用新型/发明",
+		status:"状态",
+		words:"说明书字数",
+		remark:"备注",
+		
+		
+		applicants:[
+			{
+				id:"1",//申请人ID
+				area:"area",//地区代码
+				type_text:"类型名称",
+				name:"name",//申请人姓名
+				ename:"ename",//英文姓名
+				identity:"identity",//证件号码
+				email:"email",//邮箱地址
+				telephone:"telephone",//电话号码
+				province_name:"省份名称",
+				city_name:"城市名称",
+				address:"address",//详细地址
+				eaddress:"eaddress",//英文地址
+				postcode:"postcode",//邮编
+				status_name:"1",//提案状态，1-有效 0-禁用
+				fee_discount_name:"费减备案状态"
+			}
+		],
+		inventors:[
+			{id: 1, citizenship: "CN", name: "韩易", email: "hanyi@iwdoing.com", mobile: "13510482996", share: 0,sort:1}
+		],
+		tags:['标签']
+		attachments:[{id:"文件ID",name:"附件名称",ext:"附件格式",size:"附件大小",viewUrl:"查看地址，为空则不能直接查看",downloadUrl:"下载地址"}],
+		branch:{id: 3, name: "测试部"},
+		classification:{id: 1, name: "测试分类更新", description: "分类描述更新"}
+		priorities:[{area:"CN",apn:"201510422563.4",date:"2017-01-01"}],
+		products:[{id:"产品ID",name:"产品名称",description:"产品描述"}],
+		proposer:{id: 1, name: "红坚果", mobile: "18098976299", email: "hongjianguo@hongjianguo.com"},
+		relative_projects:[{
+			id:"相关案件ID",
+			serial:"相关案件案号",
+			title:"相关案件标题",
+			type:"相关类型",//下拉菜单  1 要求优先权 2 分案申请 3 部分连续案 6 要求同日送件
+		}],
+		fees:[{
+			id:"费用ID",
+			fee:"费用金额",
+			fee_name:"费用名称",
+			amount:"人民币金额"
+			roe:"汇率",
+			currency:"货币",
+			create_time:"创建时间",
+			pay_time:"支付时间",
+			due_time:"费用期限",
+			deadline:"法定期限",
+			mail_date:"发文日",
+			debit:"收入类型", //对应于该字段，需要在UI上显示一个图标，用以区分收入/支出类型
+			debit_name:"收入类型",
+			remark:"费用备注",
+			type:"费用类型",//对应于该字段，需要在UI上显示一个图标，用以区分是不是官费
+			type_name:"费用类型"
+			status_name:"费用状态",
+			policy_name:"费用监控类型",
+		}],
+		notices:[{
+			id:"通知书ID",
+			notice_name:"通知书名称",
+			seria:"发文序列号",
+			mail_date:"发文日",
+			deadline:"法定期限",
+			examiner:"审查员",
+			examiner_dept:"光电审查部",
+			examiner_phone:"审查委员电话",
+			download_url:"下载地址",
+			view_url:"查看地址"
+		}],
+		mails:[{
+			id:"邮件ID",
+			from:"邮件发件人",
+			to:"邮件收件人",
+			cc:"CC",
+			mailbox:"1收件箱2发送箱",
+			read:"是否已读",
+			top:"是否置顶",
+			subject:"邮件主题",
+			sent_time:"发送时间",
+			attach:"是否有附件"
+		}]
     }
 }
 

@@ -2,9 +2,10 @@
   <div class="main">
     <pa-base ref="base"></pa-base>
     <person ref="person"></person>
-    <expand ref="extend"></expand>
     <case ref="case"></case>
     <div style="margin-bottom: 20px;">
+      <el-button @click="addPatent" v-if="">添加</el-button>
+      <el-button @click="editPatent">编辑</el-button>
       <el-button @click="addPatent">{{ this.type_in == 'add' ? '添加' : '编辑' }}</el-button>
       <el-button>取消</el-button>
     </div>
@@ -12,29 +13,39 @@
 </template>
 
 <script>
-const keys = [ 'base', 'person', 'extend', 'case' ];
-const error_map = new Map([
+const map = new Map([
   ['base', '请正确填写基本信息！'],
   ['person', '请正确填写人员与分类信息！'],
-  ['extend', '请正确填写扩展信息！'],
   ['case', '请正确填写委案信息！'],
 ]);
-const URL = 'http://www.zhiq.wang/project/save';
 
+const URL = '/api/patents';
+
+import AxiosMixins from '@/mixins/axios-mixins'
 import PaBase from '@/components/page_extension/PatentAdd_base'
 import Person from '@/components/page_extension/PatentAdd_person'
-import Expand from '@/components/page_extension/PatentAdd_expand'
 import Case from '@/components/page_extension/PatentAdd_case'
 export default {
   name: 'patentAdd',
   data () {
     return {
-      id: 0,
-      type_in: this.type ? this.type : 'add',
+      id: '',
+      type: '',
     }
   },
+  mixins: [ AxiosMixins ],
   props: ['type'],
   methods: {
+    save () {
+      const keys = map.keys();
+      const arr = keys.map(d=>this.$refs[d].form);
+      const url = URL;
+      const urlE = `${URL}/${id}`;
+      const data = Object.assign(...arr);
+      const success = d=>{ this.$alert(d.info); this.push(0) };
+      type == 'add' ? this.axiosPost({url, data, success}) : this.axiosPut({urlE, data, successE});
+
+    },
     addPatent () {
       const arr = keys.map(d=>this.$refs[d].form);
       const form = Object.assign({ id: this.id }, ...arr);
@@ -43,9 +54,6 @@ export default {
         ? console.log(form) 
         : console.log(msg);
       
-    },
-    addCheck () {
-      return '';
     },
     refreshForm (val) {
       if( this.type_in == 'edit' && val) {
