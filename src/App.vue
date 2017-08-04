@@ -44,12 +44,8 @@ export default {
       const d = this;
       let path = d.$route.path;
       const params = d.$route.params;
-      if(params['id']) {
-        path = path.split(`/${params['id']}`)[0];
-      }else {
-        path = path.split("__")[0];
-      }
-
+      path = path.split("__")[0];
+      
       return menu.map[path];
     },
     select_arr () {
@@ -57,11 +53,9 @@ export default {
       const arr = [];
       let path = d.$route.path;
       const params = d.$route.params;
-      if(params['id']) {
-        path = path.split(`/${params['id']}`)[0];
-      }else {
-        path = path.split("__")[0];
-      }
+
+      path = path.split("__")[0];
+
       const arr2 = path.split("/");
 
       for(let i = 0; i < arr2.length; i++) {

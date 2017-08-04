@@ -1,9 +1,9 @@
 <template>
   <div>
-  	<el-row v-for="(item,index) in value">
+  	<el-row v-for="(item,index) in value" :key="index">
   	<el-col :span="20">
 			<el-input placeholder="请输入内容" :value="item.id" @input="val=>{ handleInput(val, 'id', index) }">
-			  <el-select v-model="select" slot="prepend" placeholder="请选择案件类型" :value="item.type" @input="val=>{ handleInput(val, 'type', index) }">
+			  <el-select slot="prepend" placeholder="请选择案件类型" :value="item.type" @input="val=>{ handleInput(val, 'type', index) }">
 			    <el-option 
 			    	v-for="item in option"
 			    	:key="item.value"
@@ -14,7 +14,7 @@
 			</el-input>
   	</el-col>
   	<el-col :span="4">
-			<el-button type="text" size="mini" @click="delete(index)"></el-button>
+			<el-button type="text" size="mini" @click="dataDelete(index)"></el-button>
   	</el-col>
 		</el-row>
 		<el-button type="text" @click="add({'id': '', 'type': ''})"></el-button>

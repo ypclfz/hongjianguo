@@ -8,25 +8,25 @@ requestUrl:http://www.zhiq.wang/patents;
 method：POST;  
 request {
 			
-	title:"案件名称",
+	R#title:"案件名称",
 	abstract:"案件摘要",
 	proposals:[1,2],//提案ID
-	area:["CN","US"],//申请地区
-	type:"案件类型",// 1发明专利 2 实用新型 3 外观设计
+	R#area:["CN","US"],//申请地区
+	R#type:"案件类型",// 1发明专利 2 实用新型 3 外观设计
 	extension: ['is_utility', 'is_pre_public'],
 	remark:"备注",
-	attachments:[1,2],//附件ID数组
+	R#attachments:[1,2],//附件ID数组
 	
-	ipr_id:"IPR ID"
-	applicants:[1,2],//申请人ID数组
-	inventors:[{id:1,share:50}],//发明人ID数组
+	R#ipr_id:"IPR ID"
+	R#applicants:[1,2],//申请人ID数组
+	R#inventors:[{id:1,share:50}],//发明人ID数组
 	project_id:"项目ID",
 	products:[1,2],//产品ID数组
 	classification_id:"分类ID",
 	tags:["标签1"],//标签数组
 	
-	#priorities:[{area:"CN",apn:"201510422563.4",date:"2017-01-01"}],//优先权信息
-	#relative_projects:[{
+	priorities:[{area:"CN",apn:"201510422563.4",date:"2017-01-01"}],//优先权信息
+	relative_projects:[{
 		id:"相关案件ID",
 		type:"相关类型",//下拉菜单  1要求优先权 2 分案申请 3部分连续案 6要求同日送件
 	}],

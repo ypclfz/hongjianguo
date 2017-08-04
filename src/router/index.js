@@ -22,7 +22,7 @@ import Technology from '@/components/page/Technology'
 import Branch from '@/components/page/Branch'
 //###################
 import CommonDetail from '@/components/page/CommonDetail'
-import Babel from '@/components/page_extension/CommonDetail_babel'
+import Babel from '@/components/page_extension/CommonDetail_base'
 import Control from '@/components/page_extension/CommonDetail_control'
 import Notice from '@/components/page_extension/CommonDetail_notice'
 import Fee from '@/components/page_extension/CommonDetail_fee'
@@ -156,7 +156,11 @@ const router = new Router({
       component: Branch,
     },
     {
-      path: '/patent/list/detail',
+      path: '/patent/list/detail/:id',
+      redirect: '/patent/list/detail__/:id',
+    },
+    {
+      path: '/patent/list/detail__/:id',
       component: CommonDetail,
       children: [
         { path: '', redirect: 'base' },

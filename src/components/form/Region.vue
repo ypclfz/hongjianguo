@@ -1,11 +1,11 @@
 <template>
-  <el-select :value="value" @input="handleInput" :multiple="multiple" :disabled="disabled">
+  <el-select :value="value" @input="handleInput" :multiple="multiple" :disabled="disabled" placeholder="请选择地区">
   	<el-option
 			v-for="item in areaData"
 			:key="item.value"
 			:label="item.name"
 			:value="item.id"
-			placeholder="请选择申请地区"
+			
   	></el-option>
   </el-select>
 </template>

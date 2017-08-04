@@ -26,6 +26,15 @@ export default {
           d.status ? success(d) : error(d);
         })
         .catch(catchFunc);
+    },
+    axiosDelete({ url='', data={}, success=()=>{}, error=d=>{this.$alert(d.info)}, catchFunc=err=>{console.log(err); this.$alert('网络错误');} }) {
+      this.$axios
+        .delete(url, { params: data })
+        .then(response=>{
+          const d = response.data;
+          d.status ? success(d) : error(d);
+        })
+        .catch(catchFunc);
     }
   }
 }

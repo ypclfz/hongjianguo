@@ -14,11 +14,15 @@ export default {
 		  option: {
 		  	'is_search': false,
 		  	'columns': [
-		  		{ type: 'text', label: '发送时间', prop: 'mail_date' },
 		  		{ type: 'text', label: '发件人', prop: 'from' },
 		  		{ type: 'text', label: '收件人', prop: 'to' },
-		  		{ type: 'text', label: '邮件标题', prop: 'subject' },
-		  		{ type: 'text', label: '是否有附件', prop: 'has_attachment' },
+		  		{ type: 'text', label: 'CC', prop: 'cc' },
+		  		{ type: 'text', label: '类型', prop: 'mailbox', render: d=>d == '1' ? '收件箱' : '发送箱'  },
+		  		{ type: 'text', label: '已读', prop: 'read', render: d=>d ? '是' : '否'  },
+		  		{ type: 'text', label: '置顶', prop: 'top', render: d=>d ? '是' : '否' },
+		  		{ type: 'text', label: '邮件主题', prop: 'subject' },
+		  		{ type: 'text', label: '发送时间', prop: 'sent_time' },
+		  		{ type: 'text', label: '是否有附件', prop: 'attach', render: d=>d ? '是' : '否' },
 		  		{
 		  			type: 'action',
 		  			btns: [

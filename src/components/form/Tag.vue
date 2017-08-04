@@ -5,6 +5,7 @@
 	:multiple="multiple"
 	:disabled="disabled"
 	filterable
+  placeholder="请选择标签"
   >
   	<el-option
 		v-for="item in tagOptions"

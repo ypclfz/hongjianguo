@@ -1,38 +1,21 @@
 <template>
 	<el-row>
-    <el-col :span="12">
-      <el-select
-        :value="id"
-        @input="handleInventor"
-        filterable
-        remote
-        placeholder="请输入发明人关键词"
-        :remote-method="remoteMethod"
-        :loading="loading"
-        :disabled="disabled"
-      >
-        <el-option 
-          v-for="item in option.inventors"
-          :key="item.id"
-          :label="item.name"
-          :value="item.id"
-        >
-  
-        </el-option>
-      </el-select>
+    <el-col :span="12" style="padding-right:5px">
+      <inventor-select :value="value.id" @input="handleInventor" :disabled="disabled"></inventor-select>
     </el-col>
-    <el-col :span="5" :offset="1">
+    <el-col :span="6" style="padding:0 5px">
       <el-autocomplete placeholder="贡献率" :fetch-suggestions="handleFetch"  style="width: 100%" readonly :value="share + ''" @input="handlePercent" :disabled="disabled">
         <template slot="append">%</template>
       </el-autocomplete>
     </el-col>
-    <el-col :span="5" :offset="1">
+    <el-col :span="6" style="padding-left:5px">
       <el-button size="small" v-if="isDelete && !disabled" @click="deleteInventor">删除</el-button>
     </el-col>
   </el-row>  
 </template>
 
 <script>
+import InventorSelect from '@/components/form/InventorSelect'
 export default {
   name: 'inventor',
   props: {
@@ -84,15 +67,6 @@ export default {
         cb(response.data.data.data);
       })
     },
-    remoteMethod (keyword) {
-      const params = {keyword};
-
-      this.loading = true;
-      this.$axios.get('/api/inventors', { params }).then(response=>{
-        this.loading = false;
-        this.option.inventors = response.data.data.data;
-      })
-    },
     deleteInventor () {
     	this.$emit('deleteInventor');
     },
@@ -115,9 +89,7 @@ export default {
       console.log('blur');
     }
   },
-  created () {
-    this.remoteMethod('');
-  }
+  components: { InventorSelect }
 }
 </script>
 

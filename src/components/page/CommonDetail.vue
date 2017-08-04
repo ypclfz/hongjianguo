@@ -14,7 +14,7 @@ export default {
   data () {
 		return {
 		  tags: [
-		  	{ 'text': '基本信息', key: 'babel' },
+		  	{ 'text': '基本信息', key: 'base' },
 		  	{ 'text': '流程管理', key: 'control' },
 		  	{ 'text': '官方来文', key: 'notice' },
 		  	{ 'text': '所有费用', key: 'fee' },

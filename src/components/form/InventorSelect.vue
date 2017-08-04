@@ -12,9 +12,9 @@
 	>
 		<el-option
 			v-for="item in options"
-			:key="item.id"
-			:label="item.name"
-			:value="item.id"
+			:key="item.value"
+			:label="item.label"
+			:value="item.value"
 		>
 		</el-option>
 	</el-select>
@@ -53,14 +53,14 @@
 	  		this.$emit('input', val);
 	  	},
 	  	remoteMethod (keyword) {
-	  		const params = { keyword };
+	  		const params = { keyword, listOnly: '1' };
 
 	  		this.loading = true;
 	  		this.$axios.get('/api/inventors', { params }).then(response=>{
 	  			this.loading = false;
-	  			this.options = response.data.data.data;
+	  			this.options = response.data.data;
 	  			if(this.default) {
-	  				this.options.unshift({id: '', name: '未选择'});
+	  				this.options.unshift({value: '', label: '未选择'});
 	  			}
 	  		});
 	  	}

@@ -34,6 +34,7 @@
 </template>
 
 <script>
+import AppCollapse from '@/components/common/AppCollapse'
 import InventorSelect from '@/components/form/InventorSelect'
 import Member from '@/components/form/Member'
 import Classification from '@/components/form/Classification'
@@ -75,7 +76,7 @@ export default {
   		this.$emit('refresh');
   	}
   },
-  components: { InventorSelect, Member, Classification, Product, Tag }
+  components: { AppCollapse, InventorSelect, Member, Classification, Product, Tag }
 }
 </script>
 

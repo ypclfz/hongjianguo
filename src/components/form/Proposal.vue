@@ -4,7 +4,7 @@
     @input="handleInput"
     filterable
     remote
-    placeholder="请输入提案人关键词"
+    placeholder="请输入提案关键词"
     :disabled="disabled"
     :remote-method="remoteMethod"
     :loading="loading"
@@ -12,9 +12,9 @@
 	>
 		<el-option
 			v-for="item in options"
-			:key="item.id"
-			:label="item.name"
-			:value="item.id"
+			:key="item.value"
+			:label="item.label"
+			:value="item.value"
 		>
 		</el-option>
 	</el-select>
@@ -46,12 +46,12 @@
 	  		this.$emit('input', val);
 	  	},
 	  	remoteMethod (keyword) {
-	  		const params = { keyword };
+	  		const params = { keyword, listOnly:"1" };
 
 	  		this.loading = true;
 	  		this.$axios.get('/api/proposals', { params }).then(response=>{
 	  			this.loading = false;
-	  			this.options = response.data.members.data.map(d=>{return {id: d.id, name: d.title}});
+	  			this.options = response.data.proposals;
 	  		});
 	  	}
 	  },

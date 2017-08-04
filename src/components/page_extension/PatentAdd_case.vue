@@ -13,6 +13,8 @@
 
 <script>
 import AppCollapse from '@/components/common/AppCollapse'
+import Priorities from '@/components/form/Priorities'
+import RelativeProjects from '@/components/form/RelativeProjects'
 
 export default {
   name: 'patentAddCase',
@@ -29,7 +31,7 @@ export default {
   		this.$tool.coverObj(this.form, data);
   	},
   },
-  components: { AppCollapse }
+  components: { AppCollapse, Priorities, RelativeProjects }
 }
 </script>
 

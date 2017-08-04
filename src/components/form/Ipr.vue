@@ -4,6 +4,7 @@
   @input="handleInput"
 	:multiple="multiple"
 	:disabled="disabled"
+  placeholder="请选择IPR"
   >
   	<el-option
 		v-for="item in iprOptions"

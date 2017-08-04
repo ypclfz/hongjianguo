@@ -10,24 +10,30 @@
       	<el-form-item label="发明人">
 					<inventors v-model="form.inventors" multiple></inventors>
       	</el-form-item>
-      	<el-form-item label="项目分类">
-      		<project v-model="form.project_id"></project>
-      	</el-form-item>
+<!--       	<el-form-item label="项目分类">
+      		<el-input v-model="form.project_id"></el-input>
+      	</el-form-item> -->
       	<el-form-item label="产品分类">
       		<product v-model="form.products" multiple></product>
       	</el-form-item>
       	<el-form-item label="技术分类">
-					<classification v-model="form.classification"></classification>
+					<classification v-model="form.classification_id"></classification>
       	</el-form-item>        
         <el-form-item label="标签">
         	<tag v-model="form.tags" multiple></tag>
         </el-form-item>
+        </el-form>
     </app-collapse>
 </template>
 
 <script>
 import AppCollapse from '@/components/common/AppCollapse'
+import Applicant from '@/components/form/Applicant'
 import Inventors from '@/components/form/Inventors'
+import Ipr from '@/components/form/Ipr'
+import Product from '@/components/form/Product'
+import Classification from '@/components/form/Classification'
+import Tag from '@/components/form/Tag'
 
 export default {
   name: 'patentAddPerson',
@@ -36,7 +42,9 @@ export default {
 			form: {
 			  ipr_id: '',
 			  applicants: [],
-			  inventors: [{id: '', share: ''}],
+			  inventors: [
+          {id: '', share: ''}
+        ],
 			  project_id: '',
 			  products: [],
 			  classification_id: '',
@@ -55,7 +63,7 @@ export default {
   		this.form.inventor.splice( index, 1 );
   	}
   },
-  components: { AppCollapse, Inventors }
+  components: { AppCollapse, Inventors, Ipr, Product, Classification, Tag, Applicant }
 }
 </script>
 

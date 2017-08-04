@@ -5,13 +5,13 @@
 				<el-input v-model="form.title" placeholder="请填写案件标题"></el-input>
 			</el-form-item>
 			<el-form-item label="案件摘要">
-				<el-input v-model="form.abstract" type="textarea"></el-input>
+				<el-input v-model="form.abstract" type="textarea" placeholder="请填写案件摘要"></el-input>
 			</el-form-item>
 	    <el-form-item label="相关提案">
 	      <proposal v-model="form.proposals" multiple></proposal>
 	    </el-form-item>
 	    <el-form-item label="申请地区">
-	    	<area v-model="form.area" multiple></area>
+	    	<region v-model="form.area" :multiple = "type == 'add'"></region>
 	    </el-form-item>
 	    <el-form-item label="案件类型">
 	      <el-select v-model="form.type" placeholder="请选择案件类型">
@@ -19,7 +19,7 @@
 	      </el-select>
 	    </el-form-item>
 	    <el-form-item label="额外要求">
-	    	<el-checkbox-group v-model="extension" v-if="extensionSet.length != 0">
+	    	<el-checkbox-group v-model="form.extension" v-if="extensionSet.length != 0">
 			    <el-checkbox 
 			    	v-for="item in extensionSet" 
 			    	:key="item.label"
@@ -29,7 +29,7 @@
 			  <span v-else>暂无可选项</span>
 	    </el-form-item>
 	    <el-form-item label="备注">
-	      <el-input v-model="form.remark" type="textarea"></el-input>
+	      <el-input v-model="form.remark" type="textarea" placeholder="请填写备注"></el-input>
 	    </el-form-item>
 	    <el-form-item label="附件">
 	    	<upload v-model="form.attachments"></upload>
@@ -40,19 +40,20 @@
 
 <script>
 import AppCollapse from '@/components/common/AppCollapse'
-import Area from '@/components/form/Area'
-import Proposal from '@/components/form/proposal'
-import Upload from '@/components/form/upload'
+import Region from '@/components/form/Region'
+import Proposal from '@/components/form/Proposal'
+import Upload from '@/components/form/Upload'
 
 const extensionHash = [
 	{ text: '是否同时申请实用新型', label: 'is_utility', area: 'CN', type: 1 },
-	{ text: '是否请求提前公开', label: 'is_utility', area: 'CN', type: 1 },
-	{ text: '是否同时提出实审请求', label: 'is_utility', area: 'CN', type: 1 },
-	{ text: '是否同时提出保密审查请求', label: 'is_utility', area: 'CN', type: [1,2] },
+	{ text: '是否请求提前公开', label: 'is_pre_public', area: 'CN', type: 1 },
+	{ text: '是否同时提出实审请求', label: 'is_exam_request', area: 'CN', type: 1 },
+	{ text: '是否同时提出保密审查请求', label: 'is_secure_check', area: 'CN', type: [1,2] },
 ] 
 
 export default {
   name: 'patentAddBase',
+  props: ['type'],
   data () {
 		return {
 		  form: {
@@ -76,7 +77,7 @@ export default {
   },
   computed: {
   	extensionSet () {
-  		const area = this.form.area.join(',');
+  		const area = this.type == 'add' ? this.form.area.join(',') : this.form.area;
   		const type = this.form.type;
   		const arr = [];
   		extensionHash.forEach(d=>{
@@ -108,7 +109,7 @@ export default {
 
   	}
   },
-  components: { AppCollapse, Area, Proposal, Upload }
+  components: { AppCollapse, Region, Proposal, Upload }
 }
 </script>
 

@@ -1,12 +1,11 @@
 <template>
   <div class="main">
-    <pa-base ref="base"></pa-base>
+    <pa-base ref="base" :type="pop_type"></pa-base>
     <person ref="person"></person>
     <case ref="case"></case>
     <div style="margin-bottom: 20px;">
-      <el-button @click="addPatent" v-if="">添加</el-button>
-      <el-button @click="editPatent">编辑</el-button>
-      <el-button @click="addPatent">{{ this.type_in == 'add' ? '添加' : '编辑' }}</el-button>
+      <el-button @click="add" v-if="pop_type == 'add'">添加</el-button>
+      <el-button @click="edit" v-else>编辑</el-button>
       <el-button>取消</el-button>
     </div>
   </div>
@@ -30,36 +29,34 @@ export default {
   data () {
     return {
       id: '',
-      type: '',
+      pop_type: '',
     }
   },
   mixins: [ AxiosMixins ],
-  props: ['type'],
   methods: {
-    save () {
+    add () {
       const keys = map.keys();
-      const arr = keys.map(d=>this.$refs[d].form);
       const url = URL;
-      const urlE = `${URL}/${id}`;
-      const data = Object.assign(...arr);
-      const success = d=>{ this.$alert(d.info); this.push(0) };
-      type == 'add' ? this.axiosPost({url, data, success}) : this.axiosPut({urlE, data, successE});
+      const data = Object.assign( ...keys.map(d=>this.$refs[d].form) );
+      const success = d=>{ this.$router.push('/paten/list') };
+      this.axiosGet({url, data, success});
 
     },
-    addPatent () {
-      const arr = keys.map(d=>this.$refs[d].form);
-      const form = Object.assign({ id: this.id }, ...arr);
-      const msg = this.addCheck();
-      msg == '' 
-        ? console.log(form) 
-        : console.log(msg);
-      
+    edit () {
+      const keys = map.keys();
+      const url = `${URL}/${id}`;
+      const data = Object.assign( ...keys.map(d=>this.$refs[d].form) );
+      const success = d=>{ this.$alert(d.info).then(()=>{this.$store.dispatch('refreshDetailData')}); }
+      this.axiosPut({url, data, success});
     },
-    refreshForm (val) {
-      if( this.type_in == 'edit' && val) {
+    refreshForm (val) {      
+      if( this.type='edit' && val) {
+        const keys = map.keys();
         const copy = this.$tool.deepCopy(val);
         this.id = copy.id;
-        keys.forEach((d)=>{this.$refs[d].setForm(copy)});
+        for( let d of keys ){
+          this.$refs[d].setForm(copy);
+        }
       }
     }
   },
@@ -75,10 +72,14 @@ export default {
       }
     }   
   },
+  created () {
+    const path = this.$route.path;
+    this.pop_type = /detail/.test(path) ? 'edit' : 'add';
+  },
   mounted () {
     this.refreshForm(this.detail);
   },
-  components: { PaBase, Person, Expand, Case }
+  components: { PaBase, Person, Case }
 }
 </script>
 

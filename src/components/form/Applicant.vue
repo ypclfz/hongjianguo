@@ -23,6 +23,17 @@
 	<script>
 	export default {
 	  name: 'applicant',
+	  props: {
+	  	'value': null,
+	  	'multiple': {
+	  		type: Boolean,
+	  		default: false,
+	  	},
+	  	'disabled': {
+	  		type: Boolean,
+	  		default: false,
+	  	}
+	  },
 	  data () {
 			return {
 				options: [],
@@ -34,12 +45,12 @@
 	  		this.$emit('input', val);
 	  	},
 	  	remoteMethod (keyword) {
-	  		const params = { keyword };
+	  		const params = { keyword, listOnly:"1" };
 
 	  		this.loading = true;
 	  		this.$axios.get('/api/applicants', { params }).then(response=>{
 	  			this.loading = false;
-	  			this.options = response.data.members.data.map(d=>{return {value: d.id, label: d.name}});
+	  			this.options = response.data.applicants;
 	  		});
 	  	}
 	  },

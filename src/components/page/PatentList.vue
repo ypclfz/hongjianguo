@@ -72,14 +72,20 @@ export default {
           { type: 'text', label: '删除时间', prop: 'delete_time', sortable: true },
           { type: 'text', label: '技术分类', prop: 'classification', sortable: true, render: (h,item)=>h('span', item.name) },
           { type: 'text', label: '部门名称', prop: 'branch', sortable: true, render:  (h,item)=>h('span', item.name) },
-          { type: 'text', label: '产品名称', prop: 'product', sortable: true, render: (h,item)=>h('span', item.name) },
           { 
             type: 'array', 
-            label: '专利人', 
-            prop: 'proposer', 
+            label: '产品名称', 
+            prop: 'products', 
+            sortable: true, 
             render: arr=>{
               return arr.map(d=>d.name);
-            },
+            }, 
+          },
+          { 
+            type: 'text', 
+            label: '专利人', 
+            prop: 'proposer', 
+            render: (h, item)=>h('span', item.name),
           },
           {
             type: 'array',
@@ -113,9 +119,9 @@ export default {
     },
     refreshTableData (option) {
       const url = URL;
-      const params = Object.assign({}, option, this.filter);
+      const data = Object.assign({}, option, this.filter);
       const success = d=>{this.tableData = d.patents};
-      this.axiosGet({url, params, success});
+      this.axiosGet({url, data, success});
     },
     delete ({title, id}) {
       this.$confirm(`删除后不可恢复，确认删除‘${title}’吗？`)
@@ -126,32 +132,12 @@ export default {
         .catch(()=>{});
     },
     detail ({id}) {
-      const path = '/patent/list/detail'; 
-      const query = { id };
-      this.$router.push({ path, query });
+      const path = `/patent/list/detail/${id}`; 
+      this.$router.push( path );
     }
   },
-  created () {
-    this.tableData = {
-    total:1,//总数
-    data:[{
-      id:"1",//专利ID
-      status:"1",//专利状态，1-正常 0-暂停处理
-      title:"title",//专利标题
-      abstract:"1",  //专利摘要
-      remark:"remark",//备注
-      create_time:"create_time",//创建时间
-      update_time:"update_time",//更新时间
-      delete_time:"delete_time",//删除时间
-      branch:{id:"部门ID",name:"部门名称"},
-      product:{id:1,name:"产品名称",remark:"备注"},//
-      proposer:[{id:"用户ID",name:"专利人姓名",mobile:"专利人手机",email:"专利人邮箱"}],//专利人
-      classification:{id:"技术分类ID",name:"技术分类名称",description:"技术分类描述"},
-      product:{id:"产品ID",name:"产品名称",remark:"产品描述"},
-      tags:["tag"],//标签
-      inventors:[{id:"发明人ID",name:"发明人姓名",share:"发明人份额",sort:"发明人排序"}],//发明人
-    }]
-      }
+  mounted () {
+    this.$refs.table.refresh();
   },
   components: {  AppFilter, TableComponent, AppTree, AppDatePicker, Strainer }
 }
