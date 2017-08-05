@@ -22,7 +22,6 @@ response {
     }
 }
 
-
 # 2、新建产品
 requestUrl=http://www.zhiq.wang/products;  
 method=POST;    

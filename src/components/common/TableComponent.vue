@@ -2,6 +2,7 @@
   <div class="hjg-table">
   	<div class="table-header">
       <template v-for="btn in tableOption.header_btn">
+        
         <template v-if="btn.type == 'custom'">
           <el-button class="table-header-btn" type="primary" :icon="btn.icon ? btn.icon : ''" @click="handleCommand(btn.click, $event)">{{ btn.label }}</el-button>
         </template>

@@ -1,0 +1,163 @@
+文件上传可以添加,上传文件的描述
+
+###设计模式###
+观察者模式(发布-订阅模式) //离线缓存 Y
+//如果只是单纯获取列表请添加以下参数 listOnly:"1",
+用户名administrator   密码!9fbd0d13a3  地址 api.hongjianguo.com
+###设计模式###
+
+echarts 警告：Method `dispose` should be implemented in custom.
+
+###基础Vue文件###
+<template>
+  <div class="main">
+  </div>
+</template>
+
+<script>
+export default {
+  name: 'hello',
+  data () {
+	return {
+	  msg: 'Welcome to Your Vue.js App'
+	}
+  }
+}
+</script>
+
+<!-- Add "scoped" attribute to limit CSS to this component only -->
+<style scoped lang="scss">
+</style>
+###AppTag###
+<template>
+  <app-tag :tags="tags">
+	<router-view></router-view>
+  </app-tag>
+</template>
+
+<script>
+import AppTag from '@/components/common/AppTag'
+
+export default {
+  name: 'hello',
+  data () {
+	return {
+	  tags: [],
+	}
+  },
+  components: { AppTag },
+}
+</script>
+
+<!-- Add "scoped" attribute to limit CSS to this component only -->
+<style scoped lang="scss">
+</style>
+
+###包含table的vue文件###
+<template>
+  <div class="main">
+	<table-component :tableOption="option" :data="tableData"></table-component>
+  </div>
+</template>
+
+<script>
+import TableComponent from '@/components/common/TableComponent' 
+
+export default {
+  name: 'hello',
+  data () {
+	return {
+	  option: {},
+	  tableData: [],
+	}
+  },
+  components: { TableComponent }
+}
+</script>
+
+<!-- Add "scoped" attribute to limit CSS to this component only -->
+<style scoped lang="scss">
+</style>
+
+tableOption: {
+        'header_btn': [
+          { type: 'custom', label: '新增', icon: 'plus', click: ()=>{ this.dialogAddVisible = true; } },
+          { type: 'custom', label: '转出', icon: '', click: ()=>{ this.dialogTurnoutVisible = true; } },
+          { 
+            type: 'dropdown', 
+            label: '数据', 
+            icon: '',
+            items: [
+              { text: '筛选', click: ()=>{ this.dialogScreenVisible = true; } },
+              { text: '导出' },
+              { text: '删除', divided: true },
+              { text: '标记为已完成状态' },
+              { text: '标记未处理中状态', divided: true },
+              { text: '标记为待客户确认状态' },
+              { text: '客户确认继续' },
+            ],
+          },
+          { type: 'control', label: '字段'},
+          { type: 'custom', label: '设定', icon: '', click: ()=>{ this.dialogSettingVisible = true; } }
+        ],
+        'expandFun': (row, expanded)=>{ 
+          const expands = this.$refs.table.expands;
+          const old_id = expands.shift();
+          if(old_id != row.id) { 
+            expands.push(row.id);
+          }else if( this.expandType != this.expandOldType) {
+            expands.push(row.id);
+          }
+          this.expandOldType = this.expandType;
+        },
+        'columns': [
+          { type: 'expand' },
+          { type: 'selection'},
+          { type: 'text', label: '案号', prop: 'number'},
+          { type: 'text', label: '地区'},
+          { type: 'text', label: '案件类型'},
+          { type: 'text', label: '客户'},
+          { type: 'text', label: '案件名称', show: false},
+          { type: 'text', label: '申请号', show: false},
+          { type: 'text', label: '注册号/专利号', show: false},
+          { type: 'text', label: '任务名称'},
+          { type: 'text', label: '任务开始时间'},
+          { type: 'text', label: '指定完成时间'},
+          { type: 'text', label: '官方绝限', show: false},
+          { type: 'text', label: '客户绝限', show: false},
+          { type: 'text', label: '完成时间', show: false},
+          { type: 'text', label: '任务处理人'},
+          { type: 'text', label: '案件负责人', show: false},
+          { type: 'text', label: '任务来源', show: false},
+          { type: 'text', label: '任务来源', show: false},
+          { type: 'text', label: '撰稿人/外代', show: false},
+          { type: 'text', label: '任务状态', show: false},
+          { type: 'text', label: '备注', show: false},
+          { 
+            type: 'action', 
+            label: '操作',
+            width: '300px',
+            btns: [
+              { 
+                type: 'dropdown', 
+                label: '发送邮件',
+                items: [
+                  { text: '立案通知' },
+                  { text: '发明人看稿' },
+                  { text: 'IPR看稿' },
+                  { text: '委案处理' },
+                ],
+              },
+              { btn_type: 'text', label: '编辑', click: this.dropGenrator('edit') },
+              { btn_type: 'text', label: '详情', click: this.dropGenrator('detail') },
+              { btn_type: 'text', label: '线上完成', click: this.dropGenrator('finish') },
+            ],
+          }
+        ],
+      },
+#专利
+#详情
+#设置 ~代理机构管理 -执业证管理 -客户管理 -供应商管理
+#费用: 应付明细 付款单 年费监控 奖励
+#颜色控制
+###?筛选框与新增/编辑框切换会触发验证 BUG
