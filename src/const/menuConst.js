@@ -207,23 +207,13 @@ menu.data = [
 		icon: 'iconfont icon-task',
 		type: 'submenu',
 		children: [{
+			text: '应收明细',
+			path: '/fee/income',
+			icon: '',
+			type: 'item',
+		},{
 			text: '应付明细',
-			path: '/fee/expense',
-			icon: '',
-			type: 'item',
-		},{
-			text: '付款单',
-			path: '/fee/payment',
-			icon: '',
-			type: 'item',
-		},{
-			text: '年费监控',
-			path: '/fee/monitor',
-			icon: '',
-			type: 'item',
-		},{
-			text: '奖励',
-			path: '/fee/hortation',
+			path: '/fee/pay',
 			icon: '',
 			type: 'item',
 		}]

@@ -45,7 +45,7 @@
 			return {
 				query: '',
 				options: [],
-			  loading: false,
+			  	loading: false,
 			}
 	  },
 	  methods: {

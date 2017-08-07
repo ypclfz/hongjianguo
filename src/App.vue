@@ -96,6 +96,8 @@ export default {
         this.$store.dispatch('refreshBranch');
         this.$store.dispatch('refreshIpr');
         this.$store.dispatch('refreshArea');
+        this.$store.dispatch('refreshFeeCode');
+        this.$store.dispatch('refreshEntity');
           
       });
     

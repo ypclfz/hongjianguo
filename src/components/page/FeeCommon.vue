@@ -1,14 +1,14 @@
 <template>
   <div class="main">
   	<strainer v-model="filter" @refresh="refresh"></strainer>
-		<table-component :tableOption="option" :data="tableData" ref="table"></table-component>
-		<pop ref="pop" @refresh="refresh"></pop>
+		<table-component @refreshTableData="refreshTableData" :tableOption="option" :data="tableData" ref="table"></table-component>
+		<pop ref="pop" :feeType="feeType" :popType="popType" @refresh="refresh"></pop>
   </div>
 </template>
 
 <script>
 import TableComponent from '@/components/common/TableComponent' 
-import Stariner from '@/components/page_extension/FeeCommon_strainer'
+import Strainer from '@/components/page_extension/FeeCommon_strainer'
 import Pop from '@/components/page_extension/feeCommon_pop'
 import AxiosMixins from '@/mixins/axios-mixins'
 
@@ -19,8 +19,8 @@ export default {
   mixins: [ AxiosMixins ],
   data () {
 		return {
-			pop_type: '',
-		  option: {
+			popType: '',
+		  	option: {
 		  	'header_btn': [
 		  		{ type: 'add', click: this.addPop },
 		  		{ type: 'control' },
@@ -55,7 +55,7 @@ export default {
 		  			type: 'action',
 		  			btns: [
 		  				{ type: 'edit', click:  this.editPop},
-		  				{ type: 'delete', click: this.feeDelte },
+		  				{ type: 'delete', click: this.feeDelete },
 		  			]
 		  		}
 		  	],
@@ -65,33 +65,36 @@ export default {
 		}
   },
   computed: {
-  	fee_type () {
+  	feeType () {
   		const path = this.$route.path;
-  		return /income/.test(path) ? 'income' : 'pay'; 
+  		return /income/.test(path) ? 1 : 0; 
   	}
   },
   methods: {
   	refreshTableData (option) {
   		const url = URL;
-  		const debit = this.fee_type == 'income' ? 1 : 0;
-  		const data = Object.assigen({}, option, { debit }, filter);
+  		const debit = this.feeType;
+  		const data = Object.assign({}, option, { debit }, this.filter);
   		const success = d=>{ this.tableData = d.fees };
 
   		this.axiosGet({url, data, success});
   	},
   	addPop () {
-  		this.pop_type = 'add';
-  		this.$refs.pop.show();
+  		this.popType = 'add';
+  		this.$nextTick(()=>{
+  			this.$refs.pop.show();	
+  		})
+  		
   	},
-  	editPop () {
-  		this.pop_type = 'edit';
-  		this.$refs.pop.show();
+  	editPop (row) {
+  		this.popType = 'edit';
+  		this.$refs.pop.show(row);
   	},
   	feeDelete ({id, name}) {
-  		this.$confirm(`删除后不可恢复，确认删除‘${name}’吗？`)
+  		this.$confirm(`删除后不可恢复，确认删除‘${name}’吗？`, { type: 'warning' })
   			.then(()=>{
   				const url = `${URL}/${id}`;
-		  		const success = ()=>{ this.$refs.table.update };
+		  		const success = ()=>{ this.$refs.table.update() };
 		  		this.axiosDelete({url, success});		
   			})
   			.catch(()=>{}); 		
@@ -100,8 +103,11 @@ export default {
   		this.$refs.table.refresh();
   	},
   },
+  mounted () {
+  	this.refresh();
+  },
   
-  components: { TableComponent, Stainer, Pop }
+  components: { TableComponent, Strainer, Pop }
 }
 </script>
 

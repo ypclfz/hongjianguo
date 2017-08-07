@@ -10,6 +10,8 @@ import classification from '@/store/modules/classification.js'
 import branch from '@/store/modules/branch.js'
 import ipr from '@/store/modules/ipr.js'
 import area from '@/store/modules/area.js'
+import feeCode from '@/store/modules/fee-code.js'
+import invoiceEntity from '@/store/modules/invoice-entity.js'
 Vue.use(Vuex);
 
 const store = new Vuex.Store({
@@ -28,6 +30,8 @@ const store = new Vuex.Store({
     branch,
     ipr,
     area,
+    feeCode,
+    invoiceEntity,
   },
   mutations: {
     setDragId (state, id) {

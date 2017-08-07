@@ -4,10 +4,10 @@
     @input="handleInput"
   	:multiple="multiple"
   	:disabled="disabled"
-    placeholder="请选择IPR"
+    placeholder="请选择企业"
   >
   	<el-option
-		v-for="item in iprOptions"
+		v-for="item in options"
 		:key="item.value"
 		:label="item.label"
 		:value="item.value"
@@ -20,11 +20,11 @@
 import formSelect from '@/mixins/form-select'
 
 export default {
-  name: 'ipr',
-  mixins: [formSelect],
+  name: 'invoiceEntity',
+  mixins: [ formSelect ],
   computed: {
-  	iprOptions () {
-  		return this.$store.getters.iprOptions;
+  	options () {
+  		return this.$store.getters.invoiceEntityOptions;
   	}
   },
 }
