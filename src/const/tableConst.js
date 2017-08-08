@@ -25,7 +25,6 @@ export default {
   		},
   		handleselectionChange(selection) {
   			const d = this;
-
   			d.tableSelect = selection;
   		}
 	}

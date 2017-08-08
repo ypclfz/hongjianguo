@@ -21,7 +21,9 @@ export default {
   		this.$emit('input', val);
   	},
   	remoteMethod (keyword) {
-  		const params = { keyword, listOnly: '1' };
+  		const s = { keyword, listOnly: '1' };
+      const os = this.$options.PARAMS;
+      const params = os ? Object.assign({}, s, os) : s; 
   		const url = this.$options.URL;
       const key = this.$options.DATA_KEY;
 

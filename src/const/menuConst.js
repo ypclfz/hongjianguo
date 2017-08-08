@@ -216,6 +216,16 @@ menu.data = [
 			path: '/fee/pay',
 			icon: '',
 			type: 'item',
+		},{
+			text: '请款单',
+			path: '/fee/bill',
+			icon: '',
+			type: 'item',
+		},{
+			text: '付款单', 
+			path: '/fee/payment',
+			icon: '',
+			type: 'item',
 		}]
 	}
 ];

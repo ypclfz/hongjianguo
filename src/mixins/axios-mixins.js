@@ -18,14 +18,15 @@ export default {
         })
         .catch(catchFunc);
     },
-    axiosPut ({ url='', data={}, success=()=>{}, error=(d)=>{this.$alert(d.info)}, catchFunc=(err)=>{console.log(err); this.$alert('网络错误')} }) {
+    axiosPut ({ url='', data={}, success=()=>{}, error=(d)=>{this.$alert(d.info)}, catchFunc=(err)=>{console.log(err); this.$alert('网络错误')}, complete=()=>{} }) {
       this.$axios
         .put(url, data)
         .then(response=>{
           const d = response.data;
           d.status ? success(d) : error(d);
+          complete(d);
         })
-        .catch(catchFunc);
+        .catch((d)=>{catchFunc(d); complete(d)});
     },
     axiosDelete({ url='', data={}, success=()=>{}, error=d=>{this.$alert(d.info)}, catchFunc=err=>{console.log(err); this.$alert('网络错误');} }) {
       this.$axios

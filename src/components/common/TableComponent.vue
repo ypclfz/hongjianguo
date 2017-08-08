@@ -52,6 +52,10 @@
         </template>
 
       </template>
+        
+      <template v-if="tableOption.header_slot ? true : false">
+        <slot v-for="item in tableOption.header_slot" :name="item"></slot>
+      </template>
 
 	  	<el-input
         v-model="search_value"

@@ -1,19 +1,21 @@
 <template>
   <div class="main">
   <strainer v-model="filter" @refresh="refresh"></strainer>
-	<table-component @refreshTableData="refreshTableData" :tableOption="option" :data="tableData"></table-component>
-	<pop :feeType="feeType" :popType="popType"></pop>
+	<table-component @refreshTableData="refreshTableData" :tableOption="option" :data="tableData" ref="table"></table-component>
+	<pop :feeType="feeType" :popType="popType" ref="pop"></pop>
   </div>
 </template>
 
 <script>
 import AxiosMixins from '@/mixins/axios-mixins'
 import TableComponent from '@/components/common/TableComponent'
-import Strainer from '@/components/form/InviceCommon_strainer'
-import Pop from '@/components/form/InviceCommon_pop'
+import Strainer from '@/components/page_extension/InvoiceCommon_strainer'
+import Pop from '@/components/page_extension/InvoiceCommon_pop'
+
+const URL = '/api/invoices';
 
 export default {
-  name: 'inviceCommon',
+  name: 'invoiceCommon',
   mixins: [ AxiosMixins ],
   data () {
 		return {
@@ -50,41 +52,49 @@ export default {
 		  			type: 'action',  
 		  			btns: [
 		  				{ type: 'edit',  click: this.editPop},
+		  				{ type: 'detail', click: this.detail },
 		  				{ type: 'delete',  click: this.invoiceDelete},
 		  			], 
 		  		},
-		  	]，
+		  	],
 		  },
 		  tableData: [],
 		  filter: {},
+		  popType: 'edit',
 		}
   },
   computed: {
   	feeType () {
-  		const path = $router.path;
+  		//'bill'|'payment'
+  		const path = this.$route.path;
+
   		return /bill/.test(path) ? 1 : 0; 
   	}
   },
-  methods () {
+  methods: {
   	refreshTableData (option) {
   		const url = URL;
   		const debit = this.feeType;
   		const data = Object.assign({}, option, { debit }, this.filter);
-  		const success = d=>{ this.tableData = d.incoices };
+  		const success = d=>{ this.tableData = d.invoices };
 
   		this.axiosGet({url, data, success});
   	},
   	refresh () {
-  		this.$refs.table.refresh;
+
+  		this.$refs.table.refresh();
+  	},
+  	detail ({id}) {
+  		this.router.push(`fee/${this.feeType ? 'income' : 'pay'}`, { params: {id} });
   	},
   	editPop (row) {
   		this.popType='edit';
   		this.$refs.pop.show(row);
   	},
-  	invoiceDelete ({id, title}) {
-  		this.$confirm(`删除后不可恢复, 确认删除‘${title}’？`)
+  	invoiceDelete ({id, target}) {
+  		this.$confirm(`删除后不可恢复, 确认删除‘${target}’的账单？`)
   			.then(()=>{
-  				const url = `${url}/${id}`;
+  				const url = `${URL}/${id}`;
   				const success = ()=>{ this.$refs.table.update() };
   				this.axiosDelete({url, success});
   			})

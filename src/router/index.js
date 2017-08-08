@@ -21,6 +21,7 @@ import UserList from '@/components/page/UserList'
 import Technology from '@/components/page/Technology'
 import Branch from '@/components/page/Branch'
 import FeeCommon from '@/components/page/FeeCommon'
+import InvoiceCommon from '@/components/page/InvoiceCommon'
 //###################
 import CommonDetail from '@/components/page/CommonDetail'
 import Babel from '@/components/page_extension/CommonDetail_base'
@@ -157,10 +158,6 @@ const router = new Router({
       component: Branch,
     },
     {
-      path: '/patent/list/detail/:id',
-      redirect: '/patent/list/detail__/:id',
-    },
-    {
       path: '/fee/income',
       name: 'FeeIncome',
       component: FeeCommon,
@@ -169,6 +166,20 @@ const router = new Router({
       path: '/fee/pay',
       name: 'FeePay',
       component: FeeCommon,
+    },
+    {
+      path: '/fee/bill',
+      name: 'FeeBill',
+      component: InvoiceCommon,
+    },
+    {
+      path: 'fee/payment',
+      name: 'FeePayment',
+      component: InvoiceCommon
+    },
+    {
+      path: '/patent/list/detail/:id',
+      redirect: '/patent/list/detail__/:id',
     },
     {
       path: '/patent/list/detail__/:id',

@@ -1,7 +1,12 @@
 <template>
   <div class="main">
   	<strainer v-model="filter" @refresh="refresh"></strainer>
-		<table-component @refreshTableData="refreshTableData" :tableOption="option" :data="tableData" ref="table"></table-component>
+		<table-component @refreshTableData="refreshTableData" :tableOption="option" :data="tableData" ref="table">
+			<fee-status slot="status" v-model="fee_status" style="width: 150px; margin-left: 5px;" :feeType="feeType" feeAnnual></fee-status>
+			
+			<el-input slot="invoice" :feeType="feeType" style="width: 150px; margin-left: 10px;"></el-input>
+
+		</table-component>
 		<pop ref="pop" :feeType="feeType" :popType="popType" @refresh="refresh"></pop>
   </div>
 </template>
@@ -10,9 +15,11 @@
 import TableComponent from '@/components/common/TableComponent' 
 import Strainer from '@/components/page_extension/FeeCommon_strainer'
 import Pop from '@/components/page_extension/feeCommon_pop'
+import FeeStatus from '@/components/form/FeeStatus'
 import AxiosMixins from '@/mixins/axios-mixins'
 
 const URL = '/api/fees';
+const URL_INVOICE = '/api/invoices';
 
 export default {
   name: 'feeCommon',
@@ -23,9 +30,22 @@ export default {
 		  	option: {
 		  	'header_btn': [
 		  		{ type: 'add', click: this.addPop },
+		  		{ 
+		  			type: 'dropdown',
+		  			label:  '',
+		  			icon: 'plus',
+		  			items: [
+		  				{text: '将选择的费用新建为{key}', click: ()=>{ this.invoiceAdd('selected') } },
+		  				{text: '将筛选的费用新建为{key}', click: ()=>{ this.invoiceAdd('all') } },
+		  				{text: '将选择的费用添加到已有{key}', click: ()=>{ this.invoicePut('selected') } },
+		  				{text: '将筛选的费用添加到已有{key}', click: ()=>{ this.invoicePut('all') } },
+		  			],
+		  		},
 		  		{ type: 'control' },
-		  	], 
+		  	],
+		  	'header_slot': [ 'status', 'invoice'],
 		  	'columns': [
+		  		{ type: 'selection' },
 		  		{ type: 'text', label: '案号', prop: 'serial' },
 		  		{ type: 'text', label: '案件类型', prop: 'category' },
 		  		{ type: 'text', label: '专利类型', prop: 'patent_type' },
@@ -62,19 +82,33 @@ export default {
 		  },
 		  tableData: [],
 		  filter: {},
+		  fee_status: 0,
+		  fee_invoice: '',
 		}
   },
   computed: {
   	feeType () {
+  		
   		const path = this.$route.path;
-  		return /income/.test(path) ? 1 : 0; 
+  		const type = /income/.test(path) ? 1 : 0;
+  		const k = type ? '请款单' : '付款单';
+  		
+  		const o = this.option.header_btn[1];
+  		console.log(o);
+  		o.label = k;
+  		o.items.forEach(d=>{d.text = d.text.replace('{key}', k)});
+  	
+  		this.option.header_btn.splice(1, 1, o);
+  		
+  		return type;  
   	}
   },
   methods: {
   	refreshTableData (option) {
   		const url = URL;
   		const debit = this.feeType;
-  		const data = Object.assign({}, option, { debit }, this.filter);
+  		const status = this.fee_status;
+  		const data = Object.assign({}, option, { debit, status }, this.filter);
   		const success = d=>{ this.tableData = d.fees };
 
   		this.axiosGet({url, data, success});
@@ -102,12 +136,42 @@ export default {
   	refresh () {
   		this.$refs.table.refresh();
   	},
+  	invoiceAdd (scope) {
+  		const fees = ['',''];
+  		
+  		if( scope == "all" ) {
+
+  		}else if ( scope == 'selected' ) {
+  			let s = this.$refs.table.tableSelect;
+  			if(s.length == 0) {
+  				this.$alert('请选择需要添加的费用', {type: 'warning', closeOnClickModal: true});
+  				return false;
+  			}else {
+  				s = s.map(_=>_.id);
+  				fees[0] = s;
+  			}
+  		}
+
+  		const url = URL_INVOICE;
+  		const data = { debit: this.feeType, scope, fees };
+  		const success = ()=>{this.$alert('新建账单成功', {type: 'success', closeOnClickModal: true})};
+
+  		this.axiosPost({ url, data, success });
+  	},
+  	invoicePut (scope) {
+
+  	}
+  },
+  watch: {
+  	fee_status () {
+  		this.refresh();
+  	}
   },
   mounted () {
   	this.refresh();
   },
   
-  components: { TableComponent, Strainer, Pop }
+  components: { TableComponent, Strainer, Pop, FeeStatus }
 }
 </script>
 

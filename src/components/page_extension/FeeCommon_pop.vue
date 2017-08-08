@@ -70,7 +70,6 @@ import FeeCode from '@/components/form/FeeCode'
 import FeeStatus from '@/components/form/FeeStatus'
 import InvoiceEntity from '@/components/form/InvoiceEntity'
 
-
 const URL = '/api/fees'
 
 export default {
