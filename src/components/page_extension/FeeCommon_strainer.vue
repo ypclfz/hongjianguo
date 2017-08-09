@@ -32,7 +32,7 @@
           
         </el-col>
       </el-row>
-      <el-row>
+      <el-row style="text-align: center;">
         <el-button @click="search(form)">查询</el-button>
         <el-button @click="clear($refs.form)">清空</el-button>
       </el-row>

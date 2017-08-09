@@ -4,10 +4,14 @@
 		<table-component @refreshTableData="refreshTableData" :tableOption="option" :data="tableData" ref="table">
 			<fee-status slot="status" v-model="fee_status" style="width: 150px; margin-left: 5px;" :feeType="feeType" feeAnnual></fee-status>
 			
-			<el-input slot="invoice" :feeType="feeType" style="width: 150px; margin-left: 10px;"></el-input>
+			<fee-invoice v-if="fee_invoice_if" slot='invoice' v-model="fee_invoice" style="width: 300px; margin-left: 10px;" :feeType="feeType"></fee-invoice>
 
 		</table-component>
 		<pop ref="pop" :feeType="feeType" :popType="popType" @refresh="refresh"></pop>
+    <el-dialog :title="dialogTitle" :visible.sync="dialogVisible" :close-on-click-modal="false">
+      <fee-invoice v-model="fee_invoice_pop" :feeType="feeType" style="margin-bottom: 10px;"></fee-invoice>
+      <el-button type="primary" @click="invoicePut">添加</el-button>
+    </el-dialog>
   </div>
 </template>
 
@@ -16,6 +20,7 @@ import TableComponent from '@/components/common/TableComponent'
 import Strainer from '@/components/page_extension/FeeCommon_strainer'
 import Pop from '@/components/page_extension/feeCommon_pop'
 import FeeStatus from '@/components/form/FeeStatus'
+import FeeInvoice from '@/components/form/FeeInvoice'
 import AxiosMixins from '@/mixins/axios-mixins'
 
 const URL = '/api/fees';
@@ -37,8 +42,8 @@ export default {
 		  			items: [
 		  				{text: '将选择的费用新建为{key}', click: ()=>{ this.invoiceAdd('selected') } },
 		  				{text: '将筛选的费用新建为{key}', click: ()=>{ this.invoiceAdd('all') } },
-		  				{text: '将选择的费用添加到已有{key}', click: ()=>{ this.invoicePut('selected') } },
-		  				{text: '将筛选的费用添加到已有{key}', click: ()=>{ this.invoicePut('all') } },
+		  				{text: '将选择的费用添加到已有{key}', click: ()=>{ this.invoicePutPop('selected') } },
+		  				{text: '将筛选的费用添加到已有{key}', click: ()=>{ this.invoicePutPop('all') } },
 		  			],
 		  		},
 		  		{ type: 'control' },
@@ -84,6 +89,10 @@ export default {
 		  filter: {},
 		  fee_status: 0,
 		  fee_invoice: '',
+      fee_invoice_if: false,
+      fee_invoice_scope: '',
+      fee_invoice_pop: '',
+      dialogVisible: false,
 		}
   },
   computed: {
@@ -91,17 +100,23 @@ export default {
   		
   		const path = this.$route.path;
   		const type = /income/.test(path) ? 1 : 0;
+
   		const k = type ? '请款单' : '付款单';
-  		
   		const o = this.option.header_btn[1];
-  		console.log(o);
   		o.label = k;
   		o.items.forEach(d=>{d.text = d.text.replace('{key}', k)});
   	
   		this.option.header_btn.splice(1, 1, o);
   		
   		return type;  
-  	}
+  	},
+    feeTypeName () {
+      return this.feeType ? '请款单' : '付款单';
+    },
+    dialogTitle () {
+      const key = this.fee_invoice_scoope == 'all' ? '筛选费用' : '选择费用' 
+      return  `${key}添加至${this.feeTypeName}`;
+    }
   },
   methods: {
   	refreshTableData (option) {
@@ -140,15 +155,14 @@ export default {
   		const fees = ['',''];
   		
   		if( scope == "all" ) {
-
-  		}else if ( scope == 'selected' ) {
+        return false;
+  		}else {
   			let s = this.$refs.table.tableSelect;
   			if(s.length == 0) {
   				this.$alert('请选择需要添加的费用', {type: 'warning', closeOnClickModal: true});
   				return false;
   			}else {
-  				s = s.map(_=>_.id);
-  				fees[0] = s;
+  				fees[0] = s.map(_=>_.id);
   			}
   		}
 
@@ -158,12 +172,53 @@ export default {
 
   		this.axiosPost({ url, data, success });
   	},
-  	invoicePut (scope) {
+  	invoicePutPop (scope) {
+      if(scope == 'all') {
+        return false;
+      }else {
+        let s = this.$refs.table.tableSelect;
+        if(s.length == 0) {
+          this.$alert('请选择需要添加的费用', {type: 'warning', closeOnClickModal: true});
+          return false;
+        }
+      }
 
-  	}
+      this.fee_invoice_scope = scope;
+      this.dialogVisible = true; 
+      
+  	},
+    invoicePut () {
+      const scope = this.fee_invoice_scope;
+      const fees = ['',''];
+      
+      if(this.fee_invoice_pop == '') {
+        this.$alert(`请选择${this.feeTypeName}`, {type: 'warning', closeOnClickModal: true});
+        return false;
+      }
+      
+      if(scope == 'all') {
+
+      }else {
+        let s = this.$refs.table.tableSelect;
+        fees[0] = s.map(_=>_.id);
+      }
+
+
+      const url = `${URL_INVOICE}/${this.fee_invoice_pop}/fees`;
+      const data = { scope, fees };
+      const success = _=>{ this.$alert('添加费用成功', {type: 'success', closeOnClickModal: true}) };
+      this.axiosPut({url, data, success});
+    }
   },
   watch: {
-  	fee_status () {
+  	fee_status (val) {
+      if( val == 1 || val == 2) {
+        this.fee_invoice_if = true;
+      }else {
+        this.fee_invoice_if = false;
+        this.fee_invoice = '';
+      }
+
   		this.refresh();
   	}
   },
@@ -171,7 +226,7 @@ export default {
   	this.refresh();
   },
   
-  components: { TableComponent, Strainer, Pop, FeeStatus }
+  components: { TableComponent, Strainer, Pop, FeeStatus, FeeInvoice }
 }
 </script>
 

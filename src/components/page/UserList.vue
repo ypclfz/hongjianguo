@@ -2,68 +2,24 @@
   <div class="main">
   	<div class="row">
 			<div class="left">
-				<app-tree :option="treeOption"></app-tree>
+				<group :choose-group.sync="choose_group"></group>
 			</div>
 			<div class="right">
-				<table-component :tableOption="tableOption" :data="tableData" ref="userList"></table-component>
+				<el-form-item>
+				</el-form-item>
+				<table-component @refresh-table-data="refreshTableData" :tableOption="tableOption" :data="tableData" ref="table"></table-component>
 			</div>
   	</div>
-  	<el-dialog :title="popType == 'add' ? '添加用户' : '编辑用户'" :visible.sync="dialogFormVisible">
-		  <el-form :model="formData" :label-width="formLabelWidth" ref="userForm" :rules="formRules">
-		    <el-form-item label="用户名" prop="username">
-		    	<el-input v-model="formData.username" :disabled="popType == 'edit'"></el-input>
-		    </el-form-item>
-		    <template v-if="popType == 'add'">
-			    <el-form-item label="密码" prop="password">
-			    	<el-input type="password" v-model="formData.password"></el-input>
-			    </el-form-item>
-			    <el-form-item label="确认密码" prop="password_again">
-			    	<el-input type="password" v-model="formData.password_again"></el-input>	
-			    </el-form-item>
-		    </template>
-		    <el-form-item label="昵称" prop="nickname">
-		    	<el-input v-model="formData.nickname"></el-input>	
-		    </el-form-item>
-		    <el-form-item label="邮箱" prop="email">
-		    	<el-input v-model="formData.email"></el-input>	
-		    </el-form-item>
-		    <el-form-item label="手机号" prop="mobile">
-		    	<el-input v-model="formData.mobile"></el-input>	
-		    </el-form-item>
-		    <el-form-item label="微信号" prop="weixin">
-		    	<el-input v-model="formData.weixin"></el-input>	
-		    </el-form-item>
-		    <el-form-item label="QQ" prop="qq">
-		    	<el-input v-model="formData.qq"></el-input>
-		    </el-form-item>
-
-		    <el-form-item>
-		    	<el-button type="primary" @click="saveSubmit">确 定</el-button>
-		    	<el-button @click="dialogFormVisible = false">取 消</el-button>
-		    </el-form-item>
-		  </el-form>
-		</el-dialog>
+  	<pop :popType="popType" @refresh="refresh"></pop>
   </div>
 </template>
 
 <script>
 import AppTree from '@/components/common/AppTree'
 import TableComponent from '@/components/common/TableComponent'
-
-const userList = 'http://www.zhiq.wang/member/lists';
-const userAdd = 'http://www.zhiq.wang/member/save';
-const userDelete = 'http://www.zhiq.wang/member/delete';
-
-const nullData = {
-	username: '',
-	password: '',
-	password_again: '',
-	nickname: '',
-	email: '',
-	mobile: '',
-	weixin: '',
-	qq: '',
-};
+import Group from '@/components/page_extension/userList_group'
+import Pop from '@/components/page_extension/pop'
+const URL = 'api/members'
 
 export default {
   name: 'userList',
@@ -71,33 +27,6 @@ export default {
 		return {
 		  formLabelWidth: '100px',
 		  popType: '',
-		  dialogFormVisible: false,
-		  formData: {
-		  	username: '',
-		  	password: '',
-		  	password_again: '',
-		  	nickname: '',
-		  	email: '',
-		  	mobile: '',
-		  	weixin: '',
-		  	qq: '',
-		  },
-		  formRules : {
-		  	'username': [
-		  		{ required: true, message: '用户名不能为空', trigger: 'blur'},
-		  		{ pattern: /^[^~!@#$%^&*]+$/, message: '用户名不能包含非法字符', trigger: 'blur' }
-		  	],
-		  	'password': [
-		  		{ required: true, message: '密码不能为空', trigger: 'blur'},
-		  	],
-		  	'password_again': [
-		  		{ required: true, message: '确认密码不能为空', triggrt: 'blur'},
-		  	],
-		  	'email': { pattern: /^[a-z0-9]+([._\\-]*[a-z0-9])*@([a-z0-9]+[-a-z0-9]*[a-z0-9]+.){1,63}[a-z0-9]+$/, message: '邮箱格式不正确', trigger: 'blur' },
-		  	'mobile': { pattern: /^1[3|4|5|7|8][0-9]{9}$/, message: '手机号码不正确', trigger: 'blur'},
-		  	'qq': { pattern: /^[1-9][0-9]{4,9}$/, message: 'qq号码格式错误', trigger: 'blur'},
-
-		  },
 		  tableOption: {
 		  	'header_btn': [
 		  		{ type: 'custom', label: '添加', icon: 'plus', click: this.add },
@@ -140,6 +69,7 @@ export default {
 	      }
 			},
 			tableData: [],
+			choose_group: '',
 		};
 	},
 	methods: {
