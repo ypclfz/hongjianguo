@@ -54,5 +54,14 @@ export default {
 		}
 
 		return result;
+	},
+	getUrlParams (obj) {
+		const arr = [];
+		for(let k of obj) {
+			const d = obj[k];
+			arr
+		}
+
+		return arr.join('&');
 	}
 }

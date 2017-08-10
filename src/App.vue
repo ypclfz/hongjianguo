@@ -98,6 +98,7 @@ export default {
         this.$store.dispatch('refreshArea');
         this.$store.dispatch('refreshFeeCode');
         this.$store.dispatch('refreshEntity');
+        this.$store.dispatch('refreshGroup');
           
       });
     

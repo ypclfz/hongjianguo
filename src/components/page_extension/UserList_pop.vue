@@ -1,6 +1,6 @@
 <template>
-  <el-dialog :title="popType == 'add' ? '添加用户' : '编辑用户'" :visible.sync="dialogFormVisible">
-		<el-form :model="form" :label-width="100px" ref="userForm" :rules="rules">
+  <el-dialog :title="popType == 'add' ? '添加用户' : '编辑用户'" :visible.sync="dialogVisible">
+		<el-form :model="form" label-width="100px" ref="form" :rules="rules">
 	    <el-form-item label="用户名" prop="username" >
 	    	<el-input v-model="form.username" :disabled="popType == 'edit'"></el-input>
 	    </el-form-item>
@@ -31,7 +31,7 @@
 	    <el-form-item>
 	    	<el-button type="primary" @click="add" v-if="popType == 'add'">确定</el-button>
 	    	<el-button type="primary" @click="edit" v-if="popType == 'edit'">编辑</el-button>
-	    	<el-button @click="dialogFormVisible = false">取消</el-button>
+	    	<el-button @click="dialogVisible = false">取消</el-button>
 	    </el-form-item>
 		</el-form>
 	</el-dialog>
@@ -89,7 +89,7 @@ export default {
   		this.$nextTick(()=>{
   			const t = this.popType;
   			if(t == 'add') {
-  				this.form.resetFields();
+  				this.$refs.form.resetFields();
   			}else {
   				this.$tool.coverObj(this.form, row);
   			}
@@ -122,4 +122,4 @@ export default {
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped lang="scss">
 </style>
-###AppTag###
+<!-- ###AppTag### -->

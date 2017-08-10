@@ -40,11 +40,11 @@
         </template>
 
         <template v-else-if="btn.type == 'add'">
-          <el-button class="table-header-btn" type="primary" icon="plus" @click="handleCommand(btn.click, $event)">添加</el-button>
+          <el-button class="table-header-btn" type="primary" icon="plus" @click="handleCommand(btn.click, $event)">{{ btn.label ? btn.label : '添加' }}</el-button>
         </template>
 
         <template v-else-if="btn.type == 'delete'">
-          <el-button class="table-header-btn" type="primary" icon="delete" @click="handleCommand(btn.click, $event)">删除</el-button>
+          <el-button class="table-header-btn" type="primary" icon="delete" @click="handleCommand(btn.click, $event)">{{ btn.label ? btn.label : '删除' }}</el-button>
         </template>
 
         <template v-else-if="btn.type == 'filter'">

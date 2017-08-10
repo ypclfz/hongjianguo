@@ -12,6 +12,7 @@ import ipr from '@/store/modules/ipr.js'
 import area from '@/store/modules/area.js'
 import feeCode from '@/store/modules/fee-code.js'
 import invoiceEntity from '@/store/modules/invoice-entity.js'
+import userGroup from '@/store/modules/user-group.js'
 Vue.use(Vuex);
 
 const store = new Vuex.Store({
@@ -32,6 +33,7 @@ const store = new Vuex.Store({
     area,
     feeCode,
     invoiceEntity,
+    userGroup,
   },
   mutations: {
     setDragId (state, id) {

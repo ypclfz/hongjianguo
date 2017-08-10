@@ -1,36 +1,60 @@
 <template>
   <div class="main">
-  	<div class="row">
+  	
 			<div class="left">
-				<group :choose-group.sync="choose_group"></group>
+
+				<group v-model="current_group"></group>
+
 			</div>
 			<div class="right">
-				<el-form-item>
+				<app-collapse col-title="用户组详情">
+					<ul style="margin: 0; padding-left: 15px; list-style: none; font-size: 14px">
+						<li style="margin-bottom: 20px"><span>用户组名称：</span><span>{{ group_name }}</span></li>
+						<li><span>用户组描述：</span><span>{{ group_description }}</span></li>
+					</ul>
+				</app-collapse>
+				<table-component @refreshTableData="refreshTableData" :tableOption="tableOption" :data="tableData" ref="table"></table-component>
+  		</div>
+	
+  	<pop :popType="popType" @refresh="refresh" ref="pop"></pop>
+  	
+  	<el-dialog title="将所选用户添加至用户组" :visible.sync="dialogVisible" :close-on-click-modal="false">
+			<el-form label-width="100px">
+				<el-form-item label="用户组">
+					<select-group v-model="to_group"></select-group>
 				</el-form-item>
-				<table-component @refresh-table-data="refreshTableData" :tableOption="tableOption" :data="tableData" ref="table"></table-component>
-			</div>
-  	</div>
-  	<pop :popType="popType" @refresh="refresh"></pop>
+				<el-form-item style="margin-bottom: 0;">
+					<el-button type="primary" @click="toGroup">添加</el-button>
+					<el-button @click="dialogVisible = false">取消</el-button>
+				</el-form-item>
+			</el-form>
+  	</el-dialog>
   </div>
 </template>
 
 <script>
+import AxiosMixins from '@/mixins/axios-mixins'
+import AppCollapse from '@/components/common/AppCollapse'
+
 import AppTree from '@/components/common/AppTree'
 import TableComponent from '@/components/common/TableComponent'
-import Group from '@/components/page_extension/userList_group'
-import Pop from '@/components/page_extension/pop'
+import Group from '@/components/page_extension/UserList_group'
+import Pop from '@/components/page_extension/UserList_pop'
+import SelectGroup from '@/components/form/Group'
+
 const URL = 'api/members'
+const URL_GROUP = 'api/groups'
 
 export default {
   name: 'userList',
+  mixins: [ AxiosMixins ],
   data () {
 		return {
 		  formLabelWidth: '100px',
 		  popType: '',
 		  tableOption: {
 		  	'header_btn': [
-		  		{ type: 'custom', label: '添加', icon: 'plus', click: this.add },
-		  		{ type: 'custom', label: '删除', icon: 'plus', click: this.bulkDelete },
+		  		{ type: 'add', label: '添加用户', click: this.addPop },
 		  		{ type: 'control', label: '字段' },
 		  	],
 		  	columns: [
@@ -42,10 +66,10 @@ export default {
 		  		{ type: 'text', label: '微信号', prop: 'weixin' },
 		  		{ type: 'text', label: 'QQ', prop: 'qq' },
 		  		{ 
-		  			type: 'action', label: '操作',
+		  			type: 'action', label: '操作', width: '150px',
 		  			btns: [
-		  				{ label: '编辑', icon: 'edit', click: this.edit },
-		  				{ label: '删除', icon: 'delete', click: this.delete }
+		  				{ type: 'edit', click: this.editPop },
+		  				{ type: 'delete', click: this.delete }
 		  			],
 		  		},
 		  	]
@@ -69,78 +93,113 @@ export default {
 	      }
 			},
 			tableData: [],
-			choose_group: '',
+			current_group: '',
+			to_group: '',
+			dialogVisible: false,
 		};
 	},
+	computed: {
+		group_id () {
+			return this.current_group ? this.current_group.id : ''; 
+		},
+		group_name () {
+			return this.current_group ? this.current_group.name : '暂未选择用户组';
+		},
+		group_description () {
+			return this.current_group 
+				? this.current_group.description
+					?  this.current_group.description : '暂无用户组描述'
+				: '暂未选择用户组';
+		}
+	},
 	methods: {
-		add () {
+		//true代表选择全部用户,false代表选择某个用户组
+    refreshTableOption (flag) {
+    	const h = this.tableOption.header_btn;
+    	const one = { type: 'add', label: '添加至用户组',  click: this.toGroupPop };
+    	const two = { type: 'delete', label: '移出当前用户组', click: this.removeGroup };
+    	if(flag) {
+    		h.splice(2,1,one);
+    	}else {
+    		h.splice(2,1,two);
+    	}
+    },
+		addPop () {
 			this.popType = 'add';
-			Object.assign(this.formData, nullData);
-			this.dialogFormVisible = true;
+			this.$refs.pop.show();
 		},
-		edit (row) {
+		editPop (row) {
 			this.popType = 'edit';
-			Object.assign(this.formData, row, {'password': '', 'password_again': ''});
-			this.dialogFormVisible = true;
+			this.$refs.pop.show(row);
 		},
-		delete (row) {
-			const uid = row.uid;
-			this.$confirm("确认删除该用户?")
-					.then(()=>{
-						this.$http.post(userDelete, { uid }).then(
-							data=>{console.log(data)},
-							error=>{console.log(error)}
-						);
-					});
+		toGroupPop () {
+			const s = this.$refs.table.tableSelect;
+			if( s.length == 0 ) {
+				this.$message({ message: '请选择需要添加的用户', type: 'warning' });
+				return false;
+			}
+				
+			this.to_group = '';
+			this.dialogVisible = true;
 		},
-		bulkDelete () {
-			const arr = this.$refs.getSelection();
-			const uid = [];
+		toGroup () {
+			const ids = this.$refs.table.tableSelect.map(_=>_.id);
+			const params = this.$tool.getUrlParams({ids});
+			const url = `${URL_GROUP}/${this.to_group}/members?${params}`;
+			const success = _=>{
+				this.$message({message: '添加用户至用户组成功', type: 'success'});
+				this.dialogVisible = false;
+			}
 
-			if(arr.length == 0) {
-				this.$alert("请选择需要删除的用户");
-			}else {	
-				for(let a of arr) {
-					uid.push(arr.uid);
-				}
+			this.axiosPut({url, success});
 
-				this.$http.post(userDelete, { uid }).then(
-					data=>{console.log(data)},
-					error=>{console.log(error)}
-				);
-			} 
 		},
-		saveSubmit () {
-			this.$refs.userForm.validate(valid=>{
-				if(valid) {
-					this.$http.post(userAdd, this.formData).then(data=>{
-						const body = data.body;
-						if(body.status) {
-							console.log(body);
-						}else {
-							this.$alert("添加失败");
-						}
-					},
-					error=>{this.$alert("网络连接错误")}, {type: warning, closeOnClickModal: true});
-				}else {
-					this.$alert("请正确填写各字段！", {type: 'warning', closeOnClickModal: true});
-				}
-			});
+		removeGroup () {
+			const s = this.$refs.table.tableSelect;
+			if( s.length == 0 ) {
+				this.$message({ message: '请选择需要移除的用户', type: 'warning' });
+				return false;
+			}
+
+			this.$confirm('确认将所选用户从当前用户组移出吗？')
+				.then(()=>{
+					const url = `${URL_GROUP}/${this.group_id}/members`;
+					const ids = this.$refs.table.tableSelect.map(_=>_.id);
+					const data = { ids };
+					const success = _=>{
+						this.$message({message: '移除成功', type: 'success'});
+						this.dialogVisible = false;
+						this.refresh();
+					}
+
+					this.axiosDelete({url, data, success}); 
+				})
+				.catch(()=>{});
+		},
+		userDelete () {
+
+		},
+		refreshTableData (option) {
+			const url = URL;
+			const group = this.group_id == 0 ? {} : { group: this.group_id };
+			const data = Object.assign({},group,option);
+			const success = _=>{ this.tableData = _.members };
+			
+			this.axiosGet({url, data, success})
+		},
+		refresh () {
+ 			this.$refs.table.refresh();
 		},
 	},
-  created () {
-  	this.$http.get(userList).then(
-  		data=>{
-  			const body = data.body;
-  			if(body.status) {
-  				this.tableData = body.data;
-  			}else {
-  				this.$alert("请求数据失败");
-  			}
-  		}, 
-  		error=>{console.log(error)})
+  watch: {
+  	group_id (val) {
+  		this.refreshTableOption(val == 0);
+  		this.refresh();
+  	}
   },
-  components: { AppTree, TableComponent },
+  created () {
+  },
+  components: { AppTree, TableComponent, Group, Pop, AppCollapse, SelectGroup },
 }
 </script>
 

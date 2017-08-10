@@ -126,6 +126,7 @@ request {
 	mobile:"mobile",
 	weixin:"weixin",
 	qq:"qq",
+	group: ,
 	role:"用户角色",//时间区间 2017-01-01|2017-12-31; 只填起始时间 2017-01-01| 只填结束时间 |2017-12-31
 	status:"状态",//1 正常 0 禁用
 	branch_id:"部门ID",//部门可以通过/branches接口拉取
