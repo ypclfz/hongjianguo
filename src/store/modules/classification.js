@@ -12,7 +12,7 @@ const getters = {
 
 		function a(arr) {
 			for(let d of arr) {
-				map.set(d.id, d.name);
+				map.set(d.id, d);
 				if(d.children && d.children.length) {
 					a(d.children);
 				}

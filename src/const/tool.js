@@ -56,10 +56,16 @@ export default {
 		return result;
 	},
 	getUrlParams (obj) {
+
 		const arr = [];
-		for(let k of obj) {
+		for(let k in obj) {
+
 			const d = obj[k];
-			arr
+			if(d instanceof Array) {
+				d.forEach(_=>{arr.push(`${encodeURIComponent(k)}[]=${encodeURIComponent(_)}`)});
+			}else {
+				arr.push(`${encodeURIComponent(k)}=${encodeURIComponent(d)}`)	
+			}			
 		}
 
 		return arr.join('&');

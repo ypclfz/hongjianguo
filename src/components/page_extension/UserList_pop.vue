@@ -1,9 +1,13 @@
 <template>
   <el-dialog :title="popType == 'add' ? '添加用户' : '编辑用户'" :visible.sync="dialogVisible">
 		<el-form :model="form" label-width="100px" ref="form" :rules="rules">
+		
 	    <el-form-item label="用户名" prop="username" >
 	    	<el-input v-model="form.username" :disabled="popType == 'edit'"></el-input>
 	    </el-form-item>
+		<el-form-item label="用户角色" prop="userrole" >
+			<user-role v-model="form.role" :disabled="popType == 'edit'"></user-role>
+		</el-form-item>
 	    <template v-if="popType == 'add'">
 		    <el-form-item label="密码" prop="password">
 		    	<el-input type="password" v-model="form.password"></el-input>
@@ -12,8 +16,8 @@
 		    	<el-input type="password" v-model="form.password_again"></el-input>	
 		    </el-form-item>
 	    </template>
-	    <el-form-item label="昵称" prop="nickname">
-	    	<el-input v-model="form.nickname"></el-input>	
+	    <el-form-item label="昵称" prop="name">
+	    	<el-input v-model="form.name"></el-input>	
 	    </el-form-item>
 	    <el-form-item label="邮箱" prop="email">
 	    	<el-input v-model="form.email"></el-input>	
@@ -38,10 +42,14 @@
 </template>
 
 <script>
+import UserRole from '@/components/form/UserRole'
+import AxiosMixins from '@/mixins/axios-mixins'
+
 const URL = 'api/members'
 
 export default {
   name: 'userListPop',
+  mixins: [ AxiosMixins ],
   props: {
   	'popType': {
   		type: String, 
@@ -50,11 +58,13 @@ export default {
   },
   data () {
 		return {
+			'id': '',
 		  'form': {
+		  	role: '',
 		  	username: '',
 		  	password: '',
 		  	password_again: '',
-		  	nickname: '',
+		  	name: '',
 		  	email: '',
 		  	mobile: '',
 		  	weixin: '',
@@ -92,6 +102,7 @@ export default {
   				this.$refs.form.resetFields();
   			}else {
   				this.$tool.coverObj(this.form, row);
+  				this.id = row.id;
   			}
   		});
   	},
@@ -105,17 +116,19 @@ export default {
 
   		this.axiosPost({url, data, success});
   	},
-  	edit ({id}) {
-  		const url = `${URL}/${id}`;
+  	edit () {
+  		const url = `${URL}/${this.id}`;
   		const data = this.form;
   		const success = _=>{
-  			this.$alert('编辑用户成功', {type: 'success', closeOnClickModal: true});
+  			this.$message({message: '编辑用户成功', type: 'success'});
+  			this.dialogVisible = false;
   			this.$emit('refresh');
   		}
 
   		this.axiosPut({url, data, success});
   	}
-  }
+  },
+  components: { UserRole }
 }
 </script>
 

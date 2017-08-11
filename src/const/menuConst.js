@@ -33,7 +33,13 @@ menu.data = [
 	},
 	{
 		text: '技术分类管理',
-		path: '/tclass',
+		path: '/classification',
+		icon: '',
+		type: 'item',
+	},
+	{
+		text: '产品分类管理',
+		path: '/product',
 		icon: '',
 		type: 'item',
 	},

@@ -1,13 +1,17 @@
 <template>
   <div class="main">
-	<table-component :tableOption="option" :data="tableData" ref="table" @refreshTableData="refreshTableData"></table-component>
-	<pop-panel ref="pop" @refreshTableData="refreshTableData" @refreshFilter="refreshFilter"></pop-panel>
+  	<strainer v-model="filter" @refresh="refresh"></strainer>
+		<table-component :tableOption="option" :data="tableData" ref="table" @refreshTableData="refreshTableData"></table-component>
+		<pop :popType="popType" @refresh="refresh" ref="pop"></pop>
   </div>
 </template>
 
 <script>
+import Strainer from '@/components/page_extension/ApplicantList_strainer'
 import TableComponent from '@/components/common/TableComponent'
-import PopPanel from '@/components/page_extension/ApplicantList_pop'
+import Pop from '@/components/page_extension/ApplicantList_pop'
+
+const URL = '/api/applicants';
 
 export default {
   name: 'applicantList',
@@ -16,8 +20,6 @@ export default {
 		  option: {
 		  	'header_btn': [
 		  		{ type: 'add', click: this.addPopUp },
-		  		{ type: 'delete', click: this.delete_s },
-		  		{ type: 'filter', click: this.filterPopUp },
 		  		{ type: 'control' },
 		  	],
 		  	'columns': [
@@ -37,56 +39,52 @@ export default {
 		  			type: 'action',
 		  			btns: [
 		  				{ type: 'edit', click: this.editPopUp },
-		  				{ type: 'delete', click: this.delete },
+		  				{ type: 'delete', click: this.applicantDelete },
 		  			] 
 		  		}
 		  	],
 		  },
-		  tableData: [{   		
-				id: '1',
-	      type:"1",  //申请人类型5个人 3工矿企业 1大专院校 2科研单位 4事业单位
-	      name:"name",//申请人姓名
-	      identity:"identity",//证件号码
-	      area:"area",//地区代码
-	      province:"province",//省份代码
-	      city:"city",//城市代码
-	      address:"address",//详细地址
-	      postcode:"postcode",//邮编
-	      fee_discount:"0",//费用备案 0未完成 1已完成
-	      ename:"ename",//英文姓名
-	      eaddress:"eaddress",//英文地址
-	    }],
+		  tableData: [],
 	    filter: {},
+	    popType: '',
 		}
   },
   methods: {
   	addPopUp () {
+  		this.popType = 'add';
   		this.$refs.pop.show();
   	},
-  	filterPopUp () {
-  		this.$refs.pop.show('filter', this.filter);
+  	editPopUp (row) {
+  		this.popType = 'edit';
+  		this.$refs.pop.show(row);
   	},
-  	editPopUp (col) {
-  		this.$refs.pop.show('edit', col);
+  	applicantDelete ({id, name} ) {
+  		this.$confirm(`删除后不可恢复，确认删除‘${name}’？`, {type: 'warning'})
+  			.then(_=>{
+  				const url = `${URL}/${id}`;
+  				const success = _=>{
+  					this.$message({message: '删除申请人成功', type: 'success'});
+  					this.update();
+  				}
+  				this.axiosDelete({url, success});
+  			})
+  			.catch(_=>{});
   	},
-  	delete (col) {
-  		this.$alert(`删除${col.id}`);
-  	},
-  	delete_s () {
-  		this.$alert('批量删除');
-  	},
-  	refreshTableData (flag) {
-  		if(flag) {
-        this.$refs.table.reset();
-      }
+  	refreshTableData (option) {
+  		const url = URL;
+  		const data = Object.assign({}, option, this.filter);
+  		const success = _=>{ this.tableData = _.applicants };
 
-      console.log(Object.assign({}, this.$refs.table.requesOption, this.filter));
+  		this.axiosGet({url, data, success});
   	},
-    refreshFilter (filter) {
-      this.filter = filter;
+    refresh () {
+    	this.$refs.table.refresh();
+    },
+    update () {
+    	this.$refs.table.update();
     }
   },
-  components: { TableComponent, PopPanel }
+  components: { TableComponent, Pop }
 }
 </script>
 

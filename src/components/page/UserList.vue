@@ -13,7 +13,9 @@
 						<li><span>用户组描述：</span><span>{{ group_description }}</span></li>
 					</ul>
 				</app-collapse>
-				<table-component @refreshTableData="refreshTableData" :tableOption="tableOption" :data="tableData" ref="table"></table-component>
+				<table-component @refreshTableData="refreshTableData" :tableOption="tableOption" :data="tableData" ref="table">
+					<user-role v-model="user_role" slot="userRole" default style="width: 200px; margin-left: 5px;"></user-role>
+				</table-component>
   		</div>
 	
   	<pop :popType="popType" @refresh="refresh" ref="pop"></pop>
@@ -40,6 +42,7 @@ import AppTree from '@/components/common/AppTree'
 import TableComponent from '@/components/common/TableComponent'
 import Group from '@/components/page_extension/UserList_group'
 import Pop from '@/components/page_extension/UserList_pop'
+import UserRole from '@/components/form/UserRole'
 import SelectGroup from '@/components/form/Group'
 
 const URL = 'api/members'
@@ -56,11 +59,14 @@ export default {
 		  	'header_btn': [
 		  		{ type: 'add', label: '添加用户', click: this.addPop },
 		  		{ type: 'control', label: '字段' },
+		  		{},
 		  	],
+		  	'header_slot': [ 'userRole' ],
 		  	columns: [
 		  		{ type: 'selection' },
 		  		{ type: 'text', label: '用户名', prop: 'username' },
-		  		{ type: 'text', label: '昵称', prop: 'nickname' },
+		  		{ type: 'text', label: '用户角色', prop: 'role' },
+		  		{ type: 'text', label: '昵称', prop: 'name' },
 		  		{ type: 'text', label: '邮箱', prop: 'email' },
 		  		{ type: 'text', label: '手机号', prop: 'mobile' },
 		  		{ type: 'text', label: '微信号', prop: 'weixin' },
@@ -96,6 +102,7 @@ export default {
 			current_group: '',
 			to_group: '',
 			dialogVisible: false,
+			user_role: '',
 		};
 	},
 	computed: {
@@ -144,7 +151,7 @@ export default {
 		},
 		toGroup () {
 			const ids = this.$refs.table.tableSelect.map(_=>_.id);
-			const params = this.$tool.getUrlParams({ids});
+			const params = this.$tool.getUrlParams({ ids }); 
 			const url = `${URL_GROUP}/${this.to_group}/members?${params}`;
 			const success = _=>{
 				this.$message({message: '添加用户至用户组成功', type: 'success'});
@@ -182,7 +189,8 @@ export default {
 		refreshTableData (option) {
 			const url = URL;
 			const group = this.group_id == 0 ? {} : { group: this.group_id };
-			const data = Object.assign({},group,option);
+			const role = this.user_role == '' ? {} : { role: this.user_role };
+			const data = Object.assign({},group,option,role);
 			const success = _=>{ this.tableData = _.members };
 			
 			this.axiosGet({url, data, success})
@@ -195,11 +203,14 @@ export default {
   	group_id (val) {
   		this.refreshTableOption(val == 0);
   		this.refresh();
+  	},
+  	user_role () {
+  		this.refresh();
   	}
   },
   created () {
   },
-  components: { AppTree, TableComponent, Group, Pop, AppCollapse, SelectGroup },
+  components: { AppTree, TableComponent, Group, Pop, AppCollapse, SelectGroup, UserRole },
 }
 </script>
 

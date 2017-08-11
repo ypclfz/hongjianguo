@@ -2,12 +2,12 @@
 requestUrl:http://www.zhiq.wang/fees;
 method：POST;
 request {
-    type:"费用类型",//0-应付 1-应收
+    debit:"费用类型",//0-应付 1-应收
 	project_id:"对应的案件ID",
 	target_id:"费用对象",//通过/members接口，附加listOnly=1参数
 	code:"费用代码",//通过/feeCodes接口查询获取
 	status:"费用状态",//0-未付款 1-请款单 2-付款单 3-等待客户支付相对费用 10-年费监控中 11-年费评估单 12-经评估确认不再缴纳 100-已付款
-	fee:"费用金额",//浮点类型
+	amount:"费用金额",//浮点类型
 	currency:"货币类型",//选项定义如下：[{label:"人民币[CNY]",value:"CNY"},{label:"美元[USD]",value:"USD"},{label:"欧元[EUR]",value:"EUR"},{label:"日元[JPY]",value:"JPY"},{label:"韩元[KRW]",value:"KRW"},{label:"港币[HKD]",value:"HKD"},{label:"新台币[NTD]",value:"NTD"},{label:"英磅[GBP]",value:"GBP"},{label:"德国马克[DEM]",value:"DEM"},{label:"瑞士法郎[CNY]",value:"CHF"},{label:"加拿大元[CAD]",value:"CAD"},{label:"澳大利亚元[AUD]",value:"AUD"},{label:"新西兰元[NZD]",value:"NZD"}],其余后续增加
 	roe:"执行汇率",//浮点类型
 	due_time:"费用期限",//
@@ -30,7 +30,7 @@ request {
 	target_id:"费用对象",//通过/members接口，附加listOnly=1参数
 	code:"费用ID",//通过/feeCodes接口查询获取
 	status:"费用状态",//0-未付款 1-请款单 2-付款单 3-等待客户支付相对费用 10-年费监控中 11-经评估确认不再缴纳 100-已付款
-	fee:"费用金额",//浮点类型
+	amount:"费用金额",//浮点类型
 	currency:"货币类型",//选项定义如下：[{label:"人民币[CNY]",value:"CNY"},{label:"美元[USD]",value:"USD"},{label:"欧元[EUR]",value:"EUR"},{label:"日元[JPY]",value:"JPY"},{label:"韩元[KRW]",value:"KRW"},{label:"港币[HKD]",value:"HKD"},{label:"新台币[NTD]",value:"NTD"},{label:"英磅[GBP]",value:"GBP"},{label:"德国马克[DEM]",value:"DEM"},{label:"瑞士法郎[CNY]",value:"CHF"},{label:"加拿大元[CAD]",value:"CAD"},{label:"澳大利亚元[AUD]",value:"AUD"},{label:"新西兰元[NZD]",value:"NZD"}],其余后续增加
 	roe:"执行汇率",//浮点类型
 	due_time:"费用期限",//
@@ -50,7 +50,7 @@ reponse {
 
     status:1,//状态，0表示请求失败，1表示请求成功
     info:"提示信息",//status为0时才出现
-    fee:{ //status为1时才出现
+    amount:{ //status为1时才出现
 		id:"费用ID",
 		serial:"案号",
 		category:"案件类型",
@@ -67,10 +67,10 @@ reponse {
 		target:"费用对象",
 		name:"费用名称",
 		type_name:"费用类型",
-		fee:"金额",
+		amount:"金额",
 		roe:"汇率",
 		currency:"货币",
-		amount:"人民币",
+		rmb:"人民币",
 		status_name:"状态",
 		invoice_id:"请款单ID",
 		invoice_remark:"请款单备注",
@@ -135,10 +135,10 @@ response {
 		target:"费用对象",
 		name:"费用名称",
 		type_name:"费用类型",
-		fee:"金额",
+		amount:"金额",
 		roe:"汇率",
 		currency:"货币",
-		amount:"人民币",
+		rmb:"人民币",
 		status_name:"状态",
 		invoice_id:"请款单ID",
 		invoice_remark:"请款单备注",
@@ -157,5 +157,22 @@ response:{
 	entities:[{
 		label:"标签",
 		value:"值"
+	}]
+}
+
+# 7、获取费用代码
+requestUrl:http://www.zhiq.wang/feeCodes
+method：GET;
+request {
+    debit:"收入/支出类型",
+	project_id:"用户选择的关联案件ID",
+}
+response:{
+	status:1,
+    info:"信息提示",
+	entities:[{
+		label:"标签",
+		value:"值",
+		amount:"费用的默认金额"
 	}]
 }

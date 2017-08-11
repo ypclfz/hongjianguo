@@ -22,6 +22,7 @@ import Technology from '@/components/page/Technology'
 import Branch from '@/components/page/Branch'
 import FeeCommon from '@/components/page/FeeCommon'
 import InvoiceCommon from '@/components/page/InvoiceCommon'
+import ClassificationCommon from '@/components/page/ClassificationCommon'
 //###################
 import CommonDetail from '@/components/page/CommonDetail'
 import Babel from '@/components/page_extension/CommonDetail_base'
@@ -148,9 +149,14 @@ const router = new Router({
       component: UserList,
     },
     {
-      path: '/tclass',
-      name: 'Technology',
-      component: Technology,
+      path: '/classification',
+      name: 'Clssification',
+      component: ClassificationCommon,
+    },
+    {
+      path: '/product',
+      name: 'Product',
+      component: ClassificationCommon,
     },
     {
       path: '/branch',

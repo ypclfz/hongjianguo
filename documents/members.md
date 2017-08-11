@@ -126,10 +126,12 @@ request {
 	mobile:"mobile",
 	weixin:"weixin",
 	qq:"qq",
-	group: ,
 	role:"用户角色",//时间区间 2017-01-01|2017-12-31; 只填起始时间 2017-01-01| 只填结束时间 |2017-12-31
 	status:"状态",//1 正常 0 禁用
 	branch_id:"部门ID",//部门可以通过/branches接口拉取
+	
+	group:"用户组ID"
+	
 	keyword:"关键词",//支持检索：username name email mobile weixin qq字段
 	sort:"field-order",//field表示字段，取值为username、name、email、mobile、weixin、qq、role、status、branch_id order取值为asc（升序），desc（降序），多个排序采用逗号隔开
 }  
