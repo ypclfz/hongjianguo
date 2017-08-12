@@ -2,11 +2,12 @@
 requestUrl:http://www.zhiq.wang/mails;
 method：POST;
 request {
-    debit:"邮件类型",//0-应付 1-应收，这个根据费用收入支出类型自动决定
-    //新建邮件的菜单包括：1、从选取费用新增，2、从所有查询结果新增
-    scope:"数据范围",取值为all,selected,all对应菜单2 selected对应菜单1
-    fees:[1,2],//费用ID数组（用户通过复选框选择），菜单1时必须传递
-    与费用列表接口相同的参数，在scope=all时必须传递
+    subject:"邮件标题",
+	to:"收件人邮箱地址", 多个用逗号或分号隔开
+	cc:"抄送人邮箱地址",
+	body:"邮件正文",
+	mailbox:"邮箱",取值为0或2，其中0为保存草稿，2为保存至发件箱并发送
+	attachments:[1,2],//附件
 }
 response {
     status:1, //状态，0表示请求失败，1表示请求成功
@@ -17,46 +18,18 @@ response {
 requestUrl:http://www.zhiq.wang/mails/:id;  
 method：PUT;
 request {
-    mail_entity_id:"开票主体",//通过/mailEntities接口获取选项
-    due_time:"邮件期限",
-    pay_time:"支付时间",
-    company:"快递公司名称",//选项列出一些常见快递公司名称即可
-    number:"快递单号",
-    date:"快递寄送日期",
-    remark:"备注"
+    subject:"邮件标题",
+	to:"收件人邮箱地址", 多个用逗号或分号隔开
+	cc:"抄送人邮箱地址",
+	body:"邮件正文",
+	mailbox:"邮箱",取值为0或2，其中0为保存草稿，2为保存至发件箱并发送
 }
 response {
     status:1, //状态，0表示请求失败，1表示请求成功
     info:"信息提示",
 }
 
-# 3、向邮件中增加费用
-requestUrl:http://www.zhiq.wang/mails/:id/fees;
-method：PUT;
-request {
-    scope:"数据范围",取值为all,selected,all对应菜单2 selected对应菜单1
-    fees:[1,2],//费用ID数组（用户通过复选框选择），或者将费用的筛选条件传入
-    与费用列表接口相同的参数，在scope=all时必须传递
-}
-response {
-    status:1, //状态，0表示请求失败，1表示请求成功
-    info:"信息提示",
-}
-
-# 4、从邮件中移除费用
-requestUrl:http://www.zhiq.wang/mails/:id/fees;
-method：DELETE;
-request {
-    scope:"数据范围",取值为all,selected,all对应菜单2 selected对应菜单1
-    fees:[1,2],//费用ID数组（用户通过复选框选择
-	与费用列表接口相同的参数，在scope=all时必须传递
-}
-response {
-    status:1, //状态，0表示请求失败，1表示请求成功
-    info:"信息提示",
-}
-
-# 5、邮件详情
+# 3、邮件详情
 requestUrl:http://www.zhiq.wang/mails/:id;  
 method：GET;
 reponse {
@@ -64,34 +37,33 @@ reponse {
     info:"提示信息",//status为0时才出现
     mail:{ //status为1时才出现
         id:"邮件ID",
-        target:"邮件对象",
-        create_time:"创建时间",
-        due_time:"付款期限",
-        deadline:"付款绝限",
-        pay_time:"付款时间",
-        amount:"金额",
-        currency:"货币",
-        roe:"汇率",
-        rmb:"人民币金额",
-        status:"状态",
-        remark:"备注",
-        debit:"收入/支出类型",
-        mail_no:"发票号码",
-        mail_date:"开票日期",
-        express_company:"快递公司",
-        express_number:"快递单号",
-        express_date:"快递日",
-        creator_name:"创建人",
-        mail_title:"发票抬头",
-        tax_payer_identifier:"纳税人识别号",
-        account:"银行账号",
-        bank:"开户行",
-        address:"地址",
-        telphone:"电话",
+        attach:"是否有附件",
+        attachments:[{
+			id:"附件ID"
+			name:"名称",
+			ext:"格式",
+			size:"大小",
+			viewUrl:"查看地址",
+			downloadUrl:"下载地址",
+		}],
+        cc:"抄送",
+        from:"发件人",
+        mailBody:"邮件正文",
+        mailbox:"邮箱",0-草稿 1-收件箱 2-发件箱
+        projects:[{
+			id:"案件ID",
+			serial:"案号",
+			title:"案件名称"
+		}]
+        read:"是否阅读",
+        sent_time:"发送时间",
+        subject:"邮件标题",
+        to:"收件人",
+        top:"是否置顶",
     }
 }
 						
-# 6、删除邮件
+# 4、删除邮件
 requestUrl:http://www.zhiq.wang/mails/:id
 method:DELETE;
 response{
@@ -100,7 +72,7 @@ response{
 }
 
 
-# 7、邮件列表
+# 5、邮件列表
 requestUrl:http://www.zhiq.wang/mails;
 method：GET;
 request {
@@ -108,19 +80,16 @@ request {
     page:"1",//分页，
     listRows:"20",//分页数量，默认值20
     status:0,//邮件状态，0-未付款 1-已付款
-	debit:"收入支出类型",1收入0支出
-    ids:"邮件ID,多个用逗号隔开",
-    target:"邮件对象ID",//多个用逗号隔开，选项通过/members?role=10获取
-	mail_no:"发票号码",//多个用逗号隔开
-    create_time:"邮件生成日期",//
-	due_time:"邮件期限",//或者直接采用过滤器的id:expired/thisweek/nextweek/thismonth/nextmonth/later
-	deadline:"官方绝限",//
-	pay_time:"付款时间",//
+	
+	ids:"邮件ID",多个排序采用逗号隔开
+	mailbox:"邮箱",0草稿 1收件箱 2发件箱
+	top:"是否置顶",
+	read:"是否已读",
+	sent_time:"邮件期限",//或者直接采用过滤器的id:thisweek,lastweek,thismonth,lastmonth,earlier
 
     //关键词在列表上方
-    keyword:"关键词",//支持检索以下字段：标题、案号、申请号、公开号、公告号
-	
-    sort:"field-order",//field表示字段，取值为'id','target','create_time','due_time','deadline','pay_time','amount','currency','roe','rmb','status','remark','debit','mail_no','mail_date','express_company','express_number','express_date','creator_name','mail_title','tax_payer_identifier','account','bank','address','telphone' order取值为asc（升序），desc（降序），多个排序采用逗号隔开
+    keyword:"关键词",//支持检索以下字段：邮件标题、发件人、收件人、抄送
+    sort:"field-order",//field表示字段，取值为id/attach/cc/from/read/sent_time/subject/to/top order取值为asc（升序），desc（降序），多个排序采用逗号隔开
 }
 response {
     status:1,
@@ -130,46 +99,61 @@ response {
 		last_page:"2",//最后页码
 		per_page:"20",//每页数量 
 		total:"记录总数",
-		sum_allpage:"所有页总金额",
-		sum_curpage:"当前页总金额",
 		data:[{
 			id:"邮件ID",
-			target:"邮件对象",
-			create_time:"创建时间",
-			due_time:"付款期限",
-			deadline:"付款绝限",
-			pay_time:"付款时间",
-			amount:"金额",
-			currency:"货币",
-			roe:"汇率",
-			rmb:"人民币金额",
-			status:"状态",
-			remark:"备注",
-			debit:"收入/支出类型",
-			mail_no:"发票号码",
-			mail_date:"开票日期",
-			express_company:"快递公司",
-			express_number:"快递单号",
-			express_date:"快递日",
-			creator_name:"创建人",
-			mail_title:"发票抬头",
-			tax_payer_identifier:"纳税人识别号",
-			account:"银行账号",
-			bank:"开户行",
-			address:"地址",
-			telphone:"电话",
+			attach:"是否有附件",
+			attachments:[{
+				id:"附件ID"
+				name:"名称",
+				ext:"格式",
+				size:"大小",
+				viewUrl:"查看地址",
+				downloadUrl:"下载地址",
+			}],
+			cc:"抄送",
+			from:"发件人",
+			mailBody:"邮件正文",
+			mailbox:"邮箱",0-草稿 1-收件箱 2-发件箱
+			projects:[{
+				id:"案件ID",
+				serial:"案号",
+				title:"案件名称"
+			}]
+			read:"是否阅读",
+			sent_time:"发送时间",
+			subject:"邮件标题",
+			to:"收件人",
+			top:"是否置顶",
 		}],
 		filters:{
-			duetime:[{
+			senttime:[{
 				name:"名称",
 				count:"数量",
 				id:"id"
 			}],
-			targets:[{
-				name:"名称",
-				count:"数量",
-				id:"id"
-			}]
 		}
     }
 }
+
+# 6、邮件与案件列表进行关联
+requestUrl:http://www.zhiq.wang/mails/:id/projects;
+method：PUT;
+request {
+	ids:[1,2],//案件ID  
+}
+response{
+    status:1, //状态，0表示请求失败，1表示请求成功
+    info:"信息提示",
+}
+
+# 7、邮件与案件列表取消关联
+requestUrl:http://www.zhiq.wang/mails/:id/projects;
+method：DELETE;
+request {
+	ids:[1,2],//案件ID  
+}
+response{
+    status:1, //状态，0表示请求失败，1表示请求成功
+    info:"信息提示",
+}
+

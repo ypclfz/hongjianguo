@@ -17,21 +17,17 @@
 				</el-select>
 			</el-form-item>
 
-			<el-form-item label="证件号码" prop="identity">
-				<el-input v-model="form.identity"></el-input>
+			<el-form-item labe=申请人地区"">
+				<area v-model="form.area"></el-form-item>
 			</el-form-item>
 
-			<el-form-item label="地区" prop="area">
+			<el-form-item label="申请人省份与城市" prop="area">
 				<el-input v-model="form.area"></el-input>
 			</el-form-item>
 
-			<el-form-item label="省份" prop="province">
+			<el-form-item label="邮编" prop="province">
 				<el-input v-model="form.province"></el-input>
-			</el-form-item>
-
-			<el-form-item label="城市" prop="city">
-				<el-input v-model="form.city"></el-input>
-			</el-form-item>
+			</e
 
 			<el-form-item label="详细地址" prop="address">
 				<el-input v-model="form.address"></el-input>
@@ -52,7 +48,7 @@
 				</el-select>
 			</el-form-item>
 
-			<el-form-item label="英文姓名" prop="ename">
+			<el-form-item label="英文姓名" prop="rename">
 				<el-input v-model="form.ename"></el-input>
 			</el-form-item>
 

@@ -23,6 +23,7 @@ import Branch from '@/components/page/Branch'
 import FeeCommon from '@/components/page/FeeCommon'
 import InvoiceCommon from '@/components/page/InvoiceCommon'
 import ClassificationCommon from '@/components/page/ClassificationCommon'
+import MailList from '@/components/page/MailList'
 //###################
 import CommonDetail from '@/components/page/CommonDetail'
 import Babel from '@/components/page_extension/CommonDetail_base'
@@ -147,6 +148,11 @@ const router = new Router({
       path: '/userList',
       name: 'UserList',
       component: UserList,
+    },
+    {
+      path: '/mailList',
+      name: 'MailList',
+      component: MailList,
     },
     {
       path: '/classification',

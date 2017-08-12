@@ -79,6 +79,7 @@
     @sort-change="handleSortChange"
     :expand-row-keys="expands"
     @expand="handleExpand"
+    :style="tableStyle"
   >
     <template v-for="(col, index) in tableOption.columns">
       
@@ -266,7 +267,7 @@ export default {
   created() {
     const d = this;
   },
-  props: ['tableOption', 'data'],
+  props: ['tableOption', 'data', 'tableStyle'],
   computed: {
     tableData () {
       const d = this.data;
@@ -338,7 +339,14 @@ export default {
       render: function(h) {
         return this.render(h, this.scope.row[this.prop], this.scope.row, this.prop);
       },
-      props: ['render', 'scope', 'prop'],
+      props: {
+        'render': null, 
+        'scope': null, 
+        'prop': {
+          type: String,
+          default: '',        
+        }
+      },
     },
     AppDatePicker,
   },

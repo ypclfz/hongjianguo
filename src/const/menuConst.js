@@ -44,6 +44,12 @@ menu.data = [
 		type: 'item',
 	},
 	{
+		text: '邮件列表',
+		path: '/mailList',
+		icon: '',
+		type: 'item'
+	},
+	{
 		text: '提案',
 		path: '/proposal',
 		icon: 'iconfont icon-proposal',

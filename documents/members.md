@@ -221,5 +221,32 @@ response {
     }
 }
 
+# 8、保存用户扩展信息
+requestUrl:http://www.zhiq.wang/members/:id/extend;  
+Method:POST;
+request {
+	smtp_server:"smtp服务器地址",
+	smtp_port:"smtp 商品",
+	pop_servier:"pop服务器地址",
+	pop_port:"pop端口",
+	smtp_ssl:"是否使用SSL",
+	email_password:"邮箱密码",
+	signature:"邮件签名",
+} 
 
+# 9、获取用户扩展信息
+requestUrl:http://www.zhiq.wang/members/:id/extend;  
+Method:GET;
+request {
+	status:"1",
+	info:"",
+	member:{
+		smtp_server:"smtp服务器地址",
+		smtp_port:"smtp 商品",
+		pop_servier:"pop服务器地址",
+		pop_port:"pop端口",
+		smtp_ssl:"是否使用SSL",
+		signature:"邮件签名",// HTML编辑器
+	}
+} 
 

@@ -2,8 +2,6 @@
 requestUrl=http://www.zhiq.wang/applicants;  
 method=GET;  
 request {
-    
-
     type:"1",  //申请人类型5个人 3工矿企业 1大专院校 2科研单位 4事业单位
     name:"name",//申请人姓名
     identity:"identity",//证件号码
@@ -16,8 +14,6 @@ request {
     status:"1",//状态 1-有效 0-禁用 -1已删除
     ename:"ename",//英文姓名
     eaddress:"eaddress",//英文地址
-
-
     keyword:"关键字",//关键字
     page:"1",//页码
     listRows:"20",//每页数据条数
