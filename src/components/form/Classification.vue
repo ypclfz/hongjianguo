@@ -51,7 +51,7 @@ export default {
   		if(this.multiple) {
   			t = v.length != 0 ? v.map(d=>map.get(d).name).join("；") : '';
   		}else {
-  			t = v ? map.get(v) : '';
+  			t = v ? map.get(v).name : '';
   		}
 
   		return t;

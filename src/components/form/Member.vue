@@ -4,7 +4,7 @@
     @input="handleInput"
     filterable
     remote
-    placeholder="请输入提案人关键词"
+    placeholder="请输入用户关键词"
     :disabled="disabled"
     :remote-method="remoteMethod"
     :loading="loading"

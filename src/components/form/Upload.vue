@@ -37,7 +37,7 @@
 	  methods: {
 	  	handleUploadSuccess (p, f) {
 	      if(p.status) {
-	      	const id = p.file.id;
+	      	const id = p.data.file.id;
 	      	const copy = [...this.value];
 	      	
 	      	f.id = id;
@@ -48,10 +48,10 @@
 	      }
 	    },
 	    onPreview (file) {
-	    	window.open(file.downloadUrl);
+	    	window.open(file.response.data.file.downloadUrl);
 	    },
 	    handleUploadRemove (f) {
-	      const id = f.id;
+	      const id = f.response.data.file.id;
 	      const v = this.value;
 	      let i = v.length;
 

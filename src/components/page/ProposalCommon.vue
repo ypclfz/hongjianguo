@@ -3,37 +3,37 @@
   		<el-row>
 	  		<el-col :span="18">
 		  		<el-form label-width="100px" :rules="formRules" :model="formData" ref="form">
-            <el-form-item label="创建时间" v-if="type == 'detail'">
+            <el-form-item label="创建时间" v-if="pageType == 'detail'">
               {{ create_time }}
             </el-form-item>
-            <el-form-item label="更新时间" v-if="type == 'detail'">
+            <el-form-item label="更新时间" v-if="pageType == 'detail'">
               {{ update_time }}
             </el-form-item>
 						<el-form-item label="案件名称" prop="title">
-							<el-input :value="formData.title" @input="handleInput" placeholder="请输入案件名称" :disabled="type == 'detail'">
+							<el-input v-model="formData.title" placeholder="请输入案件名称" :disabled="pageType == 'detail'">
               </el-input>
 						</el-form-item>
 						<el-form-item label="案件摘要" prop="abstract">
-							<el-input type="textarea" v-model="formData.abstract" placeholder="请输入案件摘要" :disabled="type == 'detail'"></el-input>
+							<el-input type="textarea" v-model="formData.abstract" placeholder="请输入案件摘要" :disabled="pageType == 'detail'"></el-input>
 						</el-form-item>
 						
 						<el-form-item label="发明人" prop="inventors">
 
-              <inventors v-model="formData.inventors" @addInventor="addInventor" @deleteInventor="deleteInventor" :disabled="type == 'detail'"></inventors>
+              <inventors v-model="formData.inventors" @addInventor="addInventor" @deleteInventor="deleteInventor" :disabled="pageType == 'detail'"></inventors>
 
 						</el-form-item>
 
             <el-form-item label="提案人" prop="proposer">
-              <member v-model="formData.proposer" :disabled="type == 'detail'"></member>
+              <member v-model="formData.proposer" :disabled="pageType == 'detail'"></member>
             </el-form-item>
             <el-form-item label="技术分类" prop="classification">
-              <classification v-model="formData.classification" :disabled="type == 'detail'"></classification>
+              <classification v-model="formData.classification" :disabled="pageType == 'detail'"></classification>
             </el-form-item>
             <el-form-item label="产品名称" prop="products">
-              <product v-model="formData.products" multiple :disabled="type == 'detail'"></product>
+              <product v-model="formData.products" multiple :disabled="pageType == 'detail'"></product>
             </el-form-item>
 						<el-form-item label="标签" prop="tags">
-							<el-select  multiple filterable allow-create placeholder="请选择标签" v-model="formData.tags" :disabled="type == 'detail'">
+							<el-select  multiple filterable allow-create placeholder="请选择标签" v-model="formData.tags" :disabled="pageType == 'detail'">
 		            <el-option
 		              v-for="item in tagOptions"
 		              :key="item.value"
@@ -43,17 +43,17 @@
 		          </el-select>
 						</el-form-item>
             <el-form-item label="备注" prop="remark">
-              <el-input type="textarea" v-model="formData.remark" :disabled="type == 'detail'"></el-input>
+              <el-input type="textarea" v-model="formData.remark" :disabled="pageType == 'detail'"></el-input>
             </el-form-item>
-						<el-form-item label="附件" prop="attachments" v-if="type != 'detail'">
+						<el-form-item label="附件" prop="attachments" v-if="pageType != 'detail'">
                <upload v-model="formData.attachments" :file-list="attachments"></upload>
 						</el-form-item>
             <el-form-item label="附件" v-else>
               <table-component :data="attachmentsData" :tableOption="tableOption"></table-component>
             </el-form-item>
-						<el-form-item  v-if="type != 'detail'">
-						   <el-button type="primary" :disabled="btn_disabled">提交</el-button>
-               <el-button @click="save" :disabled="btn_disabled">暂存</el-button>
+						<el-form-item  v-if="pageType != 'detail'">
+						   <el-button @click="submit()" type="primary" :disabled="btn_disabled">提交</el-button>
+               <el-button @click="save()" :disabled="btn_disabled">暂存</el-button>
 						   <el-button @click="cancel" :disabled="btn_disabled">取消</el-button>
 						</el-form-item>
 			  	</el-form>
@@ -74,7 +74,17 @@
           </ul>
 		  	</el-col>
 	  	</el-row>
-      <pc-submit ref="submit"></pc-submit>
+      <el-dialog title="提交任务" :visible.sync="dialogVisible">
+        <task-finish 
+           
+          :id="update_id" 
+          
+          @submitSuccess="handleSubmitSuccess"
+          @cancel="dialogVisible=false"
+          ref="task"
+        >
+        </task-finish>
+      </el-dialog>
   	</div>
 </template>
 
@@ -89,62 +99,50 @@ import Inventors from '@/components/form/Inventors'
 import Proposer from '@/components/form/Proposer'
 import Member from '@/components/form/Member'
 import Upload from '@/components/form/Upload'
+import TaskFinish from '@/components/common/TaskFinish'
 
 
 const typeMap = new Map([['/proposal/add', 'add'], ['/proposal/edit', 'edit'], ['/proposal/detail', 'detail']]);
 const URL = '/api/proposals';
-const fileDelete = 'http://www.zhiq.wang/file/delete';
-const formData = {
 
-}
+
 //https://jsonplaceholder.typicode.com/posts/
 export default {
   name: 'proposalCommon',
   mixins: [axiosMixins],
   methods: {
-    addProposal () { 
-      const url = URl;
-      const params = this.formData;
-      const success = (d)=>{ this.$router.push('/proposal/list') };
-      const error = (d)
-      this.axiosPost({url, params, success, error});
-      this.$axios
-        .post('/api/proposals', this.formData)
-        .then(response=>{
-          const d = response.data;
-          if(d.status) {
-            this.$router.push('/proposal/list');
-          }else {
-            this.$alert("添加失败\n请重试！");
-            this.btn_disabled = false;
-          }
-        })
-        .catch(error=>{console.log(error)});
+    handleSubmitSuccess () {
+      this.$router.push('/task/finish');
     },
-    updateProposal () {
-      this.$axios
-        .put(`/api/proposals/${this.id}`, this.formData)
-        .then(response=>{
-          const d = response.data;
-          if(d.status) {
-            this.$router.push('/proposal/list');
-          }else {
-            this.$alert("编辑失败\n请重试！");
-            this.btn_disabled = false;
-          }
-        })
-        .catch(error=>{console.log(error)});
-    },
-    save (callback=()=>{this.$router.push('/proposal/list')}) {
-      const flag = this.type == 'add' && id != '';
-      const success = callback;
-      const error = ()=>{ this.$alert('请求失败，请重试！'); this.btn_disabled=false; };
-      flag ? this.axiosPost({url, query, success, error}) : this.axiosPut({url, query, success, error});    
+    save ( callback=_=>{this.$router.push('/proposal/list')} ) {
+      this.$refs.form.validate(valid=>{
+        if(valid) {
+          this.btn_disabled = true;
+          const flag = this.pageType == 'add';
+          const url = flag ? URL : `${URL}/${this.id}`;
+          const success = callback;
+          const data = this.formData;
+          const complete = _=>{ this.btn_disabled = false };
+          flag ? this.axiosPost({url, data, success, complete}) : this.axiosPut({url, data, success, complete});
+        }else {
+          this.$message({message: '请正确填写提案字段', type: 'error'});
+        }
+      });
+
+          
     },
     submit () {
-      this.save((d)=>{
-
-      });
+      
+          this.save(d=>{
+            this.pageType = 'edit';
+            this.id = d.proposal_id;
+            this.update_id = d.task_id;
+            this.dialogVisible = true;
+            this.$nextTick(_=>{
+              this.$refs.task.clear();
+            })
+          });
+        
     },
     cancel () {
       this.$router.push('/proposal/list');
@@ -166,7 +164,7 @@ export default {
       this.$refs.form.validateField('inventors');
     },
     refreshCommon () {
-      const t = this.type;
+      const t = this.pageType;
 
       if( t == 'detail' || t== 'edit' ) {
         const id = this.$route.query.id;
@@ -206,18 +204,12 @@ export default {
         this.$refs.form.resetFields();
         this.classificationText = this.productText = '';
       }
-    },
-    handleInput (val) {
-      this.formData.title = val;
-      window.setTimeout(()=>{this.formData.title = this.filterFunc(val)}, 600);
-    },
-    filterFunc (val) {
-      return (parseFloat(val) + "");
     }
   },
   data () {
     return {
       id: '',
+      pageType: '',
       formData:  { 
         title: '',
         abstract: '',
@@ -315,16 +307,18 @@ export default {
         children: 'children',
       },
       btn_disabled: false,
+      dialogVisible: false,
+      update_id: '',
+
     }
+  },
+  created () {
+    this.pageType = typeMap.get(this.$route.path);;
   },
   mounted () {
     this.refreshCommon();
   },
   computed: {
-    type () {
-      const type = typeMap.get(this.$route.path);
-      return type;
-    },
     tagOptions () {
       return this.$store.getters.tagOptions;
     },
@@ -344,7 +338,7 @@ export default {
       this.refreshCommon();
     }
   },
-  components: { PopTree, TableComponent, Inventors, PcSubmit, Upload, Member, Classification, Product },
+  components: { PopTree, TableComponent, Inventors, PcSubmit, Upload, Member, Classification, Product, TaskFinish },
 
 }
 </script>

@@ -153,16 +153,16 @@ menu.data = [
 		type: 'submenu',
 		children: [
 			{
-				text: '待处理',
+				text: '未完成',
 				path: '/task/pending',
-				icon: 'iconfont icon-task-pending',
-				type: 'item'
+				icon: '',
+				type: 'item',
 			},
 			{
-				text: '提案审核',
-				path: '/task/pending/check',
-				icon: 'iconfont icon-task-check',
-				type: 'none'
+				text: '已完成',
+				path: '/task/finish',
+				icon: '',
+				type: 'item',
 			}
 		]
 	},

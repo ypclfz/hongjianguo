@@ -12,10 +12,10 @@
   		</el-select>
   	</el-form-item>
   	<el-form-item prop="person_in_charge" label="承办人" v-if="fields.person_in_charge">
-  		<member v-model="form.person_in_charge" v-if="defaultVal =='proposer'"></member>
+  		<member v-model="form.person_in_charge" v-if="defaultVal =='proposer' || defaultVal == 'reviewer' || defaultVal == 'previous' "></member>
   		<agent v-model="form.person_in_charge" v-else-if="defaultVal == 'agent'"></agent>
   		<ipr v-model="form.person_in_charge" v-else-if="defaultVal == 'ipr'"></ipr>
-  		<span v-else>{{ data[defaultVal]['name'] }}</span>
+  		<!-- <span v-else>{{ data[defaultVal]['name'] }}</span> -->
   	</el-form-item>
   	<el-form-item prop="agent" label="代理人" v-if="fields.agent">
 			<agent v-model="form.agent"></agent>
@@ -85,34 +85,33 @@ export default {
   		this.axiosGet({url, success});
   	},
   	submitFunc () {
-  		const defaultVal  = this.defaultVal;
-  		if(defaultVal == 'reviewer' || defaultVal == 'previous') {
-  			this.form.person_in_charge = this.data[defaultVal].id;
-  		}
   		const url = `${URL}/${this.id}/nexttask`;
-  		const query = Object.assign({}, {next: this.next}, this.form);
+  		const data = Object.assign({}, {'flow_node_id': this.next}, this.form);
   		const success = ()=>{this.$emit('submitSuccess')}; 
-  		this.axiosPost({url, query, success});
+  		this.axiosPost({url, data, success});
+  	},
+  	cancel () {
+  		this.$emit('cancel')
+  	},
+  	clear () {
+  		this.$refs.form.resetFields();
   	}
 	},
 	watch: {
 		id () {
 			this.refreshData();
-			this.$refs.form.resetFields();
+			this.clear();
 		},
 		'next': {
 			handler: function (val) {
-				let f = {};
-				let defaultVal = "";
 				for (let d of this.data.next) {
 					if(d.id == val) {
-						f = d.fields;
-						defaultVal = d.default;
+						this.fields = d.fields;
+						this.defaultVal = d.default;
+						this.form.person_in_charge = this.data[d.default]['id'];
 						break;
 					}
 				}
-				this.fields = f;
-				this.defaultVal = defaultVal;
 				this.$refs.form.resetFields();
 			}
 		}

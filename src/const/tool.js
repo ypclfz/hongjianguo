@@ -2,6 +2,21 @@ export default {
 	deepCopy (obj) {
 		return JSON.parse(JSON.stringify(obj));
 	},
+	shallowCopy (obj, set = {'date': false, 'array': false}) {
+		const data = {};
+		for(let k in obj) {
+          const d = obj[k];
+          if(set.date && d instanceof Date) {
+            data[k] = this.getDate(d);
+          }else if(set.array && d instanceof Array) {
+          	data[k] = d.join(',');
+          }else {
+            data[k] = d;
+          }
+        }
+
+        return data;
+	},
 	clearObj (obj) {
 		for(let key in obj) {
 			if(typeof obj[key] === 'object') {

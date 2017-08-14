@@ -91,14 +91,13 @@ import AppFilter from '@/components/common/AppFilter'
 import AppCollapse from '@/components/common/AppCollapse'
 import TableComponent from '@/components/common/TableComponent'
 import AppDatePicker from '@/components/common/AppDatePicker'
-import TaskFinish from '@/components/common/TaskFinish'
 import Edit from '@/components/page_extension/PendingTask_edit'
 import Detail from '@/components/page_extension/PendingTask_detail'
-import Finish from '@/components/page_extension/PendingTask_finish'
+import TaskFinish from '@/components/common/TaskFinish'
 import Strainer from '@/components/page_extension/PendingTask_strainer'
 import $ from 'jquery'
 
-const url = '/api/tasks';
+const URL = '/api/tasks';
 
 export default {
   name: 'pendingTask',
@@ -111,15 +110,12 @@ export default {
       }
     },
     taskDelete ({title, id}) {
-      this.$confirm(`此操作将永久删除${title}, 是否继续？`)
+      this.$confirm(`此操作将永久删除任务‘${title}’, 是否继续？`)
         .then(()=>{
-          this.$tool.axiosDelete(`${url}/${id}`, (d)=>{
-            if(d.status) {
-              this.$refs.table.update();
-            }else {
-              this.$alert(d.info);
-            }
-          })
+          const url = `${URL}/${id}`;
+          const success = _=>{ this.update() };
+
+          this.axiosDelete({url, success});
         })
         .catch(()=>{});
     },
@@ -134,29 +130,22 @@ export default {
       this.filter = {};
     },
     refreshTableData (option) {
-      const params = Object.assign({}, this.filter, option, this.screen_value);
+      const url = URL;
+      const data = Object.assign({}, this.filter, option, this.screen_value, {status: this.task_status});
+      console.log(data);
+      const success = d=>{
+          this.tableData = d.tasks;
+          this.filters = d.tasks.filters;
+      };
 
-      this.axiosGet({url, params, success: data=>{
-          this.tableData = data.tasks;
-          this.filters = data.tasks.filters;
-      }});
-
-      // this.$axios
-      //   .get(url, { params })
-      //   .then(response=>{
-      //     const d = response.data;
-      //     if(d.status) {
-      //       this.tableData = d.tasks;
-      //       this.filters = d.tasks.filters;
-      //     }else {
-      //       this.$alert('请求数据失败！');
-      //     }
-      //   })
-      //   .catch(error=>{
-      //     console.log(error);
-      //     this.$alert('网络错误！');
-      //   })
+      this.axiosGet({url, data, success}); 
     },
+    update () {
+      this.$refs.table.update();
+    },
+    refresh () {
+      this.$refs.table.refresh();
+    }
     
   },
   data () {
@@ -281,6 +270,9 @@ export default {
 
       this.$store.getters.screen_value.forEach((d,k)=>{obj[m.get(k)] = d[0]});
       return obj;
+    },
+    task_status () {
+      return this.$route.meta.status;
     }
   },
   watch: {
@@ -291,10 +283,10 @@ export default {
       this.$refs.table.refresh();
     }
   },
-  created () {
-    this.refreshTableData();
+  mounted () {
+    this.refresh();
   },
-  components: { AppFilter, TableComponent, AppDatePicker, Edit, Detail, Finish, Strainer, AppCollapse, TaskFinish },
+  components: { AppFilter, TableComponent, AppDatePicker, Edit, Detail, Strainer, AppCollapse, TaskFinish },
 } 
 </script>
 <style>

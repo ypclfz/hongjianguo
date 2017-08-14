@@ -6,7 +6,7 @@ import InventorList from '@/components/page/InventorList'
 import ApplicantList from '@/components/page/ApplicantList'
 import ProposalCommon from '@/components/page/ProposalCommon'
 import CheckProposal from '@/components/page/CheckProposal'
-import PendingTask from '@/components/page/PendingTask'
+import TaskCommon from '@/components/page/TaskCommon'
 import PatentList from '@/components/page/PatentList'
 import ApplyingPatent from '@/components/page/ApplyingPatent'
 import PatentAdd from '@/components/page/PatentAdd'
@@ -97,8 +97,14 @@ const router = new Router({
       component: CheckProposal
     },{
       path: '/task/pending',
-      name: 'PendingTask',
-      component: PendingTask
+      name: 'TaskPending',
+      component: TaskCommon,
+      meta: { 'status': 0 },
+    },{
+      path: '/task/finish',
+      name: 'TaskFinish',
+      component: TaskCommon,
+      meta: { 'status': 1 },
     },{
       path: '/patent/list',
       name: 'PattentList',

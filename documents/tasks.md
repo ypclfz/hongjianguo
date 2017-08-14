@@ -4,8 +4,8 @@ method：POST;
 request {
     project_id:'提案/专利/商标/版权/专案ID',
 	person_in_charge:'承办人ID',
-	task_def_id:'任务类型ID',
 	flow_node_id:'任务的流程起始阶段'
+	task_def_id:'任务类型ID',
 	remark:'任务备注',
 	attachments:[1,2],//提交文件ID数组
 	due_time:'2017-09-09',//承办期限
@@ -22,9 +22,9 @@ method：PUT;
 request {
     project_id:'提案/专利/商标/版权/专案ID',
 	person_in_charge:'承办人ID',
-	task_def_id:'任务节点ID',//
-	due_time:'2017-09-09',//承办期限
 	flow_node_id:'任务的流程起始阶段'
+	task_def_id:'任务类型ID',//
+	due_time:'2017-09-09',//承办期限
 	deadline:'2017-09-09',//法限，部分任务类型必填，通过/taskDefs接口(尚未完成)获取的列表中，deadline为1则表示该任务类型法限必填
 	remark:'任务备注',
 	attachments:[1,2],//提交文件ID数组
@@ -74,7 +74,7 @@ reponse {
     }
 }
 
-# 4、删除任务
+# 4、删除任务 Y
 requestUrl:http://www.zhiq.wang/tasks/:id
 method:DELETE;
 response{
@@ -160,7 +160,7 @@ response {
     }
 }
 
-# 6、获取完成任务表单预定义数据
+# 6、获取完成任务表单预定义数据 Y
 requestUrl:http://www.zhiq.wang/tasks/:id/form;  
 method：GET; 
 response{
@@ -199,17 +199,17 @@ response{
 	}
 }
 
-# 7、完成当前任务，并生成一下阶段的任务
+# 7、完成当前任务，并生成一下阶段的任务 Y
 requestUrl:http://www.zhiq.wang/tasks/:id/nexttask;  
 method：POST;
 request {
 	person_in_charge:'承办人ID',
 	flow_node_id:'下一个流程节点的ID',//
-	due_time:'2017-09-09',//承办期限
-	deadline:'2017-09-09',//法限，部分任务类型必填，通过/taskDefs接口(尚未完成)获取的列表中，deadline为1则表示该任务类型法限必填
+	<!-- due_time:'2017-09-09',//承办期限
+	deadline:'2017-09-09',//法限，部分任务类型必填，通过/taskDefs接口(尚未完成)获取的列表中，deadline为1则表示该任务类型法限必填 -->
 	remark:'任务备注',
 	attachments:[1,2],//提交文件ID数组
-	proposals:[1,2],//不同提案合并立案时才提供
+	<!-- proposals:[1,2],//不同提案合并立案时才提供 -->
 } 
 response {
     status:1, //状态，0表示请求失败，1表示请求成功
