@@ -1,6 +1,6 @@
 <template>
   <div class="app-filter" style="margin-bottom: 20px;" v-show="show">
-  	<div :class="index === multipled_index ? 'app-filter-row app-filter-row-multipled' : 'app-filter-row'" v-for="(row, index) in filterList" :key="row.key" v-if=" !control.get(row.key) ">
+  	<div :class="index === multipled_index ? 'app-filter-row app-filter-row-multipled' : 'app-filter-row'" v-for="(row, index) in filterList" :key="row.key" v-if=" !control.get(row.key) && row.items.length != 0 ">
   		<div class="app-filter-label">
   			{{ row.label }}
   		</div>
@@ -15,7 +15,11 @@
 	  				</template>
 	  			</template>
 	  			<template v-else>
-					<a class="app-filter-item" v-for="(item, ind) in row.items" :key="ind" @click="handleClick(row, item)">{{ item.label }}</a>
+            <template v-for="(item, ind) in row.items">
+              <el-badge :hidden="item.count == 0" :value="item.count" style="margin-top: 10px; margin-left: 5px;">
+					      <el-button type="text" :key="ind" @click="handleClick(row, item)" size="small">{{ item.label }}</el-button>
+              </el-badge>
+            </template>
 	  			</template>
 	  			
 	  		</div>
@@ -129,6 +133,7 @@ export default {
                     : t.label != undefined
                       ? t.label 
                       : t,
+            count: t.count ? t.count : 0,
           });
         }
         filterList.push(Object.assign({}, a, {items: arr}));
@@ -187,7 +192,7 @@ export default {
 	margin-left: 110px;
 	padding-right: 130px;
 	min-height: 40px;
-	line-height: 40px;
+	/*line-height: 40px;*/
 	background-color: #f3f5f6;
 }
 .app-filter-btns {

@@ -1,4 +1,4 @@
-const URL = '/api/patents'; 
+let url = '/api/patents'; 
 const state = {
 	type: '',
 	data: null,
@@ -31,7 +31,8 @@ const mutations = {
 const actions = {
 	refreshDetailData({ commit, state, rootState }, {id, func}) {
 		if(state.type == 'patent') {
-      rootState.axios.get(`${URL}/${id}`)
+			url = rootState.status ? url.replace(/\/api/, '') : url;
+      rootState.axios.get(`${url}/${id}`)
 	      .then(response=>{
           if(func) func();    
           

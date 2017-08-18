@@ -1,6 +1,7 @@
 <template>
+<app-collapse col-title="任务筛选" default-close>
   <el-form label-width="100px" :model="form" ref="form">   
-  	<el-form-item label="指定完成时间" prop="due_time">
+  	<el-form-item label="指定期限" prop="due_time">
   		<date-area v-model="form.due_time"></date-area>
   	</el-form-item>
   	<el-form-item label="法定期限" prop="deadline">
@@ -11,8 +12,8 @@
   	</el-form-item>
     <el-row>
       <el-col :span="12">
-        <el-form-item label="案件类型" prop="project_type">
-          <el-select v-model="form.project_type">
+        <el-form-item label="案件类型" prop="type">
+          <el-select v-model="form.type">
             <el-option
               v-for="item in options.project_type"
               :key="item.value"
@@ -22,19 +23,19 @@
             </el-option>
           </el-select>
         </el-form-item>
-        <el-form-item label="代理机构" prop="project_agency">
+        <el-form-item label="代理机构" prop="agency">
           <agency v-model="form.agency"></agency>
         </el-form-item>
-        <el-form-item label="任务节点" prop="task_def_id">
+        <el-form-item label="流程节点" prop="task_def_id">
           <task-def v-model="form.task_def_id"></task-def>
         </el-form-item>
       </el-col>
       <el-col :span="12">
-        <el-form-item label="IPR" prop="project_ipr">
-          <ipr v-model="form.project_ipr"></ipr>
+        <el-form-item label="IPR" prop="ipr">
+          <ipr v-model="form.ipr"></ipr>
         </el-form-item>
-        <el-form-item label="代理人" prop="project_agent">
-          <agent v-model="form.project_agent"></agent>
+        <el-form-item label="代理人" prop="agent">
+          <agent v-model="form.agent"></agent>
         </el-form-item>
         <el-form-item label="任务处理人" prop="person_in_charge">
           <member v-model="form.person_in_charge"></member>
@@ -46,9 +47,11 @@
       <el-button type="danger" size="small" @click="clear" style="margin-left: 20px">清空</el-button>
     </el-row>
   </el-form>
+</app-collapse>
 </template>
 
 <script>
+import AppCollapse from '@/components/common/AppCollapse'
 import Agency from '@/components/form/Agency'
 import TaskDef from '@/components/form/TaskDef'
 import Agent from '@/components/form/Agent'
@@ -61,10 +64,10 @@ export default {
   data () {
 		return {
 		  form: {
-		  	'project_type': '',
-		  	'project_ipr': '',
-    		'project_agency': '',
-				'project_agent': '',
+		  	'type': '',
+		  	'ipr': '',
+    		'agency': '',
+				'agent': '',
 				'task_def_id': '',
 				'person_in_charge': '',
 		  	'due_time': [],
@@ -76,7 +79,7 @@ export default {
 		  		{label: '专利', value: 1},
 		  		{label: '商标', value: 2},
 		  		{label: '版本', value: 3},
-		  		{label: '项目', value: 4},
+		  		// {label: '项目', value: 4},
 		  	]
 		  }
 		}
@@ -91,7 +94,7 @@ export default {
   		this.$emit('clear');
   	}
   },
-  components: { Agency, TaskDef, Ipr, Agent, Member, DateArea }
+  components: { Agency, TaskDef, Ipr, Agent, Member, DateArea, AppCollapse }
 }
 </script>
 

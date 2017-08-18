@@ -51,7 +51,12 @@ export default {
   },
   computed () {
   	productData () {
-  		return this.$store.getters.productData;
+  		if(this.$store.getters.productData) {
+  			return this.$store.getters.productData;	
+  		}else {
+  			return [];
+  		}
+  		
   	}
   }
 }

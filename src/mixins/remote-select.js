@@ -24,15 +24,16 @@ export default {
      
   		const s = { keyword, listOnly: '1' };
       const os = this.PARAMS;
-      const params = os ? Object.assign({}, s, os) : s; 
-  		const url = this.URL;
       const key = this.DATA_KEY;
+      const url = this.URL;
+      const data = os ? Object.assign({}, s, os) : s;
+      const success = _=>{
+        this.loading = false;
+        this.options = _[key];
+      }
 
-  		this.loading = true;
-  		this.$axios.get(url, { params }).then(response=>{
-  			this.loading = false;
-  			this.options = response.data[key];
-  		});
+      this.loading = true;
+      this.axiosGet({url, data, success});
   	}
   },
   created () {

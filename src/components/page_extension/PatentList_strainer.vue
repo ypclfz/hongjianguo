@@ -1,9 +1,9 @@
 <template>
-  <app-collapse col-title="专利查询" default-close>
+  <app-collapse col-title="专利筛选" default-close>
   	<el-form :model="form" label-width="80px" ref="form">
   		<el-row>
 				<el-col :span="12">
-					<el-form-item label="专利标题" prop="title">
+					<el-form-item label="专利类型" prop="title">
 						<el-input v-model="form.title"></el-input>
 					</el-form-item>
 					<el-form-item label="发明人" prop="inventors">
@@ -25,9 +25,9 @@
 						</el-form-item>
 				</el-col>
   		</el-row>
-  		<el-row>
-				<el-button @click="search(form, $refs.form)">查询</el-button>
-				<el-button @click="clear($refs.form)">清空</el-button>
+  		<el-row style="text-align: center;">
+				<el-button @click="search(form, $refs.form)" type="primary" size="small">查询</el-button>
+				<el-button @click="clear($refs.form)" type="danger" size="small">清空</el-button>
   		</el-row>
   	</el-form>
   </app-collapse>

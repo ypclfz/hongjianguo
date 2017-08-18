@@ -8,6 +8,7 @@
 	    :value="value"
 	    :multiple="multiple"
 	    @update:value="handleValue" 
+      action
 	    ref="tree"
 	  >
 	  </pop-tree>

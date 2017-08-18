@@ -8,8 +8,7 @@
       :on-preview="onPreview"
       :file-list="fileList"
       multiple
-    >
-			<i class="el-icon-upload"></i>
+    >			<!-- <i class="el-icon-upload"></i> -->
   		<div class="el-upload__text">将文件拖到此处，或<em>点击上传</em></div>
     </el-upload>
 	</template>
@@ -41,6 +40,7 @@
 	      	const copy = [...this.value];
 	      	
 	      	f.id = id;
+	      	f.downloadUrl = p.data.file.downloadUrl;
 	      	copy.push(id);
 	      	this.$emit('input', copy);
 	      }else {
@@ -48,10 +48,10 @@
 	      }
 	    },
 	    onPreview (file) {
-	    	window.open(file.response.data.file.downloadUrl);
+	    	window.open(`${document.location.origin}${file.downloadUrl}`);
 	    },
 	    handleUploadRemove (f) {
-	      const id = f.response.data.file.id;
+	      const id = f.id;
 	      const v = this.value;
 	      let i = v.length;
 
@@ -68,5 +68,8 @@
 	</script>
 
 	<!-- Add "scoped" attribute to limit CSS to this component only -->
+	<style>
+
+	</style>
 	<style scoped lang="scss">
 	</style>

@@ -67,6 +67,9 @@ response{
     info:"信息提示",
 }
 
+http://www.zhiq.wang/proposals?ids=[];
+
+
 
 # 5、提案列表
 requestUrl:http://www.zhiq.wang/proposals;  

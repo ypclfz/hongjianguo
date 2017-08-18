@@ -20,46 +20,21 @@
 	</el-select>
 </template>
 
-	<script>
-	export default {
-	  name: 'member',
-	  props: {
-	  	'value': [Number, String, Array],
-	  	'disabled': {
-	  		type: Boolean,
-	  		default: false,
-	  	},
-	  	'multiple': {
-	  		type: Boolean,
-	  		default: false,
-	  	}
-	  },
-	  data () {
-			return {
-				options: [],
-				loading: false,
-			}
-	  },
-	  methods: {
-	  	handleInput (val) {
-	  		console.log(val);
-	  		this.$emit('input', val);
-	  	},
-	  	remoteMethod (keyword) {
-	  		const params = { keyword, listOnly:"1" };
+<script>
+import RemoteSelect from '@/mixins/remote-select'
+import AxiosMixins from '@/mixins/axios-mixins'
 
-	  		this.loading = true;
-	  		this.$axios.get('/api/proposals', { params }).then(response=>{
-	  			this.loading = false;
-	  			this.options = response.data.proposals;
-	  		});
-	  	}
-	  },
-	  created () {
-	  	this.remoteMethod('');
-	  },
-	}
-	</script>
+export default {
+  name: 'proposals',
+  mixins: [ AxiosMixins, RemoteSelect ],
+  data () {
+    return {
+      URL: '/api/proposals',
+      DATA_KEY: 'proposals',  
+    }
+  },
+}
+</script>
 
 	<!-- Add "scoped" attribute to limit CSS to this component only -->
 	<style scoped lang="scss">

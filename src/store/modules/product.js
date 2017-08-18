@@ -1,4 +1,4 @@
-const url = '/api/products';
+let url = '/api/products';
 const state = {
 	data: [],
 }
@@ -28,7 +28,7 @@ const mutations = {
 
 const actions = {
 	refreshProduct ({commit, rootState}) {
-		
+		url = rootState.status ? url.replace(/\/api/, '') : url;
 		rootState.axios
 			.get(url)
 			.then(response=>{

@@ -1,4 +1,4 @@
-const url = '/api/tags';
+let url = '/api/tags';
 const state = {
   data: [],
 }
@@ -17,7 +17,7 @@ const mutations = {
 
 const actions = {
 	refreshTags ({commit, rootState}) {
-		
+		url = rootState.status ? url.replace(/\/api/, '') : url;
 		rootState.axios
 		.get(url)
 		.then(response=>{

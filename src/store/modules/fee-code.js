@@ -1,4 +1,4 @@
-const url = '/api/feeCodes';
+let url = '/api/feeCodes';
 const state = {
 	data: [],
 }
@@ -24,6 +24,7 @@ const mutations = {
 const actions = {
 
 	refreshFeeCode ({commit, rootState, state}) {
+		url = rootState.status ? url.replace(/\/api/, '') : url;
 		rootState.axios
 			.get(url)
 			.then(response=>{

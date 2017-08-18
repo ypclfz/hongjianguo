@@ -1,4 +1,4 @@
-const url = '/api/classifications';
+let url = '/api/classifications';
 const state = {
 	data: [],
 }
@@ -29,7 +29,7 @@ const mutations = {
 
 const actions = {
 	refreshClassification ({commit, rootState, state}) {
-		
+		url = rootState.status ? url.replace(/\/api/, '') : url;
 		rootState.axios
 			.get(url)
 			.then(response=>{

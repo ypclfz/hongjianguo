@@ -4,7 +4,7 @@
     @input="handleInput"
     filterable
     remote
-    placeholder="请输入关键词"
+    placeholder="输入姓名搜索"
     :disabled="disabled"
     :remote-method="remoteMethod"
     :loading="loading"
@@ -20,57 +20,62 @@
 	</el-select>
 </template>
 
-	<script>
-	export default {
-	  name: 'inventorSelect',
-	  props: {
-	  	'value': [Number, String, Array],
-	  	'defaultOptions': {
-	  		type: Array,
-	  	},
-	  	'disabled': {
-	  		type: Boolean,
-	  		default: false,
-	  	},
-	  	'default': {
-	  		type: Boolean,
-	  		default: false,
-	  	},
-	  	'multiple': {
-	  		type: Boolean,
-	  		default: false,
-	  	}
-	  },
-	  data () {
-			return {
-				query: '',
-				options: [],
-			  	loading: false,
-			}
-	  },
-	  methods: {
-	  	handleInput (val) {
-	  		this.$emit('input', val);
-	  	},
-	  	remoteMethod (keyword) {
-	  		const params = { keyword, listOnly: '1' };
+<script>
+import AxiosMixins from '@/mixins/axios-mixins'
 
-	  		this.loading = true;
-	  		this.$axios.get('/api/inventors', { params }).then(response=>{
-	  			this.loading = false;
-	  			this.options = response.data.data;
-	  			if(this.default) {
-	  				this.options.unshift({value: '', label: '未选择'});
-	  			}
-	  		});
-	  	}
-	  },
-	  created () {
-	  	this.remoteMethod('');
-	  },
-	}
-	</script>
+export default {
+  name: 'inventorSelect',
+  mixins: [ AxiosMixins ],
+  props: {
+  	'value': [Number, String, Array],
+  	'defaultOptions': {
+  		type: Array,
+  	},
+  	'disabled': {
+  		type: Boolean,
+  		default: false,
+  	},
+  	'default': {
+  		type: Boolean,
+  		default: false,
+  	},
+  	'multiple': {
+  		type: Boolean,
+  		default: false,
+  	}
+  },
+  data () {
+		return {
+			query: '',
+			options: [],
+		  	loading: false,
+		}
+  },
+  methods: {
+  	handleInput (val) {
+  		this.$emit('input', val);
+  	},
+  	remoteMethod (keyword) {
+  		const url = '/api/inventors';
+  		const data = { keyword, listOnly: '1' };
+  		const success = _=>{
+  			this.loading = false;
+  			this.options = _.data;
+  			if(this.default) {
+  				this.options.unshift({value: '', label: '未选择'});
+  			}
+  		}
+  		
+  		this.loading = true;
+  		this.axiosGet({url, data, success});
+  	}
+  },
+  created () {
+  	this.remoteMethod('');
+  },
+}
+</script>
 
-	<!-- Add "scoped" attribute to limit CSS to this component only -->
-	<style scoped lang="scss">
-	</style>
+<!-- Add "scoped" attribute to limit CSS to this component only -->
+<style scoped lang="scss">
+</style>

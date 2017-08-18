@@ -4,8 +4,8 @@ method：POST;
 request {
     project_id:'提案/专利/商标/版权/专案ID',
 	person_in_charge:'承办人ID',
-	flow_node_id:'任务的流程起始阶段'
 	task_def_id:'任务类型ID',
+	flow_node_id:'任务的流程起始阶段'
 	remark:'任务备注',
 	attachments:[1,2],//提交文件ID数组
 	due_time:'2017-09-09',//承办期限
@@ -22,9 +22,9 @@ method：PUT;
 request {
     project_id:'提案/专利/商标/版权/专案ID',
 	person_in_charge:'承办人ID',
-	flow_node_id:'任务的流程起始阶段'
-	task_def_id:'任务类型ID',//
+	task_def_id:'任务节点ID',//
 	due_time:'2017-09-09',//承办期限
+	flow_node_id:'任务的流程起始阶段'
 	deadline:'2017-09-09',//法限，部分任务类型必填，通过/taskDefs接口(尚未完成)获取的列表中，deadline为1则表示该任务类型法限必填
 	remark:'任务备注',
 	attachments:[1,2],//提交文件ID数组
@@ -74,9 +74,19 @@ reponse {
     }
 }
 
-# 4、删除任务 Y
-requestUrl:http://www.zhiq.wang/tasks/:id
+# 4、删除任务
+requestUrl:http://www.zhiq.wang/tasks/:id  单个删除任务
 method:DELETE;
+response{
+    status:1, //状态，0表示请求失败，1表示请求成功
+    info:"信息提示",
+}
+//批量删除任务接口
+requestUrl:http://www.zhiq.wang/tasks 单个删除任务
+method:DELETE;
+request {
+	ids:[1],//提供任务ID数组
+}
 response{
     status:1, //状态，0表示请求失败，1表示请求成功
     info:"信息提示",
@@ -116,17 +126,16 @@ response {
             id:"1",//任务ID
 			serial:"案号",
 			title:"案件名称",
-			name:"任务名称",
-			ipr:"案件负责IPR姓名",
-			person_in_charge:"当前任务处理人姓名",
-			sender_name:"任务发送人姓名",
-			agency:"代理机构名称",
-			agent:"代理人名称",
+			name:"管制事项",
+			ipr:"IPR",
+			person_in_charge:"承办人",
+			agency:"代理机构",
+			agent:"代理人",
 			apd:"申请日"
 			apn:"申请号"
 			start_time:"开始时间",
-			deadline:"法定期限",//
 			due_time:"指定期限",//
+			deadline:"法定期限",//
 			end_time:"完成时间",
 			attachments:[{
 				id:"1",//文件ID
@@ -136,6 +145,13 @@ response {
 				ext:"ext",//文件格式
 				size:"size",//文件大小
 			}],//附件,列表中可不显示
+			
+			//2017-8-17新增字段
+			flow_node:"当前节点",//任务进度 
+			remark:"备注",
+			
+			action:"normal",//如果为normal不显示额外的按钮，如果是其他值则显示额外的操作按钮，proposals/edit 表示跳转提案编辑界面  patents/edit  表示跳转专利编辑界面
+			action_name:"显示额外操作按钮时按钮文字"
 			
 			status:"状态",//0-暂停处理 1正常
 			project_id:"案件ID",//不需要显示
@@ -160,7 +176,7 @@ response {
     }
 }
 
-# 6、获取完成任务表单预定义数据 Y
+# 6、获取完成任务表单预定义数据
 requestUrl:http://www.zhiq.wang/tasks/:id/form;  
 method：GET; 
 response{
@@ -199,17 +215,19 @@ response{
 	}
 }
 
-# 7、完成当前任务，并生成一下阶段的任务 Y
+# 7、完成当前任务，并生成一下阶段的任务
 requestUrl:http://www.zhiq.wang/tasks/:id/nexttask;  
 method：POST;
 request {
 	person_in_charge:'承办人ID',
 	flow_node_id:'下一个流程节点的ID',//
-	<!-- due_time:'2017-09-09',//承办期限
-	deadline:'2017-09-09',//法限，部分任务类型必填，通过/taskDefs接口(尚未完成)获取的列表中，deadline为1则表示该任务类型法限必填 -->
+	due_time:'2017-09-09',//承办期限
+	deadline:'2017-09-09',//法限，部分任务类型必填，通过/taskDefs接口(尚未完成)获取的列表中，deadline为1则表示该任务类型法限必填
 	remark:'任务备注',
 	attachments:[1,2],//提交文件ID数组
-	<!-- proposals:[1,2],//不同提案合并立案时才提供 -->
+	agency:"代理机构ID",//通过/agencies接口获取Selector
+	agent:"代理人",//通过/agents接口获取选项
+	agency_type:"代理类型" //selector: 定义数据如下：[{label:"申请&OA",value:"1"},{label:"OA",value:"2"},{label:"复审",value:"3"},{label:"无效",value:"4"},{label:"无效答复",value:"5"}]
 } 
 response {
     status:1, //状态，0表示请求失败，1表示请求成功
@@ -253,4 +271,42 @@ response {
 			task_def_id:"任务节点ID",//不需要显示
 			flow_id:"当前任务所属的流程ID",//不需要显示，用来通过 /flows/1/nodes接口拉取流程节点
         }],
+}
+
+# 9、任务类型定义数据
+requestUrl:http://www.zhiq.wang/taskDefs;  
+method：GET;
+request {
+	project_id:"project_id",可选
+}
+response {
+	status:1,
+	info:"info",
+	list:[{
+		label:"label",
+		value:"value",
+		category:"category",//案件类型，可根据案件 category进行筛选
+	}]
+}
+
+# 10、任务暂停处理
+requestUrl:http://www.zhiq.wang/tasks/pause;  
+method：PUT;
+request {
+	ids:[1,2],//任务ID数组
+}
+response {
+	status:1,
+	info:"info",
+}
+
+# 11、任务暂停处理
+requestUrl:http://www.zhiq.wang/tasks/resume;  
+method：PUT;
+request {
+	ids:[1,2],//任务ID数组
+}
+response {
+	status:1,
+	info:"info",
 }

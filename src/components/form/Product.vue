@@ -1,12 +1,13 @@
 <template>
 	<div>
-	  <el-input placeholder="选择产品分类" readonly @focus="$refs.tree.show()" :value="productText" :disabled="disabled"  ></el-input>
+	  <el-input placeholder="选择产品分类" readonly @focus="$refs.tree.show()" :value="text" :disabled="disabled"  ></el-input>
 	  <pop-tree 
 	    title="选择产品分类"
-	    :data="productData" 
+	    :data="data" 
 	    :props="props"
 	    :value="value"
 	    :multiple="multiple"
+      action
 	    @update:value="handleValue" 
 	    ref="tree"
 	  >
@@ -16,54 +17,12 @@
 
 <script>
 import PopTree from '@/components/common/PopTree'
+import FormTree from '@/mixins/form-tree'
 export default {
-  name: 'product',
-  props: {
-  	'value': [Number, String, Array],
-  	'multiple': {
-  		type: Boolean,
-  		default: false,
-  	},
-  	'disabled': {
-  		type: Boolean,
-  		default: false,
-  	}
-  },
-  data () {
-		return {
-		  'props': {
-		  	label: 'name',
-		  	children: 'children',
-		  },
-		}
-  },
-  computed: {
-  	productData () {
-  		return this.$store.getters.productData;
-  	},
-  	productMap () {
-  		return this.$store.getters.productMap;
-  	},
-  	productText () {
-  		const v = this.value;
-  		const map = this.productMap;
-  		console.log(map);
-  		let t;
-  		if(this.multiple) {
-  			t = v.length != 0 ? v.map(d=>map.get(d).name).join("；") : '';
-  		}else {
-  			t = v ? map.get(v) : '';
-  		}
-
-  		return t;
-  	}
-  },
-  methods: {
-  	handleValue (val) {
-  		const v = this.multiple ? [...val] : val;
-  		this.$emit('input', v);
-  	}
-  },
+  name: 'productForm',
+  mixins: [ FormTree ],
+  DATA_KEY: 'productData',
+  MAP_KEY: 'productMap',
   components: { PopTree },
 }
 </script>

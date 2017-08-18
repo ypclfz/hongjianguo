@@ -34,30 +34,23 @@ export default {
         }
       ],
       tableOption: {
+        'url': URL,
         'header_btn': [
           {
             type: 'custom', 
             label: '新增', 
             icon: 'plus', 
-            click () {
-              alert("新增");
-            }
+            click: this.add,
           },
           {
-            type: 'dropdown',
-            label: '数据',
-            icon: '',
-            items: [
-              { text: '筛选', click: ()=>{ this.$refs.filter.show() } },
-              {text: '导出', click: ()=>{ alert("导出")} },
-              {text: '删除', click: ()=>{ alert("删除")},  divided: true},
-              {text: '放弃申请', click: ()=>{ alert("放弃申请")} },
-              {text: '放弃维持', click: ()=>{ alert("放弃维持")} }
-            ]
+            type: 'delete',
           }, 
           {
             type: 'control',
             label: '字段'
+          },
+          {
+            type: 'export',
           }
         ],
         'columns': [
@@ -102,9 +95,10 @@ export default {
           },
           {
             type: 'action',
+            width: '130px',
             btns: [
               { type: 'detail', click: this.detail },
-              { type: 'delete', click: this.delete },
+              { type: 'delete', click: this.deletePatent },
             ], 
           },
         ] 
@@ -114,8 +108,8 @@ export default {
     };
   },
   methods: {
-    refresh () {
-      this.$refs.table.refresh();
+    add () {
+      this.$router.push('/patent/add');
     },
     refreshTableData (option) {
       const url = URL;
@@ -123,11 +117,15 @@ export default {
       const success = d=>{this.tableData = d.patents};
       this.axiosGet({url, data, success});
     },
-    delete ({title, id}) {
+    refresh () {
+      this.$refs.table.refresh();
+    },
+    deletePatent ({ title, id }) {
       this.$confirm(`删除后不可恢复，确认删除‘${title}’吗？`)
         .then(()=>{
           const url=`${URL}/${id}`;
-          this.axiosDelete(url);    
+          const success = _=>{this.$refs.table.update()};
+          this.axiosDelete({url, success});    
         })
         .catch(()=>{});
     },

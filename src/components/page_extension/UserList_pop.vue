@@ -54,7 +54,8 @@ export default {
   	'popType': {
   		type: String, 
   		default: 'add',
-  	}
+  	},
+  	'groupId': null,
   },
   data () {
 		return {
@@ -108,9 +109,10 @@ export default {
   	},
   	add () {
   		const url = URL;
-  		const data = this.form;
+  		const data = Object.assign({}, this.form, { group_id: this.groupId });
   		const success = _=>{
-  			this.$alert('添加用户成功', {type: 'success', closeOnClickModal: true});
+  			this.$message({message: '添加用户成功', type: 'success'});
+  			this.dialogVisible = false;
   			this.$emit('refresh');
   		}
 

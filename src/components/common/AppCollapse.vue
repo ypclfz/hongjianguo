@@ -1,8 +1,8 @@
 <template>
 	<div class="app-collapse" style="width: 100%">
-		<div class="app-collapse-header" :style="headerStyle">
+		<div class="app-collapse-header" :style="headerStyle" @click="toggle">
 			<h3 class="app-collapse-title">{{ colTitle }}</h3>
-			<div class="app-collapse-control" @click="toggle">
+			<div class="app-collapse-control">
 				<i :class="toggleClass"></i>
 			</div>
 		</div>
@@ -105,6 +105,7 @@ export default {
     border-top-right-radius: 4px;
     background-color: #e4e9eb;
     color: #768399;
+    cursor: pointer;
     overflow: hidden;
 }
 .app-collapse-title {
@@ -127,21 +128,21 @@ export default {
   padding: 10px 15px;
 }
 .app-collapse-control {
-	width: auto;
+	  width: auto;
     float: right;
     position: absolute;
     right: 10px;
     top: 0;
 
     padding: 10px 5px;
-    cursor: pointer;
+    /*cursor: pointer;*/
 }
 .app-collapse-header:hover .app-collapse-control i{
-	opacity: .5;
-} 
-.app-collapse-header:hover .app-collapse-control:hover i {
 	opacity: 1;
-}
+} 
+/*.app-collapse-header:hover .app-collapse-control:hover i {
+	opacity: 1;
+}*/
 /*.app-collapse-control i:hover {
 	opacity: 1;
 }*/
@@ -151,7 +152,7 @@ export default {
 	font-weight: bold;
 	/*-webkit-transition: -webkit-transform 0.4s ease !important;*/
     transition: all 0.4s ease !important;
-    opacity: 0;
+    opacity: .5;
 }
 
 .fade-enter-active, .fade-leave-active {

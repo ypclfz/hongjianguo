@@ -19,7 +19,7 @@ export default {
 		  	{ 'text': '官方来文', key: 'notice' },
 		  	{ 'text': '所有费用', key: 'fee' },
 		  	{ 'text': '往來邮件', key: 'email' },
-		  	{ 'text': '其他文档', key: 'documents' },
+		  	{ 'text': '文档', key: 'documents' },
 		  ],
 		  loading: true,
 		}

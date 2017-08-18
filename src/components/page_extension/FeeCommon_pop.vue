@@ -10,8 +10,8 @@
 			<el-form-item label="费用代码" prop="code">
 				<fee-code v-model="form.code" @change="codeChange"></fee-code>
 			</el-form-item>
-			<el-form-item label="费用状态" prop="status">
-				<fee-status v-model="form.status" :feeType="feeType" :feeAnnual="feeAnnual"></fee-status>
+			<el-form-item label="费用状态" prop="status" v-if="popType == 'add'">
+				<fee-status v-model="form.status" :feeAnnual="feeAnnual"></fee-status>
 			</el-form-item>
 			<el-form-item label="费用金额" prop="money">
 				<el-row>

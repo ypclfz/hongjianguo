@@ -56,17 +56,25 @@ export default {
 		}
 	},
 	splitObj (arr, keys) {
-		const result = {};
-		
-		for(let k of keys) {
-			result[k] = [];
-		}
-
-		for(let a of arr) {
+		let result;
+		if(keys instanceof Array) {
+			result = {};
 			for(let k of keys) {
-				result[k].push(a[k]);
+				result[k] = [];
+			}
+
+			for(let a of arr) {
+				for(let k of keys) {
+					result[k].push(a[k]);
+				}
+			}	
+		}else if(typeof keys == 'string') {
+			result = [];
+			for(let a of arr) {
+				result.push(a[keys]);
 			}
 		}
+		
 
 		return result;
 	},

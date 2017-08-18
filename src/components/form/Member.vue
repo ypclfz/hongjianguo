@@ -21,8 +21,10 @@
 </template>
 
 	<script>
+	import AxiosMixins from '@/mixins/axios-mixins'
 	export default {
 	  name: 'member',
+	  mixins: [ AxiosMixins ],
 	  props: {
 	  	'value': [Number, String, Array],
 	  	'defaultOptions': {
@@ -53,10 +55,14 @@
 	  		const params = { keyword };
 
 	  		this.loading = true;
-	  		this.$axios.get('/api/members', {params}).then(response=>{
+	  		const url = '/api/members';
+	  		const data = params;
+	  		const success = _=>{
 	  			this.loading = false;
-	  			this.options = response.data.members.data.map(d=>{return {id: d.id, name: d.username}});
-	  		});
+	  			this.options = _.members.data.map(d=>{return {id: d.id, name: d.username}})
+	  		}
+
+	  		this.axiosGet({url, data, success});
 	  	}
 	  },
 	  created () {

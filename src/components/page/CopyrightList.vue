@@ -1,176 +1,142 @@
 <template>
   <div class="main">
-  	<table-component :tableOption="tableOption" :data="tableData"></table-component>
-  	<el-dialog :visible.sync="dialogScreenVisible" title="设置筛选条件" class="dialog-small">
-  		<el-form label-width="80px">
-  			<el-form-item label="客户名称"><el-input></el-input></el-form-item>
-  			<el-form-item label="案件状态"><el-input></el-input></el-form-item>
-  			<el-form-item label="委案日"><app-date-picker></app-date-picker></el-form-item>
-  			<el-form-item label="申请日"><app-date-picker></app-date-picker></el-form-item>
-  			<el-form-item style="margin-bottom: 0;"><el-button>筛选</el-button></el-form-item>
-  		</el-form>
-  	</el-dialog>
+    <strainer v-model="filter" @refresh="refresh"></strainer>
+    <table-component :tableOption="tableOption" :data="tableData" @refreshTableData="refreshTableData" ref="table"></table-component>
   </div>
 </template>
 
 <script>
+import AxiosMixins from '@/mixins/axios-mixins'
+import AppFilter from '@/components/common/AppFilter'
 import TableComponent from '@/components/common/TableComponent'
+import AppTree from '@/components/common/AppTree'
 import AppDatePicker from '@/components/common/AppDatePicker'
+import Strainer from '@/components/page_extension/PatentList_strainer'
 
-const text1 = '测试';
-const text2 = '测试';
-const text3 = '测试';
-
+const URL = '/api/patents';
 
 export default {
   name: 'copyrightList',
-  data () {
-	return {
-		dialogScreenVisible: false,
-		tableOption: {
-			'header_btn': [{
-				'type': 'custom',
-				'label': '新增',
-				'icon': 'plus',
-				click () {
-					alert("新增");
-				}
-			},
-			{
-				'type': 'custom',
-				'label': '删除',
-				'icon': 'delete',
-				click () {
-					alert("删除");
-				}
-			},
-			{
-				'type': 'dropdown',
-				'label': '数据',
-				'icon': '',
-				'items': [{
-					text: '设定筛选条件',
-					click: ()=>{this.dialogScreenVisible = true;},
-				}]
-			},
-			{
-				'type': 'control',
-				'label': '字段'
-			}],
-			'is_search': false,//默认为true
-			'columns': [{
-				'show': true,
-				'type': 'selection'
-			},
-			{
-				'show': true,
-				'type': 'text',
-				'label': '案号',
-				'prop': 'text1',
-			},
-		  	{
-				'show': false,
-				'type': 'text',
-				'label': '地区',
-				'prop': 'text2'
-		  	},
-		  	{
-				'show': true,
-				'type': 'text',
-				'label': '客户',
-				'prop': 'text3'
-		  	},
-		  	{
-				'show': false,
-				'type': 'text',
-				'label': '类型',
-				'prop': 'text3'
-		  	},
-		  	{
-				'show': true,
-				'type': 'text',
-				'label': '名称',
-				'prop': 'text3'
-		  	},
-		  	{
-				'show': false,
-				'type': 'text',
-				'label': '委案日',
-				'prop': 'text3'
-		  	},
-		  	{
-				'show': true,
-				'type': 'text',
-				'label': '申请日',
-				'prop': 'text3'
-		  	},
-		  	{
-				'show': true,
-				'type': 'text',
-				'label': '受理号',
-				'prop': 'text3'
-		  	},
-		  	{
-				'show': false,
-				'type': 'text',
-				'label': '注册日',
-				'prop': 'text3'
-		  	},
-		  	{
-				'show': false,
-				'type': 'text',
-				'label': '注册号',
-				'prop': 'text3'
-		  	},
-		  	{
-				'show': false,
-				'type': 'text',
-				'label': '代理人'
-		  	},
-		  	{
-				'show': true,
-				'type': 'text',
-				'label': 'IPR'
-		  	},
-		  	{
-				'show': true,
-				'type': 'text',
-				'label': '当前状态'
-		  	},
-		  	{
-				'show': true,
-				'type': 'text',
-				'label': '备注'
-		  	},
-		  	{
-				'show': true,
-				'type': 'action',
-				'label': '操作',
-				'btns': [{
-					'label': '查看详情',
-					'icon': 'view',
-					click (row) {
-			 			console.log(row);
-					}
-				}]
-			}] 
-		},
-		tableData: [
-			{text1, text2, text3, id: 1},
-			{text1, text2, text3, id: 2},
-			{text1, text2, text3, id: 3},
-			{text1, text2, text3, id: 4},
-			{text1, text2, text3, id: 5},
-			{text1, text2, text3, id: 6},
-			{text1, text2, text3, id: 7},
-
-		]
-	};
+  mixins: [ AxiosMixins ],
+  computed: {
+    leftHeight () {
+      return document.querySelector(".row").clientHeight;
+    }
   },
-  components: { TableComponent, AppDatePicker }
+  data () {
+    return {
+      tableOption: {
+        'header_btn': [
+          { type: 'add' },
+          {
+            type: 'dropdown',
+            label: '数据',
+            icon: '',
+            items: [
+              {text: '导出', click: ()=>{ alert("导出")} },
+              {text: '删除', click: ()=>{ alert("删除")},  divided: true},
+              {text: '放弃申请', click: ()=>{ alert("放弃申请")} },
+              {text: '放弃维持', click: ()=>{ alert("放弃维持")} }
+            ]
+          }, 
+          { type: 'control', label: '字段' }
+        ],
+        'columns': [
+          { type: 'selection' },
+          { type: 'text', label: '案号', prop: 'serial' },
+          { type: 'text', label: '版权类型', prop: 'type' },
+          { type: 'text', label: '标题', prop: 'title'},
+          { type: 'text', label: '摘要', prop: 'abstract' },
+          { type: 'text', label: '申请日', prop: 'apd', sortable: true },
+          { type: 'text', label: '申请号', prop: 'apn' },
+          { type: 'text', label: '公告日', prop: 'issue_date' },
+          { type: 'text', label: '公告号', prop: 'issue_number' },
+          { type: 'text', label: '代理人', prop: 'ipr', render: _=>_.name },
+          { type: 'text', label: '代理机构名称', prop: 'agency' },
+          { type: 'text', label: '代理机构案号', prop: 'agency_serial' },
+          { type: 'text', label: '备注', prop: 'remark' },
+          { type: 'array', label: '申请人' },
+          { 
+            type: 'array', 
+            label: '产品名称', 
+            prop: 'products', 
+            sortable: true, 
+            render: arr=>{
+              return arr.map(d=>d.name);
+            }, 
+          },
+          { 
+            type: 'text', 
+            label: '专利人', 
+            prop: 'proposer', 
+            render: (h, item)=>h('span', item.name),
+          },
+          {
+            type: 'array',
+            label: '发明人',
+            prop: 'inventors',
+            render: arr=>{
+              return arr.map(d=>`${d.name}: ${d.share}%`);
+            },
+          },
+          {
+            type: 'array',
+            label: '标签',
+            prop: 'tags',
+          },
+          {
+            type: 'action',
+            width: '130px',
+            btns: [
+              { type: 'detail', click: this.detail },
+              { type: 'delete', click: this.deletePatent },
+            ], 
+          },
+        ] 
+      },
+      tableData: [],
+      filter: {},
+    };
+  },
+  methods: {
+    add () {
+      this.$router.push('/patent/add');
+    },
+    refreshTableData (option) {
+      const url = URL;
+      const data = Object.assign({}, option, this.filter);
+      const success = d=>{this.tableData = d.patents};
+      this.axiosGet({url, data, success});
+    },
+    refresh () {
+      this.$refs.table.refresh();
+    },
+    deletePatent ({ title, id }) {
+      this.$confirm(`删除后不可恢复，确认删除‘${title}’吗？`)
+        .then(()=>{
+          const url=`${URL}/${id}`;
+          const success = _=>{this.$refs.table.update()};
+          this.axiosDelete({url, success});    
+        })
+        .catch(()=>{});
+    },
+    detail ({id}) {
+      const path = `/patent/list/detail/${id}`; 
+      this.$router.push( path );
+    }
+  },
+  mounted () {
+    this.$refs.table.refresh();
+  },
+  components: {  AppFilter, TableComponent, AppTree, AppDatePicker, Strainer }
 }
 </script>
+<style>
 
+</style>
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped lang="scss">
+
+
+
 </style>

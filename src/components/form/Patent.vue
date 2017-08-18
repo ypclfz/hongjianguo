@@ -21,14 +21,18 @@
 </template>
 
 <script>
-//使用RemoteSelect,必须书写URL参数
 import RemoteSelect from '@/mixins/remote-select'
+import AxiosMixins from '@/mixins/axios-mixins'
 
 export default {
   name: 'patent',
-  mixins: [ RemoteSelect ],
-  URL: '/api/patents',
-  DATA_KEY: 'patents',
+  mixins: [ AxiosMixins, RemoteSelect ],
+  data () {
+    return {
+      URL: '/api/patents',
+      DATA_KEY: 'patents',  
+    }
+  },
 }
 </script>
 

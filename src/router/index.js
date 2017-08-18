@@ -10,7 +10,6 @@ import TaskCommon from '@/components/page/TaskCommon'
 import PatentList from '@/components/page/PatentList'
 import ApplyingPatent from '@/components/page/ApplyingPatent'
 import PatentAdd from '@/components/page/PatentAdd'
-import PatentDetail from '@/components/page/PatentDetail'
 import PatentStatistics from '@/components/page/PatentStatistics'
 import PatentNotice from '@/components/page/PatentNotice'
 import TrademarkList from '@/components/page/TrademarkList'
@@ -64,7 +63,7 @@ const router = new Router({
     { path: '/', redirect: '/statistics' },
     { path: '/proposal', redirect: '/proposal/list' },
     { path: '/task', redirect: '/task/pending' },
-    { path: '/patent', redirect: '/patent/applying' },
+    { path: '/patent', redirect: '/patent/list' },
     { path: '/trademark', redirect: '/trademark/list' },
     //###重定向###
     {
@@ -100,6 +99,12 @@ const router = new Router({
       name: 'TaskPending',
       component: TaskCommon,
       meta: { 'status': 0 },
+    },
+    {
+      path: '/task/pause',
+      name: 'TaskPause',
+      component: TaskCommon,
+      meta: { 'status': -1 },
     },{
       path: '/task/finish',
       name: 'TaskFinish',
@@ -117,11 +122,7 @@ const router = new Router({
       path: '/patent/add',
       name: 'PatentAdd',
       component: PatentAdd,
-    },{
-      path: '/patent/detail',
-      name: 'PatentDetail',
-      component: PatentDetail,
-      alias: ['/patent/applying/detail', '/patent/applied/detail']
+      meta: { type: 'add' },
     },
     {
       path: '/patent/statistics',
@@ -203,8 +204,8 @@ const router = new Router({
       path: '/patent/list/detail__/:id',
       component: CommonDetail,
       children: [
-        { path: '', redirect: 'base' },
-        { path: 'base', component: PatentAdd },
+        { path: '', redirect: 'base',  },
+        { path: 'base', component: PatentAdd, meta: {type: 'edit'} },
         { path: 'control', component: Control },
         { path: 'notice', component: Notice },
         { path: 'fee', component: Fee },
@@ -224,7 +225,6 @@ const router = new Router({
         { path: 'email', component: Email },
         { path: 'documents', component: Documents },
       ],
-      alias: ['/patent/list/detail/:id', '/trademark/list/detail/:id', '/copyright/list/detail/:id']
     },
     { path: '/setting/agency', name: 'SettingAgency', component: SettingAgency },
     { path: '/setting/case', name: 'SettingCase', component: SettingAgency },

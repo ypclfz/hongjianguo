@@ -3,29 +3,31 @@
   		<el-row>
 	  		<el-col :span="18">
 		  		<el-form label-width="100px" :rules="formRules" :model="formData" ref="form">
+            
+            <el-form-item label="提案人">{{ user.username }}</el-form-item>
+            
+            
             <el-form-item label="创建时间" v-if="pageType == 'detail'">
               {{ create_time }}
             </el-form-item>
             <el-form-item label="更新时间" v-if="pageType == 'detail'">
               {{ update_time }}
             </el-form-item>
-						<el-form-item label="案件名称" prop="title">
-							<el-input v-model="formData.title" placeholder="请输入案件名称" :disabled="pageType == 'detail'">
+            <el-form-item label="案件名称" prop="title">
+              <el-input v-model="formData.title" placeholder="请输入案件名称" :disabled="pageType == 'detail'">
               </el-input>
-						</el-form-item>
-						<el-form-item label="案件摘要" prop="abstract">
-							<el-input type="textarea" v-model="formData.abstract" placeholder="请输入案件摘要" :disabled="pageType == 'detail'"></el-input>
-						</el-form-item>
-						
-						<el-form-item label="发明人" prop="inventors">
+            </el-form-item>
+            <el-form-item label="案件摘要" prop="abstract">
+              <el-input type="textarea" v-model="formData.abstract" placeholder="请输入案件摘要" :disabled="pageType == 'detail'"></el-input>
+            </el-form-item>
+            
+            <el-form-item label="发明人" prop="inventors">
 
               <inventors v-model="formData.inventors" @addInventor="addInventor" @deleteInventor="deleteInventor" :disabled="pageType == 'detail'"></inventors>
 
-						</el-form-item>
-
-            <el-form-item label="提案人" prop="proposer">
-              <member v-model="formData.proposer" :disabled="pageType == 'detail'"></member>
             </el-form-item>
+
+
             <el-form-item label="技术分类" prop="classification">
               <classification v-model="formData.classification" :disabled="pageType == 'detail'"></classification>
             </el-form-item>
@@ -62,15 +64,15 @@
 					<h3 style="margin-top: 0;">提案流程</h3>
 					<el-steps :space="100" direction="vertical" :active="0">
 					  <el-step title="发明人提案"></el-step>
-					  <el-step title="部门经理审核"></el-step>
+					  <!-- <el-step title="部门经理审核"></el-step> -->
 					  <el-step title="IPR审核"></el-step>
-					  <el-step title="委案"></el-step>
+					  <el-step title="提出申请"></el-step>
 					</el-steps>
           <h3 style="margin-top: 40px;">提案模板</h3>
           <ul class="proposal-model" >
-            <li><i class="iconfont icon-docx"></i><a href="#">技术交底书范例(结构类).docx</a></li>
-            <li><i class="iconfont icon-docx"></i><a href="#">技术交底书范例(软件类).doc</a></li>
-            <li><i class="iconfont icon-ppt"></i><a href="#">15分钟如何写一个专利底稿.pptx</a></li>
+            <li><i class="iconfont icon-docx"></i><a href="javascript:void(0)">技术交底书范例(结构类).docx</a></li>
+            <li><i class="iconfont icon-docx"></i><a href="javascript:void(0)">技术交底书范例(软件类).doc</a></li>
+            <li><i class="iconfont icon-ppt"></i><a href="javascript:void(0)">15分钟如何写一个专利底稿.pptx</a></li>
           </ul>
 		  	</el-col>
 	  	</el-row>
@@ -131,18 +133,16 @@ export default {
 
           
     },
-    submit () {
-      
-          this.save(d=>{
-            this.pageType = 'edit';
-            this.id = d.proposal_id;
-            this.update_id = d.task_id;
-            this.dialogVisible = true;
-            this.$nextTick(_=>{
-              this.$refs.task.clear();
-            })
-          });
-        
+    submit () {      
+      this.save(d=>{
+        this.pageType = 'edit';
+        this.id = d.proposal_id;
+        this.update_id = d.task_id;
+        this.dialogVisible = true;
+        this.$nextTick(_=>{
+          this.$refs.task.clear();
+        })
+      });        
     },
     cancel () {
       this.$router.push('/proposal/list');
@@ -169,7 +169,9 @@ export default {
       if( t == 'detail' || t== 'edit' ) {
         const id = this.$route.query.id;
         this.id = id;
+        this.$store.commit('onLoading');
         this.$axios.get(`${URL}/${id}`).then(response=>{
+          this.$store.commit('cancelLoading');
           const data = response.data.proposal;
           const { inventors, proposer, classification, products, attachments } = data;
           
@@ -276,9 +278,6 @@ export default {
             }            
           },
         },
-        'proposer': [
-          { type: 'number', required: true, message: '联系人不能为空', trigger: 'change' },
-        ],
         'attachments': {type: 'array', required: true, message: '附件不能为空', trigger: 'change'}
       	
       },
@@ -313,12 +312,18 @@ export default {
     }
   },
   created () {
-    this.pageType = typeMap.get(this.$route.path);;
+    this.pageType = typeMap.get(this.$route.path);
+    if(this.pageType == 'add') {
+      this.formData.proposer = this.user.id;
+    } 
   },
   mounted () {
     this.refreshCommon();
   },
   computed: {
+    user () {
+      return this.$store.getters.getUser;
+    },
     tagOptions () {
       return this.$store.getters.tagOptions;
     },

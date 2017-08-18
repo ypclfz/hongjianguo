@@ -1,5 +1,5 @@
 <template>
-  <div class="user-group">
+  <div class="user-group" v-loading="loading">
 	  <div class="app-collapse-header" style="line-height: 46px;">
 			<span style="font-size: 18px;">用户组</span>
 			<div style="float: right;">
@@ -69,6 +69,7 @@ export default {
 			'current_node': '',
 			'dialogVisible': false,
 			'setCurrent': '',
+      'loading': false,
 		}
   },
   computed: {
@@ -80,7 +81,10 @@ export default {
   	},
   	deleteDisabled () {
   		return this.value && this.value.id != 0 ? false : true;
-  	}
+  	},
+    groupMap () {
+      return this.$store.getters.groupMap;
+    }
   },
   methods: {
   	handleCurrentChange (data) {
@@ -88,6 +92,7 @@ export default {
   		this.$emit('input', data);
   	},
   	refreshData () {
+      this.loading = true;
   		// this.$store.dispatch('', );
   		const url = URL;
   		const def = {name: '全部用户', description: '该用户组用于存放所有的用户，不可编辑，不可删除', id: 0};
@@ -104,7 +109,11 @@ export default {
   			})
   		};
 
-  		this.axiosGet({url, success});
+      const complete = _=>{
+        this.loading = false;
+      }
+
+  		this.axiosGet({url, success, complete});
   	},	
   	addPop () {
   		this.popType = 'add';
@@ -157,11 +166,13 @@ export default {
   			this.$message({message: '不可编辑，不可删除？', type: 'error'});
   			return false;
   		}
-  		this.$confirm('删除后不可恢复，确认删除当前用户组？')
+
+      const name = this.groupMap.get(id).name;
+  		this.$confirm(`删除后不可恢复，确认删除用户组‘${name}’？`)
   			.then(_=>{
   				const url = `${URL}/${id}`;
 		  		const success = ()=>{
-		  			this.$message({message: '删除用户成功', type: 'success'});
+		  			this.$message({message: '删除用户组成功', type: 'success'});
 		  			this.$emit('input', '');
 		  			this.refreshData();
 		  		}

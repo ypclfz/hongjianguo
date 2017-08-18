@@ -1,4 +1,4 @@
-const url = '/api/branches';
+let url = '/api/branches';
 const state = {
 	data: [],
 }
@@ -29,7 +29,7 @@ const mutations = {
 
 const actions = {
 	refreshBranch ({commit, rootState, state}) {
-		
+		url = rootState.status ? url.replace(/\/api/, '') : url;
 		rootState.axios
 			.get(url)
 			.then(response=>{

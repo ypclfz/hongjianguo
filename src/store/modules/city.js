@@ -1,4 +1,4 @@
-const url = '/api/static/js/state.json';
+let url = '/api/static/js/state.json';
 const state = {
 	data: [],
 }
@@ -14,7 +14,8 @@ const mutations = {
 }
 
 const actions = {
-	refreshArea ({commit, rootState, state}) {		
+	refreshArea ({commit, rootState, state}) {	
+		url = rootState.status ? url.replace(/\/api/, '') : url;	
 		rootState.axios
 			.get(url)
 			.then(response=>{

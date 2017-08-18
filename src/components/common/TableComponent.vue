@@ -26,7 +26,10 @@
               {{ btn.label }}<i class="el-icon-caret-bottom el-icon--right"></i>            
             </el-button>
             <el-dropdown-menu v-if="btn.items">
-              <el-dropdown-item v-for="(item,index) in btn.items" :key="index" :divided="item.divided"><div @click="handleCommand(item.click, $event)" style="margin: 0 -20px; padding: 0 20px;">{{ item.text }}</div></el-dropdown-item>
+              <el-dropdown-item v-for="(item,index) in btn.items" :key="index" :divided="item.divided">
+                <div @click="handleDelete(item.click, $event)" style="margin: 0 -20px; padding: 0 20px;" v-if="item.type == 'delete'">删除</div>
+                <div @click="handleCommand(item.click, $event)" style="margin: 0 -20px; padding: 0 20px;" v-else>{{ item.text }}</div>
+              </el-dropdown-item>
             </el-dropdown-menu>
           </el-dropdown>
         </template>
@@ -44,11 +47,15 @@
         </template>
 
         <template v-else-if="btn.type == 'delete'">
-          <el-button class="table-header-btn" type="primary" icon="delete" @click="handleCommand(btn.click, $event)">{{ btn.label ? btn.label : '删除' }}</el-button>
+          <el-button class="table-header-btn" type="primary" icon="delete" @click="handleDelete(btn.click, $event)">{{ btn.label ? btn.label : '删除' }}</el-button>
         </template>
 
         <template v-else-if="btn.type == 'filter'">
           <el-button class="table-header-btn" type="primary" icon="document" @click="handleCommand(btn.click, $event)">筛选</el-button>
+        </template>
+
+        <template v-else-if="btn.type == 'export'">
+          <el-button class="table-header-btn" type="primary" icon="upload2" @click="handelExport(btn.click, $event)">导出</el-button>
         </template>
 
       </template>
@@ -60,6 +67,7 @@
 	  	<el-input
         v-model="search_value"
         placeholder="搜索..."
+        style="width: 200px;"
         icon="search"
         :class="searchClass"
         @focus="searchClass='table-search table-search-focus'"
@@ -109,6 +117,13 @@
           </el-table-column>
         </template>
       </template>
+
+      <template v-else-if="col.type == 'date'">
+        <el-table-column :label="col.label" :prop="col.prop" v-if="tableControl[index]['show']">
+        </el-table-column>
+      </template>
+
+
       
       <template v-else-if="col.type == 'array'">
         <el-table-column :label="col.label" :prop="col.prop" v-if="tableControl[index]['show']">
@@ -125,7 +140,7 @@
               <slot :name="col.btns_render" :row="scope.row">
               </slot>
             </template>
-            <template v-else v-for="(btn, index) in col.btns">
+            <template v-else v-for="(btn, index) in col.btns" v-if="btn.btn_if ? btn.btn_if(scope.row) : true">
 
               <el-dropdown v-if="btn.type == 'dropdown'" :key="index" trigger="click" menu-align="start">
                 <el-button class="table-header-btn" :type="btn.btn_type ? btn.btn_type : ''" :size="btn.size ? btn.size : 'mini'" :icon="btn.icon ? btn.icon : ''">
@@ -174,10 +189,36 @@
 import tableConst from '@/const/tableConst'
 import AppDatePicker from '@/components/common/AppDatePicker'
 const methods = Object.assign({}, tableConst.methods, {
+  handelExport(func, e) {
+    if(func) {
+      func(e)
+    }else {
+      this.$message({message: '导出接口开发中', type: 'warning'})
+    }
+  },
   handleExpand (a, b) {
     const fun = this.tableOption.expandFun;
     if( fun ){
       fun(a, b);
+    }
+  },
+  handleDelete (func, e) {
+    if(func) {
+      func(e)
+    }else {
+      const s = this.tableSelect;
+      if(s.length == 0) {
+        this.$message({message: '请选择需要删除的提案', type: 'warning'});
+      }else {
+        this.$confirm('删除后不可恢复，确认删除？')
+          .then(_=>{
+            const url = this.url;
+            const data = { ids: this.$tool.splitObj(s, 'id') };
+            const success = _=>{ this.update() };
+            this.axiosDelete({ url, data, success });
+          })
+          .catch(_=>{console.log(_)});
+      }     
     }
   },
   handleCommand (func, event) {
@@ -248,6 +289,14 @@ const methods = Object.assign({}, tableConst.methods, {
     const copy = this.$tool.deepCopy(this.requesOption);
     return copy;
   },
+  getSelect () {
+    const s = this.tableSelect;
+    if(s.length == 0) {
+      this.$message({ message: '请至少选择一项！', type: 'warning' })
+    }else {
+      return s;
+    }
+  },
   update () {
     this.$emit('refreshTableData', this.getRequestOption() );
   },
@@ -297,6 +346,9 @@ export default {
     },
     pagesize () {
       return this.$store.getters.pagesize;
+    },
+    url () {
+      return tableOption.url ? tableOption.url : '';
     }
   },
   watch: {
@@ -364,13 +416,13 @@ export default {
 /*.el-table__expand-column {
   display: none;
 }*/
-.hjg-table {
-  -moz-user-select:none; /*火狐*/
-  -webkit-user-select:none; /*webkit浏览器*/
-  -ms-user-select:none; /*IE10*/
-  -khtml-user-select:none; /*早期浏览器*/
+/*.hjg-table {
+  -moz-user-select:none; 
+  -webkit-user-select:none; 
+  -ms-user-select:none; 
+  -khtml-user-select:none; 
   user-select:none;
-}
+}*/
 /*.table-header-btn {
   margin: 0;
   margin-right: 10px;

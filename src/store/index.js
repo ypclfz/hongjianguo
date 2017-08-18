@@ -13,6 +13,9 @@ import area from '@/store/modules/area.js'
 import feeCode from '@/store/modules/fee-code.js'
 import invoiceEntity from '@/store/modules/invoice-entity.js'
 import userGroup from '@/store/modules/user-group.js'
+import flows from '@/store/modules/flows.js'
+import taskDef from '@/store/modules/task-def.js'
+import currentUser from '@/store/modules/current-user.js'
 Vue.use(Vuex);
 
 const store = new Vuex.Store({
@@ -20,6 +23,8 @@ const store = new Vuex.Store({
   state: {
     dragId: null,
     axios,
+    status: 0, //这里进行地址代理控制, 为1时去掉/api, 为0时保留
+    loading: false,
   },
   modules: {
     filter,
@@ -34,6 +39,9 @@ const store = new Vuex.Store({
     feeCode,
     invoiceEntity,
     userGroup,
+    flows,
+    taskDef,
+    currentUser,
   },
   mutations: {
     setDragId (state, id) {
@@ -41,10 +49,17 @@ const store = new Vuex.Store({
     },
     AXIOS_FAILURE () {
       alert('网络错误');
+    },
+    onLoading (state) {
+      state.loading = true;
+    },
+    cancelLoading (state) {
+      state.loading = false;
     }
   },
   getters: {
     getDragId: state=>state.dragId,
+    loading: state=>state.loading,
   },
 });
 

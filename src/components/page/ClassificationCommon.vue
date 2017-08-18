@@ -44,9 +44,11 @@
 
 <script>
 import AppCollapse from '@/components/common/AppCollapse'
+import AxiosMixins from '@/mixins/axios-mixins'
 
 export default {
   name: 'classificationCommon',
+  mixins: [ AxiosMixins ],
   data () {
 		return {
 		  'currentNodeKey': '',
@@ -68,10 +70,13 @@ export default {
   },
   methods: {
   	renderContent (h, {node, data}) {
+      console.log(data);
   		return (
           <span>
             <span>
+            
               <span>{node.label}</span>
+              <el-badge value={ data.projects_count } />
             </span>
             <span style="float: right; margin-right: 20px">
               <el-button size="mini" on-click={ () => this.addPop(data.id) }>新建</el-button>

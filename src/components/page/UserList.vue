@@ -18,7 +18,7 @@
 				</table-component>
   		</div>
 	
-  	<pop :popType="popType" @refresh="refresh" ref="pop"></pop>
+  	<pop :popType="popType" :groupId="group_id" @refresh="refresh" ref="pop"></pop>
   	
   	<el-dialog title="将所选用户添加至用户组" :visible.sync="dialogVisible" :close-on-click-modal="false">
 			<el-form label-width="100px">
@@ -65,7 +65,8 @@ export default {
 		  	columns: [
 		  		{ type: 'selection' },
 		  		{ type: 'text', label: '用户名', prop: 'username' },
-		  		{ type: 'text', label: '用户角色', prop: 'role' },
+		  		{ type: 'array', label: '所属用户组', prop: 'groups', render: _=>_.map(_=>_.name) },
+		  		{ type: 'text', label: '用户角色', prop: 'role_name' },
 		  		{ type: 'text', label: '昵称', prop: 'name' },
 		  		{ type: 'text', label: '邮箱', prop: 'email' },
 		  		{ type: 'text', label: '手机号', prop: 'mobile' },
@@ -75,7 +76,7 @@ export default {
 		  			type: 'action', label: '操作', width: '150px',
 		  			btns: [
 		  				{ type: 'edit', click: this.editPop },
-		  				{ type: 'delete', click: this.delete }
+		  				{ type: 'delete', click: this.deleteSingle }
 		  			],
 		  		},
 		  	]
@@ -183,8 +184,18 @@ export default {
 				})
 				.catch(()=>{});
 		},
-		userDelete () {
+		deleteSingle ({username, id}) {
+			const url = `${URL}/${id}`;
+			const success = _=>{ 
+				this.$message({message: '删除用户成功！', type: 'success'});
+				this.update(); 
+			};
 
+			this.$confirm(`删除后不可恢复，确认删除用户‘${username}’？`)
+				.then(_=>{
+					this.axiosDelete({url, success});
+				})
+				.catch(_=>{});
 		},
 		refreshTableData (option) {
 			const url = URL;

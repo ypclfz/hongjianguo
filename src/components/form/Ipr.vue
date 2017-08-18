@@ -7,10 +7,10 @@
     placeholder="请选择IPR"
   >
   	<el-option
-		v-for="item in iprOptions"
-		:key="item.value"
-		:label="item.label"
-		:value="item.value"
+  		v-for="item in iprOptions"
+  		:key="item.value"
+  		:label="item.label"
+  		:value="item.value"
   	>
   	</el-option>
   </el-select>
@@ -24,7 +24,11 @@ export default {
   mixins: [formSelect],
   computed: {
   	iprOptions () {
-  		return this.$store.getters.iprOptions;
+      if(this.$store.getters.iprOptions) {
+        return this.$store.getters.iprOptions;
+      }else {
+        return [];
+      }
   	}
   },
 }

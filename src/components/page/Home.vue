@@ -1,7 +1,7 @@
 <template>
 	<div class="main">
-		<div>{{ msg }}</div>
-  	<app-filter :data="filter_data"></app-filter>
+		<!-- <div>{{ msg }}</div>
+  	<app-filter :data="filter_data"></app-filter> -->
 	</div>
 </template>
 <script>

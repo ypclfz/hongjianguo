@@ -16,8 +16,10 @@
 
 <script>
 import InventorSelect from '@/components/form/InventorSelect'
+import AxiosMixins from '@/mixins/axios-mixins'
 export default {
   name: 'inventor',
+  mixins: [ AxiosMixins ], 
   props: {
   	'value': Object,
   	'isDelete': {
@@ -34,7 +36,6 @@ export default {
 		  option: {
 		  	inventors: []
 		  },
-      value9: '',
       loading: false,
 		}
   },
@@ -60,12 +61,6 @@ export default {
         {value: 90},
         {value: 100},
       ])
-    },
-    querySearchAsync (keyword, cb) {
-      const params = { keyword };
-      this.$axios.get('/api/inventors', { params }).then(response=>{
-        cb(response.data.data.data);
-      })
     },
     deleteInventor () {
     	this.$emit('deleteInventor');

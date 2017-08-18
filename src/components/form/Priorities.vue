@@ -1,8 +1,8 @@
 <template>
   <div>
-  	<el-row v-for="(item, index) in value" :key="index">
+  	<el-row v-for="(item, index) in value" :key="index" style="margin-bottom: 5px;">
 			<el-col :span="7" style="padding-right: 5px;">
-				<el-input :value="item.apn" @input="val=>{ handleInput(val, 'apn', index) }" placeholder="请填写APN"></el-input>
+				<el-input :value="item.number" @input="val=>{ handleInput(val, 'number', index) }" placeholder="请填写申请号"></el-input>
 			</el-col>
 			
 			<el-col :span="7" style="padding: 0 5px;">
@@ -25,7 +25,7 @@
 			</el-col>
   	</el-row>
   	<el-row>
-  		<el-button type="text" @click="add({ 'area': '', 'apn': '', 'date': '' })">添加优先权</el-button>
+  		<el-button type="text" @click="add({ 'area': '', 'number': '', 'date': '' })">添加优先权</el-button>
   	</el-row>
   </div>
 </template>
@@ -38,6 +38,18 @@ export default {
   name: 'priorities',
   mixins: [ Multiline ],
   components: { Region },
+  methods: {
+    handleInput (val, key, index) {
+      const arr = this.$tool.deepCopy(this.value);
+      if( key == 'date' ) {
+        arr[index][key] = this.$tool.getDate(val);
+      }else {
+        arr[index][key] = val;          
+      }
+      
+      this.$emit('input', arr);
+    },
+  }
 }
 </script>
 

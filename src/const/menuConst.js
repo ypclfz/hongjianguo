@@ -7,47 +7,37 @@ menu.data = [
 		icon: 'iconfont icon-statistics',
 		type: 'item'
 	},
-	{ 
-		text: '发明人管理',
-		path: '/inventorList',
-		icon: '',
-		type: 'item',
-	},
 	{
-		text: '申请人管理',
-		path: '/applicantList',
-		icon: '',
-		type: 'item',
-	},
-	{
-		text: '部门设置',
-		path: '/branch',
-		icon: '',
-		type: 'item',
-	},
-	{
-		text: '用户管理',
-		path: '/userList',
-		icon: '',
-		type: 'item',
-	},
-	{
-		text: '技术分类管理',
-		path: '/classification',
-		icon: '',
-		type: 'item',
-	},
-	{
-		text: '产品分类管理',
-		path: '/product',
-		icon: '',
-		type: 'item',
-	},
-	{
-		text: '邮件列表',
+		text: '邮件',
 		path: '/mailList',
-		icon: '',
+		icon: 'iconfont icon-email',
 		type: 'item'
+	},
+	{
+		text: '任务',
+		path: '/task',
+		icon: 'iconfont icon-task',
+		type: 'submenu',
+		children: [
+			{
+				text: '未完成',
+				path: '/task/pending',
+				icon: 'iconfont icon-task-pending',
+				type: 'item',
+			},
+			{
+				text: '暂停处理',
+				path: '/task/pause',
+				icon: 'iconfont icon-pause',
+				type: 'item',
+			},
+			{
+				text: '已完成',
+				path: '/task/finish',
+				icon: 'iconfont icon-task-finish',
+				type: 'item',
+			}
+		]
 	},
 	{
 		text: '提案',
@@ -56,17 +46,17 @@ menu.data = [
 		type: 'submenu',
 		children: [
 			{
-				text: '提案列表',
-				path: '/proposal/list',
-				icon: 'iconfont icon-proposal-list',
-				type: 'item'
-			},
-			{
 				text: '新建提案',
 				path: '/proposal/add',
 				icon: 'iconfont icon-proposal-add',
 				type: 'item'
-			}
+			},
+			{
+				text: '提案列表',
+				path: '/proposal/list',
+				icon: 'iconfont icon-proposal',
+				type: 'item'
+			},
 		]
 	},
 	{
@@ -76,116 +66,153 @@ menu.data = [
 		type: 'submenu',
 		children: [
 			{
-				text: '专利管理',
-				path: '/patent/list',
-				icon: 'iconfont icon-patent-applied',
-				type: 'item',
-			},{
-				text: '专利统计',
-				path: '/patent/statistics',
-				icon: '',
-				type: 'item',
-			},{
-				text: '通知书管理',
-				path: '/patent/notice',
-				icon: '',
-				type: 'item',
-			},{
 				text: '新建专利',
 				path: '/patent/add',
-				icon: 'iconfont icon-patent',
+				icon: 'iconfont icon-proposal-add',
 				type: 'item'
+			},
+			{
+				text: '专利管理',
+				path: '/patent/list',
+				icon: 'iconfont icon-patent',
+				type: 'item',
+			},
+			// {
+			// 	text: '专利统计',
+			// 	path: '/patent/statistics',
+			// 	icon: '',
+			// 	type: 'item',
+			// },
+			{
+				text: '通知书管理',
+				path: '/patent/notice',
+				icon: 'iconfont icon-notice',
+				type: 'item',
 			}
 		]
 	},
-	{
-		text: '商标',
-		path: '/trademark',
-		icon: 'iconfont	 icon-task',
-		type: 'submenu',
-		children: [
-			{
-				text: '商标管理',
-				path: '/trademark/list',
-				icon: '',
-				type: 'item'
-			},{
-				text: '通知书管理',
-				path: '/trademark/notice',
-				icon: '',
-				type: 'item'
+	// {
+	// 	text: '商标',
+	// 	path: '/trademark',
+	// 	icon: 'iconfont	 icon-task',
+	// 	type: 'submenu',
+	// 	children: [
+	// 		{
+	// 			text: '商标管理',
+	// 			path: '/trademark/list',
+	// 			icon: '',
+	// 			type: 'item'
+	// 		},{
+	// 			text: '通知书管理',
+	// 			path: '/trademark/notice',
+	// 			icon: '',
+	// 			type: 'item'
 
-			},{
-				text: '商标统计',
-				icon: '',
-				path: '/trademark/statistics',
-				type: 'item',
-			}]
-	},
+	// 		},{
+	// 			text: '商标统计',
+	// 			icon: '',
+	// 			path: '/trademark/statistics',
+	// 			type: 'item',
+	// 		}]
+	// },
 	{
 		text: '版权',
 		path: '/copyright',
-		icon: 'iconfont	 icon-task',
+		icon: 'iconfont	 icon-copyright',
 		type: 'submenu',
 		children: [
 			{
+				text: '新建版权',
+				path: '/copyright/statistics',
+				icon: 'iconfont icon-proposal-add',
+				type: 'item'
+			},
+			{
 				text: '版权管理',
 				path: '/copyright/list',
-				icon: '',
+				icon: 'iconfont	 icon-copyright',
 				type: 'item'
 			},{
 				text: '通知书管理',
 				path: '/copyright/notice',
-				icon: '',
-				type: 'item'
-			},{
-				text: '版权统计',
-				path: '/copyright/statistics',
-				icon: '',
-				type: 'item'
-			}
+				icon: 'iconfont icon-notice',
+				type: 'item',
+			},
 		]
 	},
 	{
-		text: '任务中心',
-		path: '/task',
-		icon: 'iconfont icon-task',
+		text: '费用',
+		path: '/fee',
+		icon: 'iconfont icon-fee',
 		type: 'submenu',
-		children: [
-			{
-				text: '未完成',
-				path: '/task/pending',
-				icon: '',
-				type: 'item',
-			},
-			{
-				text: '已完成',
-				path: '/task/finish',
-				icon: '',
-				type: 'item',
-			}
-		]
+		children: [{
+			text: '应收明细',
+			path: '/fee/income',
+			icon: '',
+			type: 'item',
+		},{
+			text: '应付明细',
+			path: '/fee/pay',
+			icon: '',
+			type: 'item',
+		},{
+			text: '请款单',
+			path: '/fee/bill',
+			icon: '',
+			type: 'item',
+		},{
+			text: '付款单', 
+			path: '/fee/payment',
+			icon: '',
+			type: 'item',
+		}]
 	},
 	{
 		text: '设置',
 		path: '/setting',
-		icon: 'iconfont icon-task',
+		icon: 'iconfont icon-setting',
 		type: 'submenu',
 		children: [{
 			text: '我的个人设置',
 			path: '/setting/individual',
 			icon: '',
 			type: 'item'
-		},{
+		},
+		{
 			text: '用户管理',
-			path: '/setting/user',
+			path: '/userList',
 			icon: '',
-			type: 'item'
-		},{
-			text: '用户权限管理',
-			path: '/setting/jurisdiction',
+			type: 'item',
+		},
+		{
+			text: '申请人管理',
+			path: '/applicantList',
 			icon: '',
-			type: 'item'
+			type: 'item',
+		},
+		{ 
+			text: '发明人管理',
+			path: '/inventorList',
+			icon: '',
+			type: 'item',
+		},
+		{
+			text: '技术分类管理',
+			path: '/classification',
+			icon: '',
+			type: 'item',
+		},
+		{
+			text: '产品分类管理',
+			path: '/product',
+			icon: '',
+			type: 'item',
+		},
+		{
+			text: '部门管理',
+			path: '/branch',
+			icon: '',
+			type: 'item',
 		},{
 			text: '代理机构管理',
 			path: '/setting/agency',
@@ -213,33 +240,6 @@ menu.data = [
 			type: 'item'
 		}]
 	},
-	{
-		text: '费用',
-		path: '/fee',
-		icon: 'iconfont icon-task',
-		type: 'submenu',
-		children: [{
-			text: '应收明细',
-			path: '/fee/income',
-			icon: '',
-			type: 'item',
-		},{
-			text: '应付明细',
-			path: '/fee/pay',
-			icon: '',
-			type: 'item',
-		},{
-			text: '请款单',
-			path: '/fee/bill',
-			icon: '',
-			type: 'item',
-		},{
-			text: '付款单', 
-			path: '/fee/payment',
-			icon: '',
-			type: 'item',
-		}]
-	}
 ];
 
 menu.map = {

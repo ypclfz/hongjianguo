@@ -20,6 +20,22 @@ request {
     is_pre_public:"是否请求提前公开",//该选项在area=CN,type=1时才出现；
     is_exam_request:"是否同时提出实审请求",//该选项在area=CN,type=1时才出现；
     is_secure_check:"是否同时提出保密审查请求",//该选项在area=CN,type=1/2时才出现；
+	
+	is_biological:"是否与生物相关",  //该选项在type=1时才出现
+	is_division:"是否是分案申请",
+	is_genetic:"是否依赖于遗传资源", //该选项在type=1时才出现
+	is_leakage:"是否不丧失新颖性公开",//该选项在area=CN时才出现；
+	is_sequence:"是否有序列表",//该选项在type=1时才出现
+	
+	manner:"申请方式",//selector 选项定义如下：[{label:"直接申请",value:1},{label:"巴黎公约",value:2},{label:"PCT进入国家阶段",value:3}], 当manner选择2/3时，新增专利，优先权信息必填 
+	
+	//当manner 选择3时，额外显示以下字段：
+	pct_apd:"国际申请日", //日期类型
+	pct_no:"国际申请号",  //文本类型
+	pct_priority_date:"国际优先权日", //日期类型
+	pct_public_date:"国际公开日", //日期类型
+	pct_public_language:"国际公开语言", //selector,固定定义数据如下：[{label:"中文-Chinese",value:"CN"},{label:"英文-English",value:"EN"},{label:"法文-Franch",value:"FR"},{label:"德文-Germany",value:"GE"},{label:"日文-Japanese",value:"JP"},{label:"俄文-Russian",value:"RU"},{label:"西班牙-Spanish",value:"ES"}]
+	pct_public_no:"国际公开号", //文本类型
 
     ipr_id:"IPR ID"
     applicants:[1,2],//申请人ID数组
@@ -56,7 +72,23 @@ request {
     is_pre_public:"是否请求提前公开",//该选项在area=CN,type=1时才出现；
     is_exam_request:"是否同时提出实审请求",//该选项在area=CN,type=1时才出现；
     is_secure_check:"是否同时提出保密审查请求",//该选项在area=CN,type=1/2时才出现；
+	
+	is_biological:"是否与生物相关",  //该选项在type=1时才出现
+	is_division:"是否是分案申请",
+	is_genetic:"是否依赖于遗传资源", //该选项在type=1时才出现
+	is_leakage:"是否不丧失新颖性公开",//该选项在area=CN时才出现；
+	is_sequence:"是否有序列表",//该选项在type=1时才出现
 
+	manner:"申请方式",//selector 选项定义如下：[{label:"直接申请",value:1},{label:"巴黎公约",value:2},{label:"PCT进入国家阶段",value:3},{label:"外部转让",value:4}],在 当manner选择2/3时，新增专利，优先权信息必填 
+	
+	//当manner 选择3时，额外显示以下字段：
+	pct_apd:"国际申请日", //日期类型
+	pct_no:"国际申请号",  //文本类型
+	pct_priority_date:"国际优先权日", //日期类型
+	pct_public_date:"国际公开日", //日期类型
+	pct_public_language:"国际公开语言", //selector,固定定义数据如下：[{label:"中文-Chinese",value:"CN"},{label:"英文-English",value:"EN"},{label:"法文-Franch",value:"FR"},{label:"德文-Germany",value:"GE"},{label:"日文-Japanese",value:"JP"},{label:"俄文-Russian",value:"RU"},{label:"西班牙-Spanish",value:"ES"}]
+	pct_public_no:"国际公开号", //文本类型
+	
     ipr:"IPR ID"
     applicants:[1,2],//申请人ID数组
     inventors:[1,2],//发明人ID数组
@@ -82,49 +114,47 @@ reponse {
     info:"提示信息",//status为0时才出现
     patent:{ //status为1时才出现
 		id:"专利ID",//不需要要显示
+		
+		/* [基本信息]开始 */
 		serial:"案号",
-		type:"专利类型",
-		area:"CN",
 		title:"标题",
+		area:"CN",
+		type:"专利类型",
 		abstract:"摘要",
+		manner:"申请方式",
 		apd:"申请日",
 		apn:"申请号",
-		public_date:"公开日",
-		public_number:"公开日",
-		pre_exam_ok_date:"初审合格日",
-		sub_exam_start_date:"进入实审日",
+		public_date:"公开日", //type=1时才出现
+		public_number:"公开日",//type=1时才出现
 		issue_date:"公告日",
 		issue_number:"公告号",
 		
-		ipr:{id: 2, name: "Shawn", mobile: "18098976299", email: "shawn@iwdoing.com"},
-		agency:"代理机构名称"
-		agency_serial:"代理机构案号",
-		
-		main_ipc:"主国际分类号",
-		pct_apd:"国际申请日",
-		pct_no:"国际申请号",
-		pct_priority_date:"国际优先权日",
-		pct_public_date:"国际公开日",
-		pct_public_language:"国际公开语言",
-		pct_public_no:"国际公开号",
-		board_number:"复审委内编号",
 		extension:{
-			is_biological:"是否与生物相关",
-			is_division:"是否是分案申请",
-			is_exam_request:"是否提出实质审查请求",
-			is_genetic:"是否依赖于遗传资源",
-			is_leakage:"是否不丧失新颖性公开",
-			is_pre_public:"是否提前公开",
+			is_biological:"是否与生物相关",//该选项在type=1时才出现
+			is_division:"是否是分案申请", 
+			is_exam_request:"是否提出实质审查请求", //该选项在area=CN && type=1时才出现
+			is_genetic:"是否依赖于遗传资源", //该选项在area=CN 时才出现
+			is_leakage:"是否不丧失新颖性公开", //该选项在area=CN 时才出现
+			is_pre_public:"是否提前公开", //该选项在type=1时才出现
 			is_priority:"是否要求优先权",
-			is_secure_check:"是否保密审查",
-			is_sequence:"是否有序列表",
-			is_utility:"是否同日申请了同样的实用新型/发明",
+			is_secure_check:"是否保密审查", //该选项在type=1 || 2时才出现
+			is_sequence:"是否有序列表", //该选项在type=1时才出现
+			is_utility:"是否同日申请了同样的实用新型/发明", //该选项在type=1 || 2时才出现
 		},
-		status:"状态",
-		words:"说明书字数",
-		remark:"备注",
+		pre_exam_ok_date:"初审合格日",  //type=1时才出现
+		sub_exam_start_date:"进入实审日", //type=1时才出现
+		pct_apd:"国际申请日", //manner=3或者area包括PCT时才出现
+		pct_no:"国际申请号", //manner=3或者area包括PCT时才出现
+		pct_priority_date:"国际优先权日",//manner=3或者area包括PCT时才出现
+		pct_public_date:"国际公开日",//manner=3或者area包括PCT时才出现
+		pct_public_language:"国际公开语言",//manner=3或者area包括PCT时才出现
+		pct_public_no:"国际公开号",//manner=3或者area包括PCT时才出现
+		board_number:"复审委内编号",//manner=3或者area包括PCT时才出现
+		/* [基本信息]结束 */
 		
-		
+		/* [人员信息]开始 */
+		branch:{id: 3, name: "测试部"},
+		ipr:{id: 2, name: "Shawn", mobile: "18098976299", email: "shawn@iwdoing.com"},
 		applicants:[
 			{
 				id:"1",//申请人ID
@@ -147,19 +177,46 @@ reponse {
 		inventors:[
 			{id: 1, citizenship: "CN", name: "韩易", email: "hanyi@iwdoing.com", mobile: "13510482996", share: 0,sort:1}
 		],
-		tags:['标签']
-		attachments:[{id:"文件ID",name:"附件名称",ext:"附件格式",size:"附件大小",viewUrl:"查看地址，为空则不能直接查看",downloadUrl:"下载地址"}],
-		branch:{id: 3, name: "测试部"},
-		classification:{id: 1, name: "测试分类更新", description: "分类描述更新"}
-		priorities:[{area:"CN",apn:"201510422563.4",date:"2017-01-01"}],
-		products:[{id:"产品ID",name:"产品名称",description:"产品描述"}],
 		proposer:{id: 1, name: "红坚果", mobile: "18098976299", email: "hongjianguo@hongjianguo.com"},
+		/* [人员信息]结束 */
+		
+		
+		/* [分类信息]开始 */
+		products:[{id:"产品ID",name:"产品名称",description:"产品描述"}],
+		classification:{id: 1, name: "测试分类更新", description: "分类描述更新"}
+		tags:['标签'],
+		main_ipc:"主国际分类号",
+		/* [分类信息]结束 */
+		
+		
+		/* [委案信息]开始 */
+		agency:"代理机构名称"
+		agency_serial:"代理机构案号",
+		agency_type:"代理类型",//selector: 定义数据如下：[{label:"申请&OA",value:"1"},{label:"OA",value:"2"},{label:"复审",value:"3"},{label:"无效",value:"4"},{label:"无效答复",value:"5"}]
+		agent:"代理人信息",//
+		/* [委案信息]结束 */
+		
+		/* [相关案件]开始 */
+		proposals:[],
+		priorities:[{area:"CN",apn:"201510422563.4",date:"2017-01-01"}],
 		relative_projects:[{
 			id:"相关案件ID",
 			serial:"相关案件案号",
 			title:"相关案件标题",
 			type:"相关类型",//下拉菜单  1 要求优先权 2 分案申请 3 部分连续案 6 要求同日送件
 		}],
+		/* [相关案件]开始 */
+		
+		/* [其他信息及附件]开始 */
+		status:"状态",
+		words:"说明书字数",
+		remark:"备注",
+		attachments:[{id:"文件ID",name:"附件名称",ext:"附件格式",size:"附件大小",viewUrl:"查看地址，为空则不能直接查看",downloadUrl:"下载地址"}],
+		
+		/* [其他信息及附件]结束 */
+
+		
+		//以下内容其他Tab中显示 
 		fees:[{
 			id:"费用ID",
 			fee:"费用金额",
@@ -249,12 +306,18 @@ request {
     is_pre_public:"1",//是否提前公开
     is_exam_request:"1",//是否同时提出实审
     is_secure_check:"1",//是否进行保密审查
+	
+	//用户不可操作参数
+	ids:[1,2],//用户选择的案件列表，用户只能通过专利列表界面来选择
 
     //关键词在列表上方
     keyword:"关键词",//支持检索以下字段：标题、案号、申请号、公开号、公告号
 	
 	//如果只是单纯获取列表请添加以下参数
 	listOnly:"1",
+	
+	//如果要导出专利需要添加以下参数
+	export:"1"
     sort:"field-order",//field表示字段，取值为id/status/title/abstract/proposer/classification/remark/create_time/apn/apd/public_date/public_number/issue_date/issue_number/progress/branch/ipr/agency/agent/agencey_serial order取值为asc（升序），desc（降序），多个排序采用逗号隔开
 }
 response {
@@ -267,6 +330,7 @@ response {
         last_page:"2",//最后页
         data:[{ //status为1时才出现
 		id:"专利ID",//不需要要显示
+		
 		serial:"案号",
 		type:"专利类型",
 		area:"CN",

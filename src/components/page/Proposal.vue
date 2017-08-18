@@ -61,13 +61,16 @@ import Product from '@/components/form/Product'
 import InventorSelect from '@/components/form/InventorSelect'
 import Member from '@/components/form/Member'
 import Tag from '@/components/form/Tag'
+import AxiosMixins from '@/mixins/axios-mixins'
 
+const URL = '/api/proposals';
 const url = 'http://www.zhiq.wang/proposal/lists';
 const delete_url = 'http://www.zhiq.wang/proposal/lists';
 const tag_url = 'http://www.zhiq.wang/tag/lists';
 const strainerArr = ['classification', 'product', 'proposer', 'tags', 'inventors'];
 export default {
   name: 'proposalList',
+  mixins: [ AxiosMixins ],
   methods: {
     add () {
       this.$router.push('/proposal/add');
@@ -97,16 +100,27 @@ export default {
         })
         .catch(()=>{})
     },
+    deleteMul () {
+      const s = this.$refs.table.tableSelect;
+      if(s.length == 0) {
+        this.$message({message: '请选择需要删除的提案', type: 'warning'});
+        return false;
+      }else {
+        this.$confirm('删除后不可恢复，确认删除？')
+          .then(_=>{
+            console.log('aaaaaaaa');
+            const url = URL;
+            const data = { ids: this.$tool.splitObj(s, 'id') };
+            const success = _=>{ this.update() };
+            console.log(url, data);
+
+            this.axiosDelete({ url, data, success });
+          })
+          .catch(_=>{console.log(_)});
+      }
+    },
     detail (row) {
       this.$router.push({path: '/proposal/detail', query: {id: row.id}});
-    },
-    bulkDelete () {
-      const s = this.$refs.table.getSelection();
-      if(s["length"] == 0) {
-        this.$alert("请选择需要删除的提案", {type: 'warning', closeOnClickModal: true});
-      }else {
-        this.$confirm("确认删除?", {type: 'warning', closeOnClickModal: false}).then(()=>{console.log("删除")}).catch(()=>{console.log("取消")});
-      }
     },
     query () {
       const obj = {};
@@ -129,13 +143,18 @@ export default {
       console.log(params);
       this.$axios.get('/api/proposals', { params }).then(response=>{this.tableData = response.data.proposals});
     },
+    update () {
+      this.$refs.table.update();
+    }
   },
   data () {
     return {
       tableOption: {
+        'url': URL,
         'header_btn': [
           { type: 'add', click: this.add },
-          { type: 'delete', click: this.bulkDelete },
+          { type: 'delete', click: this.deleteMul },
+          { type: 'export' },
           { type: 'control', label: '字段' },
         ],
         'default_sort': { prop: 'create_time', order: 'descending' },
@@ -143,10 +162,11 @@ export default {
         'columns': [
           { type: 'expand' },
           { type: 'selection'},
-          { type: 'text', label: '创建时间', prop: 'create_time', sortable: true },
-          { type: 'text', label: '更新时间', prop: 'update_time', sortable: true },
+          { type: 'date', label: '创建时间', prop: 'create_time', sortable: true },
+          { type: 'date', label: '更新时间', prop: 'update_time', sortable: true },
           { type: 'text', label: '案件名称', prop: 'title',sortable: true },
           { type: 'text', label: '案件摘要', prop: 'abstract', sortable: true },
+          { type: 'text', label: '当前节点', prop: 'flow_node', sortable: true },
           { 
             type: 'text', 
             label: '技术联系人', 
@@ -165,7 +185,7 @@ export default {
           // { type: 'text', label: '案件状态', prop: 'status', sortable: true },
           {
             type: 'action',
-            width: '170px', 
+            width: '160px',
             label: '操作', 
             btns_render: 'action',
           },

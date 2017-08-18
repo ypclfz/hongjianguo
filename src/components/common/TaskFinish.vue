@@ -1,5 +1,5 @@
 <template>
-  <el-form :model="form" label-width="80px" ref="form">
+  <el-form :model="form" label-width="80px" ref="form" v-loading="loading" element-loading-text="数据加载中">
   	<el-form-item label="下一阶段">
   		<el-select v-model="next">
   		 <el-option
@@ -35,7 +35,7 @@
   	<el-form-item prop="attachments" label="附件" v-if="fields.attachments">
 			<upload v-model="form.attachments"></upload>
   	</el-form-item>
-  	<el-form-item>
+  	<el-form-item style="margin-bottom: 0px;">
   		<el-button type="primary" @click="submitFunc">提交</el-button>
   	</el-form-item>
   </el-form>
@@ -49,7 +49,7 @@ import Agency from '@/components/form/Agency'
 import Ipr from '@/components/form/Ipr'
 import Upload from '@/components/form/Upload'
 
-const URL = '/api/tasks';
+const URL = `/api/tasks`;
 
 export default {
   name: 'taskFinish',
@@ -70,6 +70,7 @@ export default {
 			},
 			'defaultVal': '',
 			'fields': {},
+      'loading': false,
 		}
   },
 	created () {
@@ -77,12 +78,17 @@ export default {
 	},
 	methods: {
   	refreshData () {
+      this.loading = true; 
   		const url = `${URL}/${this.id}/form`;
   		const success = d=>{
   			this.data = d.data;
   			this.next = d.data.next[0].id;
+        this.loading = false;
   		};
-  		this.axiosGet({url, success});
+      const complete = _=>{ 
+        this.loading = false; 
+      }
+  		this.axiosGet({url, success, complete});
   	},
   	submitFunc () {
   		const url = `${URL}/${this.id}/nexttask`;

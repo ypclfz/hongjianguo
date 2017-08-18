@@ -1,11 +1,16 @@
 <template>
   <div class="main">
-    <pa-base ref="base" :type="pop_type"></pa-base>
+    
+    <pa-base ref="base" :type="type"></pa-base>
     <person ref="person"></person>
+    <classification ref="classification"></classification>
+    <agent ref="agent" v-if="type == 'edit'"></agent>
     <case ref="case"></case>
+    <other ref="other" :type="type"></other>
+    
     <div style="margin-bottom: 20px;">
-      <el-button @click="add" v-if="pop_type == 'add'">添加</el-button>
-      <el-button @click="edit" v-else>编辑</el-button>
+      <el-button @click="add" v-if="type == 'add'">添加</el-button>
+      <el-button @click="edit" v-if="type == 'edit'">编辑</el-button>
       <el-button>取消</el-button>
     </div>
   </div>
@@ -14,16 +19,25 @@
 <script>
 const map = new Map([
   ['base', '请正确填写基本信息！'],
-  ['person', '请正确填写人员与分类信息！'],
-  ['case', '请正确填写委案信息！'],
+  ['person', '请正确填写人员信息！'],
+  ['classification', '请正确填写分类信息'],
+  ['case', '请正确填写相关案件信息'],
+  ['other', '请正确填写其他信息及附件'],
 ]);
+
+const getKeys = ['base', 'person', 'classification', 'case', 'other'];
+const setKeys = ['base', 'person', 'classification', 'agent', 'case', 'other'];
 
 const URL = '/api/patents';
 
 import AxiosMixins from '@/mixins/axios-mixins'
+import AppCollapse from '@/components/common/AppCollapse'
 import PaBase from '@/components/page_extension/PatentAdd_base'
 import Person from '@/components/page_extension/PatentAdd_person'
+import Classification from '@/components/page_extension/PatentAdd_classification'
+import Agent from '@/components/page_extension/PatentAdd_agent'
 import Case from '@/components/page_extension/PatentAdd_case'
+import Other from '@/components/page_extension/PatentAdd_other'
 export default {
   name: 'patentAdd',
   data () {
@@ -35,51 +49,47 @@ export default {
   mixins: [ AxiosMixins ],
   methods: {
     add () {
-      const keys = map.keys();
       const url = URL;
-      const data = Object.assign( ...keys.map(d=>this.$refs[d].form) );
-      const success = d=>{ this.$router.push('/paten/list') };
-      this.axiosGet({url, data, success});
+      const data = Object.assign( ...getKeys.map(_=>this.$refs[_].form) );
+      const success = _=>{ this.$router.push('/patent/list') };
+
+      this.axiosPost({url, data, success});
 
     },
     edit () {
-      const keys = map.keys();
-      const url = `${URL}/${id}`;
-      const data = Object.assign( ...keys.map(d=>this.$refs[d].form) );
-      const success = d=>{ this.$alert(d.info).then(()=>{this.$store.dispatch('refreshDetailData')}); }
+      const url = `${URL}/${this.id}`;
+      const data = Object.assign( ...getKeys.map(d=>this.$refs[d].form) );
+      const success = _=>{ this.$router.push('/patent/list') };
+
       this.axiosPut({url, data, success});
     },
     refreshForm (val) {      
-      if( this.type='edit' && val) {
-        const keys = map.keys();
+      if( this.type == 'edit' && val) {
         const copy = this.$tool.deepCopy(val);
         this.id = copy.id;
-        for( let d of keys ){
-          this.$refs[d].setForm(copy);
-        }
+        setKeys.map(_=>this.$refs[_].setForm(copy));
       }
     }
   },
   computed: {
     detail () {
       return this.$store.getters.detailBase;
-    } 
+    },
+    type () {
+      return this.$route.meta.type;
+    }
   },
   watch: {
     'detail': {
       handler: function(val) {
         this.refreshForm(val);
       }
-    }   
-  },
-  created () {
-    const path = this.$route.path;
-    this.pop_type = /detail/.test(path) ? 'edit' : 'add';
+    } 
   },
   mounted () {
     this.refreshForm(this.detail);
   },
-  components: { PaBase, Person, Case }
+  components: { PaBase, Person, Classification, Agent, Case, Other, AppCollapse }
 }
 </script>
 

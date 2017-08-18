@@ -1,11 +1,18 @@
-const url = '/api/groups';
+let url = '/api/groups';
 const state = {
 	data: [],
 }
 
 const getters = {
 	groupOptions: state=>state.data,
-	
+	groupMap: state=>{
+		const map = new Map();
+		for(let d of state.data) {
+			map.set(d.id, d);
+		}
+
+		return map;
+	}
 }
 
 const mutations = {
@@ -16,7 +23,7 @@ const mutations = {
 
 const actions = {
 	refreshGroup ({commit, rootState}) {
-		
+		url = rootState.status ? url.replace(/\/api/, '') : url;
 		rootState.axios
 			.get(url)
 			.then(response=>{

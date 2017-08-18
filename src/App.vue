@@ -1,16 +1,16 @@
 <template>
   <div id="app">
     <nav>
-      <span>LOGO</span>
+        <img src="./images/cvte_log.png" style="vertical-align: middle; height: 28px;">
     </nav>
     <div class="nav-left" :style="navL_height">
-      <el-menu theme="dark" router>
+      <el-menu theme="dark" router unique-opened>
         <app-menu v-for="item in menu_data" :data="item" :key="item.path"></app-menu>
       </el-menu>
     </div>
-    <div class="container">
-      <h1 class="container-menu"><i :class="select.icon"></i><span>{{ select.text }}</span></h1>
-      <div class="container-nav">
+    <div class="container" v-loading="loading">
+      <!-- <h1 class="container-menu"><i :class="select.icon"></i><span>{{ select.text }}</span></h1> -->
+      <div class="container-nav" style="margin-top: 20px">
         <el-breadcrumb separator=">">
           <el-breadcrumb-item v-for="item in select_arr" :to="item.path" :key="item.path">
             <i :class="item.icon"></i>{{ item.text }}
@@ -29,7 +29,7 @@
           </el-breadcrumb-item>
         </el-breadcrumb>
       </div>
-      <router-view></router-view>
+      <router-view :key="$route.path.split('__')[0]"></router-view>
     </div>
   </div>
 </template>
@@ -37,8 +37,11 @@
 <script>
 import menu from '@/const/menuConst'
 import AppMenu from '@/components/common/AppMenu'
+import AxiosMixins from '@/mixins/axios-mixins'
+
 export default {
   name: 'app',
+  mixins: [ AxiosMixins ],
   computed: {
     select () {
       const d = this;
@@ -70,6 +73,9 @@ export default {
     },
     navL_height () {
       return "height:" + (window.innerHeight - 50) + "px";
+    },
+    loading () {
+      return this.$store.getters.loading;  
     }
   },
   data () {
@@ -87,20 +93,26 @@ export default {
 
   },
   created () {
-    this.$axios.post('/api/login',{'username': 'Shawn', 'password': 'u5/vpsgWLohjhN5sd7MIZ7vSkqLC9nyma0RlWQ4oTM78HfPClnwlfvJJJxGtT7RMW6MAZog7qsdd90pd0949gIU7KR3PXYNWP1KOqu6GBWQIMrTnFktDkT+L9G6pZLZ/1i5W1W9FCmPeSFtHlQx/AaMxQh+57R/6lZqXN93gS2hwfaRuPtNyq/lQlN0bJOX1UpOzS3mXpvgcPEcmhPQUOxSZ3fJ/EvRTMY286WrnWWa+qbWjMNJt5GZkPcXCX58nzilX+LVFqekhILpOO4I1yxCNohPrPBTaNKKZr9UIaA9DEDZg80kn43cASpDGvygZp+GqLUXPjHr6o5SCn0uJyw=='})
-      .then(()=>{
+    const url = '/api/login';
+    const data = {
+      'username': 'Shawn', 
+      'password': 'u5/vpsgWLohjhN5sd7MIZ7vSkqLC9nyma0RlWQ4oTM78HfPClnwlfvJJJxGtT7RMW6MAZog7qsdd90pd0949gIU7KR3PXYNWP1KOqu6GBWQIMrTnFktDkT+L9G6pZLZ/1i5W1W9FCmPeSFtHlQx/AaMxQh+57R/6lZqXN93gS2hwfaRuPtNyq/lQlN0bJOX1UpOzS3mXpvgcPEcmhPQUOxSZ3fJ/EvRTMY286WrnWWa+qbWjMNJt5GZkPcXCX58nzilX+LVFqekhILpOO4I1yxCNohPrPBTaNKKZr9UIaA9DEDZg80kn43cASpDGvygZp+GqLUXPjHr6o5SCn0uJyw=='
+    };
+    const success = _=>{
+      this.$store.commit('setUser', _.user);
 
-        this.$store.dispatch('refreshTags');
-        this.$store.dispatch('refreshProduct');
-        this.$store.dispatch('refreshClassification');
-        this.$store.dispatch('refreshBranch');
-        this.$store.dispatch('refreshIpr');
-        this.$store.dispatch('refreshArea');
-        this.$store.dispatch('refreshFeeCode');
-        this.$store.dispatch('refreshEntity');
-        this.$store.dispatch('refreshGroup');
-          
-      });
+      this.$store.dispatch('refreshTags');
+      this.$store.dispatch('refreshProduct');
+      this.$store.dispatch('refreshClassification');
+      this.$store.dispatch('refreshBranch');
+      this.$store.dispatch('refreshIpr');
+      this.$store.dispatch('refreshArea');
+      this.$store.dispatch('refreshFeeCode');
+      this.$store.dispatch('refreshEntity');
+      this.$store.dispatch('refreshGroup');
+    }
+
+    this.axiosPost({url, data, success});
     
   },
   components: { AppMenu }
@@ -111,9 +123,9 @@ $nav_bgColor: #383838;
 $nav_height: 50px;
 
 $navL_bgColor: #324157;
-$navL_width: 200px;
+$navL_width: 160px;
 
-$container_padding: 25px;
+$container_padding: 15px;
 
 $table_margin: 15px;
 
@@ -121,9 +133,7 @@ body {
   margin: 0;
   font-family: "Helvetica Neue",Helvetica,Arial,sans-serif;
 }
-textarea {
-  height: 150px;
-}
+
 #app {
   posiion: relative;
   padding: {
@@ -137,10 +147,10 @@ nav {
   top: 0;
   left: 0;
   height: $nav_height;
+  line-height: $nav_height;
   width: 100%;
   color: #fff;
   padding-left: 20px;
-  line-height: $nav_height;
   z-index: 2;
 }
 .nav-left {
@@ -221,33 +231,7 @@ nav {
 .left .tree-search>input {
   border-radius: 0;
 }
-.dialog-mini .el-dialog {
-  width: 300px;
-}
-.dialog-small .el-dialog {
-  width: 600px;
-}
-.el-dropdown-menu__item {
-  line-height: 25px;
-  font-size: 14px;
-  font-family: "microsoft yahei", Helvetica, Tahoma, Arial, sans-serif;
-  padding: 0 20px;
-}
-.el-dialog {
-  border-radius: 6px;
-  -webkit-box-shadow: 0 5px 15px rgba(0,0,0,.5);
-  box-shadow: 0 5px 15px rgba(0,0,0,.5);
-}
-.el-dialog__header {
-  border-bottom: 1px solid #e5e5e5;
-  padding: 20px 20px 15px;
-}
-.dialog-mini .el-dialog--tiny {
-  width: 300px;
-}
-.el-dropdown-menu__item--divided:before {
-  margin: 0 -20px;
-}
+
 .el-select {
   width: 100%;
 }
@@ -256,5 +240,41 @@ nav {
 }
 .table-header-btn .el-icon-menu::before {
   font-size: 12px;
+}
+/*这里放入重写element-ui样式的内容*/
+#app {
+  .dialog-mini .el-dialog {
+    width: 300px;
+  }
+  .dialog-small .el-dialog {
+    width: 600px;
+  }
+  .el-dropdown-menu__item {
+    line-height: 25px;
+    font-size: 14px;
+    font-family: "microsoft yahei", Helvetica, Tahoma, Arial, sans-serif;
+    padding: 0 20px;
+  }
+  .el-dialog {
+    border-radius: 6px;
+    -webkit-box-shadow: 0 5px 15px rgba(0,0,0,.5);
+    box-shadow: 0 5px 15px rgba(0,0,0,.5);
+  }
+  .el-dialog__header {
+    border-bottom: 1px solid #e5e5e5;
+    padding: 15px 10px 15px 20px;
+  }
+  .dialog-mini .el-dialog--tiny {
+    width: 300px;
+  }
+  .el-dropdown-menu__item--divided:before {
+    margin: 0 -20px;
+  }
+  .el-upload-dragger {
+    height: auto;
+  }
+  textarea {
+    height: 80px;
+  }
 }
 </style>

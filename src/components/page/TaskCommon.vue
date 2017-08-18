@@ -1,15 +1,14 @@
 <template>
   <div class="main">
-    <app-collapse col-title="任务查询" default-close> 
-      <strainer
-        @query="strainerQuery"
-        @clear="strainerClear"
-      ></strainer>
-    </app-collapse>
+     <strainer @query="strainerQuery" @clear="strainerClear"></strainer>
      <app-filter :data="appFilterData"></app-filter>
     <table-component :tableOption="tableOption" :data="tableData" @refreshTableData="refreshTableData" ref="table">
+      <el-select slot="toggle" v-model="task_toggle" style="width: 110px; margin-left: 5px;">
+        <el-option key="mine" label="我的任务" value="personal"></el-option>
+        <el-option key="all" label="所有任务" value="all"></el-option>
+      </el-select>
       <template scope="scope" slot="expand">
-        <edit :row="scope.row" v-show="expandType == 'edit'"></edit>
+        <edit :row="scope.row" type="edit" v-show="expandType == 'edit'" @editSuccess="editSuccess"></edit>
         <detail :row="scope.row" v-show="expandType  == 'detail'"></detail>
         <task-finish :id="scope.row.id" v-show="expandType  == 'finish'"></task-finish>
       </template>
@@ -33,37 +32,7 @@
     </el-dialog>
 
     <el-dialog title="新增任务" :visible.sync="dialogAddVisible" class="dialog-small">
-      <el-form label-position="right" label-width="100px" >
-        <el-form-item label="案件类型"><el-input></el-input></el-form-item>
-        <el-form-item label="关联案件"><el-input></el-input></el-form-item>
-        <el-form-item label="任务类型">
-          <el-input></el-input>
-        </el-form-item>
-        <el-form-item label="任务阶段">
-          <el-input></el-input>
-        </el-form-item>
-        <el-form-item label="任务处理人">
-          <el-input></el-input>
-        </el-form-item>
-        <el-form-item label="撰稿人/外代">
-          <el-input></el-input>
-        </el-form-item>
-        <el-form-item label="指定完成时间">
-          <el-input></el-input>
-        </el-form-item>
-        <el-form-item label="官方绝限">
-          <el-input></el-input>
-        </el-form-item>
-        <el-form-item label="客户期限">
-          <el-input></el-input>
-        </el-form-item>
-        <el-form-item label="备注">
-          <el-input></el-input>
-        </el-form-item>
-        <el-form-item style="margin: 0;">
-          <el-button type="primary">保存</el-button>
-        </el-form-item>
-      </el-form>
+      <edit type="add" @addSuccess="addSuccess"></edit>
     </el-dialog>
     
     <el-dialog title="将选中任务转给以下任务处理人" :visible.sync="dialogTurnoutVisible" class="dialog-mini">
@@ -91,19 +60,19 @@ import AppFilter from '@/components/common/AppFilter'
 import AppCollapse from '@/components/common/AppCollapse'
 import TableComponent from '@/components/common/TableComponent'
 import AppDatePicker from '@/components/common/AppDatePicker'
-import Edit from '@/components/page_extension/PendingTask_edit'
+import Edit from '@/components/page_extension/TaskCommon_edit'
 import Detail from '@/components/page_extension/PendingTask_detail'
 import TaskFinish from '@/components/common/TaskFinish'
-import Strainer from '@/components/page_extension/PendingTask_strainer'
+import Strainer from '@/components/page_extension/TaskCommon_strainer'
 import $ from 'jquery'
 
 const URL = '/api/tasks';
 
 export default {
   name: 'pendingTask',
-  mixins: [axiosMixins],
+  mixins: [ axiosMixins ],
   methods: {
-    dropGenrator(str) {
+    dropGenerator(str) {
       return (row, element)=>{       
         this.expandType = str;
         $(element.target).parents("tr").find(".el-table__expand-icon").click();  
@@ -131,8 +100,7 @@ export default {
     },
     refreshTableData (option) {
       const url = URL;
-      const data = Object.assign({}, this.filter, option, this.screen_value, {status: this.task_status});
-      console.log(data);
+      const data = Object.assign({}, this.filter, option, this.screen_value, {status: this.task_status}, {scope: this.task_toggle});
       const success = d=>{
           this.tableData = d.tasks;
           this.filters = d.tasks.filters;
@@ -140,13 +108,53 @@ export default {
 
       this.axiosGet({url, data, success}); 
     },
+    refresh () {
+      this.$refs.table.refresh();
+    },
     update () {
       this.$refs.table.update();
     },
     refresh () {
       this.$refs.table.refresh();
-    }
-    
+    },
+    addSuccess () {
+      this.refresh();
+    },
+    editSuccess () {
+      this.update();
+      this.$message({message: '编辑成功', type: 'success'});
+    },
+    refreshOption () {
+      const t = this.task_status;
+      const h = this.tableOption;
+      if( t === 0 ) {
+        h.header_btn[1].items.push({text: '暂停处理', click: _=>{ this.handleTask('/api/tasks/pause') }});
+      }else if( t === -1 ) {
+        h.header_btn[1].items.push({text: '恢复处理', click: _=>{ this.handleTask('/api/tasks/resume') }});
+      }else if( t === 1 ) {
+        h.header_btn[1].items.pop();
+      }
+
+      this.$forceUpdate();
+    },
+    handleTask(url) {
+      const s = this.$refs.table.getSelect();
+      if(s) {
+        
+        const data = { ids: this.$tool.splitObj(s, 'id') };
+        const success = _=>{ this.update() };
+
+        this.axiosPost({ url, data, success });
+      }
+      
+
+    },
+    proposalEdit ({project_id}) {
+      this.$router.push({path: '/proposal/edit', query: {id: project_id}});
+    },
+    patentEdit ({id}) {
+      console.log('patentEdit')
+    }  
   },
   data () {
     return {
@@ -160,26 +168,27 @@ export default {
       expandType: '',
       checkedTest: [],
       tableOption: {
+        'url': URL,
         'header_btn': [
           { type: 'custom', label: '新增', icon: 'plus', click: ()=>{ this.dialogAddVisible = true; } },
-          { type: 'custom', label: '转出', icon: '', click: ()=>{ this.dialogTurnoutVisible = true; } },
+          // { type: 'custom', label: '转出', icon: '', click: ()=>{ this.dialogTurnoutVisible = true; } },
           { 
             type: 'dropdown', 
             label: '数据', 
             icon: '',
             items: [
-              { text: '筛选', click: ()=>{ this.dialogScreenVisible = true; } },
               { text: '导出' },
-              { text: '删除', divided: true },
-              { text: '标记为已完成状态' },
-              { text: '标记未处理中状态', divided: true },
-              { text: '标记为待客户确认状态' },
-              { text: '客户确认继续' },
+              { type: 'delete'  },
+              // { text: '标记为已完成状态', divided: true },
+              // { text: '标记为处理中状态'  },
+              // { text: '暂停处理', divided: true },
+              // { text: '确认继续' },
             ],
           },
           { type: 'control', label: '字段'},
-          { type: 'custom', label: '设定', icon: '', click: ()=>{ this.dialogSettingVisible = true; } }
+          // { type: 'custom', label: '设定', icon: '', click: ()=>{ this.dialogSettingVisible = true; } }
         ],
+        'header_slot': [ 'toggle' ],
         'expandFun': (row, expanded)=>{ 
           const expands = this.$refs.table.expands;
           const old_id = expands.shift();
@@ -193,45 +202,49 @@ export default {
         'columns': [
           { type: 'expand' },
           { type: 'selection'},
-          { type: 'text', label: '案号', prop: 'serial'},
-          { type: 'text', label: '案件名称', prop: 'title'},
-          { type: 'text', label: '任务名称', prop: 'name' },
+          { type: 'text', label: '案号', prop: 'serial', sortable: true},
+          { type: 'text', label: '案件名称', prop: 'title', sortable: true},
+          { type: 'text', label: '管制事项', prop: 'name' },
           { type: 'text', label: 'IPR', prop: 'ipr'},
-          { type: 'text', label: '案件负责人', prop: 'person_in_charge', show: false},
-          { type: 'text', label: '任务来源', prop: 'sender_name', show: false},
-          { type: 'text', label: '代理机构名称', prop: 'agency', show: false},
-          { type: 'text', label: '代理人名称', prop: 'agent'},
-          { type: 'text', label: '申请日', prop: 'apd'},
-          { type: 'text', label: '申请号', prop: 'apn'},
-          { type: 'text', label: '开始时间', prop: 'start_time', show: false},
-          { type: 'text', label: '法定期限', prop: 'deadline', show: false},
-          { type: 'text', label: '指定期限', prop: 'due_time', show: false},
-          { type: 'text', label: '完成时间', prop: 'end_time'},
-          { type: 'text', label: '任务状态', prop: 'status', show: false},
+          { type: 'text', label: '承办人', prop: 'person_in_charge', show: false, sortable: true},
+          // { type: 'text', label: '任务来源', prop: 'sender_name', show: false},
+          { type: 'text', label: '代理机构', prop: 'agency', show: false, sortable: true},
+          { type: 'text', label: '代理人', prop: 'agent', sortable: true},
+          { type: 'text', label: '申请日', prop: 'apd', sortable: true},
+          { type: 'text', label: '申请号', prop: 'apn', sortable: true},
+          { type: 'text', label: '开始时间', prop: 'start_time', show: false, sortable: true},
+          { type: 'text', label: '完成时间', prop: 'end_time', sortable: true},
+          { type: 'text', label: '指定期限', prop: 'due_time', show: false, sortable: true},
+          { type: 'text', label: '法定期限', prop: 'deadline', show: false, sortable: true},
+          { type: 'text', label: '当前节点', prop: 'flow_node', show: false},
+          { type: 'text', label: '备注', prop: 'remark', sortable: true},
           { 
             type: 'action', 
             label: '操作',
             width: '300px',
             btns: [
-              { 
-                type: 'dropdown', 
-                label: '发送邮件',
-                items: [
-                  { text: '立案通知' },
-                  { text: '发明人看稿' },
-                  { text: 'IPR看稿' },
-                  { text: '委案处理' },
-                ],
-              },
-              { btn_type: 'text', label: '编辑', click: this.dropGenrator('edit') },
-              { btn_type: 'text', label: '详情', click: this.dropGenrator('detail') },
-              { btn_type: 'text', label: '线上完成', click: this.dropGenrator('finish') },
+              // { 
+              //   type: 'dropdown', 
+              //   label: '发送邮件',
+              //   items: [
+              //     { text: '立案通知' },
+              //     { text: '发明人看稿' },
+              //     { text: 'IPR看稿' },
+              //     { text: '委案处理' },
+              //   ],
+              // },
+              { btn_type: 'text', label: '编辑', click: this.dropGenerator('edit') },
+              { btn_type: 'text', label: '详情', click: this.dropGenerator('detail') },
+              { btn_type: 'text', label: '完成', click: this.dropGenerator('finish') },
               { type: 'delete', click: this.taskDelete },
+              { btn_type: 'text', label: '编辑提案', click: this.proposalEdit, btn_if: _=>_.action == 'proposals/edit' },
+              { btn_type: 'text', label: '编辑专利', click: this.patentEdit, btn_if: _=>_.action == 'patents/edit'},
             ],
           }
         ],
       },
       tableData: [],
+      task_toggle: 'personal',
     };
   },
   computed: {
@@ -244,7 +257,7 @@ export default {
           items: [],
         },
         {
-          label: '指定完成时间',
+          label: '指定期限',
           key: 'duetime',
           items: [],
         },
@@ -258,14 +271,15 @@ export default {
         const item = f[d.key];
         if(item) {
           item.forEach(d2=>{
-            d.items.push({label: d2.name, value: d2.id});
+            d.items.push({label: d2.name, value: d2.id, count: d2.count});
           });
         }
       });
+      console.log(filterArr);
       return filterArr;     
     },
     screen_value () {
-      const m = new Map([['agents', 'project_agent'],['duetime', 'due_time'],['roles', 'task_def_id']]);
+      const m = new Map([['agents', 'agent'],['duetime', 'due_time'],['flownodes', 'flow_node_id']]);
       const obj = {};
 
       this.$store.getters.screen_value.forEach((d,k)=>{obj[m.get(k)] = d[0]});
@@ -277,14 +291,22 @@ export default {
   },
   watch: {
     screen_value () {
-      this.$refs.table.refresh();
+      this.refresh();
     },
     filter () {
-      this.$refs.table.refresh();
-    }
+      this.refresh();
+    },
+    task_toggle () {
+      this.refresh();
+    },
   },
   mounted () {
+
     this.refresh();
+    this.$store.dispatch('refreshFlows');
+    this.$store.dispatch('refreshTaskDefs');
+
+    this.refreshOption();
   },
   components: { AppFilter, TableComponent, AppDatePicker, Edit, Detail, Strainer, AppCollapse, TaskFinish },
 } 

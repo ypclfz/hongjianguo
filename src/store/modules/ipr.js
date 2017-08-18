@@ -1,4 +1,4 @@
-const url = '/api/iprs';
+let url = '/api/iprs';
 const state = {
 	data: [],
 }
@@ -6,7 +6,7 @@ const state = {
 const getters = {
 	iprData: state=>state.data,
 	iprOptions: state=>{
-		return state.data.map(d=>{ return {label: d.username, value: d.uid} })
+		return state.data;
 	}
 }
 
@@ -20,12 +20,13 @@ const actions = {
 
 	refreshIpr ({commit, rootState, state}) {
 		const params = { listRows:"100" };
+		url = rootState.status ? url.replace(/\/api/, '') : url;
 		rootState.axios
 			.get(url, { params })
 			.then(response=>{
 				const d = response.data;
 				if(d.status){
-					commit('setIpr', d.members.data);
+					commit('setIpr', d.members);
 				}else {
 					alert('请求Ipr数据失败');
 				}
