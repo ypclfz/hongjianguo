@@ -32,8 +32,9 @@
           <el-button type="danger" size="small" @click="clear" style="margin-left: 20px">清空</el-button>
         </el-row>
       </el-form>
-   
+    
     </app-collapse>
+    <app-filter :data="appFilterData"></app-filter>
     		<table-component :tableOption="tableOption" :data="tableData" ref="table" @refreshTableData="refreshTableData">
           <template slot="expand" scope="scope">
             <el-steps :space="200" :active="1">
@@ -139,9 +140,12 @@ export default {
       this.$refs.table.refresh();
     },
     refreshTableData (option) {
-      const params = Object.assign({}, option, this.filter);
-      console.log(params);
-      this.$axios.get('/api/proposals', { params }).then(response=>{this.tableData = response.data.proposals});
+      const params = Object.assign({}, option, this.filter, this.screen_value);
+      
+      this.$axios.get('/api/proposals', { params }).then(response=>{this.tableData = response.data.proposals; this.filters=response.data.proposals.filters;});
+    },
+    refresh () {
+      this.$refs.table.refresh();
     },
     update () {
       this.$refs.table.update();
@@ -162,65 +166,40 @@ export default {
         'columns': [
           { type: 'expand' },
           { type: 'selection'},
-          { type: 'date', label: '创建时间', prop: 'create_time', sortable: true },
-          { type: 'date', label: '更新时间', prop: 'update_time', sortable: true },
-          { type: 'text', label: '案件名称', prop: 'title',sortable: true },
-          { type: 'text', label: '案件摘要', prop: 'abstract', sortable: true },
-          { type: 'text', label: '当前节点', prop: 'flow_node', sortable: true },
+          { type: 'text', label: '创建时间', prop: 'create_time', sortable: true, width: '176' },
+          { type: 'text', label: '更新时间', prop: 'update_time', sortable: true, width: '172' },
+          { type: 'text', label: '案件名称', prop: 'title',sortable: true, width: '120' },
+          { type: 'text', label: '案件摘要', prop: 'abstract', sortable: true, width: '122' },
+          { type: 'text', label: '当前节点', prop: 'flow_node', sortable: true, width: '118' },
           { 
             type: 'text', 
             label: '技术联系人', 
             prop: 'proposer',
             sortable: true,
             render:  (h,item)=>{return h('span', item.name)},
+            width: '148',
           },
           { 
             type: 'array', label: '发明人', prop: 'inventors',
             render: (arr)=>{
              return arr.map(d=>d.name);
-            }
+            },
+            width: '158'
           },
-          { type: 'array', label: '标签', prop: 'tags' },
-          { type: 'text', label: '备注', prop: 'remark' },
+          { type: 'array', label: '标签', prop: 'tags', width: '135' },
+          { type: 'text', label: '备注', prop: 'remark', sortable: true },
           // { type: 'text', label: '案件状态', prop: 'status', sortable: true },
+          { type: 'text', label: '相关专利', prop: 'projects', width: '103' },
           {
             type: 'action',
-            width: '160px',
             label: '操作', 
             btns_render: 'action',
+            width: '161',
           },
         ]
       },
       tableData: [
 
-      ],
-      filterParameter: [
-        {
-          label: '标签',
-          key: 'tag',
-          items: [],
-          multipled: true
-        }, 
-        {
-          label: '提案人',
-          key: 'proposer',
-          items: [
-            {label: '提案人一', value: 1},
-            {label: '提案人二', value: 2},
-            {label: '提案人三', value: 3},
-          ], 
-          multipled: true
-        },
-        {
-          label: '发明人',
-          key: 'inventor',
-          items: [
-            {label: '提案人一', value: 1},
-            {label: '提案人二', value: 2},
-            {label: '提案人三', value: 3}
-          ],
-          multipled: true
-        }
       ],
       filter: {
       },
@@ -230,12 +209,47 @@ export default {
       proposer: [],
       tags: [],
       inventors: [],
+      filters: {},
     }
   },
-  created () {
-    
+  computed: {
+
+    appFilterData () {
+      const f = this.filters;
+      const filterArr = [
+        {
+          label: '提案阶段',
+          key: 'flownodes',
+          items: [],
+        },
+        {
+          label: '创建时间',
+          key: 'time',
+          items: [],
+        }
+      ];
+      filterArr.forEach(d=>{
+        const item = f[d.key];
+        if(item) {
+          item.forEach(d2=>{
+            d.items.push({label: d2.name, value: d2.id, count: d2.count});
+          });
+        }
+      });
+      return filterArr;
+    },
+    screen_value () {
+      const obj = {};
+      this.$store.getters.screen_value.forEach((d,k)=>{obj[k] = d[0]});
+      return obj;
+    }
   },
-  components: { TableComponent, AppFilter, AppCollapse, Classification, Product, InventorSelect, Member, Tag } 
+  watch: {
+    screen_value (val) {
+      this.refresh();
+    }
+  },
+  components: { TableComponent, AppFilter, AppCollapse, Classification, Product, InventorSelect, Member, Tag, AppFilter } 
 }
 </script>
 

@@ -4,7 +4,9 @@
   		<el-row>
 				<el-col :span="12">
 					<el-form-item label="专利类型" prop="title">
-						<el-input v-model="form.title"></el-input>
+						<el-select v-model="form.type" placeholder="请选择专利类型">
+							<el-option v-for="item in options.type" :key="item.value" :label="item.label" :value="item.value"></el-option>
+						</el-select>					
 					</el-form-item>
 					<el-form-item label="发明人" prop="inventors">
 						<inventor-select v-model="form.inventors" multiple></inventor-select>
@@ -46,13 +48,20 @@ export default {
   data () {
 		return {
 			form: {
-				title: '',
+				type: '',
 				classification: [],
 				product: [],
 				proposer: [],
 				branch: [],
 				tags: [],
 				inventors: [],
+			},
+			options: {
+				type: [
+					{label: '发明', value: 1},
+					{label: '实用新型', value: 2},
+					{label: '外观设计', value: 3},
+				]
 			}
 		}
   },

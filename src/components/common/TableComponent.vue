@@ -63,7 +63,6 @@
       <template v-if="tableOption.header_slot ? true : false">
         <slot v-for="item in tableOption.header_slot" :name="item"></slot>
       </template>
-
 	  	<el-input
         v-model="search_value"
         placeholder="搜索..."
@@ -106,14 +105,14 @@
 
       <template v-else-if="col.type == 'text'">
         <template v-if="col.render ? true : false">
-          <el-table-column :label="col.label" :prop="col.prop" v-if="tableControl[index]['show']" :sortable="col.sortable ? 'custom' : false" >
+          <el-table-column :label="col.label" :prop="col.prop" :width="col.width ? col.width : ''" v-if="tableControl[index]['show']" :sortable="col.sortable ? 'custom' : false" >
             <template scope="scope">
               <table-render :render="col.render" :scope="scope" :prop="col.prop"></table-render>
             </template>
           </el-table-column>
         </template>
         <template v-else>
-          <el-table-column :label="col.label" :prop="col.prop" v-if="tableControl[index]['show']" :sortable="col.sortable ? 'custom' : false">
+          <el-table-column :label="col.label" :prop="col.prop" :width="col.width ? col.width : ''" v-if="tableControl[index]['show']" :sortable="col.sortable ? 'custom' : false">
           </el-table-column>
         </template>
       </template>
@@ -126,7 +125,7 @@
 
       
       <template v-else-if="col.type == 'array'">
-        <el-table-column :label="col.label" :prop="col.prop" v-if="tableControl[index]['show']">
+        <el-table-column :label="col.label" :prop="col.prop" :width="col.width ? col.width : ''" v-if="tableControl[index]['show']">
           <template scope="scope">
             <el-tag v-for="(item, i) in arrayRender(scope['row'],col)" style="margin-left: 5px;" close-transition :key="i">{{ item }}</el-tag>
           </template>

@@ -12,8 +12,8 @@
   	</el-form-item>
     <el-row>
       <el-col :span="12">
-        <el-form-item label="案件类型" prop="type">
-          <el-select v-model="form.type">
+        <el-form-item label="案件类型" prop="categoey">
+          <el-select v-model="form.category">
             <el-option
               v-for="item in options.project_type"
               :key="item.value"
@@ -64,21 +64,21 @@ export default {
   data () {
 		return {
 		  form: {
-		  	'type': '',
+		  	'category': '',
 		  	'ipr': '',
     		'agency': '',
 				'agent': '',
 				'task_def_id': '',
 				'person_in_charge': '',
-		  	'due_time': [],
-		  	'deadline': [],
-		  	'end_time': [],
+		  	'due_time': ['',''],
+		  	'deadline': ['',''],
+		  	'end_time': ['',''],
 		  },
 		  options: {
 		  	'project_type': [
 		  		{label: '专利', value: 1},
 		  		{label: '商标', value: 2},
-		  		{label: '版本', value: 3},
+		  		{label: '版权', value: 3},
 		  		// {label: '项目', value: 4},
 		  	]
 		  }

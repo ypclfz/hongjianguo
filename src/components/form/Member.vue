@@ -1,6 +1,6 @@
 <template>
 	<el-select
-		:value="value"
+		:value="value2"
     @input="handleInput"
     filterable
     remote
@@ -8,13 +8,14 @@
     :disabled="disabled"
     :remote-method="remoteMethod"
     :loading="loading"
-    :multiple="multiple"
+    multiple
+    :multiple-limit="multiple ? 0 : 1"
 	>
 		<el-option
 			v-for="item in options"
-			:key="item.id"
-			:label="item.name"
-			:value="item.id"
+			:key="item.value"
+			:label="item.label"
+			:value="item.value"
 		>
 		</el-option>
 	</el-select>
@@ -22,51 +23,16 @@
 
 	<script>
 	import AxiosMixins from '@/mixins/axios-mixins'
+	import RemoteSelect from '@/mixins/remote-select'
+
 	export default {
 	  name: 'member',
-	  mixins: [ AxiosMixins ],
-	  props: {
-	  	'value': [Number, String, Array],
-	  	'defaultOptions': {
-	  		type: Array,
-	  	},
-	  	'disabled': {
-	  		type: Boolean,
-	  		default: false,
-	  	},
-	  	'multiple': {
-	  		type: Boolean,
-	  		default: false,
-	  	}
-	  },
+	  mixins: [ AxiosMixins, RemoteSelect ],
 	  data () {
 			return {
-				query: '',
-				options: [],
-				loading: false,
+				URL: '/api/members',
+				DATA_KEY: 'members',
 			}
-	  },
-	  methods: {
-	  	handleInput (val) {
-	  		console.log(val);
-	  		this.$emit('input', val);
-	  	},
-	  	remoteMethod (keyword) {
-	  		const params = { keyword };
-
-	  		this.loading = true;
-	  		const url = '/api/members';
-	  		const data = params;
-	  		const success = _=>{
-	  			this.loading = false;
-	  			this.options = _.members.data.map(d=>{return {id: d.id, name: d.username}})
-	  		}
-
-	  		this.axiosGet({url, data, success});
-	  	}
-	  },
-	  created () {
-	  	this.remoteMethod('');
 	  },
 	}
 	</script>

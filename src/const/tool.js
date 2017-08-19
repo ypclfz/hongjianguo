@@ -28,7 +28,12 @@ export default {
 		return obj;
 	},
 	getDate (date) {
-		return `${date.getFullYear()}-${date.getMonth() + 1}-${date.getDate()}`;
+		if(date instanceof Date) {
+			return `${date.getFullYear()}-${date.getMonth() + 1}-${date.getDate()}`;
+		}else {
+			return date;
+		}
+		
 	},
 	coverObj (obj, obj1) {
 		for (let key in obj) {

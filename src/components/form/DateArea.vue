@@ -1,8 +1,8 @@
 <template>
   <div class="app-date-picker" style="display: inline-block; width: 100%;">
-        <el-date-picker type="date" placeholder="起始日期" :size=size :style="sizeFormate.get(size)" :value="date[0]" @input="startUpdate" :picker-options="startOption"></el-date-picker>
+        <el-date-picker type="date" placeholder="起始日期" :size=size :style="sizeFormate.get(size)" :value="date[0]" @input="_=>{ update(_,'start') }" :picker-options="startOption"></el-date-picker>
         <span>-</span>
-        <el-date-picker type="date" placeholder="结束日期" :size=size :style="sizeFormate.get(size)" :value="date[1]"  @input="endUpdate" :picker-options="endOption"></el-date-picker>
+        <el-date-picker type="date" placeholder="结束日期" :size=size :style="sizeFormate.get(size)" :value="date[1]"  @input="_=>{ update(_, 'end') }" :picker-options="endOption"></el-date-picker>
   </div>
 </template>
 
@@ -19,22 +19,15 @@ export default {
   	'size': String
   },
   methods: {
-		startUpdate (val) {
-			this.startTime = val;
-			const s = this.startTime ? this.startTime.getTime() : '';
-			const e = this.endTime ? this.endTime.getTime() : ''; 
-			const arr = [s, e];
-			console.log('startUpdate');
-			this.$emit("input", arr);
+    update( val, key ) {
+      const arr = [];
+      if(key == 'start') this.startTime = val;
+      if(key == 'end') this.endTime = val;
+      arr[0] = key == 'start' ? this.$tool.getDate(val) : this.date[0];
+      arr[1] = key == 'end' ? this.$tool.getDate(val) : this.date[1];
+
+      this.$emit('input', arr);
     },
-    endUpdate (val) {
-    	this.endTime = val;
-		const s = this.startTime ? this.startTime.getTime() : '';
-		const e = this.endTime ? this.endTime.getTime() : '';
-    	const arr = [s, e];
-    	console.log('endUpdate');
-    	this.$emit("input", arr);
-    }
   },
   computed: {
   	date () {
@@ -56,26 +49,25 @@ export default {
 			endTime: '',
 		  startOption: {
 	      disabledDate (time) {
-	        let flag;
+	        let flag = true;
 
-	        if(d.endTime == "") {
-	          flag = time.getTime() < Date.now();  
-	        }else {
-	          flag = time.getTime() < d.endTime.getTime() + 8.64e7; 
-	        }
+	        // if(d.endTime == "") {
+	        //   flag = time.getTime() < Date.now();  
+	        // }else {
+          if(d.endTime != "") { 
+	          flag = time.getTime() < d.endTime.getTime() + 8.64e7;
+          } 
+	        // }
 	        return !flag;
 	      }
 	    },
 	    endOption: {
 	      disabledDate (time) {
-	        let flag;
+	        let flag = true;
 
-	        if(d.startTime == "") {
-	          flag = time.getTime() < Date.now();
-	        }else {
-	          flag = time.getTime() < Date.now() && time.getTime() > d.startTime.getTime() - 8.64e7;
-	        }
-
+          if(d.startTime != "") { 
+	          flag = time.getTime() > d.startTime.getTime() - 8.64e7;
+          } 
 	        return !flag;
 	      }
 	    },

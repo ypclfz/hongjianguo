@@ -91,7 +91,7 @@ export default {
     strainerQuery (form) {
       const arr = ['due_time', 'deadline', 'end_time'];
       arr.forEach(d=>{
-        form[d] = form[d].join(',');
+        form[d] = form[d][0] == ''&&form[d][0] == '' ? '' : form[d].join(',');
       })
       this.filter = form;
     },
@@ -113,9 +113,6 @@ export default {
     },
     update () {
       this.$refs.table.update();
-    },
-    refresh () {
-      this.$refs.table.refresh();
     },
     addSuccess () {
       this.refresh();
@@ -204,8 +201,8 @@ export default {
           { type: 'selection'},
           { type: 'text', label: '案号', prop: 'serial', sortable: true},
           { type: 'text', label: '案件名称', prop: 'title', sortable: true},
-          { type: 'text', label: '管制事项', prop: 'name' },
-          { type: 'text', label: 'IPR', prop: 'ipr'},
+          { type: 'text', label: '管制事项', prop: 'name', sortasble: true },
+          { type: 'text', label: 'IPR', prop: 'ipr', sortable: true},
           { type: 'text', label: '承办人', prop: 'person_in_charge', show: false, sortable: true},
           // { type: 'text', label: '任务来源', prop: 'sender_name', show: false},
           { type: 'text', label: '代理机构', prop: 'agency', show: false, sortable: true},
@@ -236,7 +233,7 @@ export default {
               { btn_type: 'text', label: '编辑', click: this.dropGenerator('edit') },
               { btn_type: 'text', label: '详情', click: this.dropGenerator('detail') },
               { btn_type: 'text', label: '完成', click: this.dropGenerator('finish') },
-              { type: 'delete', click: this.taskDelete },
+              { btn_type: 'text', label: '删除', click: this.taskDelete },
               { btn_type: 'text', label: '编辑提案', click: this.proposalEdit, btn_if: _=>_.action == 'proposals/edit' },
               { btn_type: 'text', label: '编辑专利', click: this.patentEdit, btn_if: _=>_.action == 'patents/edit'},
             ],
@@ -275,7 +272,6 @@ export default {
           });
         }
       });
-      console.log(filterArr);
       return filterArr;     
     },
     screen_value () {

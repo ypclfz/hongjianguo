@@ -16,7 +16,7 @@
 	  			</template>
 	  			<template v-else>
             <template v-for="(item, ind) in row.items">
-              <el-badge :hidden="item.count == 0" :value="item.count" style="margin-top: 10px; margin-left: 5px;">
+              <el-badge :hidden="item.count == 0" :value="item.count" style="margin-top: 10px; margin-left: 15px;">
 					      <el-button type="text" :key="ind" @click="handleClick(row, item)" size="small">{{ item.label }}</el-button>
               </el-badge>
             </template>

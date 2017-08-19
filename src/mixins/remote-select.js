@@ -16,10 +16,23 @@ export default {
 			loading: false,
 		}
   },
+  computed: {
+    value2 () {
+      if(!this.multiple) {
+        return this.value == "" ? [] : [ this.value ];
+      }else {
+        return this.value;
+      }
+    }
+  },
   methods: {
   	handleInput (val) {
-  		this.$emit('input', val);
-  	},
+      if(!this.multiple) {
+        this.$emit('input', val[0] ? val[0] : '');  
+      }else {
+        this.$emit('input', val);
+      }
+    },
   	remoteMethod (keyword) {
      
   		const s = { keyword, listOnly: '1' };

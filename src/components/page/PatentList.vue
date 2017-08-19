@@ -56,7 +56,7 @@ export default {
         'columns': [
 
           { type: 'selection' },
-          { type: 'text', label: '专利状态', prop: 'status', render: (h,item)=>h('span', item ? '正常' : '暂停处理') },
+          // { type: 'text', label: '专利状态', prop: 'status', render: (h,item)=>h('span', item ? '正常' : '暂停处理') },
           { type: 'text', label: '专利标题', prop: 'title', sortable: true },
           { type: 'text', label: '专利摘要', prop: 'abstract'},
           { type: 'text', label: '备注' },
@@ -76,7 +76,7 @@ export default {
           },
           { 
             type: 'text', 
-            label: '专利人', 
+            label: '申请人', 
             prop: 'proposer', 
             render: (h, item)=>h('span', item.name),
           },

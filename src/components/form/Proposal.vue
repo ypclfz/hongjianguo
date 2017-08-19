@@ -1,6 +1,6 @@
 <template>
 	<el-select
-		:value="value"
+		:value="value2"
     @input="handleInput"
     filterable
     remote
@@ -8,7 +8,8 @@
     :disabled="disabled"
     :remote-method="remoteMethod"
     :loading="loading"
-    :multiple="multiple"
+    multiple
+    :multiple-limit="multiple ? 0 : 1"
 	>
 		<el-option
 			v-for="item in options"

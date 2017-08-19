@@ -1,9 +1,9 @@
 <template>  
 	<el-form label-width="80px" :model="form" ref="form">
-    <el-form-item label="关联案件" prop="project_id">
+    <el-form-item label="关联案件" prop="project_id" v-if="type == 'add'">
       <project v-model="form.project_id"></project>
     </el-form-item>
-    <el-form-item label="任务流程" prop="flow_node_id">
+    <el-form-item label="任务流程" prop="flow_node_id" v-if="type == 'add'">
       <el-select v-model="form.flow_node_id" placeholder="请选择任务流程">
         <el-option
           v-for="item in flowOptions"
@@ -14,7 +14,7 @@
         </el-option>
       </el-select>
     </el-form-item>
-    <el-form-item label="任务类型" prop="task_def_id">
+    <el-form-item label="任务类型" prop="task_def_id" v-if="type == 'add'">
       <el-select v-model="form.task_def_id" placeholder="请选择任务类型">
         <el-option
           v-for="item in defOptions"

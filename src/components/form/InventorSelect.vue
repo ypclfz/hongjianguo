@@ -1,6 +1,6 @@
 <template>
 	<el-select
-		:value="value"
+		:value="value2"
     @input="handleInput"
     filterable
     remote
@@ -8,7 +8,8 @@
     :disabled="disabled"
     :remote-method="remoteMethod"
     :loading="loading"
-    :multiple="multiple"
+    multiple="multiple"
+    :multiple-limit="multiple ? 0 : 1"
 	>
 		<el-option
 			v-for="item in options"
@@ -51,9 +52,22 @@ export default {
 		  	loading: false,
 		}
   },
+  computed: {
+    value2 () {
+      if(!this.multiple) {
+        return this.value == "" ? [] : [ this.value ];
+      }else {
+        return this.value;
+      }
+    }
+  },
   methods: {
   	handleInput (val) {
-  		this.$emit('input', val);
+      if(!this.multiple) {
+        this.$emit('input', val[0] ? val[0] : '');  
+      }else {
+        this.$emit('input', val);
+      }
   	},
   	remoteMethod (keyword) {
   		const url = '/api/inventors';
