@@ -30,14 +30,14 @@
 			<member v-model="form.person_in_charge"></member>
 		</el-form-item>
     <el-row> 
-      <el-col :span="12">
-        <el-form-item label="法限" prop="deadline">
-          <el-date-picker type="date" v-model="form.deadline" placeholder="请选择法限"></el-date-picker>
-        </el-form-item>
-      </el-col>
       <el-col :span="12"> 
         <el-form-item label="承办期限" prop="due_time">
           <el-date-picker type="date" v-model="form.due_time" placeholder="请选择承办期限"></el-date-picker>
+        </el-form-item>
+      </el-col>
+      <el-col :span="12">
+        <el-form-item label="法限" prop="deadline">
+          <el-date-picker type="date" v-model="form.deadline" placeholder="请选择法限"></el-date-picker>
         </el-form-item>
       </el-col>
     </el-row>

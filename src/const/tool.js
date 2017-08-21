@@ -97,5 +97,37 @@ export default {
 		}
 
 		return arr.join('&');
+	},
+	setCookie (name,value) {
+		if( name === undefined || !(typeof name === 'string') ) { return;}
+
+	    var Days = 30;
+	    var exp = new Date();
+	    exp.setTime(exp.getTime() + Days*24*60*60*1000);
+	    document.cookie = name + "="+ escape (value) + ";expires=" + exp.toGMTString();
+	},
+	getCookie (name) {
+	    var arr,reg=new RegExp("(^| )"+name+"=([^;]*)(;|$)"); //正则匹配
+	    if(arr=document.cookie.match(reg)){
+	      return unescape(arr[2]);
+	    }
+	    else{
+	     return null;
+	    }
+	},
+	delCookie (name) {
+	    var exp = new Date();
+	    exp.setTime(exp.getTime() - 1);
+	    var cval=getCookie(name);
+	    if(cval!=null){
+	      document.cookie= name + "="+cval+";expires="+exp.toGMTString();
+	    }
+	},
+	windowChangeUrl (string) {
+		if (!window.location.origin) {
+        	window.location.origin = window.location.protocol + "//" + window.location.hostname + (window.location.port ? ':' + window.location.port: '');
+    	}
+
+    	window.location.href = `${window.location.origin}/${string}`;
 	}
 }

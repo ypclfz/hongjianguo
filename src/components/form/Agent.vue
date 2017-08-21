@@ -1,53 +1,40 @@
 <template>
   <el-select
-  	:value="value"
-  	@input="handleInput"
-		:multiple="multiple"
-		:disabled="disabled"
+    :value="value2"
+    @input="handleInput"
+    filterable
+    remote
+    placeholder="请输入代理人关键词"
+    :disabled="disabled"
+    :remote-method="remoteMethod"
+    :loading="loading"
+    multiple
+    :multiple-limit="multiple ? 0 : 1"
+    ref="select"
   >
-  	<el-option
-			v-for="item in agentOptions"
-			:key="item.value"
-			:label="item.label"
-			:value="item.value"
-  	>
-  	</el-option>
+    <el-option
+      v-for="item in options"
+      :key="item.value"
+      :label="item.label"
+      :value="item.value"
+    >
+    </el-option>
   </el-select>
 </template>
 
 <script>
+import AxiosMixins from '@/mixins/axios-mixins'
+import RemoteSelect from '@/mixins/remote-select'
+
 export default {
   name: 'agent',
-  props: {
-  	'value': null,
-  	'multiple': {
-  		type: Boolean,
-  		default: false,
-  	},
-  	'disabled': {
-  		type: Boolean,
-  		default: false,
-  	}
-  },
+  mixins: [ AxiosMixins, RemoteSelect ],
   data () {
-		return {
-		  options: [
-		  	{ label: '代理人1', value: 1 },
-		  	{ label: '代理人2', value: 2 },
-		  	{ label: '代理人3', value: 3 },
-		  ],
-		}
+    return {
+      URL: '/api/agents',
+      DATA_KEY: 'members',
+    }
   },
-  computed: {
-  	agentOptions () {
-  		return this.options;
-  	}
-  },
-  methods: {
-  	handleInput (val) {
-  		this.$emit('input', val);
-  	}
-  }
 }
 </script>
 

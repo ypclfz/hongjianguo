@@ -154,6 +154,7 @@ export default {
   data () {
     return {
       tableOption: {
+        'name': 'proposalList',
         'url': URL,
         'header_btn': [
           { type: 'add', click: this.add },

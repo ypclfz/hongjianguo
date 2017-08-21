@@ -14,7 +14,7 @@
             </el-button>
             <el-dropdown-menu slot="dropdown">
               <el-dropdown-item v-for="(col, index) in tableControl" :key="index" v-if="col.type != 'selection' && col.type != 'action' && col.type != 'expand'">
-                <el-checkbox :label="col.label" v-model="col.show"></el-checkbox>
+                <el-checkbox :label="col.label" v-model="col.show" @change=handleControlChange></el-checkbox>
               </el-dropdown-item>
             </el-dropdown-menu>
           </el-dropdown>
@@ -133,7 +133,7 @@
       </template>
 
       <template v-else-if="col.type == 'action'">
-        <el-table-column :label="col.label ? col.label : '操作'" align="center" :width="col.width">
+        <el-table-column :label="col.label ? col.label : '操作'" :align="col.align ? col.align : 'center'" :width="col.width" header-align='center' >
           <template scope="scope">
             <template v-if="col.btns_render != undefined">
               <slot :name="col.btns_render" :row="scope.row">
@@ -307,14 +307,16 @@ const methods = Object.assign({}, tableConst.methods, {
     this.page = 1;
     this.search_value = "";
     this.update();
+  },
+  handleControlChange () {
+    const name = this.tableOption.name;
+    const value = JSON.stringify(this. tableControl);
+    this.$tool.setCookie(name, value);
   }
 });
 export default {
   name: 'tableComponent',
   methods,
-  created() {
-    const d = this;
-  },
   props: ['tableOption', 'data', 'tableStyle'],
   computed: {
     tableData () {
@@ -360,15 +362,19 @@ export default {
 
     const d = this;
     const cols = d.tableOption.columns;
-    const tableControl = [];
-
-    for (let c of d.tableOption.columns) {
-
-      let show = c.show == undefined ? true : c.show;
-      let type = c.type;
-      let label = c.label;
-      tableControl.push({show, type, label});
+    let tableControl = [];
+    const cookieControl = this.$tool.getCookie(this.tableOption.name);
+    if(cookieControl) {
+      tableControl = JSON.parse(cookieControl);
+    }else {
+      for (let c of d.tableOption.columns) {
+        let show = c.show == undefined ? true : c.show;
+        let type = c.type;
+        let label = c.label;
+        tableControl.push({show, type, label});
+      }
     }
+
 
     const data = {
       tableControl,

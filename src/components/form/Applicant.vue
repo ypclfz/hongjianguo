@@ -10,6 +10,7 @@
     :loading="loading"
     multiple
     :multiple-limit="multiple ? 0 : 1"
+    ref="select"
 	>
 		<el-option
 			v-for="item in options"

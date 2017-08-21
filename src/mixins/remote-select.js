@@ -49,6 +49,13 @@ export default {
       this.axiosGet({url, data, success});
   	}
   },
+  watch: {
+    value2 (val) {
+      if( !this.multiple && val.length == 1) {
+        this.$refs.select.visible = false;
+      }
+    }
+  },
   created () {
   	this.remoteMethod('');
   },

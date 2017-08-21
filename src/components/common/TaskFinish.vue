@@ -1,6 +1,6 @@
 <template>
   <el-form :model="form" label-width="80px" ref="form" v-loading="loading" element-loading-text="数据加载中">
-  	<el-form-item label="下一阶段">
+  	<el-form-item label="下一节点">
   		<el-select v-model="next">
   		 <el-option
 				v-for="item in data.next"
@@ -36,7 +36,7 @@
 			<upload v-model="form.attachments"></upload>
   	</el-form-item>
   	<el-form-item style="margin-bottom: 0px;">
-  		<el-button type="primary" @click="submitFunc">提交</el-button>
+  		<el-button type="primary" @click="submitFunc" :disabled="btn_disabled">提交</el-button>
   	</el-form-item>
   </el-form>
 </template>
@@ -71,6 +71,7 @@ export default {
 			'defaultVal': '',
 			'fields': {},
       'loading': false,
+      'btn_disabled': false,
 		}
   },
 	created () {
@@ -83,7 +84,6 @@ export default {
   		const success = d=>{
   			this.data = d.data;
   			this.next = d.data.next[0].id;
-        this.loading = false;
   		};
       const complete = _=>{ 
         this.loading = false; 
@@ -91,10 +91,12 @@ export default {
   		this.axiosGet({url, success, complete});
   	},
   	submitFunc () {
+      this.btn_disabled = true;
   		const url = `${URL}/${this.id}/nexttask`;
   		const data = Object.assign({}, {'flow_node_id': this.next}, this.form);
-  		const success = ()=>{this.$emit('submitSuccess')}; 
-  		this.axiosPost({url, data, success});
+  		const success = ()=>{this.$emit('submitSuccess')};
+      const complete = _=>{this.btn_disabled=false}; 
+  		this.axiosPost({url, data, success, complete});
   	},
   	cancel () {
   		this.$emit('cancel')

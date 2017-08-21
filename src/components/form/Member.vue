@@ -10,6 +10,7 @@
     :loading="loading"
     multiple
     :multiple-limit="multiple ? 0 : 1"
+    ref="select"
 	>
 		<el-option
 			v-for="item in options"
@@ -21,22 +22,22 @@
 	</el-select>
 </template>
 
-	<script>
-	import AxiosMixins from '@/mixins/axios-mixins'
-	import RemoteSelect from '@/mixins/remote-select'
+<script>
+import AxiosMixins from '@/mixins/axios-mixins'
+import RemoteSelect from '@/mixins/remote-select'
 
-	export default {
-	  name: 'member',
-	  mixins: [ AxiosMixins, RemoteSelect ],
-	  data () {
-			return {
-				URL: '/api/members',
-				DATA_KEY: 'members',
-			}
-	  },
-	}
-	</script>
+export default {
+  name: 'member',
+  mixins: [ AxiosMixins, RemoteSelect ],
+  data () {
+		return {
+			URL: '/api/members',
+			DATA_KEY: 'members',
+		}
+  },
+}
+</script>
 
-	<!-- Add "scoped" attribute to limit CSS to this component only -->
-	<style scoped lang="scss">
-	</style>
+<!-- Add "scoped" attribute to limit CSS to this component only -->
+<style scoped lang="scss">
+</style>

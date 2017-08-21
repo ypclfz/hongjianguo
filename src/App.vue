@@ -2,6 +2,14 @@
   <div id="app">
     <nav>
         <img src="./images/cvte_log.png" style="vertical-align: middle; height: 28px;">
+        <el-dropdown  trigger="click" style="float: right; margin-right: 40px;" @command="handleCommond">
+          <span class="el-dropdown-link" style="color: #20a0ff; cursor: pointer;">
+            {{ username }}<i class="el-icon-caret-bottom el-icon--right"></i>
+          </span>
+          <el-dropdown-menu slot="dropdown" >
+            <el-dropdown-item command="login_out">登出</el-dropdown-item>
+          </el-dropdown-menu>
+        </el-dropdown>
     </nav>
     <div class="nav-left" :style="navL_height">
       <el-menu theme="dark" router unique-opened>
@@ -76,6 +84,10 @@ export default {
     },
     loading () {
       return this.$store.getters.loading;  
+    },
+    username () {
+      const user = this.$store.getters.getUser; 
+      return user ? user.name : '';
     }
   },
   data () {
@@ -87,19 +99,26 @@ export default {
   methods: {
     handleClose: function (index) {
       this.$store.commit('removeScreen', index);
+    },
+    handleCommond (commond) {
+      if(commond == 'login_out') {
+        const url = '/api/logout';
+        const success = _=>{
+          this.$message({message: '登出成功', type: 'success'} );
+          window.location.href = '/login';
+        }
+
+        this.axiosGet({url, success});
+      }
     }
   },
   beforeCreated () {
 
   },
   created () {
-    const url = '/api/login';
-    const data = {
-      'username': 'Shawn', 
-      'password': 'u5/vpsgWLohjhN5sd7MIZ7vSkqLC9nyma0RlWQ4oTM78HfPClnwlfvJJJxGtT7RMW6MAZog7qsdd90pd0949gIU7KR3PXYNWP1KOqu6GBWQIMrTnFktDkT+L9G6pZLZ/1i5W1W9FCmPeSFtHlQx/AaMxQh+57R/6lZqXN93gS2hwfaRuPtNyq/lQlN0bJOX1UpOzS3mXpvgcPEcmhPQUOxSZ3fJ/EvRTMY286WrnWWa+qbWjMNJt5GZkPcXCX58nzilX+LVFqekhILpOO4I1yxCNohPrPBTaNKKZr9UIaA9DEDZg80kn43cASpDGvygZp+GqLUXPjHr6o5SCn0uJyw=='
-    };
+    const url = '/api/userinfo';
     const success = _=>{
-      this.$store.commit('setUser', _.user);
+      this.$store.commit('setUser', _.member);
 
       this.$store.dispatch('refreshTags');
       this.$store.dispatch('refreshProduct');
@@ -110,9 +129,18 @@ export default {
       this.$store.dispatch('refreshFeeCode');
       this.$store.dispatch('refreshEntity');
       this.$store.dispatch('refreshGroup');
+    };
+    const error = _=>{
+      // window.location.href = '/login';
+    };
+    const catchFunc = _=>{
+      // window.location.href = '/login';
     }
-
-    this.axiosPost({url, data, success});
+    const success2 = _=>{
+      this.axiosGet({url, success, error, catchFunc});
+    }
+    this.axiosPost({url: '/api/login', success: success2, data: {username: 'Shawn', password: 'Z9jgM6FhdKWEqbbpJePv/6qeTO/Yk2b6lx7zF4tiBncRubwf0fz93hkqGXCiWvqXCDIq7x+kAH3TK5zhjDZ53jgt1Gx1vvBPHn3ga7HTqPrnc+VhhuVGeTefHShJBx32rnbhL6LbEqCAMGqtQXaovCtuJGY6uWYAPfecAOGMuadnxTigTTBwKtW2oVP4J/EwAroYKuy4MK4Pd7YGtFoJAhlpKVOponsgsYQ8EKGOSVxcZgcgnOw8LhPy28N+xoFCh0OBkMyjM80Ybjq+H8BO6CacnDzQReZL5wQZqBdTtW7CUBi6S4+JWDPBahqNgz7jD73UhEIeG0ivFLEdCWtlVw=='}});
+    // this.axiosGet({url, success, error, catchFunc});
     
   },
   components: { AppMenu }

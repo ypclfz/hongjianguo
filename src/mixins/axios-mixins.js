@@ -2,14 +2,14 @@ const complete_default = function () {};
 const status = 0; //这里进行地址代理控制, 为1时去掉/api, 为0时保留
 export default {
   methods: {
-  	axiosGet ({url='', data={}, success=()=>{}, error=(d)=>{this.$alert(d.info)}, catchFunc=(err)=>{console.log(err); this.$alert('网络错误')}, complete=()=>{} }) {
+  	axiosGet ({url='', data={}, success=()=>{}, error=(d)=>{this.$alert(d.info)}, catchFunc=(err)=>{console.log(err); this.$alert('网络错误')}, complete=_=>{} }) {
       url = status ? url.replace(/\/api/, '') : url;
       this.$axios
         .get(url, { params: data })
         .then(response=>{
           const d = response.data;
-          d.status ? success(d) : error(d);
-          
+          d.status > 0 ? success(d) : error(d);
+      
           complete(d);
         })
         .catch(error=>{catchFunc(error); complete(error);});

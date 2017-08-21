@@ -9,8 +9,9 @@
     :remote-method="remoteMethod"
     :loading="loading"
     multiple
-    :multiple-limit="multiole ? 0 : 1"
+    :multiple-limit="multiple ? 0 : 1"
     @change="handleChange"
+    ref="select"
 	>
 		<el-option
 			v-for="item in options"
@@ -29,7 +30,7 @@ import AxiosMixins from '@/mixins/axios-mixins'
 // import AxiosMixins from '@/'
 
 export default {
-  name: 'patent',
+  name: 'project',
   mixins: [ RemoteSelect, AxiosMixins ],
   data () {
     return {
@@ -39,12 +40,7 @@ export default {
   },
   methods: {
     handleChange (data) {      
-      for(let d of this.options) {
-        if(d.value == data) {
-          this.$emit('change', d);
-          break;
-        }
-      }
+      
     }
   }
 }

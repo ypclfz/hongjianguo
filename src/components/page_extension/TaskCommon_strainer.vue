@@ -37,7 +37,7 @@
         <el-form-item label="代理人" prop="agent">
           <agent v-model="form.agent"></agent>
         </el-form-item>
-        <el-form-item label="任务处理人" prop="person_in_charge">
+        <el-form-item label="承办人" prop="person_in_charge">
           <member v-model="form.person_in_charge"></member>
         </el-form-item>
       </el-col>

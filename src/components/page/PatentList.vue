@@ -34,6 +34,7 @@ export default {
         }
       ],
       tableOption: {
+        'name': 'patentList',
         'url': URL,
         'header_btn': [
           {

@@ -8,9 +8,9 @@
         <el-option key="all" label="所有任务" value="all"></el-option>
       </el-select>
       <template scope="scope" slot="expand">
-        <edit :row="scope.row" type="edit" v-show="expandType == 'edit'" @editSuccess="editSuccess"></edit>
-        <detail :row="scope.row" v-show="expandType  == 'detail'"></detail>
-        <task-finish :id="scope.row.id" v-show="expandType  == 'finish'"></task-finish>
+        <edit :row="scope.row" type="edit" v-if="expandType == 'edit'" @editSuccess="editSuccess"></edit>
+        <detail :row="scope.row" v-if="expandType  == 'detail'"></detail>
+        <task-finish :id="scope.row.id" v-if="expandType  == 'finish'" @submitSuccess="finishSuccess"></task-finish>
       </template>
     </table-component>
 
@@ -61,7 +61,7 @@ import AppCollapse from '@/components/common/AppCollapse'
 import TableComponent from '@/components/common/TableComponent'
 import AppDatePicker from '@/components/common/AppDatePicker'
 import Edit from '@/components/page_extension/TaskCommon_edit'
-import Detail from '@/components/page_extension/PendingTask_detail'
+import Detail from '@/components/page_extension/TaskCommon_detail'
 import TaskFinish from '@/components/common/TaskFinish'
 import Strainer from '@/components/page_extension/TaskCommon_strainer'
 import $ from 'jquery'
@@ -69,7 +69,7 @@ import $ from 'jquery'
 const URL = '/api/tasks';
 
 export default {
-  name: 'pendingTask',
+  name: 'taskList',
   mixins: [ axiosMixins ],
   methods: {
     dropGenerator(str) {
@@ -143,15 +143,17 @@ export default {
 
         this.axiosPost({ url, data, success });
       }
-      
-
     },
     proposalEdit ({project_id}) {
       this.$router.push({path: '/proposal/edit', query: {id: project_id}});
     },
     patentEdit ({id}) {
       console.log('patentEdit')
-    }  
+    },
+    finishSuccess () {
+      this.$message({message: '操作成功', type: 'success'});
+      this.refresh();
+    }
   },
   data () {
     return {
@@ -165,6 +167,7 @@ export default {
       expandType: '',
       checkedTest: [],
       tableOption: {
+        'name': 'taskList',
         'url': URL,
         'header_btn': [
           { type: 'custom', label: '新增', icon: 'plus', click: ()=>{ this.dialogAddVisible = true; } },
@@ -203,7 +206,7 @@ export default {
           { type: 'text', label: '案件名称', prop: 'title', sortable: true},
           { type: 'text', label: '管制事项', prop: 'name', sortasble: true },
           { type: 'text', label: 'IPR', prop: 'ipr', sortable: true},
-          { type: 'text', label: '承办人', prop: 'person_in_charge', show: false, sortable: true},
+          { type: 'text', label: '承办人', prop: 'person_in_charge_name', show: false, sortable: true},
           // { type: 'text', label: '任务来源', prop: 'sender_name', show: false},
           { type: 'text', label: '代理机构', prop: 'agency', show: false, sortable: true},
           { type: 'text', label: '代理人', prop: 'agent', sortable: true},
@@ -218,6 +221,7 @@ export default {
           { 
             type: 'action', 
             label: '操作',
+            align: 'left',
             width: '300px',
             btns: [
               // { 
@@ -231,7 +235,7 @@ export default {
               //   ],
               // },
               { btn_type: 'text', label: '编辑', click: this.dropGenerator('edit') },
-              { btn_type: 'text', label: '详情', click: this.dropGenerator('detail') },
+              { btn_type: 'text', label: '相关', click: this.dropGenerator('detail') },
               { btn_type: 'text', label: '完成', click: this.dropGenerator('finish') },
               { btn_type: 'text', label: '删除', click: this.taskDelete },
               { btn_type: 'text', label: '编辑提案', click: this.proposalEdit, btn_if: _=>_.action == 'proposals/edit' },
