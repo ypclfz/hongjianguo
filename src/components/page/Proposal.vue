@@ -69,6 +69,7 @@ const url = 'http://www.zhiq.wang/proposal/lists';
 const delete_url = 'http://www.zhiq.wang/proposal/lists';
 const tag_url = 'http://www.zhiq.wang/tag/lists';
 const strainerArr = ['classification', 'product', 'proposer', 'tags', 'inventors'];
+const map = new Map([['flownodes', 'progress'],['time', 'create_time']]);
 export default {
   name: 'proposalList',
   mixins: [ AxiosMixins ],
@@ -109,11 +110,9 @@ export default {
       }else {
         this.$confirm('删除后不可恢复，确认删除？')
           .then(_=>{
-            console.log('aaaaaaaa');
             const url = URL;
             const data = { ids: this.$tool.splitObj(s, 'id') };
             const success = _=>{ this.update() };
-            console.log(url, data);
 
             this.axiosDelete({ url, data, success });
           })
@@ -241,7 +240,7 @@ export default {
     },
     screen_value () {
       const obj = {};
-      this.$store.getters.screen_value.forEach((d,k)=>{obj[k] = d[0]});
+      this.$store.getters.screen_value.forEach((d,k)=>{obj[map.get(k)] = d[0]});
       return obj;
     }
   },
@@ -250,7 +249,7 @@ export default {
       this.refresh();
     }
   },
-  components: { TableComponent, AppFilter, AppCollapse, Classification, Product, InventorSelect, Member, Tag, AppFilter } 
+  components: { TableComponent, AppFilter, AppCollapse, Classification, Product, InventorSelect, Member, Tag, AppFilter }, 
 }
 </script>
 

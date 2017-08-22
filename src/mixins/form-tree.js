@@ -42,6 +42,12 @@ export default {
   	handleValue (val) {
   		const v = this.multiple ? [...val] : val;
   		this.$emit('input', v);
-  	}
+  	},
+    refresh (type) {
+      this.$store.dispatch(this.$options.REFRESH_KEY);
+      if(type == 'remove') {
+        
+      }
+    }
   }		
 }

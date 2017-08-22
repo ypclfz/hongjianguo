@@ -11,11 +11,12 @@ import PatentList from '@/components/page/PatentList'
 import ApplyingPatent from '@/components/page/ApplyingPatent'
 import PatentAdd from '@/components/page/PatentAdd'
 import PatentStatistics from '@/components/page/PatentStatistics'
-import PatentNotice from '@/components/page/PatentNotice'
+import NoticeCommon from '@/components/page/NoticeCommon'
 import TrademarkList from '@/components/page/TrademarkList'
 import TrademarkNotice from '@/components/page/TrademarkNotice'
 import TrademarkStatistics from '@/components/page/TrademarkStatistics'
 import CopyrightList from '@/components/page/CopyrightList'
+import CopyrightAdd from '@/components/page/CopyrightAdd'
 import UserList from '@/components/page/UserList'
 import Technology from '@/components/page/Technology'
 import Branch from '@/components/page/Branch'
@@ -65,6 +66,7 @@ const router = new Router({
     { path: '/task', redirect: '/task/pending' },
     { path: '/patent', redirect: '/patent/list' },
     { path: '/trademark', redirect: '/trademark/list' },
+    { path: '/copyright', redirect: '/copyright/list' },
     //###重定向###
     {
       path: '/statistics',
@@ -131,7 +133,7 @@ const router = new Router({
     },{
       path: '/patent/notice',
       name: 'PatentNotice',
-      component: PatentNotice,
+      component: NoticeCommon,
     },{
       path: '/trademark/list',
       name: 'TrademarkList',
@@ -145,12 +147,40 @@ const router = new Router({
       path:'/trademark/statistics',
       name: 'TrademarkStatistics',
       component: TrademarkStatistics
-    }, 
+    },
+    {
+      path: '/copyright/add',
+      name: 'CopyrightAdd',
+      meta: { pageType: 'add' },
+      component: CopyrightAdd
+    },
     {
       path: '/copyright/list',
       name: 'CopyrightList',
       component: CopyrightList
-    }, 
+    },
+    {
+      path: '/copyright/list/detail/:id',
+      redirect: '/copyright/list/detail__/:id',
+    },
+    {
+      path: '/copyright/list/detail__/:id',
+      component: CommonDetail,
+      children: [
+        { path: '', redirect: 'base',  },
+        { path: 'base', component: CopyrightAdd, meta: { pageType: 'edit' } },
+        { path: 'control', component: Control },
+        { path: 'notice', component: Notice },
+        { path: 'fee', component: Fee },
+        { path: 'email', component: Email },
+        { path: 'documents', component: Documents },
+      ]
+    },
+    {
+      path: '/copyright/notice',
+      name: 'CopyrightNotice',
+      component: NoticeCommon,
+    },
     {
       path: '/userList',
       name: 'UserList',

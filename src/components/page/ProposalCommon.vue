@@ -271,6 +271,16 @@ export default {
               }
             }
 
+            if( !msg ) {
+              if(b.length > 1) {
+                const arr = b.map(_=>_.id);
+                const set = new Set(arr);
+                if(arr.length != set.size) {
+                  msg = '请不要选择重复的发明人';
+                }
+              }
+            }
+
             if(msg) {
               c(msg);              
             }else {

@@ -35,16 +35,19 @@
         <el-input v-model="form.description" type="textarea"></el-input>
       </el-form-item>
       <el-form-item style="margin-bottom: 0px; margin-top: 10px;">
-        <el-button v-if="popType == 'add'">添加</el-button>
-        <el-button v-if="popType == 'edit'">编辑</el-button>
+        <el-button v-if="popType == 'add'" @click="add">添加</el-button>
+        <el-button v-if="popType == 'edit'" @click="edit">编辑</el-button>
       </el-form-item>
     </el-form>
   </el-dialog>
   </div>
 </template>
 <script>
+import AxiosMinxins from '@/mixins/axios-mixins'
+
 export default {
   name: 'popTree',
+  mixins: [ AxiosMinxins ],
   props: {
   	'title': {
   		type: String,
@@ -73,10 +76,15 @@ export default {
     'action': {
       type: Boolean,
       default: false,
+    },
+    'url': {
+      type: String,
+      default: '',
     }
   },
   data () {
 		return {
+      id: '',
 		  dialogVisible: false,
       dialogPopVisible: false,
       filterText: '',
@@ -136,9 +144,10 @@ export default {
       if (!value) return true;
       return data.name.indexOf(value) !== -1;
     },
-    appendPop () {
+    appendPop (store,data) {
       this.popType = "add";
       this.dialogPopVisible = true;
+      this.id = data.id;
       this.$nextTick(_=>{
         this.$refs.form.resetFields();
       })
@@ -146,14 +155,44 @@ export default {
     editPop (store, data) {
       this.popType = "edit";
       this.dialogPopVisible = true;
-      this.$nextTick(_=>{
-        this.form.name = data.name;
-        this.form.description = data.description; 
-      })
+      
+      this.id = data.id;
+      this.form.name = data.name;
+      this.form.description = data.description; 
     },
-    remove () {
-      this.$confirm('删除后不可恢复, 确认删除？')
-        .then(_=>{})
+    add () {
+      const url = this.url;
+      const data = Object.assign({}, this.form, {parent: this.id});
+      const success = _=>{ 
+        this.dialogPopVisible = false;
+        this.$message({message: '新增成功', type: 'success'});
+        this.$emit('refresh', 'add');
+      };
+
+      this.axiosPost({url, data, success});
+    },
+    edit () {
+      const url = `${this.url}/${this.id}`;
+      const data = this.form;
+      const success = _=>{ 
+        this.dialogPopVisible = false;
+        this.$message({message: '编辑成功', type: 'success'});
+        this.$emit('refresh', 'edit'); 
+      };
+
+      this.axiosPut({url, data, success});
+    },
+    remove (store, data) {
+      this.$confirm(`删除后不可恢复, 确认删除${data.name}？`)
+        .then(_=>{
+          const url = `${this.url}/${data.id}`;
+          const success = _=>{ 
+            this.$message({message: '删除成功', type: 'success'});
+            this.$emit('refresh', 'remove');
+          };
+
+          this.axiosDelete({url, success});
+        })
         .catch(_=>{});
     },
     renderContent(h, { node, data, store }) {
@@ -162,15 +201,13 @@ export default {
             <span>
               <span>{node.label}</span>
             </span>
-            {   
-              data.is_disabled ?
+               
                 <span style="float: right; margin-right: 20px" >
-                  <el-button size="mini" on-click={ (e) => {e.stopPropagation(); this.appendPop(store, data)} }>新增</el-button>
-                  <el-button size="mini" on-click={ (e) => {e.stopPropagation(); this.editPop(store, data)} }>编辑</el-button>
-                  <el-button size="mini" on-click={ (e) => {e.stopPropagation(); this.remove(store, data)} }>删除</el-button>
-                </span>
-              : ''   
-            } </span>
+                  { data.is_children ? <el-button size="mini" on-click={ (e) => {e.stopPropagation(); this.appendPop(store, data)} }>新增</el-button> : '' }
+                  { data.is_editable ? <el-button size="mini" on-click={ (e) => {e.stopPropagation(); this.editPop(store, data)} }>编辑</el-button> : '' }
+                  { data.is_removable ? <el-button size="mini" on-click={ (e) => {e.stopPropagation(); this.remove(store, data)} }>删除</el-button> : '' }
+                </span>   
+            </span>
             );
     },
   },

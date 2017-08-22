@@ -1,24 +1,30 @@
 <template>
   <div class="main">
+  	<strainer @refresh="refresh" v-model="filter"></strainer>
   	<table-component :tableOption="tableOption" :data="tableData"></table-component>
   </div>
 </template>
 
 <script>
 import TableComponent from '@/components/common/TableComponent'
+import Strainer from '@/components/page_extension/NoticeCommon_strainer'
+
 export default {
-  name: 'patentNotice',
+  name: 'noticeCommon',
   data () {
   	return {
 			tableOption: {
 				'header_btn': [
-					{ type: 'custom', label: '筛选', icon: '', click: ()=>{alert("筛选")} },
-					{ type: 'custom', label: '统计', icon: '', click: ()=>{alert("统计")} },
+					// { type: 'custom', label: '筛选', icon: '', click: ()=>{alert("筛选")} },
+					// { type: 'custom', label: '统计', icon: '', click: ()=>{alert("统计")} },
+					{ type: 'export' },
+					{ type: 'delete' },
 					{ type: 'control', label: '字段' },
 					{ type: 'custom', label: '上传', icon: '', click: ()=>{alert("上传")} },
-					{ type: 'custom', label: '批量上传', icon: '', click: ()=>{alert("批量上传")}},
+					// { type: 'custom', label: '批量上传', icon: '', click: ()=>{alert("批量上传")}},
 				],
 				'columns': [
+					{ type: 'selection' },
 					{ type: 'text', label: '内部案号', prop: 'test' },
 					{ type: 'text', label: '通知书编号', show: false },
 					{ type: 'text', label: '通知书代码', show: false },
@@ -63,9 +69,13 @@ export default {
 				{test: 'test', id: 6},
 				{test: 'test', id: 7},
 			],
+			filter: {},
 	  }
 	},
-	components: { TableComponent },	
+	methods: {
+		refresh () {}
+	},
+	components: { TableComponent, Strainer },	
 }
 </script>
 

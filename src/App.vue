@@ -131,10 +131,10 @@ export default {
       this.$store.dispatch('refreshGroup');
     };
     const error = _=>{
-      // window.location.href = '/login';
+      window.location.href = '/login';
     };
     const catchFunc = _=>{
-      // window.location.href = '/login';
+      window.location.href = '/login';
     }
     const success2 = _=>{
       this.axiosGet({url, success, error, catchFunc});
@@ -303,6 +303,7 @@ nav {
   }
   textarea {
     height: 80px;
+    font-family: "Helvetica Neue",Helvetica,Arial,sans-serif;
   }
 }
 </style>

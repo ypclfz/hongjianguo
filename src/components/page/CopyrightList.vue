@@ -7,39 +7,23 @@
 
 <script>
 import AxiosMixins from '@/mixins/axios-mixins'
-import AppFilter from '@/components/common/AppFilter'
 import TableComponent from '@/components/common/TableComponent'
-import AppTree from '@/components/common/AppTree'
-import AppDatePicker from '@/components/common/AppDatePicker'
-import Strainer from '@/components/page_extension/PatentList_strainer'
-
-const URL = '/api/patents';
+import Strainer from '@/components/page_extension/CopyrightList_strainer'
+const URL = '/api/copyrights';
 
 export default {
   name: 'copyrightList',
   mixins: [ AxiosMixins ],
-  computed: {
-    leftHeight () {
-      return document.querySelector(".row").clientHeight;
-    }
-  },
   data () {
     return {
       tableOption: {
+        'name': 'copyrightList',
+        'url': URL,
         'header_btn': [
-          { type: 'add' },
-          {
-            type: 'dropdown',
-            label: '数据',
-            icon: '',
-            items: [
-              {text: '导出', click: ()=>{ alert("导出")} },
-              {text: '删除', click: ()=>{ alert("删除")},  divided: true},
-              {text: '放弃申请', click: ()=>{ alert("放弃申请")} },
-              {text: '放弃维持', click: ()=>{ alert("放弃维持")} }
-            ]
-          }, 
-          { type: 'control', label: '字段' }
+          { type: 'add', click: this.add },
+          { type: 'delete' },
+          { type: 'export' },
+          { type: 'control', label: '字段' },
         ],
         'columns': [
           { type: 'selection' },
@@ -55,41 +39,14 @@ export default {
           { type: 'text', label: '代理机构名称', prop: 'agency' },
           { type: 'text', label: '代理机构案号', prop: 'agency_serial' },
           { type: 'text', label: '备注', prop: 'remark' },
-          { type: 'array', label: '申请人' },
-          { 
-            type: 'array', 
-            label: '产品名称', 
-            prop: 'products', 
-            sortable: true, 
-            render: arr=>{
-              return arr.map(d=>d.name);
-            }, 
-          },
-          { 
-            type: 'text', 
-            label: '专利人', 
-            prop: 'proposer', 
-            render: (h, item)=>h('span', item.name),
-          },
-          {
-            type: 'array',
-            label: '发明人',
-            prop: 'inventors',
-            render: arr=>{
-              return arr.map(d=>`${d.name}: ${d.share}%`);
-            },
-          },
-          {
-            type: 'array',
-            label: '标签',
-            prop: 'tags',
-          },
+          { type: 'array', label: '申请人', prop: 'applicants', render: _=>_.map(_=>_.name) },
+          { type: 'array', label: '标签', prop: 'tags' },
+          { type: 'array', label: '产品名称', prop: 'products', sortable: true, render: _=>_.map(_=>_.name) },
           {
             type: 'action',
-            width: '130px',
             btns: [
               { type: 'detail', click: this.detail },
-              { type: 'delete', click: this.deletePatent },
+              { type: 'delete', click: this.deleteSingle },
             ], 
           },
         ] 
@@ -100,7 +57,7 @@ export default {
   },
   methods: {
     add () {
-      this.$router.push('/patent/add');
+      this.$router.push('/copyright/add');
     },
     refreshTableData (option) {
       const url = URL;
@@ -111,7 +68,7 @@ export default {
     refresh () {
       this.$refs.table.refresh();
     },
-    deletePatent ({ title, id }) {
+    deleteSingle ({ title, id }) {
       this.$confirm(`删除后不可恢复，确认删除‘${title}’吗？`)
         .then(()=>{
           const url=`${URL}/${id}`;
@@ -128,7 +85,7 @@ export default {
   mounted () {
     this.$refs.table.refresh();
   },
-  components: {  AppFilter, TableComponent, AppTree, AppDatePicker, Strainer }
+  components: { TableComponent, Strainer }
 }
 </script>
 <style>

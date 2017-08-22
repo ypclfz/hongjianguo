@@ -7,6 +7,8 @@
 	    :props="props"
 	    :value="value"
 	    :multiple="multiple"
+	    url="/api/products"
+	    @refresh="refresh"
       action
 	    @update:value="handleValue" 
 	    ref="tree"
@@ -23,6 +25,7 @@ export default {
   mixins: [ FormTree ],
   DATA_KEY: 'productData',
   MAP_KEY: 'productMap',
+  REFRESH_KEY: 'refreshProduct',
   components: { PopTree },
 }
 </script>

@@ -8,12 +8,12 @@
         </template>
 
         <template v-else-if="btn.type == 'control'">
-          <el-dropdown trigger="click" :hide-on-click="false" menu-align="start">
+          <el-dropdown trigger="click" :hide-on-click="false" menu-align="start" >
             <el-button class="table-header-btn" type="primary" :icon="btn.icon ? btn.icon : 'menu'">
               {{ btn.label ? btn.label : '字段'}}<i class="el-icon-caret-bottom el-icon--right"></i>
             </el-button>
-            <el-dropdown-menu slot="dropdown">
-              <el-dropdown-item v-for="(col, index) in tableControl" :key="index" v-if="col.type != 'selection' && col.type != 'action' && col.type != 'expand'">
+            <el-dropdown-menu slot="dropdown" style="max-height: 500px; overflow-y: auto; overflow-x:  hidden;">
+              <el-dropdown-item style="padding: 0 20px; line-height: 25px;" v-for="(col, index) in tableControl" :key="index" v-if="col.type != 'selection' && col.type != 'action' && col.type != 'expand'">
                 <el-checkbox :label="col.label" v-model="col.show" @change=handleControlChange></el-checkbox>
               </el-dropdown-item>
             </el-dropdown-menu>
@@ -133,7 +133,7 @@
       </template>
 
       <template v-else-if="col.type == 'action'">
-        <el-table-column :label="col.label ? col.label : '操作'" :align="col.align ? col.align : 'center'" :width="col.width" header-align='center' >
+        <el-table-column :label="col.label ? col.label : '操作'" :align="col.align ? col.align : 'center'" :min-width="col.width" header-align='center'>
           <template scope="scope">
             <template v-if="col.btns_render != undefined">
               <slot :name="col.btns_render" :row="scope.row">
@@ -207,7 +207,7 @@ const methods = Object.assign({}, tableConst.methods, {
     }else {
       const s = this.tableSelect;
       if(s.length == 0) {
-        this.$message({message: '请选择需要删除的提案', type: 'warning'});
+        this.$message({message: '请选择需要删除的列表项', type: 'warning'});
       }else {
         this.$confirm('删除后不可恢复，确认删除？')
           .then(_=>{

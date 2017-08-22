@@ -58,17 +58,18 @@ export default {
 
           { type: 'selection' },
           // { type: 'text', label: '专利状态', prop: 'status', render: (h,item)=>h('span', item ? '正常' : '暂停处理') },
-          { type: 'text', label: '专利标题', prop: 'title', sortable: true },
-          { type: 'text', label: '专利摘要', prop: 'abstract'},
-          { type: 'text', label: '备注' },
-          { type: 'text', label: '创建时间', prop: 'create_time', sortable: true },
-          { type: 'text', label: '更新时间', prop: 'update_time', sortable: true },
-          { type: 'text', label: '删除时间', prop: 'delete_time', sortable: true },
-          { type: 'text', label: '技术分类', prop: 'classification', sortable: true, render: (h,item)=>h('span', item.name) },
-          { type: 'text', label: '部门名称', prop: 'branch', sortable: true, render:  (h,item)=>h('span', item.name) },
+          { type: 'text', label: '专利标题', prop: 'title', sortable: true, width: '142' },
+          { type: 'text', label: '专利摘要', prop: 'abstract', width: '263'},
+          { type: 'text', label: '备注', width: '175' },
+          { type: 'text', label: '创建时间', prop: 'create_time', sortable: true, width: '175' },
+          { type: 'text', label: '更新时间', prop: 'update_time', sortable: true, width: '175' },
+          { type: 'text', label: '删除时间', prop: 'delete_time', sortable: true, width: '175' },
+          { type: 'text', label: '技术分类', prop: 'classification', sortable: true, render: (h,item)=>h('span', item.name), width: '142' },
+          { type: 'text', label: '部门名称', prop: 'branch', sortable: true, render:  (h,item)=>h('span', item.name), width: '142' },
           { 
             type: 'array', 
-            label: '产品名称', 
+            label: '产品名称',
+            width: '212', 
             prop: 'products', 
             sortable: true, 
             render: arr=>{
@@ -77,13 +78,15 @@ export default {
           },
           { 
             type: 'text', 
-            label: '申请人', 
+            label: '申请人',
+            width: '123', 
             prop: 'proposer', 
             render: (h, item)=>h('span', item.name),
           },
           {
             type: 'array',
             label: '发明人',
+            width: '238',
             prop: 'inventors',
             render: arr=>{
               return arr.map(d=>`${d.name}: ${d.share}%`);
@@ -93,10 +96,11 @@ export default {
             type: 'array',
             label: '标签',
             prop: 'tags',
+            width: '145',
           },
           {
             type: 'action',
-            width: '130px',
+            width: '145',
             btns: [
               { type: 'detail', click: this.detail },
               { type: 'delete', click: this.deletePatent },

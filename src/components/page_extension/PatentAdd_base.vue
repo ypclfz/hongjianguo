@@ -108,7 +108,6 @@
 import AppCollapse from '@/components/common/AppCollapse'
 import Region from '@/components/form/Region'
 import Proposal from '@/components/form/Proposal'
-import Upload from '@/components/form/Upload'
 import PatentType from '@/components/form/PatentType'
 
 const extensionHash = [
@@ -224,7 +223,7 @@ export default {
 
   	},
   },
-  components: { AppCollapse, Region, Proposal, Upload, PatentType }
+  components: { AppCollapse, Region, Proposal, PatentType }
 }
 </script>
 

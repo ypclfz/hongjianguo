@@ -123,7 +123,7 @@ menu.data = [
 		children: [
 			{
 				text: '新建版权',
-				path: '/copyright/statistics',
+				path: '/copyright/add',
 				icon: 'iconfont icon-proposal-add',
 				type: 'item'
 			},

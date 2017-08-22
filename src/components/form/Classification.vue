@@ -1,15 +1,17 @@
 <template>
 	<div>
-	  <el-input placeholder="选择技术分类" readonly @focus="$refs.tree.show()" :value="classificationText" :disabled="disabled"  ></el-input>
+	  <el-input placeholder="选择技术分类" readonly @focus="$refs.tree.show()" :value="text" :disabled="disabled"  ></el-input>
 	  <pop-tree 
 	    title="选择技术分类"
-	    :data="classificationData" 
+	    :data="data" 
 	    :props="props"
 	    :value="value"
 	    :multiple="multiple"
 	    @update:value="handleValue" 
       action
 	    ref="tree"
+      url="/api/classifications"
+      @refresh="refresh"
 	  >
 	  </pop-tree>
 	</div>
@@ -17,53 +19,14 @@
 
 <script>
 import PopTree from '@/components/common/PopTree'
+import FormTree from '@/mixins/form-tree'
+
 export default {
   name: 'product',
-  props: {
-  	'value': [Number, String, Array],
-  	'multiple': {
-  		type: Boolean,
-  		default: false,
-  	},
-  	'disabled': {
-  		type: Boolean,
-  		default: false,
-  	}
-  },
-  data () {
-		return {
-		  'props': {
-		  	label: 'name',
-		  	children: 'children',
-		  },
-		}
-  },
-  computed: {
-  	classificationData () {
-  		return this.$store.getters.classificationData;
-  	},
-  	classificationMap () {
-  		return this.$store.getters.classificationMap;
-  	},
-  	classificationText () {
-  		const v = this.value;
-  		const map = this.classificationMap;
-  		let t;
-  		if(this.multiple) {
-  			t = v.length != 0 ? v.map(d=>map.get(d).name).join("；") : '';
-  		}else {
-  			t = v ? map.get(v).name : '';
-  		}
-
-  		return t;
-  	}
-  },
-  methods: {
-  	handleValue (val) {
-  		const v = this.multiple ? [...val] : val;
-  		this.$emit('input', v);
-  	}
-  },
+  mixins: [ FormTree ],
+  DATA_KEY: 'classificationData',
+  MAP_KEY: 'classificationMap',
+  REFRESH_KEY: 'refreshClassification',
   components: { PopTree },
 }
 </script>

@@ -1,23 +1,29 @@
 <template>
   <div class="main">
-	<table-component :tableOption="option" :data="tableData" ref="table" @refreshTableData="refreshTableData"></table-component>
-	<pop-panel ref="pop" @refreshFilter="refreshFilter" @refreshTableData="refreshTableData"></pop-panel>
+    <!-- <strainer v-model="filter" @refresh="refresh"></strainer> -->
+  	<table-component :tableOption="option" :data="tableData" ref="table" @refreshTableData="refreshTableData"></table-component>
+  	<pop-panel ref="pop" @add-success="refresh" @edit-success="update"></pop-panel>
   </div>
 </template>
 
 <script>
 import TableComponent from '@/components/common/TableComponent'
-import PopPanel from '@/components/page_extension/InventorList_pop' 
+// import Strainer from '@/components/page_extension/strainer'
+import PopPanel from '@/components/page_extension/InventorList_pop'
+import AxiosMixins from '@/mixins/axios-mixins'
+
+const URL = '/api/inventors'
 
 export default {
   name: 'inventorList',
+  mixins: [ AxiosMixins ],
   data () {
 		return {
 		  option: {
+        'url': URL,
 		  	'header_btn': [
-		  		{ type: 'add', click: this.addPopUp },
-          { type: 'delete', click: this.delete_s },
-		  		{ type: 'filter', click: this.filterPopUp },
+		  		{ type: 'add', click: this.addPop },
+          { type: 'delete' },
 		  		{ type: 'control' },
 		  	],
 		  	'columns': [
@@ -32,63 +38,51 @@ export default {
 		  		{ 
 		  			type: 'action',
 		  			btns: [
-		  				{ type: 'edit', click: this.editPopUp },
-		  				{ type: 'delete', click: this.delete },
+		  				{ type: 'edit', click: this.editPop },
+		  				{ type: 'delete', click: this.deleteSingle },
 		  			]
 		  		}
 		  	]
 		  },
-		  tableData: [
-        {
-  		  	id: '1',
-    			name:"name",//发明人姓名
-          identity:"identity",//证件号码
-          area:"area",//地区代码
-          mobile:"mobile",//手机
-          email:"email",//邮箱
-          public_name:"public_name",//不公开姓名   
-          name_en:"name_en",//英文姓名
-        },
-        { id: '2',name: 'name2' },
-        { id: '3',name: 'name3' },
-        { id: '4',name: 'name4' },
-        { id: '5',name: 'name5' },
-        { id: '6',name: 'name6' },
-        { id: '7',name: 'name7' },
-        { id: '8',name: 'name8' },
-        { id: '9',name: 'name9' },
-      ],
+		  tableData: [],
       filter: {},
 		}
   },
   methods: {
-  	addPopUp () {
+  	addPop () {
   		this.$refs.pop.show();
   	},
-  	filterPopUp () {
-  		this.$refs.pop.show('filter', this.filter);
-  	},
-  	editPopUp (col) {
+  	editPop (col) {
   		this.$refs.pop.show('edit', col);
   	},
-  	delete (col) {
-  		this.$alert(`删除${col.id}`);
-  	},
-    delete_s () {
-      this.$alert('批量删除');
-    },
-  	refreshTableData (flag) {
-  		if(flag) {
-        this.$refs.table.reset();
-      }
+  	deleteSingle ({id, name}) {
+  		this.$confirm(`删除后不可恢复，确认删除发明人‘${name}’？`)
+        .then(_=>{
+          const url = `${URL}/${id}`;
+          const success = _=>{
+            this.$message({message: '删除发明人成功', type: 'success'});
+            this.update();
+          };
 
-      console.log(Object.assign({}, this.$refs.table.requesOption, this.filter));
+          this.axiosDelete({url, success});
+        })
+        .catch(_=>{});
   	},
-    refreshFilter (filter) {
-      this.filter = filter;
+  	refreshTableData (option) {
+      const url = URL;
+      const data = Object.assign({}, option);
+      const success = _=>{ this.tableData = _.data };
+
+      this.axiosGet({url, data, success});
+  	},
+    refresh () {
+      this.$refs.table.refresh();
+    },
+    update () {
+      this.$refs.table.update();
     }
   },
-  components: { TableComponent, PopPanel }
+  components: { TableComponent, Strainer, PopPanel }
 }
 </script>
 

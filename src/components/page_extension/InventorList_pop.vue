@@ -31,12 +31,8 @@
 			</el-form-item>
 
 			<el-form-item>
-				<el-button type="primary" @click="submit" v-if="type === 'add'">添加</el-button>
-				<el-button type="primary" @click="submit" v-else-if="type === 'edit'">编辑</el-button>
-				<template v-else-if="type == 'filter'">
-					<el-button @click="filter">筛选</el-button>
-					<el-button @click="clear">清空</el-button>
-				</template>
+				<el-button type="primary" @click="add" v-if="type === 'add'">添加</el-button>
+				<el-button type="primary" @click="edit" v-if="type === 'edit'">编辑</el-button>
 			</el-form-item>
 
   	</el-form>
@@ -103,17 +99,12 @@ export default {
   			}
   		});
   	},
-  	filter () {
-  		const copy = this.$tool.deepCopy(this.form);
-  		this.$emit('refreshFilter', copy);
-      this.dialogVisible = false;
-      this.$emit('refreshTableData', true);
-  	},
-  	clear () {
-  		this.$emit('refreshFilter', {});
-      this.dialogVisible = false;
-      this.$emit('refreshTableData', true);
-  	}
+    add () {
+
+    },
+    edit () {
+
+    },
   }
 }
 </script>

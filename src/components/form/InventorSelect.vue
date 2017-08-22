@@ -10,6 +10,7 @@
     :loading="loading"
     multiple="multiple"
     :multiple-limit="multiple ? 0 : 1"
+    ref="select"
 	>
 		<el-option
 			v-for="item in options"
@@ -23,52 +24,18 @@
 
 <script>
 import AxiosMixins from '@/mixins/axios-mixins'
+import RemoteSelect from '@/mixins/remote-select'
 
 export default {
   name: 'inventorSelect',
-  mixins: [ AxiosMixins ],
+  mixins: [ AxiosMixins,RemoteSelect ],
   props: {
-  	'value': [Number, String, Array],
-  	'defaultOptions': {
-  		type: Array,
-  	},
   	'disabled': {
   		type: Boolean,
   		default: false,
   	},
-  	'default': {
-  		type: Boolean,
-  		default: false,
-  	},
-  	'multiple': {
-  		type: Boolean,
-  		default: false,
-  	}
-  },
-  data () {
-		return {
-			query: '',
-			options: [],
-		  	loading: false,
-		}
-  },
-  computed: {
-    value2 () {
-      if(!this.multiple) {
-        return this.value == "" ? [] : [ this.value ];
-      }else {
-        return this.value;
-      }
-    }
   },
   methods: {
-  	handleInput (val) {
-      if(!this.multiple) {
-        this.$emit('input', val[0] ? val[0] : '');  
-      }else {
-        this.$emit('input', val);
-      }
-  	},
   	remoteMethod (keyword) {
   		const url = '/api/inventors';
   		const data = { keyword, listOnly: '1' };
@@ -83,9 +50,6 @@ export default {
   		this.loading = true;
   		this.axiosGet({url, data, success});
   	}
-  },
-  created () {
-  	this.remoteMethod('');
   },
 }
 </script>
