@@ -2,16 +2,16 @@
   <app-collapse col-title="委案信息">
       <el-form label-width="120px">
 				<el-form-item label="代理机构名称">
-					{{ agency }}
+					{{ agent }}
 				</el-form-item>
 				<el-form-item label="代理机构案号">
-					{{ agency_serial }}
+					{{ agent_serial }}
 				</el-form-item>
 				<el-form-item label="代理类型">
 					{{ agency_type }}
 				</el-form-item>
 				<el-form-item label="代理人信息">
-					{{ agent }}
+					{{ agency }}
 				</el-form-item>
       </el-form>
     </app-collapse>
@@ -21,7 +21,7 @@
 import AppCollapse from '@/components/common/AppCollapse'
 
 export default {
-  name: 'patentAddClassification',
+  name: 'patentAddAgent',
   data () {
 		return {
 			form: {
@@ -34,7 +34,7 @@ export default {
   },
   methods: {
   	setForm (data) {
-      
+      this.$tool.coverObj(this.form, data); 
   	}
   },
   computed: {
@@ -47,10 +47,9 @@ export default {
   	agency_type () {
   		return this.form.agency_type ? this.form.agency_type : '未知代理类型';
   	},
-  	agent () {
-  		return this.form.agent ? this.form.agent : '暂无代理人信息';
+  	agency () {
+  		return this.form.agency ? this.form.agency : '暂无代理人信息';
   	}
-
   },
   components: {  AppCollapse }
 }

@@ -129,5 +129,18 @@ export default {
     	}
 
     	window.location.href = `${window.location.origin}/${string}`;
+	},
+	detectionTime (time) {
+		const now_time = new Date().getTime();
+		const in_time = new Date(time.split(' ')[0]).getTime() + 8.64e7;
+		const n = in_time - now_time;
+
+		return (n > 8.64e7 && n < 3*8.64e7 && 'table-warning') || (n < 8.64e7 && 'table-error') || '';
+	},
+	getObjLength (obj) {
+		let i = 0;
+		for(let k in obj)  i++; 
+
+		return i;
 	}
 }

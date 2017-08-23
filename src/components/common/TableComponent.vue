@@ -77,8 +77,8 @@
     </div>
     
 	<el-table 
-    :data="tableData" 
-    stripe 
+    :data="tableData"
+    stripe
     :border="tableOption.is_border != undefined ? tableOption.is_border : true" 
     @selection-change="handleselectionChange" 
     :row-key="getRowKeys" 
@@ -87,6 +87,7 @@
     :expand-row-keys="expands"
     @expand="handleExpand"
     :style="tableStyle"
+    :row-class-name="handleRowClassName"
   >
     <template v-for="(col, index) in tableOption.columns">
       
@@ -133,7 +134,7 @@
       </template>
 
       <template v-else-if="col.type == 'action'">
-        <el-table-column :label="col.label ? col.label : '操作'" :align="col.align ? col.align : 'center'" :min-width="col.width" header-align='center'>
+        <el-table-column :label="col.label ? col.label : '操作'" :align="col.align ? col.align : 'left'" :min-width="col.width" header-align='center'>
           <template scope="scope">
             <template v-if="col.btns_render != undefined">
               <slot :name="col.btns_render" :row="scope.row">
@@ -187,6 +188,7 @@
 <script>
 import tableConst from '@/const/tableConst'
 import AppDatePicker from '@/components/common/AppDatePicker'
+import AxiosMixins from '@/mixins/axios-mixins'
 const methods = Object.assign({}, tableConst.methods, {
   handelExport(func, e) {
     if(func) {
@@ -312,11 +314,21 @@ const methods = Object.assign({}, tableConst.methods, {
     const name = this.tableOption.name;
     const value = JSON.stringify(this. tableControl);
     this.$tool.setCookie(name, value);
+  },
+  handleRowClassName (row, index) {
+
+    const func = this.tableOption.row_class;
+    if(func) {
+      return func(row, index);
+    }else {
+      return '';
+    }
   }
 });
 export default {
   name: 'tableComponent',
   methods,
+  mixins: [ AxiosMixins ],
   props: ['tableOption', 'data', 'tableStyle'],
   computed: {
     tableData () {
@@ -349,7 +361,7 @@ export default {
       return this.$store.getters.pagesize;
     },
     url () {
-      return tableOption.url ? tableOption.url : '';
+      return this.tableOption.url ? this.tableOption.url : '';
     }
   },
   watch: {

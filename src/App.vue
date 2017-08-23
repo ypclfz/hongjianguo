@@ -269,6 +269,12 @@ nav {
 .table-header-btn .el-icon-menu::before {
   font-size: 12px;
 }
+.el-table .table-error {
+  color: #FF4949;
+}
+.el-table .table-warning {
+ color: #F7BA2A;
+}
 /*这里放入重写element-ui样式的内容*/
 #app {
   .dialog-mini .el-dialog {

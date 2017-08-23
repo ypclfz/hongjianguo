@@ -14,6 +14,7 @@ import AppDatePicker from '@/components/common/AppDatePicker'
 import Strainer from '@/components/page_extension/PatentList_strainer'
 
 const URL = '/api/patents';
+const PATENT_TYPE = ['发明专利', '实用新型', '外观设计']; 
 
 export default {
   name: 'patentList',
@@ -25,57 +26,49 @@ export default {
   },
   data () {
     return {
-      filterData: [
-        {
-          label: '标签',
-          key: 'tag',
-          items: ['标签一', '标签二', '标签三'],
-          multipled: true
-        }
-      ],
       tableOption: {
         'name': 'patentList',
         'url': URL,
         'header_btn': [
-          {
-            type: 'custom', 
-            label: '新增', 
-            icon: 'plus', 
-            click: this.add,
-          },
-          {
-            type: 'delete',
-          }, 
-          {
-            type: 'control',
-            label: '字段'
-          },
-          {
-            type: 'export',
-          }
+          { type: 'add', click: this.add },
+          { type: 'delete' }, 
+          { type: 'control', label: '字段' },
+          { type: 'export' },
         ],
         'columns': [
 
           { type: 'selection' },
           // { type: 'text', label: '专利状态', prop: 'status', render: (h,item)=>h('span', item ? '正常' : '暂停处理') },
+          { type: 'text', label: '案号', prop: 'serial', width: '142' },
+          { type: 'text', label: '专利类型', prop: 'type', width: '142',
+            render: (h,item)=>{
+              const tex = PATENT_TYPE[item-1]; 
+              return h('span', tex ? tex : '');
+            } 
+          },
+          { type: 'text', label: '地区', prop: 'area', width: '142' },
           { type: 'text', label: '专利标题', prop: 'title', sortable: true, width: '142' },
           { type: 'text', label: '专利摘要', prop: 'abstract', width: '263'},
+          { type: 'text', label: '申请日', prop: 'apd', width: '263'},
+          { type: 'text', label: '申请号', prop: 'apn', width: '263'},
+          { type: 'text', label: '公开日', prop: 'public_date', width: '263'},
+          { type: 'text', label: '公开号', prop: 'public_number', width: '263'},
+          { type: 'text', label: '初审合格日', prop: 'pre_exam_ok_date', width: '263'},
+          { type: 'text', label: '进入实审日', prop: 'sub_exam_start_date', width: '263'},
+          { type: 'text', label: '公告日', prop: 'issue_date', width: '263'},
+          { type: 'text', label: '公告号', prop: 'issue_number', width: '263'},
           { type: 'text', label: '备注', width: '175' },
-          { type: 'text', label: '创建时间', prop: 'create_time', sortable: true, width: '175' },
-          { type: 'text', label: '更新时间', prop: 'update_time', sortable: true, width: '175' },
-          { type: 'text', label: '删除时间', prop: 'delete_time', sortable: true, width: '175' },
-          { type: 'text', label: '技术分类', prop: 'classification', sortable: true, render: (h,item)=>h('span', item.name), width: '142' },
-          { type: 'text', label: '部门名称', prop: 'branch', sortable: true, render:  (h,item)=>h('span', item.name), width: '142' },
-          { 
-            type: 'array', 
-            label: '产品名称',
-            width: '212', 
-            prop: 'products', 
-            sortable: true, 
-            render: arr=>{
-              return arr.map(d=>d.name);
-            }, 
-          },
+          { type: 'text', label: 'IPR', prop: 'ipr', render: (h,item)=>h('span',item.name),sortable: true, width: '175' },
+          { type: 'text', label: '主国际分类号', prop: 'main_ipc', width: '263'},
+          { type: 'text', label: '国际申请日', prop: 'pct_apd', width: '263'},
+          { type: 'text', label: '国际申请号', prop: 'pct_no', width: '263'},
+          { type: 'text', label: '国际优先权日', prop: 'pct_priority_date', width: '263'},
+          { type: 'text', label: '国际公开日', prop: 'pct_public_date', width: '263'},
+          { type: 'text', label: '国际公开语言', prop: 'pct_public_language', width: '263'},
+          { type: 'text', label: '国际公开号', prop: 'pct_public_no', width: '263'},
+          { type: 'text', label: '复审委内编号', prop: 'board_number', width: '263'},
+          { type: 'text', label: '说明书字数', prop: 'words', width: '263'},
+          { type: 'text', label: '备注', prop: 'remark', width: '263'},
           { 
             type: 'text', 
             label: '申请人',
@@ -97,6 +90,38 @@ export default {
             label: '标签',
             prop: 'tags',
             width: '145',
+          },
+          { type: 'text', label: '部门名称', prop: 'branch', sortable: true, render:  (h,item)=>h('span', item.name), width: '142' },
+          { type: 'text', label: '技术分类', prop: 'classification', sorable: true, render: (h,item)=>('span', item.name), width: '142' },
+          { 
+            type: 'array',
+            label: '优先权',
+            prop: 'priorities',
+            width: '145',
+            render: _=>_.map(_=>_.number),
+          },
+          { 
+            type: 'array', 
+            label: '产品名称',
+            width: '212', 
+            prop: 'products', 
+            sortable: true, 
+            render: _=>_.map(_=>_.name),
+          },
+          {
+            type: 'text',
+            label: '申请人',
+            prop: 'proposer',
+            width: '145',
+            render: (h,item)=>h('span', item.name),
+          },
+          {
+            type: 'array',
+            label: '相关案件',
+            prop: 'relative_projects',
+            width: '145',
+            render: _=>_.map(_=>_.title),
+
           },
           {
             type: 'action',

@@ -44,9 +44,9 @@ const actions = {
           }
 	      })
 	      .catch(err=>{
-          if(func) func();
-          console.log(err);
-          alert('网络错误');
+	          if(func) func();
+	          console.log(err);
+	          alert('网络错误');
 	      })
 		}
 	}

@@ -1,13 +1,13 @@
 <template>
   <div class="main">
-  	<strainer v-model="filter" @refresh="refresh"></strainer>
 		<table-component :tableOption="option" :data="tableData" ref="table" @refreshTableData="refreshTableData"></table-component>
-		<pop :popType="popType" @refresh="refresh" ref="pop"></pop>
+		<pop  @refresh="refresh" ref="pop"></pop>
   </div>
 </template>
 
 <script>
-import Strainer from '@/components/page_extension/ApplicantList_strainer'
+
+import AxiosMixins from '@/mixins/axios-mixins'
 import TableComponent from '@/components/common/TableComponent'
 import Pop from '@/components/page_extension/ApplicantList_pop'
 
@@ -15,11 +15,13 @@ const URL = '/api/applicants';
 
 export default {
   name: 'applicantList',
+  mixins: [ AxiosMixins ],
   data () {
 		return {
 		  option: {
 		  	'header_btn': [
 		  		{ type: 'add', click: this.addPopUp },
+          { type: 'delete' },
 		  		{ type: 'control' },
 		  	],
 		  	'columns': [
@@ -51,12 +53,10 @@ export default {
   },
   methods: {
   	addPopUp () {
-  		this.popType = 'add';
-  		this.$refs.pop.show();
+  		this.$refs.pop.show('add');
   	},
   	editPopUp (row) {
-  		this.popType = 'edit';
-  		this.$refs.pop.show(row);
+  		this.$refs.pop.show('edit',row);
   	},
   	applicantDelete ({id, name} ) {
   		this.$confirm(`删除后不可恢复，确认删除‘${name}’？`, {type: 'warning'})
@@ -72,7 +72,7 @@ export default {
   	},
   	refreshTableData (option) {
   		const url = URL;
-  		const data = Object.assign({}, option, this.filter);
+  		const data = Object.assign({}, option);
   		const success = _=>{ this.tableData = _.applicants };
 
   		this.axiosGet({url, data, success});
@@ -83,6 +83,9 @@ export default {
     update () {
     	this.$refs.table.update();
     }
+  },
+  mounted () {
+    this.refresh();
   },
   components: { TableComponent, Pop }
 }

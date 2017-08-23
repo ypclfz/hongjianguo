@@ -1,6 +1,6 @@
 <template>
-  <el-dialog :title="title" :visible.sync="dialogVisible" @open="open" @close="close">
-  	<el-form label-width="100px" ref="form" :model="form" :rules="type == 'add' || type == 'edit' ? rules : {}">
+  <el-dialog :title="title" :visible.sync="dialogVisible" >
+  	<el-form label-width="100px" ref="form" :model="form" :rules="rules">
   		
   		<el-form-item label="发明人姓名" prop="name">
   			<el-input v-model='form.name' placeholder='请输入发明人姓名'></el-input>
@@ -10,8 +10,8 @@
 				<el-input v-model="form.identity" placeholder="请输入证件号码"></el-input>
 			</el-form-item>
 
-			<el-form-item label="地区" prop="area">
-				<el-input v-model="form.area" placeholder="请输入地区"></el-input>
+			<el-form-item label="地区" prop="citizenship">
+				<region v-model="form.citizenship"></region>
 			</el-form-item>
 
 			<el-form-item label="手机" prop="mobile">
@@ -22,17 +22,20 @@
 				<el-input v-model="form.email" placeholder="请输入邮箱"></el-input>
 			</el-form-item>
 
-			<el-form-item label="不公开姓名" prop="public_name">
-				<el-input v-model="form.public_name" placeholder="请输入不公开姓名"></el-input>
+			<el-form-item label="不公开姓名" prop="not_disclose_name">
+				<el-checkbox v-model="form.not_disclose_name" :true-label="1" :false-label="0">不公开姓名</el-checkbox>
 			</el-form-item>
 
-			<el-form-item label="英文姓名" prop="name_en">
-				<el-input v-model="form.name_en" placeholder="请输入英文姓名"></el-input>
+			<el-form-item label="英文名" prop="given_name">
+        <el-input v-model="form.given_name" placeholder="请输入英文名"></el-input>
+      </el-form-item>
+      <el-form-item label="英文姓" prop="family_name">
+				<el-input v-model="form.family_name" placeholder="请输入英文姓"></el-input>
 			</el-form-item>
 
 			<el-form-item>
-				<el-button type="primary" @click="add" v-if="type === 'add'">添加</el-button>
-				<el-button type="primary" @click="edit" v-if="type === 'edit'">编辑</el-button>
+				<el-button type="primary" @click="add" v-if="type === 'add'" :disabled="btn_disabled">添加</el-button>
+				<el-button type="primary" @click="edit" v-if="type === 'edit'" :disabled="btn_disabled">编辑</el-button>
 			</el-form-item>
 
   	</el-form>
@@ -40,72 +43,32 @@
 </template>
 
 <script>
+import AxiosMixins from '@/mixins/axios-mixins'
+import PopMixins from '@/mixins/pop-mixins'
+import Region from '@/components/form/Region'
 export default {
   name: 'inventorListPop',
+  mixins: [ AxiosMixins, PopMixins ],
   data () {
 		return {
-			type: '',
-			id: 0,
-		  form: {
-		  	name: '',
-		  	identity: '',
-		  	area: '',
-		  	mobile: '',
-		  	email: '',
-		  	public_name: '',
-		  	name_en: '',
-		  },
-		  rules: {
-		  	name: { required: true, message: '发明人姓名不能为空', trigger: 'blur' }
-		  },
-		  dialogVisible: false,
+      form: {
+        name: '',
+        identity: '',
+        citizenship: '',
+        mobile: '',
+        email: '',
+        not_disclose_name: 0,
+        given_name: '',
+        family_name: '',
+      },
+      rules: {
+        name: { required: true, message: '发明人姓名不能为空', trigger: 'blur' }
+      }
 		}
   },
-  computed: {
-  	title () {
-  		const t = this.type;
-  		return t == 'add'
-  							? '新增发明人' 
-  							: t == 'edit'
-  								? '编辑发明人'
-  								: '设置筛选条件';
-  	}
-  },
-  methods: {
-  	show ( type='add', data ) {
-  		this.type = type;
-      this.dialogVisible = true;
-     
-      this.$tool.clearObj(this.form);
-      this.id = type == 'edit' ? data.id : '0';
-  		
-      if( type == 'edit' || type == 'filter' ) {
-        const copy = this.$tool.deepCopy(data);
-  			this.$tool.coverObj(this.form, copy);
-  	  }
-  	},
-    open () {
-
-    },
-  	close () {
-  		this.$refs.form.resetFields();
-  	},
-  	submit () {
-  		this.$refs.form.validate((valid)=>{
-  			if(valid) {
-  				const id = this.id;
-  				console.log(Object.assign({}, this.form, { id }));
-  				this.$emit('refreshTableData');
-  			}
-  		});
-  	},
-    add () {
-
-    },
-    edit () {
-
-    },
-  }
+  components: { Region },
+  URL: '/api/inventors',
+  REMINDER_TEXT: '发明人',
 }
 </script>
 

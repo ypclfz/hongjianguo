@@ -46,8 +46,8 @@ export default {
   methods: {
   	setForm (data) {
       for(let k in this.form) {
-        if(k == 'ipr_id') {
-          this.form[k] = data.ipr.id;
+        if(k == 'proposer' || k == 'branch') {
+          this.form[k] = data[k] ? data[k]['id'] : "";
         }else if(k == 'applicants') {
           this.form[k] = data[k].map(_=>_.id);
         }else {
@@ -55,6 +55,9 @@ export default {
         }
       }
   	},
+    submitForm () {
+      return this.form;
+    },
   	addInventor () {
   		this.form.inventor.push({ inventor: '', percent: '' });
   	},

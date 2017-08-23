@@ -21,6 +21,7 @@ export default {
         .then(response=>{
           const d = response.data;
           d.status ? success(d) : error(d);
+
           complete(d);
         })
         .catch(error=>{catchFunc(error); complete(error);});
@@ -32,6 +33,7 @@ export default {
         .then(response=>{
           const d = response.data;
           d.status ? success(d) : error(d);
+          
           complete(d);
         })
         .catch((d)=>{catchFunc(d); complete(d)});

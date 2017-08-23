@@ -28,11 +28,16 @@ export default {
     text () {
       const v = this.value;
       const map = this.map;
-      let t;
+      let t = '';
+      
       if(this.multiple) {
-        t = v.length != 0 ? v.map(d=>map.get(d).name).join("；") : '';
+        if(v.length != 0 && map.size != 0) {
+          t = v.map(_=>map.get(_).name).join("；");
+        }
       }else {
-        t = v ? map.get(v).name : '';
+        if(v && map.size != 0) {
+          t = map.get(v).name;
+        }
       }
 
       return t;

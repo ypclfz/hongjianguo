@@ -75,7 +75,6 @@ const URL = '/api/copyrights'
 export default {
   name: 'copyrightAdd',
   mixins: [ AxiosMixins ],
-  props: ['pageType'],
   data () {
 	return {
 	  form: {
@@ -108,6 +107,11 @@ export default {
 	  btn_disabled: false,
 	}
   },
+  computed: {
+  	pageType () {
+  		return this.$route.meta.pageType;
+  	}
+  },
   methods: {
   	add () {
   		this.btn_disabled = true;
@@ -128,9 +132,7 @@ export default {
   		this.axiosPut({url, data, success, complete})
   	}
   },
-  created () {
-
-  },
+  created () {},
   components: { Classification, Product, Tag, Ipr, Member, Branch, Applicant, Upload }
 }
 </script>

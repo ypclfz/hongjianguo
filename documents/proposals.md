@@ -56,6 +56,7 @@ reponse {
         inventors:[{id:"1",share:"10"}],//id 发明人ID，share 发明人贡献占比
         tags:["tag"],//标签
         classification:{id:"1",name:"name"},//技术分类
+		flow_node:"当前节点"
     }
 }
 
@@ -66,9 +67,6 @@ response{
     status:1, //状态，0表示请求失败，1表示请求成功
     info:"信息提示",
 }
-
-http://www.zhiq.wang/proposals?ids=[];
-
 
 
 # 5、提案列表
@@ -118,3 +116,13 @@ response {
 
 # 6、两个及以上的提案合并立案
 在前端页面上需要提供菜单/按钮，选择两个及以上提案后，选择合并立案，立案方式与单个提案递交相同，可以采用选择的任一提案保存接口返回的任务ID进行提交，提交时next值设为6（此节点，其他字段均可不提供），但提交的参数里需要增加proposals:[所有提案ID的数组];
+
+# 7、提案导出
+同任务列表接口，需要添加参数 format = excel
+response {
+	status:"1",
+	info:"",
+	file:{
+		//这是一个文件对象，请参考列表接口中的附件，可以直接windows.open(downloadUrl)
+	}
+}

@@ -64,6 +64,9 @@ reponse {
             ext:"ext",//文件格式
             size:"size",//文件大小
         }],//附件,列表中可不显示
+		siblings:[{
+			数据结构与任务详情相同
+		}]
         
         status:"状态",//0-暂停处理 1正常
 		project_id:"案件ID",//不需要显示
@@ -309,4 +312,14 @@ request {
 response {
 	status:1,
 	info:"info",
+}
+
+# 12、 任务导出
+同任务列表接口，需要添加参数 format = excel
+response {
+	status:"1",
+	info:"",
+	file:{
+		//这是一个文件对象，请参考列表接口中的附件，可以直接windows.open(downloadUrl)
+	}
 }

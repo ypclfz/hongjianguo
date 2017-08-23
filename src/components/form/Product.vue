@@ -7,9 +7,9 @@
 	    :props="props"
 	    :value="value"
 	    :multiple="multiple"
+	    action
 	    url="/api/products"
 	    @refresh="refresh"
-      action
 	    @update:value="handleValue" 
 	    ref="tree"
 	  >
@@ -20,6 +20,7 @@
 <script>
 import PopTree from '@/components/common/PopTree'
 import FormTree from '@/mixins/form-tree'
+
 export default {
   name: 'productForm',
   mixins: [ FormTree ],

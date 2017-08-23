@@ -12,7 +12,7 @@
 			  </el-select>
   		</el-col>
   		<el-col :span="16" style="padding: 0 5px">
-  			<patent :value="item.id" @input="val=>{handleInput(val, 'id', index)}"></patent>
+  			<patent :value="item.id" @input="val=>{ handleInput(val, 'id', index) }"></patent>
   		</el-col>
   		<el-col :span="2" style="padding-left: 5px">
   			<el-button type="text" size="mini" @click="dataDelete(index)">删除</el-button>

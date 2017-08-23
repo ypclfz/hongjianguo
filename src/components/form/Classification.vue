@@ -7,8 +7,8 @@
 	    :props="props"
 	    :value="value"
 	    :multiple="multiple"
-	    @update:value="handleValue" 
-      action
+	    @update:value="handleValue"
+	    action
 	    ref="tree"
       url="/api/classifications"
       @refresh="refresh"

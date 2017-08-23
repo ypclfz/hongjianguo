@@ -2,7 +2,7 @@
   <app-collapse col-title="分类信息">
       <el-form label-width="120px">
 				<el-form-item label="产品分类">
-					<product v-model="form.products"></product>
+					<product v-model="form.products" multiple></product>
 				</el-form-item>
 				<el-form-item label="技术分类">
 					<classification v-model="form.classification"></classification>
@@ -28,7 +28,7 @@ export default {
   data () {
 		return {
 			form: {
-				products: '',
+				products: [],
 				classification: '',
 				tags: [],
 				main_ipc: '',
@@ -46,7 +46,10 @@ export default {
           this.form[k] = data[k];
         }
       }
-  	}
+  	},
+    submitForm () {
+      return this.form;
+    }
   },
   components: { AppCollapse, Product, Classification, Tag }
 }

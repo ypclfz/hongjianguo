@@ -50,7 +50,7 @@ export default {
   methods: {
     add () {
       const url = URL;
-      const data = Object.assign( ...getKeys.map(_=>this.$refs[_].form) );
+      const data = Object.assign( ...getKeys.map(_=>this.$refs[_].submitForm()) );
       const success = _=>{ this.$router.push('/patent/list') };
 
       this.axiosPost({url, data, success});
@@ -58,13 +58,13 @@ export default {
     },
     edit () {
       const url = `${URL}/${this.id}`;
-      const data = Object.assign( ...getKeys.map(d=>this.$refs[d].form) );
+      const data = Object.assign( ...getKeys.map(d=>this.$refs[d].submitForm()) );
       const success = _=>{ this.$router.push('/patent/list') };
 
       this.axiosPut({url, data, success});
     },
-    refreshForm (val) {      
-      if( this.type == 'edit' && val) {
+    refreshForm (val) {
+      if( this.type == 'edit' && this.$tool.getObjLength(val) != 0) {
         const copy = this.$tool.deepCopy(val);
         this.id = copy.id;
         setKeys.map(_=>this.$refs[_].setForm(copy));

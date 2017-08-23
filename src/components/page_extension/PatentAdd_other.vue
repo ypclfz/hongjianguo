@@ -41,12 +41,15 @@ export default {
         const d = data[k];
         if(k == 'attachments') {
           this.form[k] = d.map(_=>_.id);
-          attachments = d;
+          this.attachments = d;
         }else {
           this.form[k] = d;
         }
       }
   	},
+    submitForm () {
+      return this.form;
+    }
   },
   components: { AppCollapse, Upload }
 }

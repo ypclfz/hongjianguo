@@ -169,6 +169,9 @@ export default {
       tableOption: {
         'name': 'taskList',
         'url': URL,
+        'row_class': ({due_time}, index)=> {
+          return this.$tool.detectionTime(due_time);
+        },
         'header_btn': [
           { type: 'custom', label: '新增', icon: 'plus', click: ()=>{ this.dialogAddVisible = true; } },
           // { type: 'custom', label: '转出', icon: '', click: ()=>{ this.dialogTurnoutVisible = true; } },

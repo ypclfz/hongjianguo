@@ -8,7 +8,7 @@
 				<el-input v-model="form.title" placeholder="请填写案件标题"></el-input>
 			</el-form-item>
 	    <el-form-item label="申请地区">
-	    	<region v-model="form.area" multiple></region>
+	    	<region v-model="form.area" :multiple="type == 'add'"></region>
 	    </el-form-item>
 	    <el-form-item label="专利类型">
 	      <patent-type v-model="form.type"></patent-type>
@@ -131,7 +131,7 @@ export default {
 		  form: {
         serial: '',
         title: '',
-        area: [],
+        area: this.type == 'add' ? [] : '',
         type: '',
         abstract: '',
         manner: '',
@@ -216,6 +216,9 @@ export default {
   			}
   		} 
   	},
+    submitForm () {
+      return this.$tool.shallowCopy(this.form, { 'date': true });
+    },
   	handleUploadSuccess () {
 
   	},

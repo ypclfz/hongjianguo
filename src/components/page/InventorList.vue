@@ -1,8 +1,8 @@
 <template>
   <div class="main">
     <!-- <strainer v-model="filter" @refresh="refresh"></strainer> -->
-  	<table-component :tableOption="option" :data="tableData" ref="table" @refreshTableData="refreshTableData"></table-component>
-  	<pop-panel ref="pop" @add-success="refresh" @edit-success="update"></pop-panel>
+  	<table-component :tableOption="option" :data="tableData" @refreshTableData="refreshTableData" ref="table"></table-component>
+  	<pop-panel ref="pop" @refresh="handlePopRefresh"></pop-panel>
   </div>
 </template>
 
@@ -20,6 +20,7 @@ export default {
   data () {
 		return {
 		  option: {
+        'name': 'inventorList',
         'url': URL,
 		  	'header_btn': [
 		  		{ type: 'add', click: this.addPop },
@@ -28,15 +29,16 @@ export default {
 		  	],
 		  	'columns': [
           { type: 'selection' },
-		  		{ type: 'text', label: '发明人姓名', prop: 'name', sortable: true },
-		  		{ type: 'text', label: '证件号码', prop: 'identity', sortable: true },
-		  		{ type: 'text', label: '地区', prop: 'area', sortable: true },
-		  		{ type: 'text', label: '手机', prop: 'mobile', sortable: true },
-		  		{ type: 'text', label: '邮箱', prop: 'email', sortable: true },
-		  		{ type: 'text', label: '不公开姓名', prop: 'public_name', sortable: true },
-		  		{ type: 'text', label: '英文姓名', prop: 'name_en', sortable: true },
+		  		{ type: 'text', label: '发明人姓名', prop: 'name', sortable: true, width: '200' },
+		  		{ type: 'text', label: '证件号码', prop: 'identity', sortable: true, width: '189' },
+		  		{ type: 'text', label: '地区', prop: 'citizenship', sortable: true, width: '109' },
+		  		{ type: 'text', label: '手机', prop: 'mobile', sortable: true, width: '158' },
+		  		{ type: 'text', label: '邮箱', prop: 'email', sortable: true, width: '188' },
+		  		{ type: 'text', label: '不公开姓名', prop: 'not_disclose_name', render: (h,item)=>h('span',item ? '不公开' : '公开'), sortable: true, width: '143' },
+		  		{ type: 'text', label: '英文姓名', prop: 'name_en', render: (h,item, row)=>h('span', `${row.given_name}${row.family_name}`), width: '148' },
 		  		{ 
 		  			type: 'action',
+            width: '142',
 		  			btns: [
 		  				{ type: 'edit', click: this.editPop },
 		  				{ type: 'delete', click: this.deleteSingle },
@@ -80,9 +82,20 @@ export default {
     },
     update () {
       this.$refs.table.update();
+    },
+    handlePopRefresh (key) {
+      if(key == 'add') {
+        this.refresh();
+      }
+      if(key == 'edit') {
+        this.update();
+      }
     }
   },
-  components: { TableComponent, Strainer, PopPanel }
+  mounted () {
+    this.refresh();
+  },
+  components: { TableComponent, PopPanel }
 }
 </script>
 
