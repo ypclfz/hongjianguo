@@ -134,9 +134,9 @@
       </template>
 
       <template v-else-if="col.type == 'action'">
-        <el-table-column :label="col.label ? col.label : '操作'" :align="col.align ? col.align : 'left'" :min-width="col.width" header-align='center'>
+        <el-table-column :label="col.label ? col.label : '操作'" :align="col.align ? col.align : 'left'" :width="col.width ? col.width : ''" :min-width="col.min_width ? col.min_width : ''" header-align='center'>
           <template scope="scope">
-            <template v-if="col.btns_render != undefined">
+            <template v-if="col.btns_render ? true : false">
               <slot :name="col.btns_render" :row="scope.row">
               </slot>
             </template>
@@ -194,7 +194,9 @@ const methods = Object.assign({}, tableConst.methods, {
     if(func) {
       func(e)
     }else {
-      this.$message({message: '导出接口开发中', type: 'warning'})
+      this.page = 1;
+      this.search_value = "";
+      this.$emit('refreshTableData', Object.assign({}, this.getRequestOption(), {format: 'excel'}) );
     }
   },
   handleExpand (a, b) {
@@ -214,7 +216,7 @@ const methods = Object.assign({}, tableConst.methods, {
         this.$confirm('删除后不可恢复，确认删除？')
           .then(_=>{
             const url = this.url;
-            const data = { ids: this.$tool.splitObj(s, 'id') };
+            const data = { id: this.$tool.splitObj(s, 'id') };
             const success = _=>{ this.update() };
             this.axiosDelete({ url, data, success });
           })
@@ -333,11 +335,19 @@ export default {
   computed: {
     tableData () {
       const d = this.data;
-      return d ? d.data : []; 
+      if(d instanceof Array) {
+        return d;
+      }else {
+        return d.data ? d.data : [];
+      }
     },
     totalNumber () {
       const d = this.data;
-      return d && d.total ? d.total : 0;
+      if(d instanceof Array) {
+        return d.length;
+      }else {
+        return d.total ? d.total : 0;  
+      }
     },
     requesOption () {
       const obj = {

@@ -1,13 +1,9 @@
 <template>
 	<el-dialog :title="title" :visible.sync="dialogVisible">
 		<el-form label-width="130px" :model="form" :rules="rules" ref="form">
-
-			<el-form-item label="申请人姓名" prop="name">
-				<el-input v-model='form.name'></el-input>
-			</el-form-item>
 			
 			<el-form-item label="申请人类型" prop="type">
-				<el-select v-model="form.type">
+				<el-select v-model="form.type" placeholder="请选择申请人类型">
 					<el-option
 						v-for="item in option.type"
 						:key="item.value"
@@ -17,28 +13,35 @@
 				</el-select>
 			</el-form-item>
 
+			<el-form-item label="申请人姓名" prop="name">
+				<el-input v-model="form.name"  placeholder="请填写申请人姓名"></el-input>
+			</el-form-item>
+
+			<el-form-item label="证件号码" prop="identity">
+				<el-input v-model="form.identity" placeholder="请填写证件号码"></el-input>
+			</el-form-item>
+			
 			<el-form-item label="申请人地区" prop="area">
 				<region v-model="form.area"></region>
+			</el-form-item>
+
+			<el-form-item label="申请人城市" prop="province_city">
+				<city v-model="form.province_city"></city>
 			</el-form-item>
 
 <!-- 			<el-form-item label="申请人省份与城市" prop="city_name>
 				<el-input v-model="form.city_name"></el-input>
 			</el-form-item> -->
-
-			<el-form-item label="邮编" prop="province">
-				<el-input v-model="form.province"></el-input>
-			</el-form-item>
-
 			<el-form-item label="详细地址" prop="address">
-				<el-input v-model="form.address"></el-input>
+				<el-input v-model="form.address" placeholder="请输入详细地址"></el-input>
 			</el-form-item>
 
-			<el-form-item label="邮编" prop="city">
-				<el-input v-model="form.city"></el-input>
+			<el-form-item label="邮编" prop="postcode">
+				<el-input v-model="form.postcode" placeholder="请输入邮编"></el-input>
 			</el-form-item>
 
 			<el-form-item label="费用备案" prop="fee_discount">
-				<el-select v-model="form.fee_discount">
+				<el-select v-model="form.fee_discount" placeholder="请选择费用备案">
 					<el-option 
 						v-for="item in option.fee_discount"
 						:key="item.value"
@@ -49,11 +52,11 @@
 			</el-form-item>
 
 			<el-form-item label="英文姓名" prop="ename">
-				<el-input v-model="form.ename"></el-input>
+				<el-input v-model="form.ename" placeholder="请输入英文姓名"></el-input>
 			</el-form-item>
 
 			<el-form-item label="英文地址" prop="eaddress">
-				<el-input v-model="form.eaddress"></el-input>
+				<el-input v-model="form.eaddress" placeholder="请输入英文地址"></el-input>
 			</el-form-item>
 
 			<el-form-item>
@@ -67,11 +70,13 @@
 
 <script>
 import PopMixins from '@/mixins/pop-mixins'
+import AxiosMixins from '@/mixins/axios-mixins'
 import Region from '@/components/form/Region'
+import City from '@/components/form/City'
 
 export default {
   name: 'applicantListPop',
-  mixins: [PopMixins],
+  mixins: [ PopMixins, AxiosMixins ],
   data () {
 		return {
 		  form: {
@@ -79,13 +84,12 @@ export default {
 		  	name: '',
 		  	identity: '',
 		  	area: '',
-		  	province: '',
-		  	city: '',
 		  	address: '',
 		  	postcode: '',
 		  	fee_discount: '',
 		  	ename: '',
 		  	eaddress: '',
+		  	province_city: [],
 		  },
 		  option: {
 		  	type: [
@@ -103,9 +107,39 @@ export default {
 		  rules: {},
 		}
   },
+  methods: {
+  	setForm (data) {
+  		for(let k in this.form) {
+  			const d = data[k];
+  			if(k == 'province_city') {
+  				let arr = [];
+  				arr[0] = Number.parseInt(data['province']);
+  				arr[1] = data['city'];
+  				console.log(arr);
+  				this.form[k] = arr;
+  			}else {
+  				this.form[k] = d;
+  			}
+  		}
+  	},
+  	submitForm () {
+  		const o = {};
+  		for(let k in this.form) {
+  			const d = this.form[k];
+  			if(k == 'province_city') {
+  				o.province = d[0] ? d[0] : '';
+  				o.city = d[1] ? d[1] : '';
+  			}else {
+  				o[k] = d;
+  			}
+  		}
+
+  		return o;
+  	}
+  },
   URL: '/api/applicants',
   REMINDER_TEXT: '申请人',
-  components: { Region },
+  components: { Region, City },
 }
 </script>
 

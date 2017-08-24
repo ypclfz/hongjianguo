@@ -1,10 +1,26 @@
-let url = '/api/static/js/state.json';
+let url = '/api/static/js/states.json';
 const state = {
 	data: [],
 }
 
 const getters = {
-	areaCity: state=>state.data,
+	cityData: state=>state.data,
+	provinceMap: state=>{
+		const map = new Map();
+		state.data.forEach(_=>{map.set(_.zipcode,_.name)});
+
+		return map;
+	},
+	cityMap: state=>{
+		const map = new Map();
+		state.data.forEach(_=>{
+			if(_.child) {
+				_.child.forEach(_=>{map.set(_.zipcode,_.name)});
+			}
+		})
+
+		return map;
+	}
 }
 
 const mutations = {
@@ -14,7 +30,7 @@ const mutations = {
 }
 
 const actions = {
-	refreshArea ({commit, rootState, state}) {	
+	refreshCity ({commit, rootState, state}) {	
 		url = rootState.status ? url.replace(/\/api/, '') : url;	
 		rootState.axios
 			.get(url)

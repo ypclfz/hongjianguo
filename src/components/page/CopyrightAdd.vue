@@ -76,47 +76,51 @@ export default {
   name: 'copyrightAdd',
   mixins: [ AxiosMixins ],
   data () {
-	return {
-	  form: {
-	  	title: '',
-	  	abstract: '',
-	  	type: '',
-	  	classification_id: '',
-	  	products: [],
-	  	tags: [],
-	  	ipr_id: '',
-	  	proposer_id: '',
-	  	branch_id: '',
-	  	applicants: [],
-	  	attachments: [],
-	  	remark: '',
-	  	apn: '',
-	  	apd: '',
-	  	issue_date: '',
-	  	issue_number: '',
-	  },
-	  options: {
-	  	type: [
-	  		{label: '计算机软件著作权', value: 1},
-	  		{label: '文字作品著作权', value: 2},
-	  		{label: '美术作品著作权', value: 3},
-	  		{label: '影视作品著作权', value: 4},
-	  	]
-	  },
-	  attachments: [],
-	  btn_disabled: false,
-	}
+		return {
+			id: '',
+		  form: {
+		  	title: '',
+		  	abstract: '',
+		  	type: '',
+		  	classification_id: '',
+		  	products: [],
+		  	tags: [],
+		  	ipr_id: '',
+		  	proposer_id: '',
+		  	branch_id: '',
+		  	applicants: [],
+		  	attachments: [],
+		  	remark: '',
+		  	apn: '',
+		  	apd: '',
+		  	issue_date: '',
+		  	issue_number: '',
+		  },
+		  options: {
+		  	type: [
+		  		{label: '计算机软件著作权', value: 1},
+		  		{label: '文字作品著作权', value: 2},
+		  		{label: '美术作品著作权', value: 3},
+		  		{label: '影视作品著作权', value: 4},
+		  	]
+		  },
+		  attachments: [],
+		  btn_disabled: false,
+		}
   },
   computed: {
   	pageType () {
   		return this.$route.meta.pageType;
-  	}
+  	},
+  	detail () {
+      return this.$store.getters.detailBase;
+    }
   },
   methods: {
   	add () {
   		this.btn_disabled = true;
   		const url = URL;
-  		const data = this.form;
+  		const data = this.$tool.shallowCopy(this.form, {'date': true});
   		const success = _=>{ this.$router.push('/copyright/list') };
   		const complete = _=>{ ths.btn_disabled = false };
 
@@ -125,14 +129,39 @@ export default {
   	edit () {
   		this.btn_disabled = true;
   		const url = `${URL}/${this.id}`;
-  		const data = this.form;
+  		const data = this.$tool.shallowCopy(this.form, {'date': true});
   		const success = _=>{ this.$message({message: '编辑成功', type: 'success'}) };
   		const complete = _=>{ this.btn_disabled = false };
 
   		this.axiosPut({url, data, success, complete})
+  	},
+  	refreshForm () {
+  		const data = this.detail;
+  		if(this.pageType == 'edit' && this.$tool.getObjLength(data) != 0) {
+  			
+  			this.id = data.id;
+  			for(let k in this.form) {
+  				const d = data[k];
+  				if(k == 'classification_id' || k == 'ipr_id' || k == 'proposer_id' || k == 'branch_id') {
+  					this.form[k] = data[k.split('_')[0]].id;
+  				}else if(k == 'products' || k == 'applicants' || k == 'attachments') {
+  					this.form[k] = d.map(_=>_.id);
+  					if(k == 'attachments') this.attachments = d;
+  				}else {
+  					this.form[k] = d;
+  				}
+  			}
+  		}
   	}
   },
-  created () {},
+  created () {
+  	this.refreshForm();
+  },
+  watch: {
+  	detail () {
+  		this.refreshForm();
+  	}
+  },
   components: { Classification, Product, Tag, Ipr, Member, Branch, Applicant, Upload }
 }
 </script>

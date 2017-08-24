@@ -15,12 +15,13 @@ export default {
 		  	'is_search': false,
 		  	'columns': [
 		  		{ type: 'text', label: '文件名称', prop: 'name' },
-		  		{ type: 'text', label: '上传时间', prop: 'upload_time' },
-		  		{ type: 'text', label: '上传用户', prop: 'upload_user' },
+		  		{ type: 'text', label: '文件格式', prop: 'ext' },
+		  		{ type: 'text', label: '文件大小', prop: 'size' },
 		  		{ type: 'action',
+		  			width: '134',
 		  			btns: [
-		  				{ type: 'download', text: '下载' },
-		  				{ type: 'view', text: '查看' },
+		  				{ type: 'download', text: '下载', click: ({downloadUrl})=>{window.open(downloadUrl)} },
+		  				{ type: 'view', text: '查看', click: ({viewUrl})=>{window.open(viewUrl)} },
 		  			] 
 		  		}
 		  	],
@@ -29,7 +30,7 @@ export default {
   },
   computed: {
   	tableData () {
-  		return this.$store.getters.detailDocuments;
+  		return this.$store.getters.detailDocuments; 
   	}
   },
   components: { TableComponent }

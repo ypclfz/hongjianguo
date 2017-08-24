@@ -27,23 +27,24 @@ export default {
         ],
         'columns': [
           { type: 'selection' },
-          { type: 'text', label: '案号', prop: 'serial' },
-          { type: 'text', label: '版权类型', prop: 'type' },
-          { type: 'text', label: '标题', prop: 'title'},
-          { type: 'text', label: '摘要', prop: 'abstract' },
-          { type: 'text', label: '申请日', prop: 'apd', sortable: true },
-          { type: 'text', label: '申请号', prop: 'apn' },
-          { type: 'text', label: '公告日', prop: 'issue_date' },
-          { type: 'text', label: '公告号', prop: 'issue_number' },
-          { type: 'text', label: '代理人', prop: 'ipr', render: _=>_.name },
-          { type: 'text', label: '代理机构名称', prop: 'agency' },
-          { type: 'text', label: '代理机构案号', prop: 'agency_serial' },
-          { type: 'text', label: '备注', prop: 'remark' },
-          { type: 'array', label: '申请人', prop: 'applicants', render: _=>_.map(_=>_.name) },
-          { type: 'array', label: '标签', prop: 'tags' },
-          { type: 'array', label: '产品名称', prop: 'products', sortable: true, render: _=>_.map(_=>_.name) },
+          { type: 'text', label: '案号', prop: 'serial', width: '203' },
+          { type: 'text', label: '版权类型', prop: 'type', width: '121' },
+          { type: 'text', label: '标题', prop: 'title', width: '133'},
+          { type: 'text', label: '摘要', prop: 'abstract', width: '277' },
+          { type: 'text', label: '申请日', prop: 'apd', sortable: true, width: '173' },
+          { type: 'text', label: '申请号', prop: 'apn', width: '121' },
+          { type: 'text', label: '公告日', prop: 'issue_date', width: '183' },
+          { type: 'text', label: '公告号', prop: 'issue_number', width: '121' },
+          { type: 'text', label: '代理人', prop: 'ipr', render: _=>_.name, width: '121' },
+          { type: 'text', label: '代理机构名称', prop: 'agency', width: '143' },
+          { type: 'text', label: '代理机构案号', prop: 'agency_serial', width: '138' },
+          { type: 'text', label: '备注', prop: 'remark', width: '285' },
+          { type: 'array', label: '申请人', prop: 'applicants', render: _=>_.map(_=>_.name), width: '190' },
+          { type: 'array', label: '标签', prop: 'tags', width: '150' },
+          { type: 'array', label: '产品名称', prop: 'products', sortable: true, render: _=>_.map(_=>_.name), width: '150' },
           {
             type: 'action',
+            width: '150',
             btns: [
               { type: 'detail', click: this.detail },
               { type: 'delete', click: this.deleteSingle },
@@ -62,7 +63,7 @@ export default {
     refreshTableData (option) {
       const url = URL;
       const data = Object.assign({}, option, this.filter);
-      const success = d=>{this.tableData = d.patents};
+      const success = d=>{this.tableData = d.copyrights};
       this.axiosGet({url, data, success});
     },
     refresh () {
@@ -78,7 +79,7 @@ export default {
         .catch(()=>{});
     },
     detail ({id}) {
-      const path = `/patent/list/detail/${id}`; 
+      const path = `/copyright/list/detail/${id}`; 
       this.$router.push( path );
     }
   },

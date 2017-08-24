@@ -1,15 +1,47 @@
 <template>
   <div class="main">
+	  <el-cascader
+	  	placeholder="请选择省市"
+	    expand-trigger="hover"
+	    :options="options"
+	    :value=value
+	    :props="props"
+	    @input="handleInput"
+	    clearable
+	   >
+	  </el-cascader>
   </div>
 </template>
 
 <script>
 export default {
   name: 'city',
+  props: {
+  	'value': {
+  		type: Array,
+  		default () {
+  			return [];
+  		},
+  	}
+  },
   data () {
-	return {
-	  msg: 'Welcome to Your Vue.js App'
-	}
+  	return {
+  		props: {
+  			value: 'zipcode',
+  			label: 'name',
+  			children: 'child',
+  		}
+  	}
+  },	
+  computed: {
+  	options () {
+  		return this.$store.getters.cityData;
+  	}
+  },
+  methods: {
+  	handleInput(val) {
+  		this.$emit('input', val);
+  	}
   }
 }
 </script>

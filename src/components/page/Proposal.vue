@@ -139,9 +139,18 @@ export default {
       this.$refs.table.refresh();
     },
     refreshTableData (option) {
-      const params = Object.assign({}, option, this.filter, this.screen_value);
+      const url = '/api/proposals';
+      const data = Object.assign({}, option, this.filter, this.screen_value);
+      const success = _=>{
+        if(data.format == 'excel') {
+          window.open(_.proposals.downloadUrl);
+        }else {
+          this.tableData = _.proposals;
+          this.filters = _.proposals.filters;
+        }
+      }
       
-      this.$axios.get('/api/proposals', { params }).then(response=>{this.tableData = response.data.proposals; this.filters=response.data.proposals.filters;});
+      this.axiosGet({url, data, success});
     },
     refresh () {
       this.$refs.table.refresh();
@@ -218,7 +227,7 @@ export default {
       const f = this.filters;
       const filterArr = [
         {
-          label: '提案阶段',
+          label: '流程节点',
           key: 'flownodes',
           items: [],
         },

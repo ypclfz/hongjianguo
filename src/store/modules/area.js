@@ -5,6 +5,12 @@ const state = {
 
 const getters = {
 	areaData: state=>state.data,
+	areaMap: state=>{
+		const map = new Map();
+		state.data.forEach(_=>{map.set(_.id, _.name)});
+
+		return map;
+	}
 }
 
 const mutations = {

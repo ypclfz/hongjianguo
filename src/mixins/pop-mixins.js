@@ -3,8 +3,8 @@ export default {
 		return {
 			type: '',
 			id: '',
-      		btn_disabled: false,
-		  	dialogVisible: false,
+      btn_disabled: false,
+		  dialogVisible: false,
 		}
 	},
 	computed: {
@@ -28,7 +28,7 @@ export default {
 	      if(type == 'edit') {
 	        const copy = this.$tool.deepCopy(data);
 	        this.id = copy.id; 
-	        this.$tool.coverObj(this.form, copy);
+	        this.setForm ? this.setForm(data) : this.$tool.coverObj(this.form, copy);
 	      }
      	});
   	},
@@ -36,7 +36,7 @@ export default {
       this.btn_disabled = true;
       const url = this.$options.URL;
       const tex = this.$options.REMINDER_TEXT;
-      const data = this.form;
+      const data = this.submitForm ? this.submitForm() : this.form;
       const success = _=>{
         this.$message({message: `添加${tex}成功`, type: 'success'});
         this.dialogVisible = false;
@@ -52,7 +52,7 @@ export default {
       this.btn_disabled = true;
       const url = `${this.$options.URL}/${this.id}`;
       const tex = this.$options.REMINDER_TEXT;
-      const data = this.form;
+      const data = this.submitForm ? this.submitForm() : this.form;
       const success = _=>{
         this.$message({message: `编辑${tex}成功`, type: 'success'});
         this.dialogVisible = false;

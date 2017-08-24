@@ -102,8 +102,13 @@ export default {
       const url = URL;
       const data = Object.assign({}, this.filter, option, this.screen_value, {status: this.task_status}, {scope: this.task_toggle});
       const success = d=>{
+        if( data['format'] == 'excel' ) {
+          window.open(d.tasks.downloadUrl);
+        }else {
           this.tableData = d.tasks;
-          this.filters = d.tasks.filters;
+          this.filters = d.tasks.filters; 
+        }
+         
       };
 
       this.axiosGet({url, data, success}); 
@@ -125,11 +130,9 @@ export default {
       const t = this.task_status;
       const h = this.tableOption;
       if( t === 0 ) {
-        h.header_btn[1].items.push({text: '暂停处理', click: _=>{ this.handleTask('/api/tasks/pause') }});
+        h.header_btn.splice(3,1,{type: 'custom', label: '暂停处理', click: _=>{ this.handleTask('/api/tasks/pause') }});
       }else if( t === -1 ) {
-        h.header_btn[1].items.push({text: '恢复处理', click: _=>{ this.handleTask('/api/tasks/resume') }});
-      }else if( t === 1 ) {
-        h.header_btn[1].items.pop();
+        h.header_btn.splice(3,1,{type: 'custom', label: '恢复处理', click: _=>{ this.handleTask('/api/tasks/resume') }});
       }
 
       this.$forceUpdate();
@@ -173,21 +176,11 @@ export default {
           return this.$tool.detectionTime(due_time);
         },
         'header_btn': [
-          { type: 'custom', label: '新增', icon: 'plus', click: ()=>{ this.dialogAddVisible = true; } },
+          { type: 'add', click: ()=>{ this.dialogAddVisible = true; } },
+          { type: 'delete' },
+          { type: 'export' },
+          {},
           // { type: 'custom', label: '转出', icon: '', click: ()=>{ this.dialogTurnoutVisible = true; } },
-          { 
-            type: 'dropdown', 
-            label: '数据', 
-            icon: '',
-            items: [
-              { text: '导出' },
-              { type: 'delete'  },
-              // { text: '标记为已完成状态', divided: true },
-              // { text: '标记为处理中状态'  },
-              // { text: '暂停处理', divided: true },
-              // { text: '确认继续' },
-            ],
-          },
           { type: 'control', label: '字段'},
           // { type: 'custom', label: '设定', icon: '', click: ()=>{ this.dialogSettingVisible = true; } }
         ],

@@ -20,13 +20,13 @@ export default {
 		  option: {
 		  	'is_search': false,
 		  	'columns': [
-		  		{ type: 'text', label: '任务名称', prop: 'action_name' },
+		  		{ type: 'text', label: '任务名称', prop: 'name' },
+		  		{ type: 'text', label: '任务节点', prop: 'node_time' },
+		  		{ type: 'text', label: '承办人', prop: 'person_in_charge' },
 		  		{ type: 'text', label: '开始时间', prop: 'start_time' },
-		  		{ type: 'text', label: '结束时间', prop: 'end_time' },
 		  		{ type: 'text', label: '指定期限', prop: 'due_time' },
-		  		{ type: 'text', label: '法定期限', prop: 'deadline' },
-		  		{ type: 'text', label: '负责人', prop: 'charger' },
-		  		{ type: 'text', label: '状态', prop: 'status' },
+		  		{ type: 'text', label: '代理机构', prop: 'agency' },
+		  		{ type: 'text', label: '代理人', prop: 'agent' },
 		  		{ 
 		  			type: 'action', 
 		  			label: '操作',

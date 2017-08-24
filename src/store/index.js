@@ -10,6 +10,7 @@ import classification from '@/store/modules/classification.js'
 import branch from '@/store/modules/branch.js'
 import ipr from '@/store/modules/ipr.js'
 import area from '@/store/modules/area.js'
+import city from '@/store/modules/city.js'
 import feeCode from '@/store/modules/fee-code.js'
 import invoiceEntity from '@/store/modules/invoice-entity.js'
 import userGroup from '@/store/modules/user-group.js'
@@ -36,6 +37,7 @@ const store = new Vuex.Store({
     branch,
     ipr,
     area,
+    city,
     feeCode,
     invoiceEntity,
     userGroup,

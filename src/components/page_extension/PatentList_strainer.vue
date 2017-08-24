@@ -3,28 +3,57 @@
   	<el-form :model="form" label-width="80px" ref="form">
   		<el-row>
 				<el-col :span="12">
-					<el-form-item label="专利类型" prop="title">
-						<el-select v-model="form.type" placeholder="请选择专利类型">
-							<el-option v-for="item in options.type" :key="item.value" :label="item.label" :value="item.value"></el-option>
-						</el-select>					
+					<el-form-item label="专利类型" prop="type">
+						<patent-type v-model="form.type"></patent-type>
 					</el-form-item>
-					<el-form-item label="发明人" prop="inventors">
-						<inventor-select v-model="form.inventors" multiple></inventor-select>
+					<el-form-item label="申请地区" prop="area">
+						<region v-model="form.area"></region>
 					</el-form-item>
-					<el-form-item label="专利人" prop="proposer">
-						<member v-model="form.proposer" multiple></member>
+					<el-form-item label="当前进度" prop="progress"></el-form-item>
+					<el-form-item label="申请日" prop="apd">
+						<el-date-picker type="date" placeholder="请选择申请日" v-model="form.apd"></el-date-picker>
 					</el-form-item>
+					<el-form-item label="代理机构" prop="agency">
+						<remote-select type="agency" v-model="form.agency" multiple></remote-select>
+					</el-form-item>
+					<el-form-item label="代理人" prop="agent">
+						<remote-select type="agent" v-model="form.agent" multiple></remote-select>
+					</el-form-item>
+					<el-form-item label="提案人" prop="proposer">
+						<remote-select type="member" v-model="form.proposer" multiple></remote-select>
+					</el-form-item>
+					<el-form-item label="IPR" prop="ipr">
+						<ipr v-model="form.ipr" multiple></ipr>
+					</el-form-item>
+					<el-form-item label="标签" prop="tags">
+						<tag v-model="form.tags" multiple></tag>
+					</el-form-item>					
 				</el-col>
 				<el-col :span="12">
-						<el-form-item label="技术分类" prop="classification">
-							<classification v-model="form.classification" multiple></classification>
-						</el-form-item>
-						<el-form-item label="产品分类" prop="product">
-							<product v-model="form.product" multiple></product>
-						</el-form-item>
-						<el-form-item label="标签" prop="tags">
-							<tag v-model="form.tags" multiple></tag>
-						</el-form-item>
+					<el-form-item label="技术分类" prop="classification">
+						<classification v-model="form.classification" multiple></classification>
+					</el-form-item>
+					<el-form-item label="产品分类" prop="product">
+						<product v-model="form.product" multiple></product>
+					</el-form-item>
+					<el-form-item label="部门" prop="branch">
+						<branch v-model="form.branch" multiple></branch>
+					</el-form-item>
+					<el-form-item label="立案时间" prop="create_time">
+						<el-date-picker type="date" placeholder="请选择立案时间" v-model="form.create_time"></el-date-picker>
+					</el-form-item>
+					<el-form-item label="授权日" prop="issue_date">
+						<el-date-picker type="date" placeholder="请选择授权日" v-model="form.issue_date"></el-date-picker>
+					</el-form-item>
+					<el-form-item label="公开日" prop="public_date">
+						<el-date-picker type="date" placeholder="请选择公开日" v-model="form.public_date"></el-date-picker>
+					</el-form-item>
+					<el-form-item label="申请人" prop="applicants">
+						<remote-select type="applicant" v-model="form.applicants" multiple></remote-select>
+					</el-form-item>
+					<el-form-item label="发明人" prop="inventors">
+						<remote-select type="inventor" v-model="form.inventors" multiple></remote-select>
+					</el-form-item>
 				</el-col>
   		</el-row>
   		<el-row style="text-align: center;">
@@ -37,11 +66,14 @@
 
 <script>
 import AppCollapse from '@/components/common/AppCollapse'
-import InventorSelect from '@/components/form/InventorSelect'
-import Member from '@/components/form/Member'
 import Classification from '@/components/form/Classification'
 import Product from '@/components/form/Product'
+import Branch from '@/components/form/Branch'
+import PatentType from '@/components/form/PatentType'
+import Ipr from '@/components/form/Ipr'
 import Tag from '@/components/form/Tag'
+import Region from '@/components/form/Region'
+import RemoteSelect from '@/components/form/RemoteSelect'
 export default {
   name: 'patentListStrainer',
   props: ['value'],
@@ -49,11 +81,20 @@ export default {
 		return {
 			form: {
 				type: '',
+				area: '',
+				apd: '',
+				agency: [],
+				agent: [],
+				proposer: [],
+				ipr: [],
+				tags: [],
 				classification: [],
 				product: [],
-				proposer: [],
 				branch: [],
-				tags: [],
+				create_date: '',
+				issue_date: '',
+				public_date: '',
+				applicants: [],
 				inventors: [],
 			},
 			options: {
@@ -85,7 +126,7 @@ export default {
   		this.$emit('refresh');
   	}
   },
-  components: { AppCollapse, InventorSelect, Member, Classification, Product, Tag }
+  components: { AppCollapse, Classification, Product, Branch, PatentType, Ipr, Tag, Region, RemoteSelect },
 }
 </script>
 
