@@ -15,6 +15,7 @@ import feeCode from '@/store/modules/fee-code.js'
 import invoiceEntity from '@/store/modules/invoice-entity.js'
 import userGroup from '@/store/modules/user-group.js'
 import flows from '@/store/modules/flows.js'
+import flowNodes from '@/store/modules/flow-nodes.js'
 import taskDef from '@/store/modules/task-def.js'
 import currentUser from '@/store/modules/current-user.js'
 Vue.use(Vuex);
@@ -42,6 +43,7 @@ const store = new Vuex.Store({
     invoiceEntity,
     userGroup,
     flows,
+    flowNodes,
     taskDef,
     currentUser,
   },

@@ -4,10 +4,10 @@
     @input="handleInput"
   	:multiple="multiple"
   	:disabled="disabled"
-    placeholder="请选择任务下一阶段"
+    placeholder="请选择流程节点"
   >
   	<el-option
-		v-for="item in iprOptions"
+		v-for="item in flowOptions"
 		:key="item.value"
 		:label="item.label"
 		:value="item.value"
@@ -24,7 +24,7 @@ export default {
   mixins: [formSelect],
   computed: {
   	flowOptions () {
-  		return this.$store.getters.iprOptions;
+  		return this.$store.getters.flowNodesData;
   	}
   },
 }

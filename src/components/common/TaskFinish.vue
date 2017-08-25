@@ -1,6 +1,6 @@
 <template>
   <el-form :model="form" label-width="80px" ref="form" v-loading="loading" element-loading-text="数据加载中">
-  	<el-form-item label="下一节点">
+  	<el-form-item label="下一节点" v-if="ifNext">
   		<el-select v-model="next">
   		 <el-option
 				v-for="item in data.next"
@@ -83,7 +83,12 @@ export default {
   		const url = `${URL}/${this.id}/form`;
   		const success = d=>{
   			this.data = d.data;
-  			this.next = d.data.next[0].id;
+        this.fields = d.data.fields;
+        if(this.data.next.length != 0) {
+          this.next = d.data.next[0].id;
+        }else {
+          this.next = "";
+        }
   		};
       const complete = _=>{ 
         this.loading = false; 
@@ -107,16 +112,17 @@ export default {
 	},
 	watch: {
 		id () {
-			this.refreshData();
 			this.clear();
+      this.refreshData();
 		},
 		'next': {
 			handler: function (val) {
+        if(val == "") return;
 				for (let d of this.data.next) {
 					if(d.id == val) {
 						this.fields = d.fields;
 						this.defaultVal = d.default;
-						this.form.person_in_charge = this.data[d.default]['id'];
+						if(this.defaultVal) this.form.person_in_charge = this.data[d.default]['id'];
 						break;
 					}
 				}
@@ -124,7 +130,10 @@ export default {
 			}
 		}
 	},
-	computed () {
+	computed: {
+    ifNext () {
+      return this.data.next && this.data.next.length != 0 ? true : false;
+    }
 	},
 	components: { Member, Agent, Agency, Ipr, Upload }
 }

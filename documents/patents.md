@@ -283,18 +283,18 @@ request {
 
     /* 固定参数开始 */
     type:"1",//专利类型 1-发明 2-实用新型 3-外观设计 0-其他
-    area:"CN",//专利申请地区,
-    progress:"1",//案件进度，多个进度采用逗号隔开,案件进度的选项采用/progresses/category/:id获取 :id取值 1-4
+    area:"CN",//申请地区,
+    progress:"1",//当前进度，多个进度采用逗号隔开,案件进度的选项采用/progress?category=1获取 取值 1-4
     apd:"2017-08-01|2017-08-31",//申请日
-    agencey:"1",//代理机构ID，多个agency用逗号隔开
-    agent:"1",//代理人ID，多个agent用逗号隔开
+    agencey:"1",//代理机构，多个agency用逗号隔开
+    agent:"1",//代理人，多个agent用逗号隔开
     /* 固定参数结束 */
 
     //以下字段动态添加
-    proposer:"1",//提案人ID，多个提案人ID用逗号隔开
-    ipr:"1",//IPR ID,多个IPR用逗号隔开
+    proposer:"1",//提案人，多个提案人ID用逗号隔开
+    ipr:"1",//IPR ,多个IPR用逗号隔开
     classification:"1",//技术分类ID，多个分类用逗号隔开
-    branch:"1",//部门ID,暂未启用，多个部门ID用逗号隔开
+    branch:"1",//部门,暂未启用，多个部门ID用逗号隔开
     create_time:"2017-08-01|2017-08-31",//立案时间，或者直接采用过滤器的id:thisweek/lastweek/thismonth/lastmonth/earlier
     issue_date:"2017-08-01|2017-08-31",//授权日
     public_date:"2017-08-01|2017-08-31",//公开日
@@ -410,6 +410,16 @@ response {
 			title:"相关案件标题",
 			type:"相关类型",//下拉菜单  1 要求优先权 2 分案申请 3 部分连续案 6 要求同日送件
 		}],
+		
+		filters:[{
+			label:"标签",
+			key:"上传字段",
+			items:[{
+				label:"标签",
+				value:"值",
+				count:"数量"
+			}]
+		}]
 		
     }
 }

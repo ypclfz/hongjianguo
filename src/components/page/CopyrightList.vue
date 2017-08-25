@@ -19,6 +19,7 @@ export default {
       tableOption: {
         'name': 'copyrightList',
         'url': URL,
+        'is_filter': true,
         'header_btn': [
           { type: 'add', click: this.add },
           { type: 'delete' },

@@ -19,6 +19,8 @@ export default {
   data () {
 		return {
 		  option: {
+        'name': 'applicant',
+        'url': '/api/applicants',
 		  	'header_btn': [
 		  		{ type: 'add', click: this.addPopUp },
           { type: 'delete' },

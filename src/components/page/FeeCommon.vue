@@ -4,7 +4,7 @@
 		<table-component @refreshTableData="refreshTableData" :tableOption="option" :data="tableData" ref="table">
 			<fee-status slot="status" v-model="fee_status" style="width: 150px; margin-left: 5px;" :feeType="feeType" feeAnnual></fee-status>
 			
-			<fee-invoice v-if="fee_invoice_if" slot='invoice' v-model="fee_invoice" style="width: 300px; margin-left: 10px;" :feeType="feeType"></fee-invoice>
+			<fee-invoice v-if="fee_invoice_if" slot='invoice' v-model="fee_invoice" style="width: 280px; margin-left: 10px;" :feeType="feeType"></fee-invoice>
 
 		</table-component>
 		<pop ref="pop" :feeType="feeType" :popType="popType" @refresh="refresh"></pop>
@@ -46,38 +46,40 @@ export default {
 		  				{text: '将筛选的费用添加到已有{key}', click: ()=>{ this.invoicePutPop('all') } },
 		  			],
 		  		},
+          { type: 'export' },
 		  		{ type: 'control' },
 		  	],
 		  	'header_slot': [ 'status', 'invoice'],
 		  	'columns': [
 		  		{ type: 'selection' },
-		  		{ type: 'text', label: '案号', prop: 'serial' },
-		  		{ type: 'text', label: '案件类型', prop: 'category' },
-		  		{ type: 'text', label: '专利类型', prop: 'patent_type' },
-		  		{ type: 'text', label: '案件名称', prop: 'title' },
-		  		{ type: 'text', label: '申请号', prop: 'apn' },
-		  		{ type: 'text', label: '申请日', prop: 'apd' },
-		  		{ type: 'text', label: '地区', prop: 'area' },
-		  		{ type: 'text', label: '发文日', prop: 'mail_date' },
-		  		{ type: 'text', label: '创建日期', prop: 'create_time' },
-		  		{ type: 'text', label: '费用期限', prop: 'due_time' },
-		  		{ type: 'text', label: '官方绝限', prop: 'deadline' },
-		  		{ type: 'text', label: '付款时间', prop: 'pay_time' },
-		  		{ type: 'text', label: '费用对象', prop: 'target' },
-		  		{ type: 'text', label: '费用名称', prop: 'name' },
-		  		{ type: 'text', label: '费用类型', prop: 'type_name' },
-		  		{ type: 'text', label: '金额', prop: 'fee' },
-		  		{ type: 'text', label: '汇率', prop: 'roe' },
-		  		{ type: 'text', label: '货币', prop: 'currency' },
-		  		{ type: 'text', label: '人民币', prop: 'amount' },
-		  		{ type: 'text', label: '状态', prop: 'status_name' },
-		  		{ type: 'text', label: '请款单ID', prop: 'invoice_id' },
-		  		{ type: 'text', label: '请款单备注', prop: 'invoidce_remark' },
-		  		{ type: 'text', label: '发票抬头', prop: 'invoice_title' },
-		  		{ type: 'text', label: '纳税人识别号', prop: 'tax_payer_identifier' },
-		  		{ type: 'text', label: '费用备注', prop: 'remark' },
+		  		{ type: 'text', label: '案号', prop: 'serial', width: '192' },
+		  		{ type: 'text', label: '案件类型', prop: 'category', width: '116' },
+		  		{ type: 'text', label: '专利类型', prop: 'patent_type', width: '133' },
+		  		{ type: 'text', label: '案件名称', prop: 'title', width: '189' },
+		  		{ type: 'text', label: '申请号', prop: 'apn', width: '210' },
+		  		{ type: 'text', label: '申请日', prop: 'apd', width: '200' },
+		  		{ type: 'text', label: '地区', prop: 'area', width: '210' },
+		  		{ type: 'text', label: '发文日', prop: 'mail_date', width: '250' },
+		  		{ type: 'text', label: '创建日期', prop: 'create_time', width: '200' },
+		  		{ type: 'text', label: '费用期限', prop: 'due_time', width: '200' },
+		  		{ type: 'text', label: '官方绝限', prop: 'deadline', width: '200' },
+		  		{ type: 'text', label: '付款时间', prop: 'pay_time', width: '200' },
+		  		{ type: 'text', label: '费用对象', prop: 'target', width: '190' },
+		  		{ type: 'text', label: '费用名称', prop: 'name', width: '190' },
+		  		{ type: 'text', label: '费用类型', prop: 'type_name', width: '190' },
+		  		{ type: 'text', label: '金额', prop: 'fee', width: '80' },
+		  		{ type: 'text', label: '汇率', prop: 'roe', width: '80' },
+		  		{ type: 'text', label: '货币', prop: 'currency', width: '80' },
+		  		{ type: 'text', label: '人民币', prop: 'amount', width: '100' },
+		  		{ type: 'text', label: '状态', prop: 'status_name' , width: '180'},
+		  		{ type: 'text', label: '请款单ID', prop: 'invoice_id', width: '150' },
+		  		{ type: 'text', label: '请款单备注', prop: 'invoidce_remark', width: '150' },
+		  		{ type: 'text', label: '发票抬头', prop: 'invoice_title', width: '330' },
+		  		{ type: 'text', label: '纳税人识别号', prop: 'tax_payer_identifier', width: '160' },
+		  		{ type: 'text', label: '费用备注', prop: 'remark', width: '160' },
 		  		{ 
 		  			type: 'action',
+            width: '137',
 		  			btns: [
 		  				{ type: 'edit', click:  this.editPop},
 		  				{ type: 'delete', click: this.feeDelete },
@@ -123,8 +125,16 @@ export default {
   		const url = URL;
   		const debit = this.feeType;
   		const status = this.fee_status;
-  		const data = Object.assign({}, option, { debit, status }, this.filter);
-  		const success = d=>{ this.tableData = d.fees };
+      const invoice = this.fee_invoice_if && this.fee_invoice != '' ? {fee_invoice: this.fee_invoice} : {};
+  		const data = Object.assign({}, option, { debit, status }, this.filter, invoice);
+  		const success = d=>{ 
+        if(data.format) {
+          console.log(d);
+        }else {
+          this.tableData = d.fees;  
+        }
+         
+      };
 
   		this.axiosGet({url, data, success});
   	},
@@ -152,17 +162,17 @@ export default {
   		this.$refs.table.refresh();
   	},
   	invoiceAdd (scope) {
-  		const fees = ['',''];
+  		let fees;
   		
   		if( scope == "all" ) {
         return false;
   		}else {
   			let s = this.$refs.table.tableSelect;
   			if(s.length == 0) {
-  				this.$alert('请选择需要添加的费用', {type: 'warning', closeOnClickModal: true});
+  				this.$message({ message: '请选择需要添加的费用', type: 'warning' });
   				return false;
   			}else {
-  				fees[0] = s.map(_=>_.id);
+  				fees = s.map(_=>_.id);
   			}
   		}
 
@@ -189,7 +199,7 @@ export default {
   	},
     invoicePut () {
       const scope = this.fee_invoice_scope;
-      const fees = ['',''];
+      let fees;
       
       if(this.fee_invoice_pop == '') {
         this.$alert(`请选择${this.feeTypeName}`, {type: 'warning', closeOnClickModal: true});
@@ -200,7 +210,7 @@ export default {
 
       }else {
         let s = this.$refs.table.tableSelect;
-        fees[0] = s.map(_=>_.id);
+        fees = s.map(_=>_.id);
       }
 
 
@@ -220,7 +230,12 @@ export default {
       }
 
   		this.refresh();
-  	}
+  	},
+    fee_invoice () {
+      if( this.fee_invoice_if ) {
+        this.refresh(); 
+      }
+    }
   },
   mounted () {
   	this.refresh();

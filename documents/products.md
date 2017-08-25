@@ -73,6 +73,8 @@ response {
 		name:"name",//产品姓名
 		description:"产品描述",
 		parent:"父节点ID",
+		level:"分类层级",
+		projects_count:"分类下的案件数量"
 	}
 }  
 

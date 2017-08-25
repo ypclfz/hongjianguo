@@ -276,6 +276,16 @@ response {
 			}],
 			tasks:[同/tasks接口，但版权下任务可仅显示以下字段：name,node_name,person_in_charge,start_time,due_time,agency,agent,仅显示详情按钮,不显示完成任务的入口]
 		}]
+		
+		filters:[{
+			label:"标签",
+			key:"上传字段",
+			items:[{
+				label:"标签",
+				value:"值",
+				count:"数量"
+			}]
+		}]
     }
 }
 

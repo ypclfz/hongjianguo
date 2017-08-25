@@ -1,7 +1,7 @@
 <template>
   <el-select
     class="fee-invoice"
-		:value="value"
+		:value="value2"
     @input="handleInput"
     filterable
     remote
@@ -11,6 +11,7 @@
     :loading="loading"
     multiple
     :multiple-limit="multiple ? 0 : 1"
+    ref="select"
 	>
 		<el-option
 			v-for="item in options"
@@ -25,10 +26,11 @@
 <script>
 //使用RemoteSelect,必须书写URL参数
 import RemoteSelect from '@/mixins/remote-select'
+import AxiosMixins from '@/mixins/axios-mixins'
 
 export default {
   name: 'patent',
-  mixins: [ RemoteSelect ],
+  mixins: [ RemoteSelect,AxiosMixins ],
   props: ['feeType'],
   data () {
     return {

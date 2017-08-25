@@ -1,7 +1,6 @@
 <template>
   <div class="main">
      <strainer @query="strainerQuery" @clear="strainerClear"></strainer>
-     <app-filter :data="appFilterData"></app-filter>
     <table-component :tableOption="tableOption" :data="tableData" @refreshTableData="refreshTableData" ref="table">
       <el-select slot="toggle" v-model="task_toggle" style="width: 110px; margin-left: 5px;">
         <el-option key="mine" label="我的任务" value="personal"></el-option>
@@ -172,6 +171,7 @@ export default {
       tableOption: {
         'name': 'taskList',
         'url': URL,
+        'is_filter': true,
         'row_class': ({due_time}, index)=> {
           return this.$tool.detectionTime(due_time);
         },
@@ -217,7 +217,7 @@ export default {
           { 
             type: 'action', 
             label: '操作',
-            width: '235',
+            min_width: '170',
             align: 'left',
             btns: [
               // { 
@@ -245,50 +245,11 @@ export default {
     };
   },
   computed: {
-    appFilterData () {
-      const f = this.filters;
-      const filterArr = [
-        {
-          label: '代理人',
-          key: 'agents',
-          items: [],
-        },
-        {
-          label: '指定期限',
-          key: 'duetime',
-          items: [],
-        },
-        {
-          label: '任务阶段',
-          key: 'flownodes',
-          items: [],
-        }
-      ];
-      filterArr.forEach(d=>{
-        const item = f[d.key];
-        if(item) {
-          item.forEach(d2=>{
-            d.items.push({label: d2.name, value: d2.id, count: d2.count});
-          });
-        }
-      });
-      return filterArr;     
-    },
-    screen_value () {
-      const m = new Map([['agents', 'agent'],['duetime', 'due_time'],['flownodes', 'flow_node_id']]);
-      const obj = {};
-
-      this.$store.getters.screen_value.forEach((d,k)=>{obj[m.get(k)] = d[0]});
-      return obj;
-    },
     task_status () {
       return this.$route.meta.status;
     }
   },
   watch: {
-    screen_value () {
-      this.refresh();
-    },
     filter () {
       this.refresh();
     },

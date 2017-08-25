@@ -233,12 +233,14 @@ menu.data = [
 			path: '/setting/template',
 			icon: '',
 			type: 'item'
-		},{
-			text: '发文规则',
-			path: '/setting/rule',
-			icon: '',
-			type: 'item'
-		}]
+		},
+		// {
+		// 	text: '发文规则',
+		// 	path: '/setting/rule',
+		// 	icon: '',
+		// 	type: 'item'
+		// }
+		]
 	},
 ];
 

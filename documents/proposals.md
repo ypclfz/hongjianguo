@@ -84,6 +84,9 @@ request {
     tags:"tag",//标签，多个标签用逗号隔开
     inventors:"1",//发明人ID，多个发明人ID用逗号隔开
 	sort:"field-order",//field表示字段，取值为id,status,title,abstract,classification,proposer,create_time,update_time,delete_time,remark order取值为asc（升序），desc（降序），多个排序采用逗号隔开
+	
+	//如果要导出清单请添加以下参数
+	format:"excel"
 }  
 response {
     status:1,
@@ -96,21 +99,47 @@ response {
         data:[{
             id:"1",//提案ID
 			status:"1",//提案状态，1-正常 0-暂停处理
+			seria:"案号",
             title:"title",//提案标题
             abstract:"1",  //提案摘要
-			remark:"remark",//备注
 			create_time:"create_time",//创建时间
-			update_time:"update_time",//更新时间
-			delete_time:"delete_time",//删除时间
 			branch:{id:"部门ID",name:"部门名称"},
-            product:{id:1,name:"产品名称",remark:"备注"},//
-            proposer:{id:"用户ID",name:"提案人姓名",mobile:"提案人手机",email:"提案人邮箱"},//提案人
-            attachments:[{id:"文件ID",name:"附件名称",ext:"附件格式",size:"附件大小",viewUrl:"查看地址，为空则不能直接查看",downloadUrl:"下载地址"}]
-            classification:{id:"技术分类ID",name:"技术分类名称",description:"技术分类描述"}
-            product:{id:"产品ID",name:"产品名称",remark:"产品描述"}
-            tags:["tag"],//标签
+			classification:{id:"技术分类ID",name:"技术分类名称",description:"技术分类描述"}
+			products:{id:"产品ID",name:"产品名称",description:"产品描述"}
+			proposer:{id:"用户ID",name:"提案人姓名",mobile:"提案人手机",email:"提案人邮箱"},//提案人
             inventors:[{id:"发明人ID",name:"发明人姓名",share:"发明人份额",sort:"发明人排序"}],//发明人
+			tags:["tag"],//标签
+            attachments:[{id:"文件ID",name:"附件名称",ext:"附件格式",size:"附件大小",viewUrl:"查看地址，为空则不能直接查看",downloadUrl:"下载地址"}]
+			remark:"remark",//备注
+			
+			//以下是点击相关专利弹出面板显示
+			patents:[{
+				id:"id",不显示，用于跳转链接
+				serial:"案号",
+				title:"标题",
+				type_name:"专利类型",
+				area:"申请地区",
+				apn:"申请号",
+				apd:"申请日"
+			}]
         }]
+		
+		filters:[{
+			label:"标签",
+			key:"上传字段",
+			items:[{
+				label:"标签",
+				value:"值",
+				count:"数量"
+			}]
+		}]
+		
+		//当提交format=excel参数时，返回如下
+		downloadUrl:"/files/33",//可以直接windows.open下载
+		ext:"xlsx",
+		id:"33",文件ID
+		name:"文件名称",
+		size:"文件大小",
     }
 }
 

@@ -27,7 +27,7 @@
           <agency v-model="form.agency"></agency>
         </el-form-item>
         <el-form-item label="流程节点" prop="task_def_id">
-          <task-def v-model="form.task_def_id"></task-def>
+          <flow-nodes v-model="form.task_def_id"></flow-nodes>
         </el-form-item>
       </el-col>
       <el-col :span="12">
@@ -53,7 +53,7 @@
 <script>
 import AppCollapse from '@/components/common/AppCollapse'
 import Agency from '@/components/form/Agency'
-import TaskDef from '@/components/form/TaskDef'
+import FlowNodes from '@/components/form/FlowNodes'
 import Agent from '@/components/form/Agent'
 import Ipr from '@/components/form/Ipr'
 import Member from '@/components/form/Member'
@@ -94,7 +94,7 @@ export default {
   		this.$emit('clear');
   	}
   },
-  components: { Agency, TaskDef, Ipr, Agent, Member, DateArea, AppCollapse }
+  components: { Agency, FlowNodes, Ipr, Agent, Member, DateArea, AppCollapse }
 }
 </script>
 

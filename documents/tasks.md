@@ -115,6 +115,9 @@ request {
 	scope:"all/personal",//all-所有任务 personal-全部任务
 	status:"0/1",//0未完成 1-已完成
 	sort:"field-order",//field表示字段，取值为project_type、agency、agent、task_def_id、role、person_in_charge、due_time、deadline、end_time、title、serial、apn、apd、remark order取值为asc（升序），desc（降序），多个排序采用逗号隔开
+	
+	//如果要导出清单请添加以下参数
+	format:"excel"
 }  
 
 response {
@@ -162,20 +165,22 @@ response {
 			task_def_id:"任务节点ID",//不需要显示
 			flow_id:"当前任务所属的流程ID",//不需要显示，用来通过 /flows/1/nodes接口拉取流程节点
         }],
-		filters:{
-			agents:[{
-				name:'name',
-				count:"count"
-			}],
-			duetime:[{
-				name:'name',
-				count:"count"
-			}],
-			roles:[{
-				name:'name',
-				count:"count"
-			}],
-		}
+		filters:[{
+			label:"标签",
+			key:"上传字段",
+			items:[{
+				label:"标签",
+				value:"值",
+				count:"数量"
+			}]
+		}]
+		
+		//当提交format=excel参数时，返回如下
+		downloadUrl:"/files/33",//可以直接windows.open下载
+		ext:"xlsx",
+		id:"33",文件ID
+		name:"文件名称",
+		size:"文件大小",
     }
 }
 

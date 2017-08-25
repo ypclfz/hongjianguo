@@ -34,7 +34,6 @@
       </el-form>
     
     </app-collapse>
-    <app-filter :data="appFilterData"></app-filter>
     		<table-component :tableOption="tableOption" :data="tableData" ref="table" @refreshTableData="refreshTableData">
           <template slot="expand" scope="scope">
             <el-steps :space="200" :active="1">
@@ -164,6 +163,7 @@ export default {
       tableOption: {
         'name': 'proposalList',
         'url': URL,
+        'is_filter': true,
         'header_btn': [
           { type: 'add', click: this.add },
           { type: 'delete', click: this.deleteMul },
@@ -219,43 +219,6 @@ export default {
       tags: [],
       inventors: [],
       filters: {},
-    }
-  },
-  computed: {
-
-    appFilterData () {
-      const f = this.filters;
-      const filterArr = [
-        {
-          label: '流程节点',
-          key: 'flownodes',
-          items: [],
-        },
-        {
-          label: '创建时间',
-          key: 'time',
-          items: [],
-        }
-      ];
-      filterArr.forEach(d=>{
-        const item = f[d.key];
-        if(item) {
-          item.forEach(d2=>{
-            d.items.push({label: d2.name, value: d2.id, count: d2.count});
-          });
-        }
-      });
-      return filterArr;
-    },
-    screen_value () {
-      const obj = {};
-      this.$store.getters.screen_value.forEach((d,k)=>{obj[map.get(k)] = d[0]});
-      return obj;
-    }
-  },
-  watch: {
-    screen_value (val) {
-      this.refresh();
     }
   },
   components: { TableComponent, AppFilter, AppCollapse, Classification, Product, InventorSelect, Member, Tag, AppFilter }, 

@@ -222,7 +222,7 @@ const router = new Router({
       component: InvoiceCommon,
     },
     {
-      path: 'fee/payment',
+      path: '/fee/payment',
       name: 'FeePayment',
       component: InvoiceCommon
     },

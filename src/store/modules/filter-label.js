@@ -35,6 +35,16 @@ const getters = {
 		}
 		return map;
 	},
+	screen_obj: state=>{
+		const screen = state.screen;
+		const o = {};
+
+		for(let s of screen) {
+			o[s['key']] = s['items'][0]['value'];
+		}
+
+		return o;
+	}
 }
 
 const mutations = {

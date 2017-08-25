@@ -1,5 +1,6 @@
 <template>
   <div class="hjg-table">
+    <app-filter :data="filters" v-if="tableOption.is_filter ? true : false"></app-filter>
   	<div class="table-header">
       <template v-for="btn in tableOption.header_btn">
         
@@ -189,6 +190,7 @@
 import tableConst from '@/const/tableConst'
 import AppDatePicker from '@/components/common/AppDatePicker'
 import AxiosMixins from '@/mixins/axios-mixins'
+import AppFilter from '@/components/common/AppFilter'
 const methods = Object.assign({}, tableConst.methods, {
   handelExport(func, e) {
     if(func) {
@@ -301,7 +303,7 @@ const methods = Object.assign({}, tableConst.methods, {
     }
   },
   update () {
-    this.$emit('refreshTableData', this.getRequestOption() );
+    this.$emit('refreshTableData', Object.assign({}, this.getRequestOption(), this.screen_obj) );
   },
   reset () {
     this.page = 1;
@@ -333,6 +335,9 @@ export default {
   mixins: [ AxiosMixins ],
   props: ['tableOption', 'data', 'tableStyle'],
   computed: {
+    screen_obj () {
+      return this.$store.getters.screen_obj;
+    },
     tableData () {
       const d = this.data;
       if(d instanceof Array) {
@@ -348,6 +353,10 @@ export default {
       }else {
         return d.total ? d.total : 0;  
       }
+    },
+    filters () {
+      const d = this.data;
+      return d.filters ? d.filters : [];
     },
     requesOption () {
       const obj = {
@@ -378,6 +387,10 @@ export default {
     'requesOption': {
       handler: function () {  },
       deep: true,
+    },
+    screen_obj (val) {
+      console.log(val); 
+      this.refresh();    
     }
   },
   data () {
@@ -428,6 +441,7 @@ export default {
       },
     },
     AppDatePicker,
+    AppFilter,
   },
   mounted () {
     

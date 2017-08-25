@@ -29,6 +29,7 @@ export default {
       tableOption: {
         'name': 'patentList',
         'url': URL,
+        'is_filter': true,
         'header_btn': [
           { type: 'add', click: this.add },
           { type: 'delete' }, 
@@ -47,7 +48,18 @@ export default {
             } 
           },
           { type: 'text', label: '地区', prop: 'area', width: '142' },
-          { type: 'text', label: '专利标题', prop: 'title', sortable: true, width: '142' },
+          { type: 'text', label: '专利标题', prop: 'title', sortable: true, width: '142',
+            render: (h,item,{id})=>{
+              return h('a', {
+                attrs: {
+                  href: 'javascript:void(0)'
+                },
+                on: {
+                  click: _=>{this.detail({id})}
+                },
+              },item);
+            }
+          },
           { type: 'text', label: '专利摘要', prop: 'abstract', width: '263'},
           { type: 'text', label: '申请日', prop: 'apd', width: '263'},
           { type: 'text', label: '申请号', prop: 'apn', width: '263'},
