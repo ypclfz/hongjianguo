@@ -156,7 +156,15 @@ export default {
     refreshTableData (option) {
       const url = URL;
       const data = Object.assign({}, option, this.filter);
-      const success = d=>{this.tableData = d.patents};
+      const success = d=>{
+        if(data['format'] == 'excel') {
+          window.open(d.downloadUrl);
+        }else {
+          this.tableData = d.patents;  
+        }
+        
+      };
+      
       this.axiosGet({url, data, success});
     },
     refresh () {

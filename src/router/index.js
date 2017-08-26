@@ -258,17 +258,7 @@ const router = new Router({
     },
     { path: '/setting/agency', name: 'SettingAgency', component: SettingAgency },
     { path: '/setting/case', name: 'SettingCase', component: SettingAgency },
-    { path: '/setting/individual', redirect: '/setting/individual__' },
-    { 
-      path: '/setting/individual__',
-      component: SettingIndividual,
-      children: [
-        { path: '', redirect: 'base' },
-        { path: 'base', component: SI_Base },
-        { path: 'email', component: SI_Email },
-        { path: 'notice', component: SI_Notice },
-      ] 
-    },
+    { path: '/setting/individual', name: 'SettingIndividual', component: SettingIndividual },
     { path: '/setting/jurisdiction', name: 'SettingJurisdiction', component: SettingJurisdiction },
     { path: '/setting/rule', name: 'SettingRule', component: SettingRule },
     { path: '/setting/system', redirect: '/setting/system__' },

@@ -128,8 +128,8 @@ export default {
       const invoice = this.fee_invoice_if && this.fee_invoice != '' ? {fee_invoice: this.fee_invoice} : {};
   		const data = Object.assign({}, option, { debit, status }, this.filter, invoice);
   		const success = d=>{ 
-        if(data.format) {
-          console.log(d);
+        if(data['format'] == 'excel') {
+          window.open(d.downloadUrl);
         }else {
           this.tableData = d.fees;  
         }

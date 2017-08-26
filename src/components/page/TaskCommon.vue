@@ -143,7 +143,7 @@ export default {
         const data = { ids: this.$tool.splitObj(s, 'id') };
         const success = _=>{ this.update() };
 
-        this.axiosPost({ url, data, success });
+        this.axiosPut({ url, data, success });
       }
     },
     proposalEdit ({project_id}) {
