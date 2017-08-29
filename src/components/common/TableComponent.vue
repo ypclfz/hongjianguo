@@ -59,6 +59,14 @@
           <el-button class="table-header-btn" type="primary" icon="upload2" @click="handelExport(btn.click, $event)">导出</el-button>
         </template>
 
+        <template v-else-if="btn.type == 'import'">
+          <el-button class="table-header-btn" type="primary" icon="document" @click="handleImport(btn.click, $event)">导入</el-button>
+        </template>
+
+        <template v-else-if="btn.type == 'batch_upload'">
+          <el-button class="table-header-btn" type="primary" icon="upload" @click="handleBatchUpload(btn.click, $event)">批量上传</el-button>
+        </template>
+
       </template>
         
       <template v-if="tableOption.header_slot ? true : false">
@@ -92,7 +100,7 @@
   >
     <template v-for="(col, index) in tableOption.columns">
       
-      <template v-if="col.type == 'selection'">
+      <template v-if="col.type == 'selection'" >
         <el-table-column type="selection"></el-table-column>
       </template>
 
@@ -135,7 +143,7 @@
       </template>
 
       <template v-else-if="col.type == 'action'">
-        <el-table-column :label="col.label ? col.label : '操作'" :align="col.align ? col.align : 'left'" :width="col.width ? col.width : ''" :min-width="col.min_width ? col.min_width : ''" header-align='center'>
+        <el-table-column :label="col.label ? col.label : '操作'" :align="col.align ? col.align : 'left'" :width="col.width ? col.width : ''" :min-width="col.min_width ? col.min_width : ''" header-align="center">
           <template scope="scope">
             <template v-if="col.btns_render ? true : false">
               <slot :name="col.btns_render" :row="scope.row">
@@ -183,6 +191,9 @@
   	:total="totalNumber"
   >
   </el-pagination>
+  <el-dialog title="导入数据文件" :visible.sync="dialogImportVisible">
+    <app-import :columns="import_columns" :action="tableOption.import_action ? tableOption.import_action : ''"></app-import>
+  </el-dialog>
   </div>
 </template>
 
@@ -191,14 +202,28 @@ import tableConst from '@/const/tableConst'
 import AppDatePicker from '@/components/common/AppDatePicker'
 import AxiosMixins from '@/mixins/axios-mixins'
 import AppFilter from '@/components/common/AppFilter'
+import AppImport from '@/components/common/AppImport'
 const methods = Object.assign({}, tableConst.methods, {
   handelExport(func, e) {
     if(func) {
       func(e)
     }else {
-      this.page = 1;
-      this.search_value = "";
       this.$emit('refreshTableData', Object.assign({}, this.getRequestOption(), {format: 'excel'}) );
+    }
+  },
+  handleImport(func, e) {
+    if(func) {
+      func(e)
+    }else {
+      // this.$message({message: '导入接口开发中', type: 'warning'})
+      this.dialogImportVisible = true;
+    }
+  },
+  handleBatchUpload(func, e) {
+    if(func) {
+      func(e)
+    }else {
+      this.$message({message: '批量上传接口开发中', type: 'warning'})
     }
   },
   handleExpand (a, b) {
@@ -356,7 +381,13 @@ export default {
     },
     filters () {
       const d = this.data;
-      return d.filters ? d.filters : [];
+      let filter = [];
+      
+      if(d && d.filters) {
+        filter = d.filters;
+      }
+
+      return filter;
     },
     requesOption () {
       const obj = {
@@ -381,7 +412,20 @@ export default {
     },
     url () {
       return this.tableOption.url ? this.tableOption.url : '';
-    }
+    },
+    import_if () {
+      const h = this.tableOption.header_btn;
+      let flag = false;
+      if(h) {
+        h.forEach(_=>{ if(_.type == 'import' && _.click == undefined) flag = true })
+      }
+
+      return flag;
+    },
+    import_columns () {
+      const c =this.tableOption.columns;
+      return c.filter(_=>_.is_import);
+    },
   },
   watch: {
     'requesOption': {
@@ -422,6 +466,7 @@ export default {
       search_value: '',
       page: 1,
       sort: {field: null, order: null},
+      dialogImportVisible: false,
     };
 
     return Object.assign({}, tableConst.data, data);
@@ -442,6 +487,7 @@ export default {
     },
     AppDatePicker,
     AppFilter,
+    AppImport,
   },
   mounted () {
     

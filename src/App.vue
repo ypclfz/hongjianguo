@@ -277,6 +277,12 @@ nav {
 .el-table .table-warning {
  color: #F7BA2A;
 }
+.ql-toolbar.ql-snow {
+  line-height: initial;
+}
+.ql-container.ql-snow {
+  height: 300px;
+}
 /*这里放入重写element-ui样式的内容*/
 #app {
   .dialog-mini .el-dialog {

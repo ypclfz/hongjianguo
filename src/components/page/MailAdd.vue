@@ -1,1 +1,102 @@
-MailAdd.vue
+<template>
+  <div class="main">
+  	<el-form :model="form" ref="form" label-width="80px">
+  		<el-form-item label="收件人" prop="to">
+			<mail v-model="form.to"></mail>
+  		</el-form-item>
+  		<el-form-item label="抄送" prop="cc">
+  			<mail v-model="form.cc"></mail>
+  		</el-form-item>
+  		<el-form-item label="密送" prop="bcc">
+			<mail v-model="form.bcc"></mail>
+  		</el-form-item>
+  		<el-form-item label="主题" prop="subject">
+  			<el-input v-model="form.subject" placeholder="请输入邮件主题"></el-input>
+  		</el-form-item>
+  		<el-form-item label="附件" prop="attachments">
+  			<upload v-model="form.attachments"></upload>
+  		</el-form-item>
+  		<el-form-item label="正文" prop="to">
+  			<quill-editor 
+					v-model="form.body"
+          ref="myQuillEditor"
+          :options="editorOption"
+          @blur="onEditorBlur($event)"
+          @focus="onEditorFocus($event)"
+          @ready="onEditorReady($event)"	
+        >
+  			</quill-editor>
+  		</el-form-item>
+  		<el-form-item>
+  			<el-button type="primary" icon="message">发送</el-button>
+  			<el-button type="primary" icon="document">保存</el-button>
+  			<el-button type="danger" @click="back">返回</el-button>
+  		</el-form-item>
+  	</el-form>
+  </div>
+</template>
+
+<script>
+import Upload from '@/components/form/Upload'
+import Mail from '@/components/form/Mail'
+
+export default {
+  name: 'mailAdd',
+  data () {
+		return {
+			'form': {
+				subject: '',
+				to: [],
+				cc: [],
+				bcc: [],
+				mailbox: '',
+				body: '',
+				attachments: [], 
+			},
+			'editorOption': {
+				modules: {
+         //  toolbar: [
+         //   	[{ 'header': [] }],          	
+         //    [{ 'size': [] }],
+         //    ['bold', 'italic'],
+         //    [{ 'list': 'ordered'}, { 'list': 'bullet' }],
+         //    ['image']
+         //  ],
+	        // history: {
+	        //   delay: 1000,
+	        //   maxStack: 50,
+	        //   userOnly: false
+	        // },
+	        // imageImport: true,
+	        // imageResize: {
+	        //   displaySize: true
+	        // }
+          
+        }
+			},
+		}	  
+	},
+	methods: {
+		print () {
+			console.log(this.form);
+		},
+		back () {
+			this.$router.push('/mailList');
+		},
+		onEditorBlur () {
+
+		},
+		onEditorFocus () {
+
+		},
+		onEditorReady () {
+
+		}
+	},
+	components: { Upload, Mail },
+}
+</script>
+
+<!-- Add "scoped" attribute to limit CSS to this component only -->
+<style scoped lang="scss">
+</style>

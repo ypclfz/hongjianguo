@@ -17,39 +17,26 @@ export default {
 				'header_btn': [
 					// { type: 'custom', label: '筛选', icon: '', click: ()=>{alert("筛选")} },
 					// { type: 'custom', label: '统计', icon: '', click: ()=>{alert("统计")} },
-					{ type: 'export' },
 					{ type: 'delete' },
+					{ type: 'export' },
+					{ type: 'import' },
 					{ type: 'control', label: '字段' },
 					{ type: 'custom', label: '上传', icon: '', click: ()=>{alert("上传")} },
 					// { type: 'custom', label: '批量上传', icon: '', click: ()=>{alert("批量上传")}},
 				],
+				'import_action': '',				
 				'columns': [
 					{ type: 'selection' },
-					{ type: 'text', label: '内部案号', prop: 'test' },
-					{ type: 'text', label: '通知书编号', show: false },
-					{ type: 'text', label: '通知书代码', show: false },
-					{ type: 'text', label: '发明名称' },
-					{ type: 'text', label: '发文序列号' },
-					{ type: 'text', label: '通知书名称' },
-					{ type: 'text', label: '申请号' },
-					{ type: 'text', label: '申请日' },
-					{ type: 'text', label: '国际申请号', show: false },
-					{ type: 'text', label: '委内编号', show: false },
-					{ type: 'text', label: '发文日' },
-					{ type: 'text', label: '答复日' },
-					{ type: 'text', label: '注册代码', show: false },
-					{ type: 'text', label: '下载日期', show: false },
-					{ type: 'text', label: '公布号', show: false },
-					{ type: 'text', label: '公布日', show: false },
-					{ type: 'text', label: '进入实审日', show: false },
-					{ type: 'text', label: '首次年费年度', show: false },
-					{ type: 'text', label: '外观分类号', show: false },
-					{ type: 'text', label: '授权公告号', show: false },
-					{ type: 'text', label: '授权公告日', show: false },
-					{ type: 'text', label: '存储路径', show: false },
-					{ type: 'text', label: '生成日期', show: false },
-					{ type: 'text', label: '备注', show: false },
-					{ type: 'text', label: '是否上传', show: false },
+					{ type: 'text', label: '上传日', prop: 'upload_time' },
+					{ type: 'text', label: '通知书名称', prop: 'name' },
+					{ type: 'text', label: '上传用户', prop: 'uploader' },
+					{ type: 'text', label: '处理状态', prop: 'status' },
+					{ type: 'text', label: '案号', prop: 'serial' },
+					{ type: 'text', label: '申请日', prop: 'apd' },
+					{ type: 'text', label: '发文日', prop: 'mail_date' },
+					{ type: 'text', label: '案件名称', prop: 'title' },
+					{ type: 'text', label: '发文序列号', prop: 'mail_serial' },
+					{ type: 'text', label: '申请号', prop: 'apn' },
 					{ 
 						type: 'action', 
 						label: '操作',
@@ -72,10 +59,20 @@ export default {
 			filter: {},
 	  }
 	},
+	computed: {
+		type () {
+			let type = this.$route.meta.type;
+
+			return type ? type : '';
+		}
+	},
 	methods: {
 		refresh () {}
 	},
-	components: { TableComponent, Strainer },	
+	components: { TableComponent, Strainer },
+	created () {
+		this.tableOption.import_action = this.type == 'patent' ? 'getPatentNotices' : 'getCopyrightNotices';
+	}
 }
 </script>
 

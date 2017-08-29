@@ -10,16 +10,18 @@
 			<el-form-item label="代理人" prop="agent">
 				<remote-select type="member" v-model="form.agent"></remote-select>
 			</el-form-item>
-			<el-form-item label="通知订阅" prop="message_subscribe">
-				<el-checkbox label="是否订阅邮件通知" v-model="form.message_subscribe.mail" :true-label="1" :false-label="0"></el-checkbox>
-				<el-checkbox label="是否订阅系统内通知" v-model="form.message_subscribe.system" :true-label="1" :false-label="0"></el-checkbox>
+			<el-form-item label="邮件通知" prop="message_subscribe_mail">
+				<el-checkbox label="是否订阅邮件通知" v-model="form.message_subscribe_mail" :true-label="1" :false-label="0"></el-checkbox>
+			</el-form-item>
+			<el-form-item label="系统内通知" prop="message_subscribe_system">
+				<el-checkbox label="是否订阅系统内通知" v-model="form.message_subscribe_system" :true-label="1" :false-label="0"></el-checkbox>
 			</el-form-item>
 			<el-form-item label="邮箱地址" prop="email">
 				<el-input v-model="form.email"></el-input>
 			</el-form-item>
-			<el-form-item label="邮箱密码" prop="email_password">
+<!-- 			<el-form-item label="邮箱密码" prop="email_password">
 				<el-input v-model="form.email_password" type="password"></el-input>
-			</el-form-item>
+			</el-form-item> -->
 			<el-form-item label="POP服务器" prop="pop_server">
 				<el-input v-model="form.pop_server"></el-input>
 			</el-form-item>
@@ -61,10 +63,8 @@ export default {
 		  	"name": "",
 		    "mobile": "",
 		    "agent": "",
-		    "message_subscribe": {
-		      "mail": 0,
-		      "system": 0,
-		    },
+		    "message_subscribe_mail": 0,
+		    "message_subscribe_system": 0,
 		    "email": "",
 		    "email_password": "",
 		    "pop_server": "",
@@ -89,7 +89,16 @@ export default {
   	refreshForm () {
   		if(this.id) {
   			const url = `${URL}/${this.id}/config`;
-  			const success = _=>{ this.form = _.data };
+  			const success = _=>{ 
+  				for(let k in this.form) {
+  					const d = _.data[k];
+  					if(k == 'agent') {
+  						this.form[k] = d.id;
+  					}else {
+  						this.form[k] = d;
+  					}
+  				} 
+  			};
   			const complete = _=>{
   				window.setTimeout(_=>{this.loading = false}, 300);
   			};

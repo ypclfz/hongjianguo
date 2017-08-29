@@ -33,33 +33,25 @@ export default {
         'header_btn': [
           { type: 'add', click: this.add },
           { type: 'delete' }, 
-          { type: 'control', label: '字段' },
           { type: 'export' },
+          { type: 'import' },
+          { type: 'batch_upload' },
+          { type: 'control', label: '字段' },
         ],
+        'import_action': 'getPatents',
         'columns': [
 
           { type: 'selection' },
           // { type: 'text', label: '专利状态', prop: 'status', render: (h,item)=>h('span', item ? '正常' : '暂停处理') },
           { type: 'text', label: '案号', prop: 'serial', width: '142' },
-          { type: 'text', label: '专利类型', prop: 'type', width: '142',
+          { type: 'text', label: '专利类型', prop: 'type', is_import: true, width: '142',
             render: (h,item)=>{
               const tex = PATENT_TYPE[item-1]; 
               return h('span', tex ? tex : '');
             } 
           },
-          { type: 'text', label: '地区', prop: 'area', width: '142' },
-          { type: 'text', label: '专利标题', prop: 'title', sortable: true, width: '142',
-            render: (h,item,{id})=>{
-              return h('a', {
-                attrs: {
-                  href: 'javascript:void(0)'
-                },
-                on: {
-                  click: _=>{this.detail({id})}
-                },
-              },item);
-            }
-          },
+          { type: 'text', label: '地区', prop: 'area', is_import: true, width: '142' },
+          { type: 'text', label: '专利标题', prop: 'title', sortable: true, is_import: true, width: '142' },
           { type: 'text', label: '专利摘要', prop: 'abstract', width: '263'},
           { type: 'text', label: '申请日', prop: 'apd', width: '263'},
           { type: 'text', label: '申请号', prop: 'apn', width: '263'},
@@ -85,7 +77,8 @@ export default {
             type: 'text', 
             label: '申请人',
             width: '123', 
-            prop: 'proposer', 
+            prop: 'proposer',
+            is_import: true,
             render: (h, item)=>h('span', item.name),
           },
           {
@@ -93,6 +86,7 @@ export default {
             label: '发明人',
             width: '238',
             prop: 'inventors',
+            is_import: true,
             render: arr=>{
               return arr.map(d=>`${d.name}: ${d.share}%`);
             },
@@ -119,13 +113,6 @@ export default {
             prop: 'products', 
             sortable: true, 
             render: _=>_.map(_=>_.name),
-          },
-          {
-            type: 'text',
-            label: '申请人',
-            prop: 'proposer',
-            width: '145',
-            render: (h,item)=>h('span', item.name),
           },
           {
             type: 'array',

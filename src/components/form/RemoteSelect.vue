@@ -39,7 +39,7 @@ const map = new Map([
 	}],
 	['inventor', {
 		URL: '/api/inventors',
-		DATA_KEY: 'inventors',
+		DATA_KEY: 'data',
 		PLACEHOLDER: '请输入发明人关键词',
 	}],
 	['agent', {
@@ -52,6 +52,11 @@ const map = new Map([
 		DATA_KEY: 'members',
 		PLACEHOLDER: '请输入代理机构关键词',
 	}],
+	['project', {
+		URL: '/api/projects',
+		DATA_KEY: 'projects',
+		PLACEHOLDER: '请输入案件关键词',
+	}]
 ]);
 
 export default {

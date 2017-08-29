@@ -24,6 +24,7 @@ import FeeCommon from '@/components/page/FeeCommon'
 import InvoiceCommon from '@/components/page/InvoiceCommon'
 import ClassificationCommon from '@/components/page/ClassificationCommon'
 import MailList from '@/components/page/MailList'
+import MailAdd from '@/components/page/MailAdd'
 //###################
 import CommonDetail from '@/components/page/CommonDetail'
 import Babel from '@/components/page_extension/CommonDetail_base'
@@ -133,6 +134,7 @@ const router = new Router({
     },{
       path: '/patent/notice',
       name: 'PatentNotice',
+      meta: { type: 'patent' },
       component: NoticeCommon,
     },{
       path: '/trademark/list',
@@ -179,6 +181,7 @@ const router = new Router({
     {
       path: '/copyright/notice',
       name: 'CopyrightNotice',
+      meta: { type: 'copyright' },
       component: NoticeCommon,
     },
     {
@@ -190,6 +193,11 @@ const router = new Router({
       path: '/mailList',
       name: 'MailList',
       component: MailList,
+    },
+    {
+      path: '/mailList/mailAdd',
+      name: 'MailAdd',
+      component: MailAdd,
     },
     {
       path: '/classification',

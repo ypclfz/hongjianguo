@@ -1,28 +1,15 @@
 <template>
   <div class="main">
-  		<div class="left">
-		  <el-tree 
-		  	:data="options"
-		  	:props="props"
-		  	node-key="value"
-		  	highlight-current
-		  	:expand-on-click-node="false"
-		  	:current-node-key="currentNodeKey"
-		  	default-expand-all
-		  	@current-change="handleCurrentChange"
-		  >
-	  </el-tree>
-	  </div>
-
-  	<div class="right">
+			<strainer v-model="filter" @refresh="refresh"></strainer>
   		<table-component :tableOption="tableOption" :data="tableData" @refreshTableData="refreshTableData" ref="table" ></table-component>
-  	</div>
   </div>
 </template>
 
 <script>
 import TableComponent from '@/components/common/TableComponent'
+import Strainer from '@/components/page_extension/MailList_strainer'
 import AxiosMixins from '@/mixins/axios-mixins'
+
 
 const URL = '/api/mails';
 
@@ -42,8 +29,13 @@ export default {
 		  },
 		  currentNodeKey: 1,
 		  tableOption: {
+		  	'header_btn': [
+		  		{ type: 'custom', label: '写邮件', icon: 'edit', click: this.add },
+		  		{ type: 'delete' },
+		  	],
 		  	// 'is_search': false,
 		  	'columns': [
+		  		{ type: 'selection' },
 		  		{ type: 'text', label: '发件人邮箱', prop: 'from' },
 		  		{ type: 'array', label: '收件人邮箱', prop: 'to', render: _=>{ return _.split(','); } },
 		  		{ type: 'text', label: '邮件标题', prop: 'subject' },
@@ -57,14 +49,18 @@ export default {
 		  	]
 		  },
 		  tableData: [],
+		  filter: {},
 
 		}
   },
   methods: {
+  	add () {
+  		this.$router.push('/mailList/mailAdd');
+  	},
   	refreshTableData (option) {
   		const url = URL;
   		const mailbox = this.currentNodeKey == '' ? {} : {'mailbox': this.currentNodeKey};
-  		const data = Object.assign({}, option, mailbox);
+  		const data = Object.assign({}, this.filter, option, mailbox);
   		const success = _=>this.tableData = _.mails;
 
   		this.axiosGet({url, data, success});
@@ -85,9 +81,10 @@ export default {
 
   		this.axiosDelete({url, success});
   	},
-
   },
-  components: { TableComponent },
+  mounted () {
+  },
+  components: { TableComponent, Strainer },
 }
 </script>
 

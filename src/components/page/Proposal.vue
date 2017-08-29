@@ -177,8 +177,8 @@ export default {
           { type: 'selection'},
           { type: 'text', label: '创建时间', prop: 'create_time', sortable: true, width: '176' },
           { type: 'text', label: '更新时间', prop: 'update_time', sortable: true, width: '172' },
-          { type: 'text', label: '案件名称', prop: 'title',sortable: true, width: '120' },
-          { type: 'text', label: '案件摘要', prop: 'abstract', sortable: true, width: '122' },
+          { type: 'text', label: '案件名称', prop: 'title',sortable: true, width: '200' },
+          { type: 'text', label: '案件摘要', prop: 'abstract', sortable: true, width: '200' },
           { type: 'text', label: '当前节点', prop: 'flow_node', sortable: true, width: '118' },
           { 
             type: 'text', 
@@ -196,9 +196,9 @@ export default {
             width: '158'
           },
           { type: 'array', label: '标签', prop: 'tags', width: '135' },
-          { type: 'text', label: '备注', prop: 'remark', sortable: true },
+          { type: 'text', label: '备注', prop: 'remark', sortable: true, width: '300' },
           // { type: 'text', label: '案件状态', prop: 'status', sortable: true },
-          { type: 'text', label: '相关专利', prop: 'projects', width: '103' },
+          { type: 'text', label: '相关专利', prop: 'projects', width: '200' },
           {
             type: 'action',
             label: '操作', 

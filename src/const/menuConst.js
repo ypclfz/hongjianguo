@@ -253,6 +253,7 @@ menu.map = {
 	'/proposal/edit': {text: '提案编辑', icon: '', path: '/proposal/edit'},
 	'/proposal/detail': {text: '提案详情', icon: '', path: '/proposal/detail'},
 	'/trademark/list/detail': {text: '商标详情', icon: '', path: '/trademark/list/detail/babel'},
+	'/mailList/mailAdd': {text: '写邮件', icon: 'el-icon-edit', path: '/mailList/mailAdd'},
 };
 tailRecursion(menu.data);
 
