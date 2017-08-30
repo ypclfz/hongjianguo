@@ -11,11 +11,13 @@
           </el-dropdown-menu>
         </el-dropdown>
     </nav>
-    <div class="nav-left" :style="navL_height">
-      <el-menu theme="dark" router unique-opened>
-        <app-menu v-for="item in menu_data" :data="item" :key="item.path"></app-menu>
-      </el-menu>
-    </div>
+      <span class="nav-left-btn" @click="navToggle"><span class="nav-left-btn-arrow el-icon-arrow-left"></span></span>
+      <div class="nav-left" :style="navL_height">
+        
+        <el-menu theme="dark" router unique-opened>
+          <app-menu v-for="item in menu_data" :data="item" :key="item.path"></app-menu>
+        </el-menu>
+      </div>
     <div class="container" v-loading="loading">
       <!-- <h1 class="container-menu"><i :class="select.icon"></i><span>{{ select.text }}</span></h1> -->
       <div class="container-nav" style="margin-top: 20px">
@@ -46,6 +48,7 @@
 import menu from '@/const/menuConst'
 import AppMenu from '@/components/common/AppMenu'
 import AxiosMixins from '@/mixins/axios-mixins'
+import $ from 'jquery'
 
 export default {
   name: 'app',
@@ -110,6 +113,35 @@ export default {
 
         this.axiosGet({url, success});
       }
+    },
+    navToggle () {
+      let i = 32;
+      let n = Number.parseInt($('.nav-left').css('width'));
+      
+      i = n == 0 ? i : -i;
+
+      const left = $('.nav-left');
+      const app = $('#app');
+      const btn = $('.nav-left-btn');
+      animation();
+      
+      function animation () {
+        
+        n += i;
+        left.css('width', n);
+        app.css('padding-left', n);
+        btn.css('left', n);
+
+        if(n == 0) {
+          btn.find('.nav-left-btn-arrow').removeClass('el-icon-arrow-left').addClass('el-icon-arrow-right');
+        }else if( n== 160) {
+          btn.find('.nav-left-btn-arrow').removeClass('el-icon-arrow-right').addClass('el-icon-arrow-left');
+        }else {
+          window.requestAnimationFrame(animation);
+        }
+      }
+      
+      
     }
   },
   beforeCreated () {
@@ -143,7 +175,9 @@ export default {
     }
     this.axiosPost({url: '/api/login', success: success2, data: {username: 'Shawn', password: 'Z9jgM6FhdKWEqbbpJePv/6qeTO/Yk2b6lx7zF4tiBncRubwf0fz93hkqGXCiWvqXCDIq7x+kAH3TK5zhjDZ53jgt1Gx1vvBPHn3ga7HTqPrnc+VhhuVGeTefHShJBx32rnbhL6LbEqCAMGqtQXaovCtuJGY6uWYAPfecAOGMuadnxTigTTBwKtW2oVP4J/EwAroYKuy4MK4Pd7YGtFoJAhlpKVOponsgsYQ8EKGOSVxcZgcgnOw8LhPy28N+xoFCh0OBkMyjM80Ybjq+H8BO6CacnDzQReZL5wQZqBdTtW7CUBi6S4+JWDPBahqNgz7jD73UhEIeG0ivFLEdCWtlVw=='}});
     // this.axiosGet({url, success, error, catchFunc});
-    
+  },
+  mounted () {
+
   },
   components: { AppMenu }
 }
@@ -155,7 +189,7 @@ $nav_height: 50px;
 $navL_bgColor: #324157;
 $navL_width: 160px;
 
-$container_padding: 15px;
+$container_padding: 20px;
 
 $table_margin: 15px;
 
@@ -184,12 +218,32 @@ nav {
   z-index: 2;
 }
 .nav-left {
+  overflow-x: auto;
   overflow-y: auto;
   width: $navL_width;
   position: fixed;
   top: $nav_height;
   left: 0;
   background-color: $navL_bgColor;
+}
+.nav-left-btn {
+  position: absolute;
+  left: 160px;
+  top: 50%;
+  margin-top: -50px;
+  background-color: #68758a;
+  width: 15px;
+  height: 150px;
+  border-bottom-right-radius: 20px;
+  border-top-right-radius: 20px;
+  cursor: pointer;
+}
+.nav-left-btn-arrow {
+  position: absolute;
+  top: 50%;
+  left: -2px;
+  color: #324157;
+  transform: translate(0, -50%);
 }
 .container {
   padding: 0 $container_padding

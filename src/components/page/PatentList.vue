@@ -30,6 +30,7 @@ export default {
         'name': 'patentList',
         'url': URL,
         'is_filter': true,
+        'import_type': 'patent',
         'header_btn': [
           { type: 'add', click: this.add },
           { type: 'delete' }, 
@@ -38,7 +39,6 @@ export default {
           { type: 'batch_upload' },
           { type: 'control', label: '字段' },
         ],
-        'import_action': 'getPatents',
         'columns': [
 
           { type: 'selection' },
@@ -50,7 +50,7 @@ export default {
               return h('span', tex ? tex : '');
             } 
           },
-          { type: 'text', label: '地区', prop: 'area', is_import: true, width: '142' },
+          { type: 'text', label: '地区', prop: 'area', render: (h, item)=>h('span', item.name), is_import: true, width: '142' },
           { type: 'text', label: '专利标题', prop: 'title', sortable: true, is_import: true, width: '142' },
           { type: 'text', label: '专利摘要', prop: 'abstract', width: '263'},
           { type: 'text', label: '申请日', prop: 'apd', width: '263'},
@@ -75,11 +75,18 @@ export default {
           { type: 'text', label: '备注', prop: 'remark', width: '263'},
           { 
             type: 'text', 
-            label: '申请人',
-            width: '123', 
+            label: '提案人',
             prop: 'proposer',
-            is_import: true,
+            width: '123', 
             render: (h, item)=>h('span', item.name),
+          },
+          {
+            type: 'array',
+            label: '申请人',
+            prop: 'applicants',
+            width: '300',
+            is_import: true,
+            render: _=>_.map(_=>_.name),
           },
           {
             type: 'array',
@@ -145,7 +152,7 @@ export default {
       const data = Object.assign({}, option, this.filter);
       const success = d=>{
         if(data['format'] == 'excel') {
-          window.open(d.downloadUrl);
+          window.open(d.patents.downloadUrl);
         }else {
           this.tableData = d.patents;  
         }

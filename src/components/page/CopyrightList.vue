@@ -20,6 +20,7 @@ export default {
         'name': 'copyrightList',
         'url': URL,
         'is_filter': true,
+        'import_type': 'copyright',
         'header_btn': [
           { type: 'add', click: this.add },
           { type: 'delete' },
@@ -28,7 +29,6 @@ export default {
           { type: 'batch_upload' },
           { type: 'control', label: '字段' },
         ],
-        'import_action': 'getCopyrights',
         'columns': [
           { type: 'selection' },
           { type: 'text', label: '案号', prop: 'serial', width: '203' },

@@ -64,7 +64,7 @@
         </template>
 
         <template v-else-if="btn.type == 'batch_upload'">
-          <el-button class="table-header-btn" type="primary" icon="upload" @click="handleBatchUpload(btn.click, $event)">批量上传</el-button>
+          <el-button class="table-header-btn" type="primary" icon="upload" @click="handleBatchUpload(btn.click, $event)">文件上传</el-button>
         </template>
 
       </template>
@@ -192,7 +192,7 @@
   >
   </el-pagination>
   <el-dialog title="导入数据文件" :visible.sync="dialogImportVisible">
-    <app-import :columns="import_columns" :action="tableOption.import_action ? tableOption.import_action : ''"></app-import>
+    <app-import :columns="import_columns" :type="tableOption.import_type ? tableOption.import_type : ''" @import-success="handleImportSuccess"></app-import>
   </el-dialog>
   </div>
 </template>
@@ -352,6 +352,11 @@ const methods = Object.assign({}, tableConst.methods, {
     }else {
       return '';
     }
+  },
+  handleImportSuccess () {
+    this.$message({message: '导入成功', type: 'success'});
+    this.dialogImportVisible = false;
+    this.refresh();
   }
 });
 export default {

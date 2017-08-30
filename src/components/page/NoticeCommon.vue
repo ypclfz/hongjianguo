@@ -24,7 +24,7 @@ export default {
 					{ type: 'custom', label: '上传', icon: '', click: ()=>{alert("上传")} },
 					// { type: 'custom', label: '批量上传', icon: '', click: ()=>{alert("批量上传")}},
 				],
-				'import_action': '',				
+				'import_type': '',				
 				'columns': [
 					{ type: 'selection' },
 					{ type: 'text', label: '上传日', prop: 'upload_time' },
@@ -71,7 +71,7 @@ export default {
 	},
 	components: { TableComponent, Strainer },
 	created () {
-		this.tableOption.import_action = this.type == 'patent' ? 'getPatentNotices' : 'getCopyrightNotices';
+		this.tableOption.import_type = this.type == 'patent' ? 'patent_notice' : 'copyright_notice';
 	}
 }
 </script>
