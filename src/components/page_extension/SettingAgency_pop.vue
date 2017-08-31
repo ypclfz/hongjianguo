@@ -14,8 +14,8 @@
 				<el-input v-model="form.address" placeholder="请填写公司的详细地址"></el-input>
 			</el-form-item>
 
-			<el-form-item label="联系电话" prop="telphone">
-				<el-input v-model="form.telphone" placeholder="请填写联系电话"></el-input>
+			<el-form-item label="联系电话" prop="telephone">
+				<el-input v-model="form.telephone" placeholder="请填写联系电话"></el-input>
 			</el-form-item>
 
 			<el-form-item label="邮箱" prop="email">
@@ -33,7 +33,7 @@
 				<app-switch type="is" v-model="form.is_core_partner"></app-switch>
 			</el-form-item>
 
-			<el-form-item>
+			<el-form-item style="margin-bottom: 0px;">
 				<el-button type="primary" @click="add" v-if="type === 'add'" :disabled="btn_disabled">添加</el-button>
 				<el-button type="primary" @click="edit" v-if="type === 'edit'" :disabled="btn_disabled">编辑</el-button>
 			</el-form-item>
@@ -57,7 +57,7 @@ export default {
         name: '',
         contact: '',
         address: '',
-        telphone: '',
+        telephone: '',
         email: '',
         scope: [],
         status: 1,

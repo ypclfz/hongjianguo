@@ -21,6 +21,7 @@ export default {
         'url': URL,
         'is_filter': true,
         'import_type': 'copyright',
+        'upload_type': 'copyright',
         'header_btn': [
           { type: 'add', click: this.add },
           { type: 'delete' },

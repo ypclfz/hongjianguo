@@ -40,7 +40,7 @@ export default {
  	computed: {
  		config () {
  			const config = map.get(this.type);
- 			return config ? consig : this.type;
+ 			return config ? config : this.type;
  		}
  	},
  	methods: {

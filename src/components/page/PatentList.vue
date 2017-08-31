@@ -31,6 +31,7 @@ export default {
         'url': URL,
         'is_filter': true,
         'import_type': 'patent',
+        'upload_type': 'patent',
         'header_btn': [
           { type: 'add', click: this.add },
           { type: 'delete' }, 

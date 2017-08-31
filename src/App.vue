@@ -116,7 +116,7 @@ export default {
     },
     navToggle () {
       let i = 32;
-      let n = Number.parseInt($('.nav-left').css('width'));
+      let n = Number.parseInt($('.nav-left').css('width')) != 0 ? 160 : 0;
       
       i = n == 0 ? i : -i;
 
@@ -218,7 +218,7 @@ nav {
   z-index: 2;
 }
 .nav-left {
-  overflow-x: auto;
+  overflow-x: hidden;
   overflow-y: auto;
   width: $navL_width;
   position: fixed;
@@ -227,7 +227,7 @@ nav {
   background-color: $navL_bgColor;
 }
 .nav-left-btn {
-  position: absolute;
+  position: fixed;
   left: 160px;
   top: 50%;
   margin-top: -50px;

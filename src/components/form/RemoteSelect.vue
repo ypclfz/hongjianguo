@@ -56,6 +56,18 @@ const map = new Map([
 		URL: '/api/projects',
 		DATA_KEY: 'projects',
 		PLACEHOLDER: '请输入案件关键词',
+	}],
+	['patent', {
+		URL: '/api/projects',
+		DATA_KEY: 'projects',
+		PLACEHOLDER: '请输入专利关键词',
+		PARAMS: { category: 1 },
+	}],
+	['copyright', {
+		URL: '/api/projects',
+		DATA_KEY: 'projects',
+		PLACEHOLDER: '请输入版权关键词',
+		PARAMS: { category: 3 },
 	}]
 ]);
 
@@ -82,6 +94,9 @@ export default {
   	},
   	PLACEHOLDER () {
   		return this.choose.PLACEHOLDER;
+  	},
+  	PARAMS () {
+  		return this.choose.PARAMS;
   	}
   }
 }

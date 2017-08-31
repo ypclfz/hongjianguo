@@ -37,6 +37,7 @@ import Documents from '@/components/page_extension/CommonDetail_documents'
 
 //-------------------设置 begin-----------------
 import SettingAgency from '@/components/page/SettingAgency'
+import SettingAgencyDetail from '@/components/page/SettingAgencyDetail'
 import SettingCase from '@/components/page/SettingCase'
 import SettingJurisdiction from '@/components/page/SettingJurisdiction'
 import SettingRule from '@/components/page/SettingRule'
@@ -265,6 +266,7 @@ const router = new Router({
       ],
     },
     { path: '/setting/agency', name: 'SettingAgency', component: SettingAgency },
+    { path: '/setting/agency/detail', name: 'SettingAgencyDetail', component: SettingAgencyDetail },
     { path: '/setting/case', name: 'SettingCase', component: SettingAgency },
     { path: '/setting/individual', name: 'SettingIndividual', component: SettingIndividual },
     { path: '/setting/jurisdiction', name: 'SettingJurisdiction', component: SettingJurisdiction },

@@ -1,30 +1,70 @@
 <template>
+<div class="main">
   <div class="app-tag">
   	<ul class="app-tag-menu">
   		<li :class="item.key == key ? 'active' : ''" v-for="item in tags" @click="change(item.key)"><div>{{ item.text }}</div></li>
   	</ul>
   	<div class="app-tag-content">
-  		<slot>
-  		</slot>
+  		<template v-if="is_static">
+        
+        <slot 
+          v-for="item in tags"
+          :name="item.key"
+          v-if="item.key == key"
+        >
+        </slot>
+
+      </template>
+      <template v-else><slot></slot></template>
 	  </div>
   </div>
+
+</div>
 </template>
 
 <script>
 export default {
   name: 'appTag',
-  props: ['tags'],
+  props: {
+    'tags': {
+      required: true,
+      type: Array,
+    },
+    'is_static': {
+      type: Boolean,
+      default: false,
+    }
+  },
+  data () {
+    return {
+      key_static: "",
+    }
+  },
   computed: {
     key () {
-      return this.$route.path.split("/").pop();
+      if(this.is_static) {
+        return this.key_static;
+      }else {
+        return this.$route.path.split("/").pop();  
+      }
+      
     }
   },
   methods: {
     change (key) {
-      const arr = this.$route.path.split("/");
-      arr.pop();
-      arr.push(key); 
-      this.$router.push(arr.join("/"));
+      if(this.is_static) {
+        this.key_static = key;
+      }else {
+        const arr = this.$route.path.split("/");
+        arr.pop();
+        arr.push(key); 
+        this.$router.push(arr.join("/"));  
+      }
+    }
+  },
+  created () {
+    if(this.is_static) {
+      this.key_static = this.tags.filter(_=>_.default)[0]['key'];
     }
   }
 }

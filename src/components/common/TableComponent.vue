@@ -194,6 +194,7 @@
   <el-dialog title="导入数据文件" :visible.sync="dialogImportVisible">
     <app-import :columns="import_columns" :type="tableOption.import_type ? tableOption.import_type : ''" @import-success="handleImportSuccess"></app-import>
   </el-dialog>
+  <file-upload :type="tableOption.upload_type ? tableOption.upload_type : ''" @upload-success="refresh" ref="file_upload"></file-upload>
   </div>
 </template>
 
@@ -203,6 +204,7 @@ import AppDatePicker from '@/components/common/AppDatePicker'
 import AxiosMixins from '@/mixins/axios-mixins'
 import AppFilter from '@/components/common/AppFilter'
 import AppImport from '@/components/common/AppImport'
+import FileUpload from '@/components/common/FileUpload'
 const methods = Object.assign({}, tableConst.methods, {
   handelExport(func, e) {
     if(func) {
@@ -223,7 +225,7 @@ const methods = Object.assign({}, tableConst.methods, {
     if(func) {
       func(e)
     }else {
-      this.$message({message: '批量上传接口开发中', type: 'warning'})
+      this.$refs.file_upload.show();
     }
   },
   handleExpand (a, b) {
@@ -493,6 +495,7 @@ export default {
     AppDatePicker,
     AppFilter,
     AppImport,
+    FileUpload,
   },
   mounted () {
     

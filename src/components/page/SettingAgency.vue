@@ -1,6 +1,12 @@
 <template>
   <div class="main">
-		<table-component :tableOption="option" :data="tableData" @refreshTableData="refreshTableData" ref="table"></table-component>
+		<table-component :tableOption="option" :data="tableData" @refreshTableData="refreshTableData" ref="table">
+			<template scope="scope" slot="is_core_partner"> 
+				<el-select v-model="is_core_partner" style="width: 130px;">
+					<el-option v-for="(item, index) in options.is_core_partner" :label="item.l" :value="item.v" :key=index></el-option>
+				</el-select>
+			</template>
+		</table-component>
   	<pop ref="pop" @refresh="update"></pop>
   </div>
 </template>
@@ -16,11 +22,12 @@ export default {
   mixins: [ AxiosMixins ],
   data () {
 		return {
-			name: 'agency',
 		  option: {
+				'name': 'agency',
 		  	'header_btn': [
 		  		{'type': 'control'}
 				],
+				'header_slot': [ 'is_core_partner' ],
 				'columns': [
 					{ type: 'selection' },
 					{ type: 'text', label: '机构名称', prop: 'name', width: '318' },
@@ -57,17 +64,25 @@ export default {
 				]
 		  },
 		  tableData: [],
+		  options: {
+		  	is_core_partner: [
+		  		{l: '全部', v: ''},
+		  		{l: '核心伙伴', v: 1},
+		  		{l: '非核心伙伴', v: 0},
+		  	]
+		  },
+		  is_core_partner: '',
 		}
   },
   methods: {
   	edit (row) {
   		this.$refs.pop.show('edit', row);
   	},
-  	detail () {
-	  		this.$message({message: '暂无详情界面', type: 'warning'});
+  	detail ({id}) {
+	  	this.$router.push({path: '/setting/agency/detail', query: {id} })
   	},
   	deleteSingle ({id, name}) {
-  		this.$confirm(`删除后不可恢复，确认删除‘${name}’？`, {type: 'warning'})
+  		this.$confirm(`删除后不可恢复，确认删除‘${name}’？`, '提示' ,{type: 'warning'})
   			.then(_=>{  
   				const url = `${URL}/${id}`;
   				const success = _=>{ this.update() };
@@ -79,7 +94,8 @@ export default {
   	},
   	refreshTableData (option) {
   		const url = URL;
-  		const data = option;
+  		const is_core_partner = this.is_core_partner !== "" ? { is_core_partner: this.is_core_partner } : {};
+  		const data = Object.assign({}, option, is_core_partner);
   		const success = _=>{ this.tableData = _.agencies };
 
   		this.axiosGet({url, data, success});
@@ -89,6 +105,11 @@ export default {
   	},
   	update () {
   		this.$refs.table.update();
+  	}
+  },
+  watch: {
+  	is_core_partner () {
+  		this.refresh();
   	}
   },
   mounted () {
