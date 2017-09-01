@@ -254,6 +254,7 @@ menu.map = {
 	'/proposal/detail': {text: '提案详情', icon: '', path: '/proposal/detail'},
 	'/trademark/list/detail': {text: '商标详情', icon: '', path: '/trademark/list/detail/babel'},
 	'/mailList/mailAdd': {text: '写邮件', icon: 'el-icon-edit', path: '/mailList/mailAdd'},
+	'/mailList/mailEdit': {text: '编辑邮件', icon: 'el-icon-edit', path: '/mailList/mailEdit'},
 	'/setting/agency/detail': {text: '代理机构详情', icon: '', path: '/setting/agency/detail'}
 };
 tailRecursion(menu.data);

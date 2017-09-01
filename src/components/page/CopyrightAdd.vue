@@ -122,7 +122,7 @@ export default {
   		const url = URL;
   		const data = this.$tool.shallowCopy(this.form, {'date': true});
   		const success = _=>{ this.$router.push('/copyright/list') };
-  		const complete = _=>{ ths.btn_disabled = false };
+  		const complete = _=>{ this.btn_disabled = false };
 
   		this.axiosPost({url, data, success, complete});
   	},

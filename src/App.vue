@@ -115,9 +115,10 @@ export default {
       }
     },
     navToggle () {
+      console.log($('.nav-left').css('width'));
       let i = 32;
-      let n = Number.parseInt($('.nav-left').css('width')) != 0 ? 160 : 0;
-      
+      let n = Number.parseInt($('.nav-left').css('width')) > 0 ? 160 : 0;
+
       i = n == 0 ? i : -i;
 
       const left = $('.nav-left');

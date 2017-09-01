@@ -198,6 +198,13 @@ const router = new Router({
     {
       path: '/mailList/mailAdd',
       name: 'MailAdd',
+      meta: { type: 'add' },
+      component: MailAdd,
+    },
+    {
+      path: '/mailList/mailEdit',
+      name: 'mailEdit',
+      meta: { type: 'edit' },
       component: MailAdd,
     },
     {
@@ -271,18 +278,10 @@ const router = new Router({
     { path: '/setting/individual', name: 'SettingIndividual', component: SettingIndividual },
     { path: '/setting/jurisdiction', name: 'SettingJurisdiction', component: SettingJurisdiction },
     { path: '/setting/rule', name: 'SettingRule', component: SettingRule },
-    { path: '/setting/system', redirect: '/setting/system__' },
     { 
-      path: '/setting/system__',
+      path: '/setting/system',
+      name: 'SettingSystem',
       component: SettingSystem,
-      children: [
-        { path: '', redirect: 'base' },
-        { path: 'base', component: SS_Base },
-        { path: 'case', component: SS_Case },
-        { path: 'email', component: SS_Email },
-        { path: 'fee', component: SS_Fee },
-        { path: 'number', component: SS_Number },
-      ] 
     },
     { path: '/setting/template', name: 'SettingTemplate', component: SettingTemplate },
     { path: '/setting/user', name: 'SettingUser', component: SettingUser },

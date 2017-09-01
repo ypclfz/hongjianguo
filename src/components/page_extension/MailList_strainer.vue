@@ -4,18 +4,19 @@
       <el-row :gutter="20">
         <el-col :span="12">
           <el-form-item label="发件人" prop="to">
-            <mail v-model="form.to"></mail>
+            <mail v-model="form.to" multiple></mail>
           </el-form-item>
-          <el-form-item label="发送时间" prop="mail_date">
-            <el-date-picker type="date" placeholder="请选择发送时间" v-model="form.mail_date"></el-date-picker>
+          <el-form-item label="关联案件" prop="project_id">
+            <remote-select type="project" v-model="form.project_id"></remote-select>
           </el-form-item>
         </el-col>
         <el-col :span="12">
           <el-form-item label="收件人" prop="from">
-            <mail v-model="form.from"></mail>
+            <mail v-model="form.from" multiple></mail>
           </el-form-item>
-          <el-form-item label="关联案件" prop="project_id">
-            <remote-select type="project" v-model="form.project_id"></remote-select>
+          
+          <el-form-item label="发送时间" prop="mail_date">
+            <el-date-picker type="date" placeholder="请选择发送时间" v-model="form.mail_date"></el-date-picker>
           </el-form-item>
         </el-col>
       </el-row>

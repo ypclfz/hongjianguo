@@ -100,8 +100,8 @@
   >
     <template v-for="(col, index) in tableOption.columns">
       
-      <template v-if="col.type == 'selection'" >
-        <el-table-column type="selection"></el-table-column>
+      <template v-if="col.type == 'selection'">
+        <el-table-column type="selection" :fixed="col.fixed === false ? false : 'left'"></el-table-column>
       </template>
 
       <template v-else-if="col.type == 'expand'">
@@ -143,7 +143,7 @@
       </template>
 
       <template v-else-if="col.type == 'action'">
-        <el-table-column :label="col.label ? col.label : '操作'" :align="col.align ? col.align : 'left'" :width="col.width ? col.width : ''" :min-width="col.min_width ? col.min_width : ''" header-align="center">
+        <el-table-column :label="col.label ? col.label : '操作'" :align="col.align ? col.align : 'left'" :width="col.width ? col.width : ''" :min-width="col.min_width ? col.min_width : ''" header-align="center" :fixed="col.fixed === false ? false : 'right'">
           <template scope="scope">
             <template v-if="col.btns_render ? true : false">
               <slot :name="col.btns_render" :row="scope.row">
@@ -440,7 +440,6 @@ export default {
       deep: true,
     },
     screen_obj (val) {
-      console.log(val); 
       this.refresh();    
     }
   },
@@ -497,9 +496,7 @@ export default {
     AppImport,
     FileUpload,
   },
-  mounted () {
-    
-  },
+  mounted () {},
 }
 </script>
 

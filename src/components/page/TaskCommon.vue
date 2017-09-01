@@ -197,7 +197,7 @@ export default {
         },
         'columns': [
           { type: 'expand' },
-          { type: 'selection'},
+          { type: 'selection', fixed: false},
           { type: 'text', label: '案号', prop: 'serial', sortable: true, width: '122'},
           { type: 'text', label: '案件名称', prop: 'title', sortable: true, width: '150'},
           { type: 'text', label: '管制事项', prop: 'name', sortasble: true, width: '134' },
@@ -215,7 +215,8 @@ export default {
           { type: 'text', label: '当前节点', prop: 'flow_node', show: false, width: '159'},
           { type: 'text', label: '备注', prop: 'remark', sortable: true, width: '134'},
           { 
-            type: 'action', 
+            type: 'action',
+            fixed: false,
             label: '操作',
             min_width: '170',
             align: 'left',

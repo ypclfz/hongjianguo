@@ -1,26 +1,44 @@
 <template>
-  <app-tag :tags="tags">
-	<router-view></router-view>
-  </app-tag>
+  <div class="main">
+		<app-collapse v-for="(item,index) in configs" :col-title="item.name" :key="index">
+			<el-form label-width="200px">
+				<el-form-item v-for="f_item in item.configs" :label="f_item.label" :key="f_item.name"><el-input :placeholder="f_item.description" v-model="f_item.config_value"></el-input></el-form-item>
+			</el-form>
+		</app-collapse>
+		<el-button type="primary" @click="save">保存设置</el-button>
+  </div>
 </template>
 
 <script>
-import AppTag from '@/components/common/AppTag'
+import AppCollapse from '@/components/common/AppCollapse'
+import AxiosMixins from '@/mixins/axios-mixins'
+
+const URL = '/api/configs'
 
 export default {
   name: 'settingSystem',
+  mixins: [ AxiosMixins ],
   data () {
-	return {
-	  tags: [
-	  	{ text: '基本信息', key: 'base' },
-	  	{ text: '系统通知邮件服务器', key: 'emil' },
-	  	{ text: '案号编码规则', key: 'number' },
-	  	{ text: '自动派案设置', key: 'case' },
-	  	{ text: '费用设置', key: 'fee' },
-	  ],
-	}
+  	return {
+  		configs: [],	
+  	}
   },
-  components: { AppTag },
+  methods: {
+  	save () {
+  		const url = URL;
+  		const data = this.configs;
+  		const success = _=>{this.$message({message: '保存系统设置成功', type: 'success'})};
+
+  		this.axiosPost({url, data, success});
+  	}
+  },
+  created () {
+  	const url = URL;
+  	const success = _=>{ this.configs = _.configs };
+
+  	this.axiosGet({url, success});
+  },
+  components: { AppCollapse },
 }
 </script>
 
