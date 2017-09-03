@@ -1,28 +1,27 @@
 <template>
   <div class="main">
-	<table-component :tableOption="option" :data="tableData"></table-component>
+	<table-component :tableOption="option" :data="tableData" ref="table"></table-component>
   </div>
 </template>
 
 <script>
-import TableComponent from '@/components/common/TableComponent' 
+import TableComponent from '@/components/common/TableComponent'
+import AxiosMixins from '@/mixins/axios-mixins'
+
+const URL = '/api/templates'
 
 export default {
   name: 'settingTemplate',
+  mixins: [ AxiosMixins ],
   data () {
 		return {
 		  option: {
-		  	'header_btn': [
-		  		{ type: 'add', click: this.add },
-		  		{ type: 'delete', click: this.delete },
-		  	],
+		  	'is_search': false,
 		  	'columns': [
 		  		{ type: 'selection' },
-		  		{ type: 'text', label: '模板名称' },
-		  		{ type: 'text', label: '应用场景' },
-		  		{ type: 'text', label: '默认模板' },
-		  		{ type: 'text', label: '模板类型' },
-		  		{ type: 'text', label: '标题' },
+		  		{ type: 'text', label: '模板名称', prop: 'name' },
+		  		{ type: 'text', label: '模板标题', prop: 'title' },
+		  		{ type: 'text', label: '模板内容', prop: 'content' },
 		  		{ 
 		  			type: 'action', 
 		  			btns: [
@@ -35,15 +34,22 @@ export default {
 		}
   },
   methods: {
-  	add () {
-  		alert("添加");
+  	refreshTableData (option) {
+  		const url = URL;
+  		const data = option;
+  		const success = _=>{ _.tableDate = _.data };
+
+  		this.axiosPost({url, data, success});
   	},
-  	delete () {
-  		alert("删除");
+  	edit ({id}) {
+  		this.$router.push({path: '/setting/template/edit', query: {id} });
   	},
-  	edit () {
-  		alert("编辑")
+  	refresh () {
+  		this.$refs.table.refresh()
   	}
+  },
+  mounted () {
+  	this.refresh();
   },
   components: { TableComponent }
 }

@@ -20,36 +20,43 @@ export default {
   data () {
 		return {
 		  option: {
+		  	'name': 'invoice',
+		  	'url': URL,
 		  	'header_btn': [
-		  		{ type: 'control' }
+		  		{ type: 'export' },
+		  		{ type: 'delete' },
+		  		{},
+		  		{ type: 'control' },
 		  	],
 		  	'columns': [
-		  		{ type: 'text', label: '账单对象', prop: 'target' },
-		  		{ type: 'text', label: '创建时间', prop: 'create_time' },
-		  		{ type: 'text', label: '付款期限', prop: 'due_time' },
-		  		{ type: 'text', label: '付款绝限', prop: 'deadline' },
-		  		{ type: 'text', label: '付款时间', prop: 'pay_time' },
-		  		{ type: 'text', label: '金额', prop: 'amount' },
-		  		{ type: 'text', label: '货币', prop: 'currency' },
-		  		{ type: 'text', label: '汇率', prop: 'roe' },
-		  		{ type: 'text', label: '人民币金额', prop: 'rmb' },
-		  		{ type: 'text', label: '状态', prop: 'status' },
-		  		{ type: 'text', label: '备注', prop: 'remark' },
-		  		{ type: 'text', label: '收入/支出类型', prop: 'debit' },
-		  		{ type: 'text', label: '发票号码', prop: 'invoice_no' },
-		  		{ type: 'text', label: '开票日期', prop: 'invoice_date' },
-		  		{ type: 'text', label: '快递公司', prop: 'express_company' },
-		  		{ type: 'text', label: '快递单号', prop: 'express_number' },
-		  		{ type: 'text', label: '快递日', prop: 'express_date' },
-		  		{ type: 'text', label: '创建人', prop: 'creator_name' },
-		  		{ type: 'text', label: '发票抬头', prop: 'invoice_title' },
-		  		{ type: 'text', label: '纳税人识别号', prop: 'tax_payer_identifier' },
-		  		{ type: 'text', label: '银行账号', prop: 'account' },
-		  		{ type: 'text', label: '开户行', prop: 'bank' },
-		  		{ type: 'text', label: '地址', prop: 'target' },
-		  		{ type: 'text', label: '电话', prop: 'telphone' },
+		  		{ type: 'selection' },
+		  		{ type: 'text', label: '账单对象', prop: 'target', render_simple: 'name', width: '200' },
+		  		{ type: 'text', label: '创建时间', prop: 'create_time',width: '200' },
+		  		{ type: 'text', label: '付款期限', prop: 'due_time', width: '200' },
+		  		// { type: 'text', label: '付款绝限', prop: 'deadline',width: '200' },
+		  		{ type: 'text', label: '付款时间', prop: 'pay_time',width: '200' },
+		  		{ type: 'text', label: '金额', prop: 'amount', width: '200' },
+		  		{ type: 'text', label: '货币', prop: 'currency', width: '200' },
+		  		{ type: 'text', label: '汇率', prop: 'roe', width: '200' },
+		  		{ type: 'text', label: '人民币金额', prop: 'rmb', width: '200' },
+		  		{ type: 'text', label: '状态', prop: 'status', render_simple: 'name', width: '200' },
+		  		{ type: 'text', label: '备注', prop: 'remark',width: '200' },
+		  		// { type: 'text', label: '收入/支出类型', prop: 'debit',width: '200' },
+		  		// { type: 'text', label: '发票号码', prop: 'invoice_no',width: '200' },
+		  		// { type: 'text', label: '开票日期', prop: 'invoice_date',width: '200' },
+		  		// { type: 'text', label: '快递公司', prop: 'express_company' },
+		  		// { type: 'text', label: '快递单号', prop: 'express_number' },
+		  		// { type: 'text', label: '快递日', prop: 'express_date' },
+		  		// { type: 'text', label: '创建人', prop: 'creator_name',width: '200' },
+		  		// { type: 'text', label: '发票抬头', prop: 'invoice_title',width: '200' },
+		  		// { type: 'text', label: '纳税人识别号', prop: 'tax_payer_identifier',width: '200' },
+		  		// { type: 'text', label: '银行账号', prop: 'account',width: '200' },
+		  		// { type: 'text', label: '开户行', prop: 'bank',width: '200' },
+		  		// { type: 'text', label: '地址', prop: 'target',width: '200' },
+		  		// { type: 'text', label: '电话', prop: 'telphone',width: '200' },
 		  		{ 
-		  			type: 'action',  
+		  			type: 'action',
+		  			width: '200',
 		  			btns: [
 		  				{ type: 'edit',  click: this.editPop},
 		  				{ type: 'detail', click: this.detail },
@@ -57,6 +64,13 @@ export default {
 		  			], 
 		  		},
 		  	],
+		  	'import_columns': [
+		  		{ type: 'text', label: '费用期限', prop: 'due_time', width: '200' },
+		  		{ type: 'text', label: '汇率', prop: 'roe', width: '80' },
+		  		{ type: 'text', label: '货币', prop: 'currency', width: '80' },
+		  		{ type: 'text', label: '人民币', prop: 'amount', width: '100' },
+		  		{ type: 'text', label: '费用备注', prop: 'remark', width: '160' },
+		  	]
 		  },
 		  tableData: [],
 		  filter: {},
@@ -76,7 +90,15 @@ export default {
   		const url = URL;
   		const debit = this.feeType;
   		const data = Object.assign({}, option, { debit }, this.filter);
-  		const success = d=>{ this.tableData = d.invoices };
+  		const success = d=>{ 
+  			if(data['format'] == 'excel') {
+  				if(d.invoices.downloadUrl) {
+	          window.location.href = d.invoices.downloadUrl;	
+  				}
+	      }else {
+	        this.tableData = d.invoices;  
+	      }
+  		};
 
   		this.axiosGet({url, data, success});
   	},
@@ -84,8 +106,8 @@ export default {
 
   		this.$refs.table.refresh();
   	},
-  	detail ({id}) {
-  		this.router.push(`fee/${this.feeType ? 'income' : 'pay'}`, { params: {id} });
+  	detail ({target}) {
+  		this.$router.push({ path: `/fee/${this.feeType ? 'income' : 'pay'}`,  params: { target_id: target.id } });
   	},
   	editPop (row) {
   		this.popType='edit';
@@ -99,6 +121,12 @@ export default {
   				this.axiosDelete({url, success});
   			})
   			.catch(()=>{});
+  	}
+  },
+  created () {
+  	if(!this.feeType) {
+  		this.option.header_btn.splice(2,1,{'type': 'import'});
+  		this.option.import_type = 'invoicePayable';
   	}
   },
   mounted () {

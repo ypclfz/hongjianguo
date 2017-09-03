@@ -14,9 +14,9 @@ export default {
 		  option: {
 		  	'is_search': false,
 				'columns': [
-					{ type: 'text', label: '费用金额', prop: 'fee'},
+					{ type: 'text', label: '费用金额', prop: 'amount'},
 					{ type: 'text', label: '费用名称', prop: 'fee_name'},
-					{ type: 'text', label: '人民币', prop: 'amount'},
+					{ type: 'text', label: '人民币', prop: 'rmb'},
 					{ type: 'text', label: '汇率', prop: 'roe'},
 					{ type: 'text', label: '货币', prop: 'currency'},
 					{ type: 'text', label: '创建时间', prop: 'create_time' },

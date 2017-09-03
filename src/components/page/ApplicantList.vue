@@ -28,34 +28,35 @@ export default {
 		  	],
 		  	'columns': [
 		  		{ type: 'selection' },
-		  		{ type: 'text', label: '申请人姓名', prop: 'name', sortable: true },
-		  		{ type: 'text', label: '申请人类型', prop: 'type', sortable: true },
-		  		{ type: 'text', label: '证件号码', prop: 'identity', sortable: true },
-		  		{ type: 'text', label: '地区', prop: 'area', sortable: true, 
+		  		{ type: 'text', label: '申请人姓名', prop: 'name', sortable: true, width: '250' },
+		  		{ type: 'text', label: '申请人类型', prop: 'type_name', sortable: true, width: '200' },
+		  		{ type: 'text', label: '证件号码', prop: 'identity', sortable: true, width: '200' },
+		  		{ type: 'text', label: '地区', prop: 'area', sortable: true, width: '200',
             render: (h,item)=>{
               const d = this.areaMap.get(item);
               return h('span', d ? d : '');
             }  
           },
-		  		{ type: 'text', label: '省份', prop: 'province', sortable: true, 
+		  		{ type: 'text', label: '省份', prop: 'province', sortable: true, width: '200', 
             render: (h, item)=>{ 
               const d = this.provinceMap.get(Number.parseInt(item));
               return h('span', d ? d : '');
             } 
           },
-		  		{ type: 'text', label: '城市', prop: 'city', sortable: true, 
+		  		{ type: 'text', label: '城市', prop: 'city', sortable: true, width: '200', 
             render: (h, item)=>{ 
               const d = this.cityMap.get(item);
               return h('span', d ? d : '');
             }
           },
-		  		{ type: 'text', label: '详细地址', prop: 'address', sortable: true },
-		  		{ type: 'text', label: '邮编', prop: 'postcode', sortable: true },
-		  		{ type: 'text', label: '费用备案', prop: 'fee_discount', sortable: true, render: (h, item)=>h('span', item ? '已完成' : '未完成') },
-		  		{ type: 'text', label: '英文姓名', prop: 'ename', sortable: true },
-		  		{ type: 'text', label: '英文地址', prop: 'eaddress', sortable: true },
+		  		{ type: 'text', label: '详细地址', prop: 'address', sortable: true, width: '200' },
+		  		{ type: 'text', label: '邮编', prop: 'postcode', sortable: true, width: '200' },
+		  		{ type: 'text', label: '费用备案', prop: 'fee_discount', sortable: true, width: '200', render: (h, item)=>h('span', item ? '已完成' : '未完成') },
+		  		{ type: 'text', label: '英文姓名', prop: 'ename', sortable: true, width: '200' },
+		  		{ type: 'text', label: '英文地址', prop: 'eaddress', sortable: true, width: '200' },
 		  		{ 
 		  			type: 'action',
+            width: '150',
 		  			btns: [
 		  				{ type: 'edit', click: this.editPopUp },
 		  				{ type: 'delete', click: this.applicantDelete },

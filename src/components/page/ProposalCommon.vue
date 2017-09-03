@@ -4,7 +4,7 @@
 	  		<el-col :span="18">
 		  		<el-form label-width="100px" :rules="formRules" :model="formData" ref="form">
             
-            <el-form-item label="提案人">{{ user.username }}</el-form-item>
+            <el-form-item label="提案人">{{ user ? user.username : '' }}</el-form-item>
             
             
             <el-form-item label="创建时间" v-if="pageType == 'detail'">
@@ -53,6 +53,9 @@
             <el-form-item label="附件" v-else>
               <table-component :data="attachmentsData" :tableOption="tableOption"></table-component>
             </el-form-item>
+            <el-form-item label="相关专利" v-if="pageType == 'detail'">
+              <table-component :data="patent" :tableOption="patentOption"></table-component>
+            </el-form-item>
 						<el-form-item  v-if="pageType != 'detail'">
 						   <el-button @click="submit()" type="primary" :disabled="btn_disabled">提交</el-button>
                <el-button @click="save()" :disabled="btn_disabled">暂存</el-button>
@@ -61,19 +64,20 @@
 			  	</el-form>
 		  	</el-col>
 		  	<el-col :span="6" style="padding-left: 40px;">
-					<h3 style="margin-top: 0;">提案流程</h3>
-					<el-steps :space="100" direction="vertical" :active="0">
-					  <el-step title="发明人提案"></el-step>
-					  <!-- <el-step title="部门经理审核"></el-step> -->
-					  <el-step title="IPR审核"></el-step>
-					  <el-step title="提出申请"></el-step>
-					</el-steps>
-          <h3 style="margin-top: 40px;">提案模板</h3>
-          <ul class="proposal-model" >
-            <li><i class="iconfont icon-docx"></i><a href="javascript:void(0)">技术交底书范例(结构类).docx</a></li>
-            <li><i class="iconfont icon-docx"></i><a href="javascript:void(0)">技术交底书范例(软件类).doc</a></li>
-            <li><i class="iconfont icon-ppt"></i><a href="javascript:void(0)">15分钟如何写一个专利底稿.pptx</a></li>
-          </ul>
+          <template v-if="pageType=='detail'">
+  					<h3 style="margin-top: 0;">提案流程</h3>
+  					<el-steps :space="100" direction="vertical" :active="tasks.length" finish-status="success">
+              <el-step v-for="item in tasks" :key="item.id" :title="item.node_name" :description="`承办人：${item.person_in_charge_name}，开始时间：${item.start_time}， 完成时间：${item.end_time}，备注：${item.remark}`"></el-step>
+  					</el-steps>
+          </template>
+          <template v-else>
+            <h3 style="margin-top: 40px;">提案模板</h3>
+            <ul class="proposal-model">
+              <li><i class="iconfont icon-docx"></i><a href="javascript:void(0)">技术交底书范例(结构类).docx</a></li>
+              <li><i class="iconfont icon-docx"></i><a href="javascript:void(0)">技术交底书范例(软件类).doc</a></li>
+              <li><i class="iconfont icon-ppt"></i><a href="javascript:void(0)">15分钟如何写一个专利底稿.pptx</a></li>
+            </ul>
+          </template>
 		  	</el-col>
 	  	</el-row>
       <el-dialog title="提交任务" :visible.sync="dialogVisible">
@@ -165,7 +169,6 @@ export default {
     },
     refreshCommon () {
       const t = this.pageType;
-
       if( t == 'detail' || t== 'edit' ) {
         const id = this.$route.query.id;
         this.id = id;
@@ -181,6 +184,8 @@ export default {
           if(t == 'detail') {
             this.create_time = data.create_time;
             this.update_time = data.update_time;
+            this.tasks = data.tasks;
+            this.patent = data.patents;
           }
           
           if(classification) {
@@ -212,6 +217,8 @@ export default {
     return {
       id: '',
       pageType: '',
+      tasks: [],
+      patent: [],
       formData:  { 
         title: '',
         abstract: '',
@@ -306,6 +313,22 @@ export default {
               {type: 'view', click: ({viewUrl})=>{window.open(viewUrl)}},
               {type: 'download', click: ({downloadUr})=>{window.open(downloadUr)}},
             ],
+          }
+        ]
+      },
+      patentOption: {
+        'is_search': false,
+        'is_pagination': false,
+        'is_border': false,
+        'columns': [
+          { type: 'text', label: '案号', prop: 'serial' },
+          { type: 'text', label: '标题', prop: 'title' },
+          { type: 'text', label: '当前节点', prop: 'progress_name' },
+          { 
+            type: 'action',
+            btns: [
+              {type: 'detail', click: ({id})=>{this.$router.push(`/patent/list/detail/${id}`)}}
+            ]  
           }
         ]
       },

@@ -29,12 +29,21 @@
   	<el-form-item prop="dealine" label="法限" v-if="fields.deadline">
 			<el-date-picker v-model="form.dealine" type="date" placeholder="选择法限"></el-date-picker>
   	</el-form-item>
-  	<el-form-item prop="remark" label="任务备注" v-if="fields.remark">
-			<el-input type="textarea" v-model="form.remark"></el-input>
-  	</el-form-item>
-  	<el-form-item prop="attachments" label="附件" v-if="fields.attachments">
-			<upload v-model="form.attachments"></upload>
-  	</el-form-item>
+    <el-form-item prop="remark" label="任务备注" v-if="fields.remark">
+      <el-input type="textarea" v-model="form.remark"></el-input>
+    </el-form-item>
+    <el-form-item prop="attachments" label="附件" v-if="fields.attachments">
+      <upload v-model="form.attachments"></upload>
+    </el-form-item>
+    <el-form-item prop="rank" label="评分" v-if="fields.rank">
+      <el-rate 
+        v-model="form.rank" 
+        style="margin-top: 10px" 
+        :colors="['#99A9BF', '#F7BA2A', '#FF9900']" 
+        show-text 
+        :texts="['20','40','60','80','100']"
+      ></el-rate>
+    </el-form-item>
   	<el-form-item style="margin-bottom: 0px;">
   		<el-button type="primary" @click="submitFunc" :disabled="btn_disabled">提交</el-button>
   	</el-form-item>
@@ -67,6 +76,7 @@ export default {
 				deadline: '',
 				remark: '',
 				attachments: [],
+        rank: '',
 			},
 			'defaultVal': '',
 			'fields': {},
@@ -99,6 +109,7 @@ export default {
       this.btn_disabled = true;
   		const url = `${URL}/${this.id}/nexttask`;
   		const data = Object.assign({}, {'flow_node_id': this.next}, this.form);
+      if(data.rank) {data.rank *= 20};
   		const success = ()=>{this.$emit('submitSuccess')};
       const complete = _=>{this.btn_disabled=false}; 
   		this.axiosPost({url, data, success, complete});

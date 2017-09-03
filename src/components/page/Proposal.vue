@@ -35,17 +35,10 @@
     
     </app-collapse>
     		<table-component :tableOption="tableOption" :data="tableData" ref="table" @refreshTableData="refreshTableData">
-          <template slot="expand" scope="scope">
-            <el-steps :space="200" :active="1">
-              <el-step title="步骤 1" description="这是一段很长很长很长的描述性文字"></el-step>
-              <el-step title="步骤 2" description="这是一段很长很长很长的描述性文字"></el-step>
-              <el-step title="步骤 3" description="这是一段很长很长很长的描述性文字"></el-step>
-            </el-steps>
-          </template>
           <template slot="action" scope="scope">
             <el-button icon="information" size="mini" @click="detail(scope.row)" v-if="scope.row.status">详情</el-button>
             <el-button icon="edit" size="mini" @click="edit(scope.row)" v-else>编辑</el-button>
-            <el-button icon="delete" size="mini" @click="deleteSingle(scope.row)">删除</el-button>
+            <el-button icon="delete" size="mini" @click="deleteSingle(scope.row)" v-if="!scope.row.status">删除</el-button>
           </template>
         </table-component>
 
@@ -170,35 +163,19 @@ export default {
           { type: 'export' },
           { type: 'control', label: '字段' },
         ],
-        'default_sort': { prop: 'create_time', order: 'descending' },
-        'sortChange': this.sortChange,
         'columns': [
-          { type: 'expand' },
           { type: 'selection'},
-          { type: 'text', label: '创建时间', prop: 'create_time', sortable: true, width: '176' },
-          { type: 'text', label: '更新时间', prop: 'update_time', sortable: true, width: '172' },
-          { type: 'text', label: '案件名称', prop: 'title',sortable: true, width: '200' },
-          { type: 'text', label: '案件摘要', prop: 'abstract', sortable: true, width: '200' },
-          { type: 'text', label: '当前节点', prop: 'flow_node', sortable: true, width: '118' },
-          { 
-            type: 'text', 
-            label: '技术联系人', 
-            prop: 'proposer',
-            sortable: true,
-            render:  (h,item)=>{return h('span', item.name)},
-            width: '148',
-          },
-          { 
-            type: 'array', label: '发明人', prop: 'inventors',
-            render: (arr)=>{
-             return arr.map(d=>d.name);
-            },
-            width: '158'
-          },
-          { type: 'array', label: '标签', prop: 'tags', width: '135' },
-          { type: 'text', label: '备注', prop: 'remark', sortable: true, width: '300' },
-          // { type: 'text', label: '案件状态', prop: 'status', sortable: true },
-          { type: 'text', label: '相关专利', prop: 'projects', width: '200' },
+          { type: 'text', label: '案号', prop: 'serial', sortable: true, width: '200' },
+          { type: 'text', label: '提案标题', prop: 'title', sortable: true, width: '300' },
+          { type: 'text', label: '提案摘要', prop: 'abstract', sortable: true, width: '400' },
+          { type: 'text', label: '创建时间', prop: 'creat_time', sortable: true, width: '250' },
+          { type: 'text', label: '部门', prop: 'branch', render_simple: 'name', sortable: true, width: '200' },
+          { type: 'text', label: '技术分类', prop: 'classification', render_simple: 'name', sortable: true, width: '200' },
+          { type: 'array', label: '产品分类', prop: 'products', render: _=>_.map(_=>_.name), width: '200' },
+          { type: 'text', label: '提案人', prop: 'proposer', render_simple: 'name', sortable: true, width: '200' },
+          { type: 'array', label: '发明人', prop: 'inventors', render: _=>_.map(_=>`${_.name}：${_.share}%`), width: '200' },
+          { type: 'array', label: '标签', prop: 'tags', width: '200' },
+          { type: 'text', label: '备注', prop: 'remark', width: '400' },
           {
             type: 'action',
             label: '操作', 
@@ -210,8 +187,7 @@ export default {
       tableData: [
 
       ],
-      filter: {
-      },
+      filter: {},
       title: '',
       classification: [],
       product: [],
@@ -220,6 +196,9 @@ export default {
       inventors: [],
       filters: {},
     }
+  },
+  mounted () {
+    this.refresh();
   },
   components: { TableComponent, AppFilter, AppCollapse, Classification, Product, InventorSelect, Member, Tag, AppFilter }, 
 }

@@ -132,12 +132,13 @@ menu.data = [
 				path: '/copyright/list',
 				icon: 'iconfont	 icon-copyright',
 				type: 'item'
-			},{
-				text: '通知书管理',
-				path: '/copyright/notice',
-				icon: 'iconfont icon-notice',
-				type: 'item',
 			},
+			// {
+			// 	text: '通知书管理',
+			// 	path: '/copyright/notice',
+			// 	icon: 'iconfont icon-notice',
+			// 	type: 'item',
+			// },
 		]
 	},
 	{
@@ -218,12 +219,14 @@ menu.data = [
 			path: '/setting/agency',
 			icon: '',
 			type: 'item'
-		},{
-			text: '案件类型管理',
-			path: '/setting/case',
-			icon: '',
-			type: 'item'
-		},{
+		},
+		// {
+		// 	text: '案件类型管理',
+		// 	path: '/setting/case',
+		// 	icon: '',
+		// 	type: 'item'
+		// },
+		{
 			text: '系统设置',
 			path: '/setting/system',
 			icon: '',
@@ -255,7 +258,8 @@ menu.map = {
 	'/trademark/list/detail': {text: '商标详情', icon: '', path: '/trademark/list/detail/babel'},
 	'/mailList/mailAdd': {text: '写邮件', icon: 'el-icon-edit', path: '/mailList/mailAdd'},
 	'/mailList/mailEdit': {text: '编辑邮件', icon: 'el-icon-edit', path: '/mailList/mailEdit'},
-	'/setting/agency/detail': {text: '代理机构详情', icon: '', path: '/setting/agency/detail'}
+	'/setting/agency/detail': {text: '代理机构详情', icon: '', path: '/setting/agency/detail'},
+	'/setting/template/edit': {text: '编辑模板', icon: 'el-icon-edit', path: '/setting/template/edit'}
 };
 tailRecursion(menu.data);
 

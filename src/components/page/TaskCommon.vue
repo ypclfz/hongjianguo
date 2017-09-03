@@ -13,6 +13,21 @@
       </template>
     </table-component>
 
+    <el-dialog title="委案" :visible.sync="dialogAgenVisible">
+      <el-form :form="agen" ref="agen" label-width="80px">
+        <el-form-item label="代理机构" prop="agency_id">
+          <remote-select type="agency" v-model="agen.agency_id"></remote-select>
+        </el-form-item>
+        <el-form-item label="代理人" prop="agency_agent">
+          <remote-select type="agent" v-model="agen.agency_agent"></remote-select>
+        </el-form-item>
+        <el-form-item label="备注" prop="remark">
+          <el-input v-model="agen.remark" type="textarea"></el-input>
+        </el-form-item>
+        <el-form-item style="margin-bottom: 0px"><el-button @click="agenSubmit" type="primary" :disabled="btn_disabled">确认委案</el-button></el-form-item>
+      </el-form>
+    </el-dialog>
+
     <el-dialog title="设置任务提醒偏好" :visible.sync="dialogSettingVisible" class="dialog-mini">
       <el-form label-position="top">
         <el-form-item label="请输入要提前标红色任务到期天数">
@@ -54,7 +69,8 @@
 </template>
 
 <script>
-import axiosMixins from '@/mixins/axios-mixins'
+import RemoteSelect from '@/components/form/RemoteSelect'
+import AxiosMixins from '@/mixins/axios-mixins'
 import AppFilter from '@/components/common/AppFilter'
 import AppCollapse from '@/components/common/AppCollapse'
 import TableComponent from '@/components/common/TableComponent'
@@ -69,8 +85,29 @@ const URL = '/api/tasks';
 
 export default {
   name: 'taskList',
-  mixins: [ axiosMixins ],
+  mixins: [ AxiosMixins ],
   methods: {
+    agenPop () {
+      const s = this.$refs.table.getSelect();
+      if(s) {
+        if(this.$refs.agen) this.$refs.agen.resetFields();
+        this.dialogAgenVisible = true;
+      }
+    }, 
+    agenSubmit () {
+      const ids = this.$refs.table.getSelect().map(_=>_.id);
+      const url = '/api/tasks/agency';
+      const data = Object.assign({}, this.agen, { ids });
+      const success = _=>{
+        this.dialogAgenVisible = false; 
+        this.$message({type: 'success', message: '委案成功'});
+        this.update();
+      };
+      const complete = _=>{this.btn_disabled = false};
+
+      this.btn_disabled = true;
+      this.axiosPost({url, data, success, complete});
+    },
     dropGenerator(str) {
       return (row, element)=>{       
         this.expandType = str;
@@ -141,7 +178,10 @@ export default {
       if(s) {
         
         const data = { ids: this.$tool.splitObj(s, 'id') };
-        const success = _=>{ this.update() };
+        const success = _=>{ 
+          this.$message({type: 'success', message: '操作成功'})
+          this.update() 
+        };
 
         this.axiosPut({ url, data, success });
       }
@@ -180,6 +220,7 @@ export default {
           { type: 'delete' },
           { type: 'export' },
           {},
+          { type: 'custom', label: '委案', click: this.agenPop },
           // { type: 'custom', label: '转出', icon: '', click: ()=>{ this.dialogTurnoutVisible = true; } },
           { type: 'control', label: '字段'},
           // { type: 'custom', label: '设定', icon: '', click: ()=>{ this.dialogSettingVisible = true; } }
@@ -218,7 +259,7 @@ export default {
             type: 'action',
             fixed: false,
             label: '操作',
-            min_width: '170',
+            min_width: '250',
             align: 'left',
             btns: [
               // { 
@@ -231,7 +272,7 @@ export default {
               //     { text: '委案处理' },
               //   ],
               // },
-              { btn_type: 'text', label: '编辑', click: this.dropGenerator('edit') },
+              { btn_type: 'text', label: '详情', click: this.dropGenerator('edit') },
               { btn_type: 'text', label: '相关', click: this.dropGenerator('detail') },
               { btn_type: 'text', label: '完成', click: this.dropGenerator('finish') },
               { btn_type: 'text', label: '删除', click: this.taskDelete },
@@ -243,6 +284,13 @@ export default {
       },
       tableData: [],
       task_toggle: 'personal',
+      agen: {
+        agency_id: '',
+        agency_agent: '',
+        remark: '',
+      },
+      dialogAgenVisible: false,
+      btn_disabled: false,
     };
   },
   computed: {
@@ -266,7 +314,7 @@ export default {
 
     this.refreshOption();
   },
-  components: { AppFilter, TableComponent, AppDatePicker, Edit, Detail, Strainer, AppCollapse, TaskFinish },
+  components: { RemoteSelect, AppFilter, TableComponent, AppDatePicker, Edit, Detail, Strainer, AppCollapse, TaskFinish },
 } 
 </script>
 <style>

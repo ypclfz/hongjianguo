@@ -1,6 +1,6 @@
 <template>
 	<el-select
-		:value="value2"
+	  :value="value2"
 	  @input="handleInput"
 	  filterable
 	  remote
@@ -14,9 +14,9 @@
 	>
 		<el-option
 			v-for="item in options"
-			:key="item.value"
-			:label="item.label"
-			:value="item.value"
+			:key="item.id"
+			:label="item.name"
+			:value="item.id"
 		>
 		</el-option>
 	</el-select>
@@ -49,7 +49,7 @@ const map = new Map([
 	}],
 	['agency', {
 		URL: '/api/agencies',
-		DATA_KEY: 'members',
+		DATA_KEY: 'agencies',
 		PLACEHOLDER: '请输入代理机构关键词',
 	}],
 	['project', {
@@ -77,14 +77,21 @@ export default {
   props: {
   	'type': [String, Object]
   },
+  data () {
+  	return { selected: [] };
+  },
+  methods: {
+  	getSelected () {
+  		return this.$tool.deepCopy(this.selected);
+  	}
+  },
   computed: {
   	choose () {
   		if(typeof this.type == 'string') {
   			return map.get(this.type);	
   		}else {
   			return this.type;
-  		}
-  		
+  		}		
   	},
   	URL () {
   		return this.choose.URL;
@@ -97,6 +104,13 @@ export default {
   	},
   	PARAMS () {
   		return this.choose.PARAMS;
+  	}
+  },
+  watch: {
+  	value2 (val) {
+  		this.selected = this.options.filter(_=>{
+  			if(val.indexOf(_.id) >= 0 ) return true;
+  		});
   	}
   }
 }

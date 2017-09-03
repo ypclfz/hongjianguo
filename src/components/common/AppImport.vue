@@ -1,19 +1,31 @@
 <template>
   <div class="app-import">
+    <a v-if="config.model ? true : false" :href="config.model">{{ config.model_name }}</a>
 		<el-table
 			height="250"
 			style="width: 100%"
 			empty-text="暂无可导入数据"
 			:data="tableData"
 		> 
-			<el-table-column fixed="left" label="关联案号" width="100" prop="project_id"></el-table-column>
+      <el-table-column fixed="left" label="序号" width="80">
+        <template scope="scope"><span style="color: #20a0ff">{{ scope.$index + 1 }}</span></template>
+      </el-table-column>
+			<el-table-column fixed="left" label="关联案号" width="150" prop="serial"></el-table-column>
 			
 			<template v-for="(col, index) in columns">
+
 				<template v-if="col.type == 'text'">
 	        <template v-if="col.render ? true : false">
 	          <el-table-column :label="col.label" :prop="col.prop" :width="col.width ? col.width : ''">
 	            <template scope="scope">
 	              <table-render :render="col.render" :scope="scope" :prop="col.prop"></table-render>
+	            </template>
+	          </el-table-column>
+	        </template>
+	        <template v-else-if="col.render_simple ? true : false">
+	          <el-table-column :label="col.label" :prop="col.prop" :width="col.width ? col.width : ''">
+	            <template scope="scope">
+	              <span class="table-column-render">{{ scope.row[col.prop][col.render_simple] }}</span>
 	            </template>
 	          </el-table-column>
 	        </template>
@@ -31,9 +43,9 @@
 	      </template>
 			</template>
 
-			<el-table-column fixed="right" label="操作" width="150">
+			<el-table-column fixed="right" label="操作" width="80">
 	      <template scope="scope">
-	        <el-button  type="text" size="small" @click="designPop(scope)">指定案号</el-button>
+	        <!-- <el-button  type="text" size="small" @click="designPop(scope)">指定案号</el-button> -->
 	        <el-button type="text" size="small" @click="deleteSingle(scope)">删除</el-button>
 	      </template>
     	</el-table-column>
@@ -44,22 +56,24 @@
 		  drag
 		  multiple
 		  style="line-height: 48px;"
+      ref='upload'
 		>
 		 	<div class="el-upload__text">将文件拖到此处，或<em>点击上传</em></div>
 		</el-upload>
 
 		<el-button style="margin-top: 20px;" type="primary" @click="importData">导入当前数据</el-button>
 		
-		<el-dialog title="指定案件号" :visible.sync="dialogVisible" :modal-append-to-body="false" :modal="false">
+		<!-- <el-dialog title="指定案件号" :visible.sync="dialogVisible" :modal-append-to-body="false" :modal="false">
 			<el-form label-width="100px">
 				<el-form-item label="案件">
-					<remote-select type="project" v-model="project_id"></remote-select>
+					<remote-select type="project" v-model="serial" ref="project"></remote-select>
 				</el-form-item>
 				<el-form-item>
 					<el-button @click="design" type="primary">确定</el-button>
+					<el-button @click="test">测试</el-button>
 				</el-form-item>
 			</el-form>
-		</el-dialog>
+		</el-dialog> -->
   </div>
 </template>
 
@@ -70,24 +84,51 @@ import RemoteSelect from '@/components/form/RemoteSelect'
 const config = [
 	['patent', {
 		action: 'getPatents',
-		url: '/patents/import',
+		url: '/api/patents/import',
 		category: 1,
+    model: '/static/templates/patent_batch_template.xlsx',
+    model_name: '专利导入模板',
 	}],
 	['copyright', {
 		action: 'getCopyrights',
 		url: '/copyrights/import',
 		category: 3,
+    model: '/static/templates/copyright_batch_template.xlsx',
+    model_name: '版权导入模板',
 	}],
 	['patent_notice', {
 		action: 'getPatentNotices',
 		url: '/notices/import',
 		category: 1,
+    model: '',
 	}],
 	['copyright_notice', {
 		action: 'getCopyrightNotices',
 		url: '/notices/import',
 		category: 3,
-	}]
+    model: '',
+	}],
+  ['feesIncome', {
+    action: 'getFeesIncome',
+    url: '/fees/import',
+    category: '',
+    model: '/static/templates/fee_template.xlsx',
+    model_name: '费用模板'
+  }],
+  ['feesPayable', {
+    action: 'getFeesPayable',
+    url: '/fees/import',
+    category: '',
+    model: '/static/templates/fee_template.xlsx',
+    model_name: '费用模板'
+  }],
+  ['invoicePayable', {
+    action: 'getFeesPayable',
+    url: '/invoices/import',
+    category: '',
+    model: '/static/templates/fee_template.xlsx',
+    model_name: '账单模板'
+  }]
 ]
 const map = new Map(config);
 
@@ -105,7 +146,7 @@ export default {
 		return {
 		  fileList: [],
 		  tableData: [],
-		  project_id: '',
+		  serial: '',
 		  dialogVisible: false,
 		  $index: null,
 		}
@@ -126,9 +167,14 @@ export default {
   	}
   },
   methods: {
+  	test () {
+  		console.log(this.$refs.project.getSelected());
+  	},
   	design() {
   		const o = this.$tool.deepCopy(this.tableData[this.$index]);
-  		o.project_id = this.project_id;
+  		const serial = this.$refs.project.getSelected().label;
+  		const reg = /\[(.*)\]/ 
+  		o.serial = serial.match(reg)[1];
 
   		this.tableData.splice(this.$index, 1, o);
   		this.dialogVisible = false;
@@ -148,7 +194,11 @@ export default {
 
   		const url = this.config.url;
   		const data = this.tableData;
-  		const success = _=>{ this.$emit('importSuccess') };
+  		const success = _=>{ 
+        this.tableData = [];
+        this.$refs.upload.clearFiles();
+        this.$emit('import-success') 
+      };
 
   		this.axiosPost({url, data, success});
   	},
@@ -156,7 +206,7 @@ export default {
   		if(a.status) {
   			this.tableData.push(...a.data.list);
   		}else {
-  			this.$message({message: this.info, type: 'warning'});
+  			this.$message({message: a.info, type: 'warning'});
   		}
   	},
   	arrayRender (row, col) {
@@ -167,16 +217,26 @@ export default {
   components: { 
 		'TableRender': {
       render: function(h) {
-        return this.render(h, this.scope.row[this.prop], this.scope.row, this.prop);
+        if( !this.simple ) {
+          return this.render(h, this.scope.row[this.prop], this.scope.row, this.prop);
+        }else {
+
+          const str = this.render(this.scope.row[this.prop]);
+          return h('span', { class: { 'table-column-render': true} }, str)
+        }
       },
       props: {
         'render': null, 
-        'scope': null, 
+        'scope': null,
+        'simple': {
+          type: Boolean,
+          default: false,
+        },
         'prop': {
           type: String,
           default: '',        
         }
-      }
+      },
     },
     RemoteSelect, 	 	
 	},

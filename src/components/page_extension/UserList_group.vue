@@ -5,7 +5,7 @@
 			<div style="float: right;">
 			<el-button icon="plus" size="mini" title="添加用户组" @click="addPop"></el-button>
 			<el-button icon="edit" :disabled="editDisabled" size="mini" title="编辑用户组" style="margin-left: 0;" @click="editPop"></el-button>
-			<el-button icon="delete" :disabled="deleteDisabled" size="mini" title="删除用户组" style="margin-left: 0;" @click="groupDelete"></el-button>
+			<!-- <el-button icon="delete" :disabled="deleteDisabled" size="mini" title="删除用户组" style="margin-left: 0;" @click="groupDelete"></el-button> -->
 			</div>
 	  </div>
 	  

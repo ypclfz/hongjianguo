@@ -8,8 +8,12 @@
       :on-preview="onPreview"
       :file-list="fileList"
       multiple
+      ref="upload"
     >			<!-- <i class="el-icon-upload"></i> -->
-  		<div class="el-upload__text">将文件拖到此处，或<em>点击上传</em></div>
+  		<div class="el-upload__text">
+  			<template v-if="uploadText ? true : false">{{ uploadText }}</template>
+  			<template v-else>将文件拖到此处，或<em>点击上传</em></template>
+  		</div>
     </el-upload>
 	</template>
 
@@ -28,12 +32,16 @@
 	  		default () {
 	  			return [];
 	  		}
-	  	}
+	  	},
+	  	'uploadText': String,
 	  },
 	  data () {
 		return {};
 	  },
 	  methods: {
+	  	clearFiles () {
+	  		this.$refs.upload.clearFiles();
+	  	},
 	  	handleUploadSuccess (p, f) {
 	      if(p.status) {
 	      	const id = p.data.file.id;

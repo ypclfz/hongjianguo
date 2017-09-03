@@ -17,12 +17,12 @@
         <el-input type="textarea" v-model="form.abstract" placeholder="请填写专利摘要"></el-input>
       </el-form-item>
       <el-form-item label="申请方式">
-        <el-select v-model="form.manner">
+        <el-select v-model="form.manner" value-key="id">
           <el-option
             v-for="item in options.manner"
-            :key="item.value"
-            :label="item.label"
-            :value="item.value"
+            :key="item.id"
+            :label="item.name"
+            :value="item"
           ></el-option>
         </el-select>
       </el-form-item>
@@ -134,7 +134,7 @@ export default {
         area: this.type == 'add' ? [] : '',
         type: '',
         abstract: '',
-        manner: '',
+        manner: {name:"直接申请",id:1},
         apd: '',
         apn: '',
         public_date: '',
@@ -154,19 +154,19 @@ export default {
       },
       options: {
         manner: [
-          {label:"直接申请",value:1},
-          {label:"巴黎公约",value:2},
-          {label:"PCT进入国家阶段",value:3},
-          {label:"外部转入", value: 4}
+          {name:"直接申请",id:1},
+          {name:"巴黎公约",id:2},
+          {name:"PCT进入国家阶段",id:3},
+          {name:"外部转入", id: 4}
         ],
         language: [
-          {label:"中文-Chinese",value:"CN"},
-          {label:"英文-English",value:"EN"},
-          {label:"法文-Franch",value:"FR"},
-          {label:"德文-Germany",value:"GE"},
-          {label:"日文-Japanese",value:"JP"},
-          {label:"俄文-Russian",value:"RU"},
-          {label:"西班牙-Spanish",value:"ES"}
+          {name:"中文-Chinese",id:"CN"},
+          {name:"英文-English",id:"EN"},
+          {name:"法文-Franch",id:"FR"},
+          {name:"德文-Germany",id:"GE"},
+          {name:"日文-Japanese",id:"JP"},
+          {name:"俄文-Russian",id:"RU"},
+          {name:"西班牙-Spanish",id:"ES"}
         ]
       }
 		}

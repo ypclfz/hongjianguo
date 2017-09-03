@@ -39,7 +39,7 @@ export default {
   },
   computed: {
   	agent () {
-  		return this.form.agency ? this.form.agency : '暂无代理机构信息';
+  		return this.form.agency ? this.form.agency.name : '暂无代理机构信息';
   	},
   	agent_serial () {
   		return this.form.agent_serial ? this.form.agent_serial : '暂无代理机构信息';
@@ -48,7 +48,7 @@ export default {
   		return this.form.agency_type ? this.form.agency_type : '未知代理类型';
   	},
   	agency () {
-  		return this.form.agency ? this.form.agency : '暂无代理人信息';
+  		return this.form.agent ? this.form.agent.name : '暂无代理人信息';
   	}
   },
   components: {  AppCollapse }

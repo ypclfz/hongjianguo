@@ -1,12 +1,11 @@
 <template>
-  <el-select :value="value" @input="handleInput" :multiple="multiple" :disabled="disabled" placeholder="请选择地区">
+  <el-select :value="value" @input="handleInput" :multiple="multiple" :disabled="disabled" placeholder="请选择地区" value-key="id">
   	<el-option
 			v-for="item in areaData"
-			:key="item.value"
+			:key="item.id"
 			:label="item.name"
-			:value="item.id"
-			
-  	></el-option>
+      :value="item"      
+	  ></el-option>
   </el-select>
 </template>
 
@@ -14,7 +13,7 @@
 export default {
   name: 'area',
   props: {
-  	'value': [String, Array],
+  	'value': [String, Object, Array],
   	'multiple': {
   		type: Boolean,
   		default: false,

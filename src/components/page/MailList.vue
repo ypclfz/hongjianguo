@@ -27,6 +27,7 @@ export default {
   		  	{ label: '收件箱', value: 1 },
   		  	{ label: '发件箱', value: 2 },
           { label: '草稿箱', value: 0 },
+          { label: '系统内消息', value: 3 }
   		  ] 
       },
 		  props: {
@@ -42,19 +43,22 @@ export default {
         'header_slot': [ 'mailbox' ],
 		  	// 'is_search': false,
 		  	'columns': [
-		  		{ type: 'selection' },
-		  		{ type: 'array', label: '发件人邮箱', prop: 'from', render: _=>[_.value ? _.value : _], width: '200' },
-		  		{ type: 'array', label: '收件人邮箱', prop: 'to', render: arr=>arr.map(_=>_.value ? _.value : _), width: '200' },
-		  		{ type: 'text', label: '邮件标题', prop: 'subject', width: '300' },
-		  		{ type: 'text', label: '发送时间', prop: 'mail_date', width: '200' },
+		  		{ type: 'selection', width: '50' },
+		  		{ type: 'array', label: '发件人邮箱', prop: 'from', render: _=>[_.value ? _.value : _], sortable: true, width: '200' },
+		  		{ type: 'array', label: '收件人邮箱', prop: 'to', render: arr=>arr.map(_=>_.value ? _.value : _), sortable: true, width: '200' },
+		  		{ type: 'text', label: '邮件标题', prop: 'subject', overflow: true },
+		  		{ type: 'text', label: '发送时间', prop: 'mail_date', sortable: true, width: '200' },
 		  		{ 
 		  			type: 'action',
+            width: '150',
 		  			btns: [
               { type: 'edit', click: this.edit, btn_if: ({mailbox})=>mailbox === 0 ? true : false, },
 		  				{ type: 'delete', click: this.mailDelete },
 		  			],  
 		  		}
-		  	]
+		  	],
+        rowClick: this.handleRowClick,
+
 		  },
 		  tableData: [],
 		  filter: {},
@@ -92,6 +96,12 @@ export default {
 
   		this.axiosDelete({url, success});
   	},
+    handleRowClick ({id}) {
+      const url = `${URL}/${id}`;
+      const success = _=>{console.log(_)};
+
+      this.axiosGet({url, success});
+    }
   },
   watch: {
     mailbox () {

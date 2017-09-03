@@ -6,21 +6,45 @@
 			empty-text="暂无可上传数据"
 			:data="tableData"
 		>
-			<el-table-column label="文件ID" prop="file_id"></el-table-column>
-			<el-table-column label="案件ID" prop="project_id"></el-table-column>
-			<el-table-column label="文件类型">
-				<template scope="scope">{{ scope.row.type == 1 ? '通知书' : '附件' }}</template>
-			</el-table-column>
+			<el-table-column label="关联案件" prop="project">
+        <template scope="scope">
+          <span>{{ scope.row.project.name }}</span>
+        </template>
+      </el-table-column>
+      <el-table-column label="文件名称" prop="name"></el-table-column>
+			<el-table-column label="文件类型" prop="type">
+        <template scope="scope">
+          <span>{{ scope.row.type.name }}</span>
+        </template>
+      </el-table-column>
+      <el-table-column label="操作">
+        <template scope="scope">
+          <el-button icon="delete" size="mini" type="text" @click="handleDelete(scope.$index)">删除</el-button>
+        </template>
+      </el-table-column>
+				
+			
 		</el-table>
   	<el-upload
 		  :action="upload_url"
 		  :on-success="handleSuccess"
 		  drag
 		  multiple
-		  style="line-height: 48px;"
+		  style="line-height: 40px;"
+      :show-file-list="false"
 		>
-		 	<div class="el-upload__text">将文件拖到此处，或<em>点击上传</em></div>
+		 	<div class="el-upload__text"><em>单个或多个文件上传</em></div>
 		</el-upload>
+    <el-upload
+      :action="`${upload_url}Zip`"
+      :on-success="handleSuccess"
+      drag
+      multiple
+      style="line-height: 40px;"
+      :show-file-list="false"
+    >
+      <div class="el-upload__text"><em>压缩包上传</em></div>
+    </el-upload>
 
 		<el-button style="margin-top: 20px;" type="primary" @click="importData">确认上传</el-button>
 		
@@ -43,12 +67,12 @@ import RemoteSelect from '@/components/form/RemoteSelect'
 
 const config = [
 	['patent', {
-		action: 'uploadPatentDocuments',
+		action: 'getPatentDocuments',
 		url: '/patents/documents',
 		type: 'patent',
 	}],
 	['copyright', {
-		action: 'uploadCopyrightDocuments',
+		action: 'getCopyrightDocuments',
 		url: '/copyrights/documents',
 		type: 'copyright',
 	}]
@@ -65,6 +89,7 @@ export default {
 		return {
 		  fileList: [],
 		  tableData: [],
+      file: [],
 		  dialogVisible: false,
 		  dialogVisibleIn: false,
 		  project_id: '',
@@ -112,7 +137,7 @@ export default {
   		}
 
   		const url = this.config.url;
-  		const data = this.tableData;
+  		const data = {file: this.file, list: this.tableData};
   		const success = _=>{
   			this.dialogVisible = false;
   			this.$message({message: '上传文件成功', type: 'success'});
@@ -124,14 +149,18 @@ export default {
   	handleSuccess (a,b,c) {
   		if(a.status) {
   			this.tableData.push(...a.data.list);
+        this.file.push(a.data.file);
   		}else {
-  			this.$message({message: this.info, type: 'warning'});
+  			this.$message({message: a.info, type: 'warning'});
   		}
   	},
   	arrayRender (row, col) {
     	const arr = row[col.prop];
     	return col.render ? col.render(arr) : arr;
   	},
+    handleDelete (index) {
+      this.tableData.splice(index, 1);
+    }
   },
   components: { 
 		'TableRender': {

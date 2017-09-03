@@ -76,8 +76,8 @@ export default {
 		  },
 		  options: {
 		  	'project_type': [
-		  		{label: '专利', value: 1},
-		  		{label: '商标', value: 2},
+		  		{label: '提案', value: 0},
+          {label: '专利', value: 1},
 		  		{label: '版权', value: 3},
 		  		// {label: '项目', value: 4},
 		  	]

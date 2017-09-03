@@ -42,6 +42,7 @@ import SettingCase from '@/components/page/SettingCase'
 import SettingJurisdiction from '@/components/page/SettingJurisdiction'
 import SettingRule from '@/components/page/SettingRule'
 import SettingTemplate from '@/components/page/SettingTemplate'
+import SettingTemplateEdit from '@/components/page/SettingTemplateEdit'
 import SettingUser from '@/components/page/SettingUser'
 
 //#################
@@ -109,20 +110,24 @@ const router = new Router({
       name: 'TaskPause',
       component: TaskCommon,
       meta: { 'status': -1 },
-    },{
+    },
+    {
       path: '/task/finish',
       name: 'TaskFinish',
       component: TaskCommon,
       meta: { 'status': 1 },
-    },{
+    },
+    {
       path: '/patent/list',
       name: 'PattentList',
       component: PatentList
-    },{
+    },
+    {
       path: '/patent/applying',
       name: 'ApplyingPatent',
       component: ApplyingPatent
-    },{
+    },
+    {
       path: '/patent/add',
       name: 'PatentAdd',
       component: PatentAdd,
@@ -132,16 +137,19 @@ const router = new Router({
       path: '/patent/statistics',
       name: 'PatentStatistics',
       component: PatentStatistics,
-    },{
+    },
+    {
       path: '/patent/notice',
       name: 'PatentNotice',
       meta: { type: 'patent' },
       component: NoticeCommon,
-    },{
+    },
+    {
       path: '/trademark/list',
       name: 'TrademarkList',
       component: TrademarkList
-    }, {
+    }, 
+    {
       path: '/trademark/notice',
       name: 'TrademarkNotice',
       component: TrademarkNotice
@@ -284,6 +292,7 @@ const router = new Router({
       component: SettingSystem,
     },
     { path: '/setting/template', name: 'SettingTemplate', component: SettingTemplate },
+    { path: '/setting/template/edit', name: 'SettingTemplateEdit', component: SettingTemplateEdit },
     { path: '/setting/user', name: 'SettingUser', component: SettingUser },
   ]
 });

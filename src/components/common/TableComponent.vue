@@ -97,6 +97,8 @@
     @expand="handleExpand"
     :style="tableStyle"
     :row-class-name="handleRowClassName"
+    @row-click="handleRowClick"
+
   >
     <template v-for="(col, index) in tableOption.columns">
       
@@ -121,8 +123,15 @@
             </template>
           </el-table-column>
         </template>
+        <template v-else-if="col.render_simple ? true : false ">
+          <el-table-column :label="col.label" :prop="col.prop" :width="col.width ? col.width : ''" v-if="tableControl[index]['show']" :sortable="col.sortable ? 'custom' : false" >
+            <template scope="scope">
+              <span class="table-column-render">{{ scope.row[col.prop][col.render_simple] }}</span>
+            </template>
+          </el-table-column>
+        </template>
         <template v-else>
-          <el-table-column :label="col.label" :prop="col.prop" :width="col.width ? col.width : ''" v-if="tableControl[index]['show']" :sortable="col.sortable ? 'custom' : false">
+          <el-table-column :label="col.label" :prop="col.prop" :width="col.width ? col.width : ''" v-if="tableControl[index]['show']" :sortable="col.sortable ? 'custom' : false" :show-overflow-tooltip="col.overflow ? true : false">
           </el-table-column>
         </template>
       </template>
@@ -135,7 +144,7 @@
 
       
       <template v-else-if="col.type == 'array'">
-        <el-table-column :label="col.label" :prop="col.prop" :width="col.width ? col.width : ''" v-if="tableControl[index]['show']">
+        <el-table-column :label="col.label" :prop="col.prop" :width="col.width ? col.width : ''" v-if="tableControl[index]['show']" :sortable="col.sortable ? 'custom' : false">
           <template scope="scope">
             <el-tag v-for="(item, i) in arrayRender(scope['row'],col)" style="margin-left: 5px;" close-transition :key="i">{{ item }}</el-tag>
           </template>
@@ -206,6 +215,10 @@ import AppFilter from '@/components/common/AppFilter'
 import AppImport from '@/components/common/AppImport'
 import FileUpload from '@/components/common/FileUpload'
 const methods = Object.assign({}, tableConst.methods, {
+  handleRowClick (a,b,c) {
+    const func = this.tableOption.rowClick;
+    if(func) func(a,b,c);
+  },
   handelExport(func, e) {
     if(func) {
       func(e)
@@ -431,7 +444,12 @@ export default {
     },
     import_columns () {
       const c =this.tableOption.columns;
-      return c.filter(_=>_.is_import);
+      const a = c.filter(_=>_.is_import);
+      if(this.tableOption.import_columns) {
+        a.push(...this.tableOption.import_columns);
+      }
+
+      return a;
     },
   },
   watch: {
@@ -480,11 +498,21 @@ export default {
   components: {
     'TableRender': {
       render: function(h) {
-        return this.render(h, this.scope.row[this.prop], this.scope.row, this.prop);
+        if( !this.simple ) {
+          return this.render(h, this.scope.row[this.prop], this.scope.row, this.prop);
+        }else {
+
+          const str = this.render(this.scope.row[this.prop]);
+          return h('span', { class: { 'table-column-render': true} }, str)
+        }
       },
       props: {
         'render': null, 
-        'scope': null, 
+        'scope': null,
+        'simple': {
+          type: Boolean,
+          default: false,
+        },
         'prop': {
           type: String,
           default: '',        

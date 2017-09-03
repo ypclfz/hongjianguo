@@ -198,7 +198,9 @@ body {
   margin: 0;
   font-family: "Helvetica Neue",Helvetica,Arial,sans-serif;
 }
-
+a {
+  color: #20a0ff;
+}
 #app {
   posiion: relative;
   padding: {
@@ -216,7 +218,7 @@ nav {
   width: 100%;
   color: #fff;
   padding-left: 20px;
-  z-index: 2;
+  z-index: 10;
 }
 .nav-left {
   overflow-x: hidden;
@@ -238,6 +240,7 @@ nav {
   border-bottom-right-radius: 20px;
   border-top-right-radius: 20px;
   cursor: pointer;
+  opacity: .5;
 }
 .nav-left-btn-arrow {
   position: absolute;
@@ -373,6 +376,9 @@ nav {
   textarea {
     height: 80px;
     font-family: "Helvetica Neue",Helvetica,Arial,sans-serif;
+  }
+  .el-step.is-vertical .el-step__main {
+    padding-left: 40px;
   }
 }
 </style>

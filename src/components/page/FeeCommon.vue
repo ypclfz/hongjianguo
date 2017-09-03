@@ -33,6 +33,8 @@ export default {
 		return {
 			popType: '',
 		  	option: {
+        'name': 'fees',
+        'url': URL,
 		  	'header_btn': [
 		  		{ type: 'add', click: this.addPop },
 		  		{ 
@@ -47,8 +49,10 @@ export default {
 		  			],
 		  		},
           { type: 'export' },
+          { type: 'import' },
 		  		{ type: 'control' },
 		  	],
+        'import_type': '',
 		  	'header_slot': [ 'status', 'invoice'],
 		  	'columns': [
 		  		{ type: 'selection' },
@@ -57,26 +61,26 @@ export default {
 		  		{ type: 'text', label: '专利类型', prop: 'patent_type', width: '133' },
 		  		{ type: 'text', label: '案件名称', prop: 'title', width: '189' },
 		  		{ type: 'text', label: '申请号', prop: 'apn', width: '210' },
-		  		{ type: 'text', label: '申请日', prop: 'apd', width: '200' },
-		  		{ type: 'text', label: '地区', prop: 'area', width: '210' },
+		  		{ type: 'text', label: '申请日', prop: 'apd',  width: '200' },
+		  		{ type: 'text', label: '地区', prop: 'area', render_simple: 'name', width: '210' },
 		  		{ type: 'text', label: '发文日', prop: 'mail_date', width: '250' },
 		  		{ type: 'text', label: '创建日期', prop: 'create_time', width: '200' },
-		  		{ type: 'text', label: '费用期限', prop: 'due_time', width: '200' },
+		  		{ type: 'text', label: '费用期限', prop: 'due_time', is_import: true, width: '200' },
 		  		{ type: 'text', label: '官方绝限', prop: 'deadline', width: '200' },
 		  		{ type: 'text', label: '付款时间', prop: 'pay_time', width: '200' },
-		  		{ type: 'text', label: '费用对象', prop: 'target', width: '190' },
+		  		{ type: 'text', label: '费用对象', prop: 'target', render_simple: 'name', width: '190' },
 		  		{ type: 'text', label: '费用名称', prop: 'name', width: '190' },
 		  		{ type: 'text', label: '费用类型', prop: 'type_name', width: '190' },
 		  		{ type: 'text', label: '金额', prop: 'fee', width: '80' },
-		  		{ type: 'text', label: '汇率', prop: 'roe', width: '80' },
-		  		{ type: 'text', label: '货币', prop: 'currency', width: '80' },
-		  		{ type: 'text', label: '人民币', prop: 'amount', width: '100' },
-		  		{ type: 'text', label: '状态', prop: 'status_name' , width: '180'},
+		  		{ type: 'text', label: '汇率', prop: 'roe', is_import: true, width: '80' },
+		  		{ type: 'text', label: '货币', prop: 'currency', is_import: true, width: '80' },
+		  		{ type: 'text', label: '人民币', prop: 'amount', is_import: true, width: '100' },
+		  		{ type: 'text', label: '状态', prop: 'status', render_simple: 'name', width: '180'},
 		  		{ type: 'text', label: '请款单ID', prop: 'invoice_id', width: '150' },
 		  		{ type: 'text', label: '请款单备注', prop: 'invoidce_remark', width: '150' },
 		  		{ type: 'text', label: '发票抬头', prop: 'invoice_title', width: '330' },
 		  		{ type: 'text', label: '纳税人识别号', prop: 'tax_payer_identifier', width: '160' },
-		  		{ type: 'text', label: '费用备注', prop: 'remark', width: '160' },
+		  		{ type: 'text', label: '费用备注', prop: 'remark', is_import: true, width: '160' },
 		  		{ 
 		  			type: 'action',
             width: '137',
@@ -107,6 +111,8 @@ export default {
   		const o = this.option.header_btn[1];
   		o.label = k;
   		o.items.forEach(d=>{d.text = d.text.replace('{key}', k)});
+
+      this.option.import_type = type ? 'feesIncome' : 'feesPayable';
   	
   		this.option.header_btn.splice(1, 1, o);
   		
@@ -129,7 +135,9 @@ export default {
   		const data = Object.assign({}, option, { debit, status }, this.filter, invoice);
   		const success = d=>{ 
         if(data['format'] == 'excel') {
-          window.open(d.downloadUrl);
+          if(d.fees.downloadUrl) {
+            window.location.href = d.fees.downloadUrl;  
+          }
         }else {
           this.tableData = d.fees;  
         }

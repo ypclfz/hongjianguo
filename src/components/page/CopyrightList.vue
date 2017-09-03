@@ -33,20 +33,22 @@ export default {
         'columns': [
           { type: 'selection' },
           { type: 'text', label: '案号', prop: 'serial', width: '203' },
-          { type: 'text', label: '版权类型', prop: 'type', is_import: true, width: '121' },
-          { type: 'text', label: '标题', prop: 'title', is_import: true, width: '133'},
+          { type: 'text', label: '版权类型', prop: 'type', is_import: true, render_simple: 'name', width: '160' },
+          { type: 'text', label: '标题', prop: 'title', is_import: true, width: '160'},
           { type: 'text', label: '摘要', prop: 'abstract', width: '277' },
-          { type: 'text', label: '申请日', prop: 'apd', sortable: true, width: '173' },
+          { type: 'text', label: '完成时间', prop: 'create_time', width: '200' },
+          { type: 'text', label: '申请日', prop: 'apd', sortable: true, is_import: true, width: '173' },
           { type: 'text', label: '申请号', prop: 'apn', width: '121' },
-          { type: 'text', label: '公告日', prop: 'issue_date', width: '183' },
-          { type: 'text', label: '公告号', prop: 'issue_number', width: '121' },
-          { type: 'text', label: '代理人', prop: 'ipr', render: _=>_.name, width: '121' },
-          { type: 'text', label: '代理机构名称', prop: 'agency', width: '143' },
+          { type: 'text', label: '公告日', prop: 'issue_date', is_import: true, width: '183' },
+          { type: 'text', label: '公告号', prop: 'issue_number', is_import: true, width: '121' },
+          { type: 'text', label: '代理人', prop: 'ipr', render_simple: 'name', is_import: true, width: '140' },
+          { type: 'text', label: '代理机构名称', prop: 'agency', render_simple: 'name', width: '143' },
           { type: 'text', label: '代理机构案号', prop: 'agency_serial', width: '138' },
-          { type: 'text', label: '备注', prop: 'remark', width: '285' },
-          { type: 'array', label: '申请人', prop: 'applicants', is_import: true, render: _=>_.map(_=>_.name), width: '190' },
-          { type: 'array', label: '标签', prop: 'tags', width: '150' },
-          { type: 'array', label: '产品名称', prop: 'products', sortable: true, render: _=>_.map(_=>_.name), width: '150' },
+          { type: 'text', label: '备注', prop: 'remark', is_import: true, width: '285' },
+          { type: 'array', label: '申请人', prop: 'applicants', is_import: true, render: _=>_.map(_=>_.name), width: '220' },
+          { type: 'text', label: '提案人', prop: 'proposer', is_import: true, render_simple: 'name', width: '200' },
+          { type: 'array', label: '标签', prop: 'tags', is_import: true, width: '150' },
+          { type: 'array', label: '产品名称', prop: 'products', sortable: true, is_import: true, render: _=>_.map(_=>_.name), width: '150' },
           {
             type: 'action',
             width: '150',
@@ -68,7 +70,13 @@ export default {
     refreshTableData (option) {
       const url = URL;
       const data = Object.assign({}, option, this.filter);
-      const success = d=>{this.tableData = d.copyrights};
+      const success = d=>{
+        if(data['format'] == 'excel') {
+          window.location.href = d.copyrights.downloadUrl;
+        }else {
+          this.tableData = d.copyrights;  
+        }
+      };
       this.axiosGet({url, data, success});
     },
     refresh () {

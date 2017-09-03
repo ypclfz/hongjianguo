@@ -1,9 +1,9 @@
 <template>  
 	<el-form label-width="80px" :model="form" ref="form">
     <el-form-item label="关联案件" prop="project_id" v-if="type == 'add'">
-      <project v-model="form.project_id"></project>
+      <remote-select type="project" v-model="form.project_id" ref="project"></remote-select>
     </el-form-item>
-    <el-form-item label="任务流程" prop="flow_node_id" v-if="type == 'add'">
+    <el-form-item label="任务流程" prop="flow_node_id" v-if="type == 'add' && category != ''">
       <el-select v-model="form.flow_node_id" placeholder="请选择任务流程">
         <el-option
           v-for="item in flowOptions"
@@ -14,7 +14,7 @@
         </el-option>
       </el-select>
     </el-form-item>
-    <el-form-item label="任务类型" prop="task_def_id" v-if="type == 'add'">
+    <el-form-item label="任务类型" prop="task_def_id" v-if="type == 'add' && category != ''">
       <el-select v-model="form.task_def_id" placeholder="请选择任务类型">
         <el-option
           v-for="item in defOptions"
@@ -49,7 +49,7 @@
     </el-form-item>
 		<el-form-item style="margin-bottom: 0;">
       <el-button type="primary" @click="add" v-if="type == 'add'">新增</el-button>
-			<el-button type="primary" @click="edit" v-if="type == 'edit'">编辑</el-button>
+			<el-button type="primary" @click="edit" v-if="type == 'edit'">保存</el-button>
 		</el-form-item>
 	</el-form>  
 </template>
@@ -58,7 +58,7 @@
 import Member from '@/components/form/Member'
 import Upload from '@/components/form/Upload'
 import AxiosMixins from '@/mixins/axios-mixins'
-import Project from '@/components/form/Project'
+import RemoteSelect from '@/components/form/RemoteSelect'
 
 const URL = '/api/tasks';
 
@@ -131,21 +131,10 @@ export default {
   },
   watch: {
     'form.project_id': {
-      handler (val) {
-        this.axiosGet({
-          url: '/api/projects',
-          data: {
-            keyword: '',
-            listOnly: '1',
-          },
-          success: _=>{
-            const arr = _.projects;
-            for(let d of arr) {
-              if(d.value == val) {
-                this.category = d.category;
-              }
-            }
-          }
+      handler () {
+        this.$nextTick(_=>{
+          const select = this.$refs.project.getSelected()[0];
+          this.category = select ? select['category'] : '';  
         })
       }
     }
@@ -165,7 +154,7 @@ export default {
       }
     }
   },
-  components: { Member, Upload, Project }
+  components: { Member, Upload, RemoteSelect }
 }
 </script>
 

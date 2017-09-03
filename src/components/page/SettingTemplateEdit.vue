@@ -1,0 +1,66 @@
+<template>
+  <div class="main">
+		<el-form>
+			<el-form-item label="模板名称">
+				<el-input v-model="form.name"></el-input>
+			</el-form-item>
+			<el-form-item label="模板标题">
+				<el-input v-model="form.title"></el-input>
+			</el-form-item>
+			<el-form-item label="模板内容">
+				<quill-editor 
+					v-model="form.content"
+	        ref="myQuillEditor"	
+	      >
+	  		</quill-editor>
+			</el-form-item>
+			<el-form-item>
+				<el-button type="primary" @click="edit">保存</el-button>
+				<el-button type="danger" @click="cancel">返回</el-button>
+			</el-form-item>
+		</el-form>
+  </div>
+</template>
+
+<script>
+import AxiosMixins from '@/mixins/axios-mixins' 
+
+const URL = '/api/templates'
+
+export default {
+  name: 'settingTemplateEdit',
+  mixins: [ AxiosMixins ],
+  data () {
+		return {
+		  form: {
+		  	name: '',
+		  	title: '',
+		  	content: '',
+		  },
+		}
+  },
+  methods: {
+  	edit () {
+  		const url = `${URL}/${this.id}`;
+  		const data = this.form;
+  		const success = _=>{ 
+  			this.$message({message: '保存成功', type: 'success'});
+  		};
+
+  		this.axiosPut({url, data, success});
+  	},
+  	cancel () {
+  		this.$router.push({path: '/setting/template'});
+  	}
+  },
+  computed: {
+  	id () {
+  		return this.$route.query.id;
+  	}
+  },
+}
+</script>
+
+<!-- Add "scoped" attribute to limit CSS to this component only -->
+<style scoped lang="scss">
+</style>
