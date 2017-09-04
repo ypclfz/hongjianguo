@@ -142,5 +142,12 @@ export default {
 		for(let k in obj)  i++; 
 
 		return i;
+	},
+	singleObject (arr, key) {
+		if(arr.length == 0 || !key ) return arr;
+
+		const obj = {};
+		arr.forEach( _=>{obj[_[key]] = _} );
+		return Object.values(obj); 
 	}
 }

@@ -34,6 +34,14 @@ const config = [
   ['ipr', {
     placeholder: '请选择IPR',
     options: 'iprOptions',
+  }],
+  ['patent_type', {
+    placeholder: '请选择专利类型',
+    options: [
+      { label: '发明专利', value: 1 },
+      { label: '实用新型', value: 2 },
+      { label: '外观设计', value: 3 },
+    ]
   }]
 ];
 const map = new Map(config);

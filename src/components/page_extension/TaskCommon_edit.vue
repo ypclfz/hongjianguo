@@ -27,7 +27,7 @@
     </el-form-item>
 
 		<el-form-item label="承办人" prop="person_in_charge">
-			<member v-model="form.person_in_charge"></member>
+      <remote-select type="member" v-model="form.person_in_charge"></remote-select>
 		</el-form-item>
     <el-row> 
       <el-col :span="12"> 

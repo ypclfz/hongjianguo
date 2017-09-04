@@ -1,7 +1,7 @@
 <template>
 	<el-row>
     <el-col :span="12" style="padding-right:5px">
-      <inventor-select :value="value.id" @input="handleInventor" :disabled="disabled"></inventor-select>
+      <remote-select type="inventor" :value="value.id" @input="handleInventor" :disabled="disabled"></remote-select>
     </el-col>
     <el-col :span="6" style="padding:0 5px">
       <el-autocomplete placeholder="贡献率" :fetch-suggestions="handleFetch"  style="width: 100%" readonly :value="share + ''" @input="handlePercent" :disabled="disabled">
@@ -17,6 +17,7 @@
 <script>
 import InventorSelect from '@/components/form/InventorSelect'
 import AxiosMixins from '@/mixins/axios-mixins'
+import RemoteSelect from '@/components/form/RemoteSelect'
 export default {
   name: 'inventor',
   mixins: [ AxiosMixins ], 
@@ -41,7 +42,12 @@ export default {
   },
   computed: {
   	id () {
-  		return this.value.id;
+      console.log(this.value);
+      if(this.value.name) {
+        return {id: this.value.id, name: this.value.name};
+      }else {
+  		  return this.value.id;
+      }
   	},
   	share () {
   		return this.value.share;
@@ -84,7 +90,14 @@ export default {
       console.log('blur');
     }
   },
-  components: { InventorSelect }
+  watch: {
+    value (v) {
+      if(v.name) {
+        this.$emit('input', {id: {id: v.id, name: v.name}, share: v.share});
+      }
+    }
+  },
+  components: { InventorSelect, RemoteSelect }
 }
 </script>
 

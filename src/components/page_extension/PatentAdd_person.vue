@@ -48,10 +48,8 @@ export default {
   methods: {
   	setForm (data) {
       for(let k in this.form) {
-        if(k == 'proposer' || k == 'branch' || k == 'ipr') {
+        if( k == 'branch' || k == 'ipr') {
           this.form[k] = data[k] ? data[k]['id'] : "";
-        }else if(k == 'applicants') {
-          this.form[k] = data[k].map(_=>_.id);
         }else {
           this.form[k] = data[k];
         }

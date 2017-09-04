@@ -18,7 +18,6 @@ export default {
   },
   computed: {
     value2 () {
-      console.log('value2');
       if(!this.multiple) {
         return this.value == "" ? [] : [ this.value ];
       }else {
@@ -45,6 +44,11 @@ export default {
       const data = os ? Object.assign({}, s, os) : s;
       const success = _=>{
         this.loading = false;
+        _[key] = _[key].map(_=>{
+          if(!_.name) _.name = _.label;
+          if(!_.id) _.id = _.value;
+          return _;
+        });
         this.options = _[key];
       }
 

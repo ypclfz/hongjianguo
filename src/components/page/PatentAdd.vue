@@ -51,7 +51,10 @@ export default {
     add () {
       const url = URL;
       const data = Object.assign( ...getKeys.map(_=>this.$refs[_].submitForm()) );
-      const success = _=>{ this.$router.push('/patent/list') };
+      const success = _=>{ 
+        this.$message({message: '添加专利成功', type: 'success'});
+        this.$router.push('/patent/list'); 
+      };
 
       this.axiosPost({url, data, success});
 
@@ -59,7 +62,10 @@ export default {
     edit () {
       const url = `${URL}/${this.id}`;
       const data = Object.assign( ...getKeys.map(d=>this.$refs[d].submitForm()) );
-      const success = _=>{ this.$router.push('/patent/list') };
+      const success = _=>{ 
+        this.$message({message: '编辑专利成功', type: 'success'});
+        this.$router.push('/patent/list');
+      };
 
       this.axiosPut({url, data, success});
     },

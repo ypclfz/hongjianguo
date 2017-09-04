@@ -12,8 +12,8 @@
 				<el-option v-for="item in options.type" :key="item.value" :label="item.label" :value="item.value"></el-option>
 			</el-select>
 		</el-form-item>
-		<el-form-item label="技术分类" prop="classification_id">
-			<classification v-model="form.classification_id"></classification>
+		<el-form-item label="技术分类" prop="classification">
+			<classification v-model="form.classification"></classification>
 		</el-form-item>
 		<el-form-item label="产品分类" prop="products">
 			<product v-model="form.products" multiple></product>
@@ -21,17 +21,17 @@
 		<el-form-item label="标签" prop="tags">
 			<tag v-model="form.tags" multiple></tag>
 		</el-form-item>
-		<el-form-item label="IPR" prop="ipr_id">
-			<ipr v-model="form.ipr_id"></ipr>
+		<el-form-item label="IPR" prop="ipr">
+			<ipr v-model="form.ipr"></ipr>
 		</el-form-item>
-		<el-form-item label="提案人" prop="proposer_id">
-			<member v-model="form.proposer_id"></member>
+		<el-form-item label="提案人" prop="proposer">
+			<remote-select type="member" v-model="form.proposer"></remote-select>
 		</el-form-item>
-		<el-form-item label="部门分类" prop="branch_id">
-			<branch v-model="form.branch_id"></branch>
+		<el-form-item label="部门分类" prop="branch">
+			<branch v-model="form.branch"></branch>
 		</el-form-item>
 		<el-form-item label="申请人" prop="applicants">
-			<applicant v-model="form.applicants" multiple></applicant>
+			<remote-select type="applicant" v-model="form.applicants" multiple></remote-select>
 		</el-form-item>
 		<el-form-item label="附件" prop="attachments">
 			<upload v-model="form.attachments" :file-list="attachments"></upload>
@@ -52,8 +52,8 @@
 			<el-input v-model="form.issue_number" placeholder="请填写证书号"></el-input>
 		</el-form-item>
 		<el-form-item>
-			<el-button @click="add" v-if="pageType == 'add'" :disabled="btn_disabled">添加</el-button>
-			<el-button @click="edit" v-if="pageType == 'edit'" :disable="btn_disabled">编辑</el-button>
+			<el-button @click="add" v-if="pageType == 'add'" :disabled="btn_disabled" type="primary">添加</el-button>
+			<el-button @click="edit" v-if="pageType == 'edit'" :disable="btn_disabled" type="primary">编辑</el-button>
 		</el-form-item>
   	</el-form>
   </div>
@@ -69,6 +69,7 @@ import Member from '@/components/form/Member'
 import Branch from '@/components/form/Branch'
 import Applicant from '@/components/form/Applicant'
 import Upload from '@/components/form/Upload'
+import RemoteSelect from '@/components/form/RemoteSelect'
 
 const URL = '/api/copyrights'
 
@@ -82,12 +83,12 @@ export default {
 		  	title: '',
 		  	abstract: '',
 		  	type: '',
-		  	classification_id: '',
+		  	classification: '',
 		  	products: [],
 		  	tags: [],
-		  	ipr_id: '',
-		  	proposer_id: '',
-		  	branch_id: '',
+		  	ipr: '',
+		  	proposer: '',
+		  	branch: '',
 		  	applicants: [],
 		  	attachments: [],
 		  	remark: '',
@@ -130,7 +131,10 @@ export default {
   		this.btn_disabled = true;
   		const url = `${URL}/${this.id}`;
   		const data = this.$tool.shallowCopy(this.form, {'date': true});
-  		const success = _=>{ this.$message({message: '编辑成功', type: 'success'}) };
+  		const success = _=>{ 
+  			this.$message({message: '编辑成功', type: 'success'});
+  			this.$router.push('/copyright/list'); 
+  		};
   		const complete = _=>{ this.btn_disabled = false };
 
   		this.axiosPut({url, data, success, complete})
@@ -142,9 +146,9 @@ export default {
   			this.id = data.id;
   			for(let k in this.form) {
   				const d = data[k];
-  				if(k == 'classification_id' || k == 'ipr_id' || k == 'proposer_id' || k == 'branch_id') {
-  					this.form[k] = data[k.split('_')[0]].id;
-  				}else if(k == 'products' || k == 'applicants' || k == 'attachments') {
+  				if(k == 'classification' || k == 'branch' || k == 'type' ) {
+  					this.form[k] = d.id;
+  				}else if(k == 'attachments' || k == 'products') {
   					this.form[k] = d.map(_=>_.id);
   					if(k == 'attachments') this.attachments = d;
   				}else {
@@ -162,7 +166,7 @@ export default {
   		this.refreshForm();
   	}
   },
-  components: { Classification, Product, Tag, Ipr, Member, Branch, Applicant, Upload }
+  components: { Classification, Product, Tag, Ipr, Member, Branch, Applicant, Upload, RemoteSelect }
 }
 </script>
 

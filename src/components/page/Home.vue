@@ -1,42 +1,43 @@
 <template>
 	<div class="main">
-		<!-- <div>{{ msg }}</div>
-  	<app-filter :data="filter_data"></app-filter> -->
 	</div>
 </template>
 <script>
 import AppFilter from '@/components/common/AppFilter'
+import AxiosMixins from '@/mixins/axios-mixins'
 
+
+let data;
+const URL = '/api/stats/lists';
 export default {
   name: 'home',
+  mixins: [ AxiosMixins ],
   data () {
     return {
-      msg: '这里是主页',
-      filter_data: [
-      	{
-      		label: '标签',
-      		key: 'tag',
-      		tidy: ['标签一', '标签二', '标签三'],
-      		items: ['标签一','标签二','标签三','标签四','标签五','标签六','标签七','标签八'],
-      		multipled: true
-      	},
-      	{
-      		label: '时间',
-      		key: 'time',
-      		items: ['2017', '2016', '2015', '2014', '2013'],
-      		multipled: true
-      	},
-      	{
-      		label: '类别',
-      		key: 'type',
-      		items: ['类别一', '类别二', '类别三', '类别四', '类别五'],
-      		multipled: true
-      	}
-      ]
+      config: '',
+    }   
+  },
+  methods: {
+    refreshHome () {
+      console.log(data);
     }
   },
   created () {
-        
+    if(data === undefined) {
+      const url = URL;
+      const success = _=>{ 
+        data = _.data;
+        this.refreshHome(); 
+      };
+      const complete = _=>{
+        this.$store.commit('cancelLoading');
+      }
+
+      this.$store.commit('onLoading');
+      this.axiosGet({url, success, complete});
+    }else {
+      this.refreshHome();
+    }
   },
   components: { AppFilter }
 }

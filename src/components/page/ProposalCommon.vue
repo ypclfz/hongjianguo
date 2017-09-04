@@ -120,7 +120,7 @@ export default {
     handleSubmitSuccess () {
       this.$router.push('/task/finish');
     },
-    save ( callback=_=>{this.$router.push('/proposal/list')} ) {
+    save ( callback=_=>{this.$message({message: '编辑成功', type: 'success'}); this.$router.push('/proposal/list')} ) {
       this.$refs.form.validate(valid=>{
         if(valid) {
           this.btn_disabled = true;
@@ -178,7 +178,7 @@ export default {
           const data = response.data.proposal;
           const { inventors, proposer, classification, products, attachments } = data;
           
-          data.inventors = inventors.map((d)=>{return {id: d.id, share: d.share}});
+          data.inventors = inventors.map((d)=>{return {id: d.id, share: d.share, name: d.name}});
           data.proposer = proposer.id;
           this.proposer_name = proposer.name;
 

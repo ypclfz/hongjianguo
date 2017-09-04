@@ -35,8 +35,6 @@ export default {
   methods: {
     setForm (data) {
       this.$tool.coverObj(this.form, data);
-
-      this.form['proposals'] = data['proposals'].map(_=>_.id);   
     },
     submitForm () {
       return this.form;

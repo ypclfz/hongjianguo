@@ -12,9 +12,9 @@
   		</el-select>
   	</el-form-item>
   	<el-form-item prop="person_in_charge" label="承办人" v-if="fields.person_in_charge">
-  		<member v-model="form.person_in_charge" v-if="defaultVal =='proposer' || defaultVal == 'reviewer' || defaultVal == 'previous' "></member>
-  		<agent v-model="form.person_in_charge" v-else-if="defaultVal == 'agent'"></agent>
-  		<ipr v-model="form.person_in_charge" v-else-if="defaultVal == 'ipr'"></ipr>
+  		<remote-select type="member" v-model="form.person_in_charge" v-if="defaultVal =='proposer' || defaultVal == 'reviewer' || defaultVal == 'previous' "></remote-select>
+  		<remote-select type="agent" v-model="form.person_in_charge" v-else-if="defaultVal == 'agent'"></remote-select>
+  		<static-select type="ipr" v-model="form.person_in_charge" v-else-if="defaultVal == 'ipr'"></static-select>
   		<!-- <span v-else>{{ data[defaultVal]['name'] }}</span> -->
   	</el-form-item>
   	<el-form-item prop="agent" label="代理人" v-if="fields.agent">
@@ -57,6 +57,8 @@ import Agent from '@/components/form/Agent'
 import Agency from '@/components/form/Agency'
 import Ipr from '@/components/form/Ipr'
 import Upload from '@/components/form/Upload'
+import RemoteSelect from '@/components/form/RemoteSelect'
+import StaticSelect from '@/components/form/StaticSelect'
 
 const URL = `/api/tasks`;
 
@@ -133,7 +135,9 @@ export default {
 					if(d.id == val) {
 						this.fields = d.fields;
 						this.defaultVal = d.default;
-						if(this.defaultVal) this.form.person_in_charge = this.data[d.default]['id'];
+            console.log(this.defaultVal);
+						if(this.defaultVal) this.form.person_in_charge = this.data[d.default];
+            if(this.defaultVal == 'ipr') this.form.person_in_charge = this.data[d.defaultVal]['id'];
 						break;
 					}
 				}
@@ -146,7 +150,7 @@ export default {
       return this.data.next && this.data.next.length != 0 ? true : false;
     }
 	},
-	components: { Member, Agent, Agency, Ipr, Upload }
+	components: { Member, Agent, Agency, Ipr, Upload, RemoteSelect, StaticSelect }
 }
 </script>
 

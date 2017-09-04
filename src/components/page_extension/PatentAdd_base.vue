@@ -11,7 +11,7 @@
 	    	<region v-model="form.area" :multiple="type == 'add'"></region>
 	    </el-form-item>
 	    <el-form-item label="专利类型">
-	      <patent-type v-model="form.type"></patent-type>
+	      <static-select type="patent_type" v-model="form.type"></static-select>
 	    </el-form-item>
       <el-form-item label="摘要">
         <el-input type="textarea" v-model="form.abstract" placeholder="请填写专利摘要"></el-input>
@@ -109,6 +109,7 @@ import AppCollapse from '@/components/common/AppCollapse'
 import Region from '@/components/form/Region'
 import Proposal from '@/components/form/Proposal'
 import PatentType from '@/components/form/PatentType'
+import StaticSelect from '@/components/form/StaticSelect'
 
 const extensionHash = [
   { text: '是否与生物相关', label: 'is_biological', area: '', type: 1 },
@@ -211,7 +212,9 @@ export default {
   				}
 
   				this.form[k] = arr;
-  			}else {
+  			}else if(k == 'area' || k == 'type') {
+          this.form[k] = data[k]['id'];
+        }else {
   				this.form[k] = data[k];
   			}
   		} 
@@ -226,7 +229,7 @@ export default {
 
   	},
   },
-  components: { AppCollapse, Region, Proposal, PatentType }
+  components: { AppCollapse, Region, Proposal, PatentType, StaticSelect }
 }
 </script>
 

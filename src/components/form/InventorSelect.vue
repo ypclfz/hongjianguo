@@ -42,6 +42,12 @@ export default {
   		const data = { keyword, listOnly: '1' };
   		const success = _=>{
   			this.loading = false;
+        _.data = _.data.map(_=>{
+          if(!_.name) _.name = _.label;
+          if(!_.id) _.id = _.value;
+          return _;
+        });
+        console.log(_.data);
   			this.options = _.data;
   			if(this.default) {
   				this.options.unshift({id: '', name: '未选择'});

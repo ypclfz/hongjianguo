@@ -12,7 +12,7 @@
 			  </el-select>
   		</el-col>
   		<el-col :span="16" style="padding: 0 5px">
-  			<patent :value="item.id" @input="val=>{ handleInput(val, 'id', index) }"></patent>
+  			<remote-select type="patent" :value="item.id" @input="val=>{ handleInput(val, 'id', index) }"></remote-select>
   		</el-col>
   		<el-col :span="2" style="padding-left: 5px">
   			<el-button type="text" size="mini" @click="dataDelete(index)">删除</el-button>
@@ -24,7 +24,7 @@
 
 <script>
 import Multiline from '@/mixins/multiline'
-import Patent from '@/components/form/Patent'
+import RemoteSelect from '@/components/form/RemoteSelect'
 
 export default {
   name: 'relativeProjects',
@@ -39,7 +39,16 @@ export default {
 			]
 		}
 	},
-	components: { Patent },
+	watch: {
+		value (val) {
+			if(val[0] && val[0]['name']) {
+				let arr;
+				arr = val.map(_=>{ return {id: { id: _.id, name: _.name }, type: _.type} });
+				this.$nextTick(_=>{ this.$emit('input', arr); });				
+			}
+		}
+	},
+	components: { RemoteSelect },
 }
 </script>
 

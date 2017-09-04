@@ -4,7 +4,7 @@
 			v-for="item in areaData"
 			:key="item.id"
 			:label="item.name"
-      :value="item"      
+      :value="item.id"      
 	  ></el-option>
   </el-select>
 </template>

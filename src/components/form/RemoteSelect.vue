@@ -14,7 +14,7 @@
 	  @visible-change.once="initialization"
 	>
 		<el-option
-			v-for="item in options"
+			v-for="item in option_in"
 			:key="item.id"
 			:label="item.name"
 			:value="item.id"
@@ -86,6 +86,7 @@ export default {
   data () {
   	return { 
   		selected: [],
+  		static_map: [],
   	};
   },
   methods: {
@@ -93,8 +94,25 @@ export default {
   		this.remoteMethod('');
   	},	
   	getSelected () {
-  		return this.$tool.deepCopy(this.selected);
-  	}
+  		return this.selected;
+  	},
+    refreshSelected (val) {
+      if( val[0] && val[0] instanceof Object ) {
+        this.static_map = val;
+        const arr = val.map(_=>_.id);
+        if(this.multiple) {
+          this.$emit('input', arr);
+        }else {
+          this.$emit('input', arr[0])
+        }
+        
+      } else {
+        //selected通过map映射
+        this.selected = val.map(_=>{
+          return this.map.get(_);
+        });
+      }
+    }
   },
   computed: {
   	choose () {
@@ -115,17 +133,31 @@ export default {
   	},
   	PARAMS () {
   		return this.choose.PARAMS;
+  	},
+  	option_in () {
+  		//由于一部分的val可能是通过object传入,单纯的options只含有动态部分
+  		//所以取selected和options的并集,取得selected的静态部分选项
+  		const arr = [ ...this.selected, ...this.options ];
+  		// console.log(arr);
+  		return this.$tool.singleObject(arr,'id');
+  	},
+  	map () {
+  		//map分为静态和动态俩部分，静态部分由value类型Object时提供
+  		const map = new Map();
+  		this.static_map.forEach(_=>map.set(_.id, _));
+  		this.options.forEach(_=>map.set(_.id, _));
+  		return map;
   	}
   },
   watch: {
-  	value (val) {
-  		console.log('valChange');
-  	},
   	value2 (val) {
-  		this.selected = this.options.filter(_=>{
-  			if(val.indexOf(_.id) >= 0 ) return true;
-  		});
+      //value类型为对象时，添加静态映射，并将其值转为id
+      
+      this.refreshSelected(val);
   	}
+  },
+  created () {
+    this.refreshSelected(this.value2);
   }
 }
 </script>
