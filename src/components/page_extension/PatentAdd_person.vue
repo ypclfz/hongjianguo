@@ -5,16 +5,16 @@
           <branch v-model="form.branch"></branch>
         </el-form-item>
       	<el-form-item label="IPR">
-      		<ipr v-model="form.ipr_id"></ipr>
+          <static-select type="ipr" v-model="form.ipr"></static-select>
       	</el-form-item>
       	<el-form-item label="申请人">
-					<applicant v-model="form.applicants" multiple></applicant>
+          <remote-select type="applicant" v-model="form.applicants" multiple></remote-select>
       	</el-form-item >
       	<el-form-item label="发明人">
 					<inventors v-model="form.inventors" multiple></inventors>
       	</el-form-item>
         <el-form-item label="提案人">
-          <member v-model="form.proposer"></member>
+          <remote-select type="member" v-model="form.proposer"></remote-select>
         </el-form-item>
       </el-form>
     </app-collapse>
@@ -27,6 +27,8 @@ import Ipr from '@/components/form/Ipr'
 import Applicant from '@/components/form/Applicant'
 import Inventors from '@/components/form/Inventors'
 import Member from '@/components/form/Member'
+import StaticSelect from '@/components/form/StaticSelect'
+import RemoteSelect from '@/components/form/RemoteSelect'
 
 export default {
   name: 'patentAddPerson',
@@ -34,7 +36,7 @@ export default {
 		return {
 			form: {
         branch: '',
-			  ipr_id: '',
+			  ipr: '',
 			  applicants: [],
 			  inventors: [
           {id: '', share: ''}
@@ -46,7 +48,7 @@ export default {
   methods: {
   	setForm (data) {
       for(let k in this.form) {
-        if(k == 'proposer' || k == 'branch') {
+        if(k == 'proposer' || k == 'branch' || k == 'ipr') {
           this.form[k] = data[k] ? data[k]['id'] : "";
         }else if(k == 'applicants') {
           this.form[k] = data[k].map(_=>_.id);
@@ -54,6 +56,7 @@ export default {
           this.form[k] = data[k];
         }
       }
+      console.log(this.form);
   	},
     submitForm () {
       return this.form;
@@ -65,7 +68,7 @@ export default {
   		this.form.inventor.splice( index, 1 );
   	}
   },
-  components: { AppCollapse, Inventors, Ipr, Applicant, Member, Branch }
+  components: { AppCollapse, Inventors, Ipr, Applicant, Member, Branch, StaticSelect, RemoteSelect }
 }
 </script>
 

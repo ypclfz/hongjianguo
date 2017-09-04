@@ -7,7 +7,7 @@
     :placeholder="config.placeholder"
   >
   	<el-option
-  		v-for="item in config.options"
+  		v-for="item in options"
   		:key="item.value"
   		:label="item.label"
   		:value="item.value"
@@ -30,19 +30,28 @@ const config = [
 			{ label: '国外无效诉讼', value: '国外无效诉讼'},
 			{ label: '分析', value: '分析'},
 		]
-	}]
+	}],
+  ['ipr', {
+    placeholder: '请选择IPR',
+    options: 'iprOptions',
+  }]
 ];
 const map = new Map(config);
 
 export default {
-  name: 'ipr',
+  name: 'staticSelect',
   mixins: [formSelect],
   props: ['type'],
   computed: {
   	config () {
   		const config = map.get(this.type);
   		return config ? config : this.type;
-  	}
+  	},
+    options () {
+      let op = this.config.options;
+      op = op instanceof Array ? op : this.$store.getters[op];
+      return op;
+    },
   },
 }
 </script>

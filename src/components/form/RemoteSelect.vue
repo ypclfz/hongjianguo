@@ -11,6 +11,7 @@
 	  multiple
 	  :multiple-limit="multiple ? 0 : 1"
 	  ref="select"
+	  @visible-change.once="initialization"
 	>
 		<el-option
 			v-for="item in options"
@@ -57,6 +58,11 @@ const map = new Map([
 		DATA_KEY: 'projects',
 		PLACEHOLDER: '请输入案件关键词',
 	}],
+	['proposal', {
+		URL: '/api/proposals',
+		DATA_KEY: 'proposals',
+		PLACEHOLDER: '请输入提案关键词',
+	}],
 	['patent', {
 		URL: '/api/projects',
 		DATA_KEY: 'projects',
@@ -72,15 +78,20 @@ const map = new Map([
 ]);
 
 export default {
-  name: 'member',
+  name: 'remoteSelect',
   mixins: [ AxiosMixins, RemoteSelect ],
   props: {
   	'type': [String, Object]
   },
   data () {
-  	return { selected: [] };
+  	return { 
+  		selected: [],
+  	};
   },
   methods: {
+  	initialization () {
+  		this.remoteMethod('');
+  	},	
   	getSelected () {
   		return this.$tool.deepCopy(this.selected);
   	}
@@ -107,6 +118,9 @@ export default {
   	}
   },
   watch: {
+  	value (val) {
+  		console.log('valChange');
+  	},
   	value2 (val) {
   		this.selected = this.options.filter(_=>{
   			if(val.indexOf(_.id) >= 0 ) return true;

@@ -11,12 +11,13 @@
     multiple="multiple"
     :multiple-limit="multiple ? 0 : 1"
     ref="select"
+    @visible-change.once="initialization"
 	>
 		<el-option
 			v-for="item in options"
-			:key="item.value"
-			:label="item.label"
-			:value="item.value"
+			:key="item.id"
+			:label="item.name"
+			:value="item.id"
 		>
 		</el-option>
 	</el-select>
@@ -43,13 +44,16 @@ export default {
   			this.loading = false;
   			this.options = _.data;
   			if(this.default) {
-  				this.options.unshift({value: '', label: '未选择'});
+  				this.options.unshift({id: '', name: '未选择'});
   			}
   		}
   		
   		this.loading = true;
   		this.axiosGet({url, data, success});
-  	}
+  	},
+    initialization () {
+      this.remoteMethod('');
+    },
   },
 }
 </script>

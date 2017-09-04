@@ -1,6 +1,6 @@
 export default {
 	props: {
-  	'value': [Number, String, Array],
+  	'value': [Number, String, Array, Object],
   	'disabled': {
   		type: Boolean,
   		default: false,
@@ -18,11 +18,13 @@ export default {
   },
   computed: {
     value2 () {
+      console.log('value2');
       if(!this.multiple) {
         return this.value == "" ? [] : [ this.value ];
       }else {
         return this.value;
       }
+
     }
   },
   methods: {
@@ -57,7 +59,7 @@ export default {
       }
     }
   },
-  created () {
-  	this.remoteMethod('');
-  },
+  // created () {
+  // 	this.remoteMethod('');
+  // },
 }

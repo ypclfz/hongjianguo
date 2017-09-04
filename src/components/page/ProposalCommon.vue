@@ -4,7 +4,7 @@
 	  		<el-col :span="18">
 		  		<el-form label-width="100px" :rules="formRules" :model="formData" ref="form">
             
-            <el-form-item label="提案人">{{ user ? user.username : '' }}</el-form-item>
+            <el-form-item label="提案人">{{ proposer_name }}</el-form-item>
             
             
             <el-form-item label="创建时间" v-if="pageType == 'detail'">
@@ -180,6 +180,7 @@ export default {
           
           data.inventors = inventors.map((d)=>{return {id: d.id, share: d.share}});
           data.proposer = proposer.id;
+          this.proposer_name = proposer.name;
 
           if(t == 'detail') {
             this.create_time = data.create_time;
@@ -210,6 +211,7 @@ export default {
         this.id = "";
         this.$refs.form.resetFields();
         this.classificationText = this.productText = '';
+        this.proposer_name = this.user ? this.user.name : '';
       }
     }
   },
@@ -235,6 +237,7 @@ export default {
       attachments: [],
       create_time: '',
       update_time: '',
+      proposer_name: '',
       formRules: {
       	'title': [
       		{required: true, message: '案件名不能为空',trigger: 'blur'},

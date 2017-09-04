@@ -2,7 +2,7 @@
   <app-collapse col-title="相关案件">
       <el-form label-width="120px">
         <el-form-item label="相关提案">
-          <proposal v-model="form.proposals" multiple></proposal>
+          <remote-select type="proposal" v-model="form.proposals" multiple></remote-select>
         </el-form-item>
         <el-form-item label="优先权">
           <priorities v-model="form.priorities"></priorities>
@@ -19,6 +19,7 @@ import AppCollapse from '@/components/common/AppCollapse'
 import Proposal from '@/components/form/Proposal'
 import Priorities from '@/components/form/Priorities'
 import RelativeProjects from '@/components/form/RelativeProjects'
+import RemoteSelect from '@/components/form/RemoteSelect'
 
 export default {
   name: 'patentAddCase',
@@ -41,7 +42,7 @@ export default {
       return this.form;
     }
   },
-  components: { AppCollapse, Priorities, RelativeProjects, Proposal }
+  components: { AppCollapse, Priorities, RelativeProjects, Proposal, RemoteSelect }
 }
 </script>
 
