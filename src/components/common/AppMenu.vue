@@ -1,13 +1,13 @@
 <template>
 	      
-	<el-submenu v-if="data.type == 'submenu'" :index="data.path">
+	<el-submenu v-if="data.type == 'submenu' && !menusMap.get(data.path) ? true : false" :index="data.path">
 		<template slot="title"><i :class="data.icon"></i>{{ data.text }}</template>
 		<template v-if="forChildren(data)">
 			<app-menu v-for="item in data.children" :key="item.path" :data="item"></app-menu>
 		</template>
 	</el-submenu>
 
-	<el-menu-item v-else-if="data.type == 'item'" :index="data.path"><i :class="data.icon"></i>{{ data.text }}</el-menu-item>
+	<el-menu-item v-else-if="data.type == 'item' && !menusMap.get(data.path) ? true : false" :index="data.path"><i :class="data.icon"></i>{{ data.text }}</el-menu-item>
 
 </template>
 
@@ -23,6 +23,11 @@ export default {
   			return false;
   		}
   	}
+  },
+  computed: {
+    menusMap () {
+      return this.$store.getters.menusMap;
+    }
   },
   data () {
     return {

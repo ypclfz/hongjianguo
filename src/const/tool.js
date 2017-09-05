@@ -2,18 +2,26 @@ export default {
 	deepCopy (obj) {
 		return JSON.parse(JSON.stringify(obj));
 	},
-	shallowCopy (obj, set = {'date': false, 'array': false}) {
+	shallowCopy (obj, {date, array,skip}) {
+		
 		const data = {};
+		if( date === undefined ) date = false;
+		if( array === undefined ) array = false;
+		if( skip === undefined ) skip = [];
+
 		for(let k in obj) {
-          const d = obj[k];
-          if(set.date && d instanceof Date) {
-            data[k] = this.getDate(d);
-          }else if(set.array && d instanceof Array) {
-          	data[k] = d.join(',');
-          }else {
-            data[k] = d;
-          }
-        }
+      const d = obj[k];
+      if(date && d instanceof Date) {
+        data[k] = this.getDate(d);
+      }else if(array && d instanceof Array) {
+      	data[k] = d.join(',');
+      }else if(skip.length != 0 && skip.indexOf(k) >= 0) {
+      	console.log(k);
+      	continue;
+      }else {
+        data[k] = d;
+      }
+    }
 
         return data;
 	},

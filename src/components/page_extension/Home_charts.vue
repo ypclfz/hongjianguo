@@ -1,7 +1,17 @@
 <template>
-	<div class="main">
-    <div :id="type" style="width: 100%, height: 300px;"></div>
-	</div>
+
+  <el-card v-loading="loading" element-loading-text="加载图表数据中...">
+    <div slot="header">
+      <el-radio-group v-model="group" size="small" v-if="!!config.group">
+        <el-radio-button  v-for="item in config.group" :label="item.value" :key="item.value">{{ item.label }}</el-radio-button>
+      </el-radio-group>
+      <el-radio-group v-model="xAxis" size="small" v-if="!!config.xAxis">
+        <el-radio-button size="small" v-for="item in config.xAxis" :label="item.value" :key="item.value">{{ item.label }}</el-radio-button>
+      </el-radio-group>
+    </div>
+    <div :id="type" style="width: 100%; height: 300px;"></div>
+  </el-card>
+  
 </template>
 <script>
 import AppFilter from '@/components/common/AppFilter'
@@ -11,53 +21,56 @@ import echarts from 'echarts'
 
 let data;
 const URL = '/api/stats';
-const option = {
-    tooltip: {
-        show: true
+const barOption = {
+  title: { text: '' },
+  tooltip: { show: true },
+  toolbox: {
+    feature: {
+      magicType: {show: true, type: [ 'bar','line']},
+      restore: { show: true},
+      dataView: {show: true, readOnly: false},
+      saveAsImage: {show: true}
+    }
+  },
+  legend: { data:[] },
+  dataZoom: [ { type: 'inside' } ],
+  xAxis: { data: [] },
+  yAxis: {},
+  series: [],
+};
+const pieOption = {
+    title : {
+      text: '',
+      x:'center'
     },
-    toolbox: {
-        feature: {
-            magicType: {show: true, type: [ 'bar','line']},
-            restore: { show: true},
-            dataView: {show: true, readOnly: false},
-            
-            saveAsImage: {show: true}
-        }
+    tooltip : {
+        trigger: 'item',
+        formatter: "{a} <br/>{b} : {c} ({d}%)"
     },
     legend: {
-        data:['蒸发量','降水量','平均温度']
+      orient: 'vertical',
+      left: 'left',
+      data: [],
     },
-    xAxis: 
-        {
-
-            data: ['1月','2月','3月','4月','5月','6月','7月','8月','9月','10月','11月','12月'],
-
+    series : [
+      {
+        name: '',
+        type: 'pie',
+        radius : '55%',
+        center: ['50%', '60%'],
+        data:[],
+        itemStyle: {
+          emphasis: {
+            shadowBlur: 10,
+            shadowOffsetX: 0,
+            shadowColor: 'rgba(0, 0, 0, 0.5)'
+          }
         }
-    ,
-    yAxis: 
-        {
-
-        }
-    ,
-    series: [
-        {
-            name:'蒸发量',
-            type:'bar',
-            data:[2.0, 4.9, 7.0, 23.2, 25.6, 76.7, 135.6, 162.2, 32.6, 20.0, 6.4, 3.3]
-        },
-        {
-            name:'降水量',
-            type:'bar',
-            data:[2.6, 5.9, 9.0, 26.4, 28.7, 70.7, 175.6, 182.2, 48.7, 18.8, 6.0, 2.3]
-        },
-        {
-            name:'平均温度',
-            type:'bar',
-            data:[2.0, 2.2, 3.3, 4.5, 6.3, 10.2, 20.3, 23.4, 23.0, 16.5, 12.0, 6.2]
-        }
+      }
     ]
+
 };
-const config = [
+const config_map = [
   ['proposal_bar', {
     title: '提案统计',
     type: 'proposal',
@@ -75,7 +88,7 @@ const config = [
   }],
   ['application_bar', {
     title: '申请统计',
-    type: 'applicant',
+    type: 'application',
     chart: 'bar',
     xAxis: [
       {label:'年', value: 'year', default: true },
@@ -89,7 +102,7 @@ const config = [
     ]
   }],
   ['issue_bar', {
-    title: '问题统计',
+    title: '授权统计',
     type: 'issue',
     chart: 'bar',
     xAxis: [
@@ -118,52 +131,120 @@ const config = [
       {label: '按类型分组', value: 'patent_type'},
     ]
   }],
+  ['application_pie', {
+    title: '申请统计',
+    type: 'application',
+    chart: 'pie',
+    xAxis: [
+      { label: '按地区统计', value: 'area', default: true },
+      { label: '按类型统计', value: 'patent_type'},
+    ]
+  }],
 ]
-const map = new Map(config);
+const map = new Map(config_map);
 export default {
   name: 'home',
   mixins: [ AxiosMixins ],
   props: ['type'],
   data () {
+    let config = map.get(this.type);
+    config = config ? config : this.type;
+    const xAxis = getDefault('xAxis');
+    const group = getDefault('group');
     return {
-      config: '',
-      xAxis: '',
-      group: '',
-      option: {},
+      xAxis,
+      group,
+      config,
+      option: '',
       chart: null,
-    }   
-  },
-  computed: {
-    config () {
-      const config = this.map.get(this.type);
-      return config ? config : this.type;
-    },
-    option () {
-
+      loading: true,
     }
+
+    function getDefault(key) {
+      let str = "";
+      if(config[key] && config[key][0]) {
+        str = config[key][0]['value'];
+        config[key].forEach(_=>{  
+          if(_.default) {
+            str = _['value'];
+          }
+        })
+      }
+
+      return str;
+    }   
   },
   methods: {
     refreshCharts () {
-      console.log(data);
+      const url = URL;
+      const data = {
+        'type': this.config.type,
+        'chart': this.config.chart,
+        'xAxis': this.xAxis,
+        'group': this.group,
+      };
+      if(this.xAxis) {
+        data.xAxis = this.xAxis;
+      }
+      if(this.group) {
+        data.group = this.group;
+      }
+      const success = _=>{
+        this.loading = false;
+        this.setChart(_.data);
+      }
+
+      this.axiosGet({url, data, success});
+    },
+    setChart (data) {
+      if(this.config.chart == 'bar') {
+        this.option.legend.data = data.legend;
+        this.option.xAxis.data = data.xAxis;
+        this.option.series = getBarSeries();
+      }else if(this.config.chart == 'pie') {
+        this.option.legend.data = data.legend;
+        this.option.series[0].data = data.data;
+      }
+
+      this.chart.setOption(this.option);
+
+      function getBarSeries () {
+        const arr = [];
+        data.legend.forEach((d,i)=>{ 
+          arr.push({
+            name: d,
+            type: 'bar',
+            barMaxWidth: 50,
+            barMinHeight: 10,
+            data: data.data[i],
+          });
+        })
+        return arr;
+      }
     }
   },
   watch: {
     xAxis () {
-
+      this.refreshCharts();
     },
     group () {
-
+      this.refreshCharts();
     }
   },
   created () {
-    this.option = {
-
+    const c = this.config;
+    if(c.chart == 'bar') {
+      this.option = this.$tool.deepCopy(barOption);
+    }else if(c.chart == 'pie') {
+      this.option = this.$tool.deepCopy(pieOption);
+      this.option.series[0].name = this.config.title;
     }
+    this.option.title.text = this.config.title;
   },
   mounted () {
     this.chart = echarts.init(document.getElementById(this.type));
     this.refreshCharts();
-  }
+  },
   components: { AppFilter }
 }
 </script>

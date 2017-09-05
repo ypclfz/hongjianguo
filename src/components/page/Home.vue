@@ -1,10 +1,16 @@
 <template>
 	<div class="main">
+    <el-row v-for="(row, i) in arr" :gutter="20" :key="i">
+      <el-col v-for="(item, i2) in row" :span="24/row.length" :key="i2">
+        <chart v-if="!!item" :type="item" style="margin: 10px 0px;"></chart>
+      </el-col>
+    </el-row>
 	</div>
 </template>
 <script>
 import AppFilter from '@/components/common/AppFilter'
 import AxiosMixins from '@/mixins/axios-mixins'
+import Chart from '@/components/page_extension/Home_charts'
 
 
 let data;
@@ -14,6 +20,12 @@ export default {
   mixins: [ AxiosMixins ],
   data () {
     return {
+      arr: 
+      [ 
+        ['application_pie','proposal_bar'],
+        ['copyright_bar', 'application_bar'], 
+        ['issue_bar', ''],
+      ],
       config: '',
     }   
   },
@@ -39,7 +51,7 @@ export default {
       this.refreshHome();
     }
   },
-  components: { AppFilter }
+  components: { AppFilter, Chart },
 }
 </script>
 

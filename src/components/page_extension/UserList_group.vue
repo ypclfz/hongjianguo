@@ -5,11 +5,11 @@
 			<div style="float: right;">
 			<el-button icon="plus" size="mini" title="添加用户组" @click="addPop"></el-button>
 			<el-button icon="edit" :disabled="editDisabled" size="mini" title="编辑用户组" style="margin-left: 0;" @click="editPop"></el-button>
-			<!-- <el-button icon="delete" :disabled="deleteDisabled" size="mini" title="删除用户组" style="margin-left: 0;" @click="groupDelete"></el-button> -->
+			<el-button icon="delete" :disabled="deleteDisabled" size="mini" title="删除用户组" style="margin-left: 0;" @click="groupDelete"></el-button>
 			</div>
 	  </div>
 	  
-		  <el-tree
+		<el-tree
 		  :data="data"
 		  node-key="id"
 		  :props="props"
@@ -17,10 +17,10 @@
 		  @current-change="handleCurrentChange"
 		  :current-node-key="setCurrent"
 		  ref="tree"
-			>
+      :render-content="renderContent"
+		>
 		</el-tree>
-		<el-dialog :title="dialogTitle" :visible.sync="dialogVisible"
-	>
+		<el-dialog :title="dialogTitle" :visible.sync="dialogVisible">
 			<el-form label-width="80px" :model="form" ref="form">
 				<el-form-item label="名称" prop="name">
 					<el-input v-model="form.name" placeholder="请输入用户组名称"></el-input>
@@ -35,12 +35,22 @@
 				</el-form-item>
 			</el-form>
 		</el-dialog>
-
+    <el-dialog :title="powerTitle" class="dialog-small" :visible.sync="dialogPowerVisible" :loading="powerLoading">
+      <div style="height: 500px; overflow-y: auto; border-radius: 5px; border: 1px solid #ccc; margin-bottom: 20px;" v-loading="powerLoading" element-loading-text="加载设置中...">
+      <el-form label-width="300px">
+        <el-form-item v-for="item in group_rules" :label="item.name" :key="item.id">
+          <app-switch type="status" v-model="item.checked" style="margin-left: 50px"></app-switch>
+        </el-form-item>
+      </el-form>
+      </div>
+      <el-button type="primary" @click="saveRules">保存设置</el-button>
+    </el-dialog>
 	</div>
 </template>
 
 <script>
 import AxiosMixins from '@/mixins/axios-mixins'
+import AppSwitch from '@/components/form/AppSwitch'
 
 const URL = 'api/groups';
 
@@ -67,9 +77,13 @@ export default {
 			},
 			'popType': '',
 			'current_node': '',
-			'dialogVisible': false,
 			'setCurrent': '',
+      'dialogVisible': false,
+      'dialogPowerVisible': false,
       'loading': false,
+      'powerLoading': false,
+      'powerTitle': '',
+      'group_rules': [],
 		}
   },
   computed: {
@@ -80,13 +94,46 @@ export default {
   		return this.value && this.value.id != 0 ? false : true;
   	},
   	deleteDisabled () {
-  		return this.value && this.value.id != 0 ? false : true;
+  		return this.value && this.value.id != 0 && this.value.isRemovable ? false : true;
   	},
     groupMap () {
       return this.$store.getters.groupMap;
-    }
+    },
   },
   methods: {
+    saveRules() {
+      const url =  `${URL}/this.value.id`;
+      const data = {rules: this.group_rules};
+      const success = _=>{
+        this.$message({message: '保存权限设置成功', type: 'success'});
+        this.powerPop = false;
+      }
+
+      this.axiosPut({url, data, success});
+    },
+    powerPop(store, data) {
+      this.dialogPowerVisible = true;
+      this.powerLoading = true;
+      this.powerTitle = `设置${data.name}权限`;
+
+      const url = `${URL}/${data.id}`;
+      const success = _=>{
+        this.group_rules = _.group.rules;
+        this.powerLoading = false;
+      };
+      this.axiosGet({url, success});
+    },
+    renderContent(h,{node, store, data}) {
+      return (
+          <span>
+            <span>
+              <span style="font-size: 12px">{ node.label} <em style="color: #20a0ff; font-style: normal;">{ data.memberCount !== undefined ? `(${data.memberCount})` : '' }</em></span>
+            </span>
+            <span style="float: right; margin-right: 20px">
+              {data.id !== 0 ? <el-button size="mini" on-click={ () => this.powerPop(store, data) }>权限</el-button> : ''}
+            </span>
+          </span>); 
+    },
   	handleCurrentChange (data) {
   		this.setCurrent = data.id;
   		this.$emit('input', data);
@@ -185,7 +232,8 @@ export default {
   },
   created () {
   	this.refreshData();
-  }
+  },
+  components: { AppSwitch },
 
 }
 </script>

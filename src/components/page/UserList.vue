@@ -14,7 +14,7 @@
 					</ul>
 				</app-collapse>
 				<table-component @refreshTableData="refreshTableData" :tableOption="tableOption" :data="tableData" ref="table">
-					<user-role v-model="user_role" slot="userRole" default style="width: 200px; margin-left: 5px;"></user-role>
+					<!-- <user-role v-model="user_role" slot="userRole" default style="width: 200px; margin-left: 5px;"></user-role> -->
 				</table-component>
   		</div>
 	
@@ -61,17 +61,17 @@ export default {
 		  		{ type: 'control', label: '字段' },
 		  		{},
 		  	],
-		  	'header_slot': [ 'userRole' ],
+		  	// 'header_slot': [ 'userRole' ],
 		  	columns: [
 		  		{ type: 'selection' },
-		  		{ type: 'text', label: '用户名', prop: 'username' },
-		  		{ type: 'array', label: '所属用户组', prop: 'groups', render: _=>_.map(_=>_.name) },
-		  		{ type: 'text', label: '用户角色', prop: 'role_name' },
-		  		{ type: 'text', label: '昵称', prop: 'name' },
-		  		{ type: 'text', label: '邮箱', prop: 'email' },
-		  		{ type: 'text', label: '手机号', prop: 'mobile' },
-		  		{ type: 'text', label: '微信号', prop: 'weixin' },
-		  		{ type: 'text', label: 'QQ', prop: 'qq' },
+		  		{ type: 'text', label: '用户名', prop: 'username', width: '200' },
+		  		{ type: 'array', label: '所属用户组', prop: 'groups', width: '200', render: _=>_.map(_=>_.name) },
+		  		{ type: 'text', label: '用户角色', prop: 'role_name', width: '200' },
+		  		{ type: 'text', label: '昵称', prop: 'name', width: '200' },
+		  		{ type: 'text', label: '邮箱', prop: 'email', width: '200' },
+		  		{ type: 'text', label: '手机号', prop: 'mobile', width: '200' },
+		  		{ type: 'text', label: '微信号', prop: 'weixin', width: '200' },
+		  		{ type: 'text', label: 'QQ', prop: 'qq', width: '200' },
 		  		{ 
 		  			type: 'action', label: '操作', width: '150px',
 		  			btns: [

@@ -76,7 +76,7 @@ export default {
     },
     edit () {
       const url = `${URL}/${this.row.id}`;
-      const data = this.$tool.shallowCopy(this.form, {'date': true});
+      const data = this.$tool.shallowCopy(this.form, {'date': true, 'skip': ['project_id', 'flow_node_id', 'task_def_id']});
       const success = _=>{ this.$emit('editSuccess') };
       
       this.axiosPut({url, data, success});
@@ -132,10 +132,12 @@ export default {
   watch: {
     'form.project_id': {
       handler () {
-        this.$nextTick(_=>{
-          const select = this.$refs.project.getSelected()[0];
-          this.category = select ? select['category'] : '';  
-        })
+        if(this.type == 'add') {
+          this.$nextTick(_=>{
+            const select = this.$refs.project.getSelected()[0];
+            this.category = select ? select['category'] : '';  
+          })
+        }
       }
     }
   },
@@ -148,8 +150,15 @@ export default {
         if(k == 'attachments') {
           this.form[k] = d.map(_=>_.id);
           this.attachments = d;
+        }else if(k == 'person_in_charge') {
+          this.form[k] = {id: d, name: this.row['person_in_charge_name']};
+          console.log(this.form[k]);
         }else {
-          this.form[k] = d;
+          if(d) {
+            this.form[k] = d;  
+          }else {
+            this.form[k] = "";
+          }
         }
       }
     }

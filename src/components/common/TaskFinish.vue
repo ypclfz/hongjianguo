@@ -1,5 +1,5 @@
 <template>
-  <el-form :model="form" label-width="80px" ref="form" v-loading="loading" element-loading-text="数据加载中">
+  <el-form :model="form" label-width="80px" ref="form" v-loading="loading" style="min-height: 300px;" element-loading-text="数据加载中">
   	<el-form-item label="下一节点" v-if="ifNext">
   		<el-select v-model="next">
   		 <el-option
@@ -17,12 +17,19 @@
   		<static-select type="ipr" v-model="form.person_in_charge" v-else-if="defaultVal == 'ipr'"></static-select>
   		<!-- <span v-else>{{ data[defaultVal]['name'] }}</span> -->
   	</el-form-item>
-  	<el-form-item prop="agent" label="代理人" v-if="fields.agent">
-			<agent v-model="form.agent"></agent>
+  	<el-form-item prop="agency" label="代理机构" v-if="fields.agency"
+      :rules="{ required: true, message: '代理机构不能为空'}"
+    >
+  		<remote-select type="agency" v-model="form.agency"></remote-select>
   	</el-form-item>
-  	<el-form-item prop="agency" label="代理机构" v-if="fields.agency">
-  		<agency v-model="form.agency"></agency>
-  	</el-form-item>
+    <el-form-item prop="agent" label="代理人" v-if="fields.agent">
+      <remote-select type="agent" v-model="form.agent" ></remote-select>
+    </el-form-item>
+    <el-form-item prop="agency_type" label="代理类型" v-if="fields.agency_type"
+      :rules="{ required: true, message: '代理类型不能为空'}"
+    >
+      <static-select type="agency_type" v-model="form.agency_type"></static-select>
+    </el-form-item>
   	<el-form-item prop="due_time" label="承办期限" v-if="fields.due_time">
 			<el-date-picker v-model="form.due_time" type="date" placeholder="选择承办期限"></el-date-picker>
   	</el-form-item>
@@ -74,6 +81,7 @@ export default {
 				person_in_charge: '',
 				agency: '',
 				agent: '',
+        agency_type: '',
 				due_time: '',
 				deadline: '',
 				remark: '',
@@ -108,16 +116,22 @@ export default {
   		this.axiosGet({url, success, complete});
   	},
   	submitFunc () {
-      this.btn_disabled = true;
-  		const url = `${URL}/${this.id}/nexttask`;
-  		const data = Object.assign({}, {'flow_node_id': this.next}, this.form);
-      if(data.rank) {data.rank *= 20};
-  		const success = ()=>{this.$emit('submitSuccess')};
-      const complete = _=>{this.btn_disabled=false}; 
-  		this.axiosPost({url, data, success, complete});
+      this.$refs.form.validate(_=>{
+        if(_) {
+          this.btn_disabled = true;
+          const url = `${URL}/${this.id}/nexttask`;
+          const data = Object.assign({}, {'flow_node_id': this.next}, this.form);
+          if(data.rank) {data.rank *= 20};
+          const success = ()=>{this.$emit('submitSuccess')};
+          const complete = _=>{this.btn_disabled=false}; 
+          this.axiosPost({url, data, success, complete}); 
+        }else {
+          this.$message({message: '请正确填写任务完成字段', type: 'warning'})
+        }
+      })
   	},
   	cancel () {
-  		this.$emit('cancel')
+  		this.$emit('cancel');
   	},
   	clear () {
   		this.$refs.form.resetFields();
@@ -134,8 +148,10 @@ export default {
 				for (let d of this.data.next) {
 					if(d.id == val) {
 						this.fields = d.fields;
+            if(this.fields.agent) this.form.agent = this.data.agent;
+            if(this.fields.agency) this.form.agency = this.data.agency;
+            if(this.fields.agency_type) this.form.agency_type = 1;
 						this.defaultVal = d.default;
-            console.log(this.defaultVal);
 						if(this.defaultVal) this.form.person_in_charge = this.data[d.default];
             if(this.defaultVal == 'ipr') this.form.person_in_charge = this.data[d.defaultVal]['id'];
 						break;
@@ -148,7 +164,7 @@ export default {
 	computed: {
     ifNext () {
       return this.data.next && this.data.next.length != 0 ? true : false;
-    }
+    },
 	},
 	components: { Member, Agent, Agency, Ipr, Upload, RemoteSelect, StaticSelect }
 }

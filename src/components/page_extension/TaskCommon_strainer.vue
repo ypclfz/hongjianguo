@@ -24,7 +24,7 @@
           </el-select>
         </el-form-item>
         <el-form-item label="代理机构" prop="agency">
-          <agency v-model="form.agency"></agency>
+          <remote-select type="agency" v-model="form.agency"></remote-select>
         </el-form-item>
         <el-form-item label="流程节点" prop="task_def_id">
           <flow-nodes v-model="form.task_def_id"></flow-nodes>
@@ -35,10 +35,10 @@
           <ipr v-model="form.ipr"></ipr>
         </el-form-item>
         <el-form-item label="代理人" prop="agent">
-          <agent v-model="form.agent"></agent>
+          <remote-select type="agent" v-model="form.agent"></remote-select>
         </el-form-item>
         <el-form-item label="承办人" prop="person_in_charge">
-          <member v-model="form.person_in_charge"></member>
+          <remote-select type="member" v-model="form.person_in_charge"></remote-select>
         </el-form-item>
       </el-col>
     </el-row>
@@ -58,6 +58,7 @@ import Agent from '@/components/form/Agent'
 import Ipr from '@/components/form/Ipr'
 import Member from '@/components/form/Member'
 import DateArea from '@/components/form/DateArea'
+import RemoteSelect from '@/components/form/RemoteSelect'
 
 export default {
   name: 'pendingTaskStrainer',
@@ -94,7 +95,7 @@ export default {
   		this.$emit('clear');
   	}
   },
-  components: { Agency, FlowNodes, Ipr, Agent, Member, DateArea, AppCollapse }
+  components: { Agency, FlowNodes, Ipr, Agent, Member, DateArea, AppCollapse, RemoteSelect }
 }
 </script>
 
