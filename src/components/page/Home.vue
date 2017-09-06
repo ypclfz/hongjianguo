@@ -23,8 +23,8 @@ export default {
       arr: 
       [ 
         ['application_pie','proposal_bar'],
-        ['copyright_bar', 'application_bar'], 
-        ['issue_bar', ''],
+        ['issue_bar', 'application_bar'], 
+        ['copyright_bar', ''],
       ],
       config: '',
     }   

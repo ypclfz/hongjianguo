@@ -8,11 +8,31 @@ menu.data = [
 		type: 'item'
 	},
 	{
-		text: '邮件',
-		path: '/mailList',
+		text: '消息',
+		path: '/news',
 		icon: 'iconfont icon-email',
-		type: 'item'
+		type: 'submenu',
+		children: [
+			{
+				text: '邮件',
+				path: '/news/mailList',
+				icon: 'iconfont icon-email',
+				type: 'item',
+			},
+			{
+				text: '系统消息',
+				path: '/news/systemMessage',
+				icon: 'iconfont icon-newlabel',
+				type: 'item',
+			}
+		]
 	},
+	// {
+	// 	text: '邮件',
+	// 	path: '/mailList',
+	// 	icon: 'iconfont icon-email',
+	// 	type: 'item',
+	// },
 	{
 		text: '任务',
 		path: '/task',
@@ -256,8 +276,8 @@ menu.map = {
 	'/proposal/edit': {text: '提案编辑', icon: '', path: '/proposal/edit'},
 	'/proposal/detail': {text: '提案详情', icon: '', path: '/proposal/detail'},
 	'/trademark/list/detail': {text: '商标详情', icon: '', path: '/trademark/list/detail/babel'},
-	'/mailList/mailAdd': {text: '写邮件', icon: 'el-icon-edit', path: '/mailList/mailAdd'},
-	'/mailList/mailEdit': {text: '编辑邮件', icon: 'el-icon-edit', path: '/mailList/mailEdit'},
+	'/news/mailList/mailAdd': {text: '写邮件', icon: 'el-icon-edit', path: '/news/mailList/mailAdd'},
+	'/news/mailList/mailEdit': {text: '编辑邮件', icon: 'el-icon-edit', path: '/news/mailList/mailEdit'},
 	'/setting/agency/detail': {text: '代理机构详情', icon: '', path: '/setting/agency/detail'},
 	'/setting/template/edit': {text: '编辑模板', icon: 'el-icon-edit', path: '/setting/template/edit'}
 };

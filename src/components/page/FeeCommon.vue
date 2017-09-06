@@ -3,9 +3,7 @@
   	<strainer v-model="filter" @refresh="refresh"></strainer>
 		<table-component @refreshTableData="refreshTableData" :tableOption="option" :data="tableData" ref="table">
 			<fee-status slot="status" v-model="fee_status" style="width: 150px; margin-left: 5px;" :feeType="feeType" feeAnnual></fee-status>
-			
-			<fee-invoice v-if="fee_invoice_if" slot='invoice' v-model="fee_invoice" style="width: 280px; margin-left: 10px;" :feeType="feeType"></fee-invoice>
-
+			<remote-select v-if="fee_invoice_if" slot='invoice' v-model="fee_invoice" style="width: 280px; margin-left: 10px;" :type="feeType ? 'bill' : 'pay'"></remote-select>
 		</table-component>
 		<pop ref="pop" :feeType="feeType" :popType="popType" @refresh="refresh"></pop>
     <el-dialog :title="dialogTitle" :visible.sync="dialogVisible" :close-on-click-modal="false">
@@ -22,6 +20,7 @@ import Pop from '@/components/page_extension/feeCommon_pop'
 import FeeStatus from '@/components/form/FeeStatus'
 import FeeInvoice from '@/components/form/FeeInvoice'
 import AxiosMixins from '@/mixins/axios-mixins'
+import RemoteSelect from '@/components/form/RemoteSelect'
 
 const URL = '/api/fees';
 const URL_INVOICE = '/api/invoices';
@@ -246,10 +245,18 @@ export default {
     }
   },
   mounted () {
-  	this.refresh();
+    if(this.$route.query.id) {
+      // console.log(this.$router.params);
+      // console.log('aaaa');
+      this.fee_status = this.feeType ? 1 : 2;
+      this.fee_invoice = {id: this.$route.query.id, name: this.$route.query.name};
+      // console.log(this.fee_status);
+    }else {
+      this.refresh();  
+    }
   },
   
-  components: { TableComponent, Strainer, Pop, FeeStatus, FeeInvoice }
+  components: { TableComponent, Strainer, Pop, FeeStatus, FeeInvoice, RemoteSelect }
 }
 </script>
 

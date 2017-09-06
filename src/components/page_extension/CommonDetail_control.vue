@@ -13,8 +13,11 @@
 
 <script>
 import TableComponent from '@/components/common/TableComponent'
+import AxiosMixins from '@/mixins/axios-mixins'
+
 export default {
   name: 'hello',
+  mixins: [ AxiosMixins ],
   data () {
 		return {
 		  option: {
@@ -64,7 +67,20 @@ export default {
   },
   methods: {
   	toggle ({id}) {
+  		if(this.show == null || this.show != id) {
+  			const url = `/api/tasks/${id}`;
+  			const success = _=>{
+  				this.tableData2 = _.task.siblings;
+  				console.log(_)
+  			};
+
+  			this.axiosGet({url, success});	
+  		}
+
   		this.show = this.show == id ? null : id;
+
+  		
+
   	}
   },
   computed: {

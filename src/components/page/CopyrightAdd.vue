@@ -22,7 +22,7 @@
 			<tag v-model="form.tags" multiple></tag>
 		</el-form-item>
 		<el-form-item label="IPR" prop="ipr">
-			<ipr v-model="form.ipr"></ipr>
+			<static-select type="ipr" v-model="form.ipr"></static-select>
 		</el-form-item>
 		<el-form-item label="提案人" prop="proposer">
 			<remote-select type="member" v-model="form.proposer"></remote-select>
@@ -70,6 +70,7 @@ import Branch from '@/components/form/Branch'
 import Applicant from '@/components/form/Applicant'
 import Upload from '@/components/form/Upload'
 import RemoteSelect from '@/components/form/RemoteSelect'
+import StaticSelect from '@/components/form/StaticSelect'
 
 const URL = '/api/copyrights'
 
@@ -166,7 +167,7 @@ export default {
   		this.refreshForm();
   	}
   },
-  components: { Classification, Product, Tag, Ipr, Member, Branch, Applicant, Upload, RemoteSelect }
+  components: { Classification, Product, Tag, Ipr, Member, Branch, Applicant, Upload, RemoteSelect, StaticSelect }
 }
 </script>
 

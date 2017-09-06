@@ -13,7 +13,7 @@
       </template>
     </table-component>
 
-    <el-dialog title="委案" :visible.sync="dialogAgenVisible">
+    <el-dialog title="申请委案" :visible.sync="dialogAgenVisible">
       <el-form :form="agen" ref="agen" label-width="80px">
         <el-form-item label="代理机构" prop="agency_id">
           <remote-select type="agency" v-model="agen.agency_id"></remote-select>
@@ -24,7 +24,7 @@
         <el-form-item label="备注" prop="remark">
           <el-input v-model="agen.remark" type="textarea"></el-input>
         </el-form-item>
-        <el-form-item style="margin-bottom: 0px"><el-button @click="agenSubmit" type="primary" :disabled="btn_disabled">确认委案</el-button></el-form-item>
+        <el-form-item style="margin-bottom: 0px"><el-button @click="agenSubmit" type="primary" :disabled="btn_disabled">申请委案</el-button></el-form-item>
       </el-form>
     </el-dialog>
 
@@ -89,10 +89,30 @@ export default {
   methods: {
     agenPop () {
       const s = this.$refs.table.getSelect();
+      let confirm = false;
+
       if(s) {
-        if(this.$refs.agen) this.$refs.agen.resetFields();
-        this.dialogAgenVisible = true;
+        for(let d of s) {
+          if(d.agency !== "") {
+            confirm = true;
+            break;
+          }
+        }
+        
+        const pop = ()=>{
+          if(this.$refs.agen) this.$refs.agen.resetFields();
+          this.dialogAgenVisible = true;
+        }
+
+        if(confirm) {
+          this.$confirm('你选择的任务中包含已委案的任务，确认继续委案？','提示',{ type: 'warning'} )
+            .then(pop)
+            .catch(_=>{});
+        }else {
+          pop();
+        }
       }
+
     }, 
     agenSubmit () {
       const ids = this.$refs.table.getSelect().map(_=>_.id);
@@ -195,6 +215,25 @@ export default {
     finishSuccess () {
       this.$message({message: '操作成功', type: 'success'});
       this.refresh();
+    },
+    titleRender (h,item,data) {
+      return h('a', {
+        attrs: {
+          href: 'javascript:void(0)',
+        },
+        on: {
+          click: _=>{ this.titleClick(data) }
+        }
+      }, item)
+    },
+    titleClick (data) {
+      if(data.category == 0) {
+        this.$router.push(`/proposal/detail?id=${data.project_id}`);
+      }else if(data.category == 1) {
+        this.$router.push(`/patent/list/detail/${data.project_id}`);
+      }else if(data.category == 3) {
+        this.$router.push(`/copyright/list/detail/${data.project_id}`);
+      }
     }
   },
   data () {
@@ -239,8 +278,8 @@ export default {
         'columns': [
           { type: 'expand' },
           { type: 'selection', fixed: false},
-          { type: 'text', label: '案号', prop: 'serial', sortable: true, width: '122'},
-          { type: 'text', label: '案件名称', prop: 'title', sortable: true, width: '200', overflow: true},
+          { type: 'text', label: '案号', prop: 'serial', sortable: true, width: '150', render: this.titleRender },
+          { type: 'text', label: '案件名称', prop: 'title', sortable: true, width: '200', overflow: true },
           { type: 'text', label: '管制事项', prop: 'name', sortasble: true, width: '134' },
           { type: 'text', label: '当前节点', prop: 'flow_node', show: false, width: '159'},
           { type: 'text', label: 'IPR', prop: 'ipr', sortable: true, width: '200'},
@@ -297,7 +336,7 @@ export default {
     task_status () {
       return this.$route.meta.status;
     }
-  },
+  },  
   watch: {
     filter () {
       this.refresh();

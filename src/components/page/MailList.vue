@@ -6,6 +6,7 @@
           <el-option v-for="item in options.mailbox" :label="item.label" :value="item.value" :key="item.value"></el-option>
         </el-select>
       </table-component>
+      <Detail ref="mail_detail"></Detail>
   </div>
 </template>
 
@@ -13,7 +14,7 @@
 import TableComponent from '@/components/common/TableComponent'
 import Strainer from '@/components/page_extension/MailList_strainer'
 import AxiosMixins from '@/mixins/axios-mixins'
-
+import Detail from '@/components/page_extension/Email_detail'
 
 const URL = '/api/mails';
 
@@ -27,7 +28,6 @@ export default {
   		  	{ label: '收件箱', value: 1 },
   		  	{ label: '发件箱', value: 2 },
           { label: '草稿箱', value: 0 },
-          { label: '系统内消息', value: 3 }
   		  ] 
       },
 		  props: {
@@ -67,10 +67,10 @@ export default {
   },
   methods: {
   	add () {
-  		this.$router.push('/mailList/mailAdd');
+  		this.$router.push('/news/mailList/mailAdd');
   	},
     edit ({id}) {
-      this.$router.push({path: '/mailList/mailEdit', query: {id} });
+      this.$router.push({path: '/news/mailList/mailEdit', query: {id} });
     },
     refreshTableData (option) {
       const url = URL;
@@ -97,10 +97,7 @@ export default {
   		this.axiosDelete({url, success});
   	},
     handleRowClick ({id}) {
-      const url = `${URL}/${id}`;
-      const success = _=>{console.log(_)};
-
-      this.axiosGet({url, success});
+      this.$refs.mail_detail.show(id);
     }
   },
   watch: {
@@ -111,7 +108,7 @@ export default {
   mounted () {
     this.refresh();
   },
-  components: { TableComponent, Strainer },
+  components: { TableComponent, Strainer, Detail },
 }
 </script>
 

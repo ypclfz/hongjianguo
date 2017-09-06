@@ -53,6 +53,10 @@ const config = [
       {id:5, name:"被无效答复"},
       {id:6,name:"分析"}
     ]
+  }],
+  ['file_type', {
+    placeholder: '请选择文件类型',
+    options: 'fileTypeOptions',
   }]
 ];
 const map = new Map(config);

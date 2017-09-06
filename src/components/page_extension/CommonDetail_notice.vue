@@ -27,7 +27,7 @@ export default {
             'min_width': '200',
             btns: [
               { type: 'download', click: ({downloadUrl})=>{ window.location.href = downloadUrl } },
-              { type: 'delete',  click: ({notice_name})=>{ this.$message({message: `暂时不可删除${notice_name}`, type: 'warning'}) } },
+              // { type: 'delete',  click: ({notice_name})=>{ this.$message({message: `暂时不可删除${notice_name}`, type: 'warning'}) } },
               { type: 'view', click: ({viewUrl})=>{ window.open(viewUrl) } },
             ]
           }

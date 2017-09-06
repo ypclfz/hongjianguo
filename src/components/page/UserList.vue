@@ -66,7 +66,7 @@ export default {
 		  		{ type: 'selection' },
 		  		{ type: 'text', label: '用户名', prop: 'username', width: '200' },
 		  		{ type: 'array', label: '所属用户组', prop: 'groups', width: '200', render: _=>_.map(_=>_.name) },
-		  		{ type: 'text', label: '用户角色', prop: 'role_name', width: '200' },
+		  		// { type: 'text', label: '用户角色', prop: 'role_name', width: '200' },
 		  		{ type: 'text', label: '昵称', prop: 'name', width: '200' },
 		  		{ type: 'text', label: '邮箱', prop: 'email', width: '200' },
 		  		{ type: 'text', label: '手机号', prop: 'mobile', width: '200' },

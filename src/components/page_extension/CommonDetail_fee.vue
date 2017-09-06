@@ -27,13 +27,13 @@ export default {
 					{ type: 'text', label: '收入类型', prop: 'debit_name'},
 					{ type: 'text', label: '费用备注', prop: 'remark'},
 					{ type: 'text', label: '费用状态', prop: 'status_name'},
-					{ 
-						type: 'action',
-						btns: [
-							{ type: 'edit', click: ()=>{alert('编辑')} },
-							{ type: 'delete', click: ()=>{alert('删除')} },
-						],
-					}
+					// { 
+					// 	type: 'action',
+					// 	btns: [
+					// 		{ type: 'edit', click: ()=>{alert('编辑')} },
+					// 		{ type: 'delete', click: ()=>{alert('删除')} },
+					// 	],
+					// }
 				],	  
 		  }
 		}

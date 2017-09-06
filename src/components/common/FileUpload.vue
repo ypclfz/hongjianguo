@@ -8,13 +8,13 @@
 		>
 			<el-table-column label="关联案件" prop="project">
         <template scope="scope">
-          <span>{{ scope.row.project.name }}</span>
+          <remote-select :type="config.type" v-model="scope.row.project"></remote-select>
         </template>
       </el-table-column>
       <el-table-column label="文件名称" prop="name"></el-table-column>
 			<el-table-column label="文件类型" prop="type">
         <template scope="scope">
-          <span>{{ scope.row.type.name }}</span>
+          <static-select type="file_type" v-model="scope.row.type"></static-select>
         </template>
       </el-table-column>
       <el-table-column label="操作">
@@ -48,7 +48,7 @@
 
 		<el-button style="margin-top: 20px;" type="primary" @click="importData">确认上传</el-button>
 		
-		<el-dialog title="指定案件号" :visible.sync="dialogVisibleIn" :modal-append-to-body="false" :modal="false">
+<!-- 		<el-dialog title="指定案件号" :visible.sync="dialogVisibleIn" :modal-append-to-body="false" :modal="false">
 			<el-form label-width="100px">
 				<el-form-item label="案件">
 					<remote-select :type="config.type" v-model="project_id"></remote-select>
@@ -57,13 +57,14 @@
 					<el-button @click="design" type="primary">确定</el-button>
 				</el-form-item>
 			</el-form>
-		</el-dialog>
+		</el-dialog> -->
 	</el-dialog>
 </template>
 
 <script>
 import AxiosMixins from '@/mixins/axios-mixins'
 import RemoteSelect from '@/components/form/RemoteSelect'
+import StaticSelect from '@/components/form/StaticSelect'
 
 const config = [
 	['patent', {
@@ -163,20 +164,8 @@ export default {
     }
   },
   components: { 
-		'TableRender': {
-      render: function(h) {
-        return this.render(h, this.scope.row[this.prop], this.scope.row, this.prop);
-      },
-      props: {
-        'render': null, 
-        'scope': null, 
-        'prop': {
-          type: String,
-          default: '',        
-        }
-      }
-    },
-    RemoteSelect, 	 	
+    RemoteSelect,
+    StaticSelect, 	
 	},
 }
 </script>

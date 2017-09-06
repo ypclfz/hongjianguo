@@ -43,9 +43,9 @@
 	      </template>
 			</template>
 
-			<el-table-column fixed="right" label="操作" width="80">
+			<el-table-column fixed="right" label="操作" width="150">
 	      <template scope="scope">
-	        <!-- <el-button  type="text" size="small" @click="designPop(scope)">指定案号</el-button> -->
+	        <el-button  type="text" size="small" @click="designPop(scope)">指定案号</el-button>
 	        <el-button type="text" size="small" @click="deleteSingle(scope)">删除</el-button>
 	      </template>
     	</el-table-column>
@@ -63,17 +63,16 @@
 
 		<el-button style="margin-top: 20px;" type="primary" @click="importData">导入当前数据</el-button>
 		
-		<!-- <el-dialog title="指定案件号" :visible.sync="dialogVisible" :modal-append-to-body="false" :modal="false">
-			<el-form label-width="100px">
+		<el-dialog title="指定案件" :visible.sync="dialogVisible" :modal-append-to-body="false" :modal="false">
+			<el-form label-width="100px" label-position="top">
 				<el-form-item label="案件">
 					<remote-select type="project" v-model="serial" ref="project"></remote-select>
 				</el-form-item>
 				<el-form-item>
 					<el-button @click="design" type="primary">确定</el-button>
-					<el-button @click="test">测试</el-button>
 				</el-form-item>
 			</el-form>
-		</el-dialog> -->
+		</el-dialog>
   </div>
 </template>
 
@@ -172,8 +171,10 @@ export default {
   	},
   	design() {
   		const o = this.$tool.deepCopy(this.tableData[this.$index]);
-  		const serial = this.$refs.project.getSelected().label;
-  		const reg = /\[(.*)\]/ 
+      const serial = this.$refs.project.getSelected()[0].name;
+
+  		const reg = /\[(.*)\]/;
+      o.project = { name: serial.split('-')[1], id: this.$refs.project.getSelected()[0].id };
   		o.serial = serial.match(reg)[1];
 
   		this.tableData.splice(this.$index, 1, o);
@@ -191,7 +192,11 @@ export default {
   			this.$message({message: '导入数据不能为空', type: 'warning'});
   			return;
   		}
-
+        if( this.tableData.filter(_=>_.serial == '').length != 0 ) {
+          this.$message({message: '必须指定关联案件', type: 'warning'});
+          return;
+        }
+      
   		const url = this.config.url;
   		const data = this.tableData;
   		const success = _=>{ 

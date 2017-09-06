@@ -102,7 +102,7 @@ export default {
   },
   methods: {
     saveRules() {
-      const url =  `${URL}/this.value.id`;
+      const url =  `${URL}/${this.value.id}`;
       const data = {rules: this.group_rules};
       const success = _=>{
         this.$message({message: '保存权限设置成功', type: 'success'});

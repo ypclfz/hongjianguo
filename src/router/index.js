@@ -24,6 +24,7 @@ import FeeCommon from '@/components/page/FeeCommon'
 import InvoiceCommon from '@/components/page/InvoiceCommon'
 import ClassificationCommon from '@/components/page/ClassificationCommon'
 import MailList from '@/components/page/MailList'
+import SystemMessage from '@/components/page/SystemMessage'
 import MailAdd from '@/components/page/MailAdd'
 //###################
 import CommonDetail from '@/components/page/CommonDetail'
@@ -70,6 +71,7 @@ const router = new Router({
     { path: '/patent', redirect: '/patent/list' },
     { path: '/trademark', redirect: '/trademark/list' },
     { path: '/copyright', redirect: '/copyright/list' },
+    { path: '/news', redirect: '/news/mailList' },
     //###重定向###
     {
       path: '/statistics',
@@ -199,18 +201,23 @@ const router = new Router({
       component: UserList,
     },
     {
-      path: '/mailList',
+      path: '/news/mailList',
       name: 'MailList',
       component: MailList,
     },
     {
-      path: '/mailList/mailAdd',
+      path: '/news/systemMessage',
+      name: 'SystemMessage',
+      component: SystemMessage,
+    },
+    {
+      path: '/news/mailList/mailAdd',
       name: 'MailAdd',
       meta: { type: 'add' },
       component: MailAdd,
     },
     {
-      path: '/mailList/mailEdit',
+      path: '/news/mailList/mailEdit',
       name: 'mailEdit',
       meta: { type: 'edit' },
       component: MailAdd,

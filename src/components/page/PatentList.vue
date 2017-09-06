@@ -49,6 +49,7 @@ export default {
           { type: 'text', label: '专利类型', prop: 'type', render_simple: 'name', sortable: true, is_import: true, width: '142',  },
           { type: 'text', label: '地区', prop: 'area', render_simple: 'name', is_import: true, width: '142' },
           { type: 'text', label: '专利标题', prop: 'title', sortable: true, is_import: true, width: '142' },
+          { type: 'text', label: '当前状态', prop: 'progress', render_simple: 'name', sortable: true, width: '180' },
           { type: 'text', label: '专利摘要', prop: 'abstract', sortable: true, width: '500'},
           { type: 'text', label: '申请日', prop: 'apd', sortable: true, is_import: true, width: '263'},
           { type: 'text', label: '申请号', prop: 'apn', sortable: true, is_import: true, width: '263'},

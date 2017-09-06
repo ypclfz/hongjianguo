@@ -1,5 +1,5 @@
 <template>
-  <el-form :model="form" label-width="80px" ref="form" v-loading="loading" style="min-height: 300px;" element-loading-text="数据加载中">
+  <el-form :model="form" label-width="150px" ref="form" v-loading="loading" style="min-height: 300px;" element-loading-text="数据加载中">
   	<el-form-item label="下一节点" v-if="ifNext">
   		<el-select v-model="next">
   		 <el-option
@@ -17,6 +17,9 @@
   		<static-select type="ipr" v-model="form.person_in_charge" v-else-if="defaultVal == 'ipr'"></static-select>
   		<!-- <span v-else>{{ data[defaultVal]['name'] }}</span> -->
   	</el-form-item>
+    <el-form-item prop="agency_serial" label="事务所案号" v-if="fields.agency_serial">
+      <el-input placeholder="请填写事务所案号" v-model="form.agency_serial"></el-input>
+    </el-form-item>
   	<el-form-item prop="agency" label="代理机构" v-if="fields.agency"
       :rules="{ required: true, message: '代理机构不能为空'}"
     >
@@ -78,6 +81,7 @@ export default {
 			'data': {},
 			'next': '',
 			'form': {
+        agency_serial: '',
 				person_in_charge: '',
 				agency: '',
 				agent: '',
@@ -122,8 +126,8 @@ export default {
           const url = `${URL}/${this.id}/nexttask`;
           const data = Object.assign({}, {'flow_node_id': this.next}, this.form);
           if(data.rank) {data.rank *= 20};
-          const success = ()=>{this.$emit('submitSuccess')};
-          const complete = _=>{this.btn_disabled=false}; 
+          const success = ()=>{ this.$emit('submitSuccess') };
+          const complete = _=>{ this.btn_disabled=false }; 
           this.axiosPost({url, data, success, complete}); 
         }else {
           this.$message({message: '请正确填写任务完成字段', type: 'warning'})

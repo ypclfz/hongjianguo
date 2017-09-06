@@ -46,7 +46,7 @@ export default {
   		];
       if(this.feeType == 1) {
         arr.push(arrType[0]);
-      }else if(this.feeType == 2) {
+      }else if(this.feeType == 0) {
         arr.push(arrType[1])
       }
   		

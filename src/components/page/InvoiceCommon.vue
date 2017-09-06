@@ -106,8 +106,9 @@ export default {
 
   		this.$refs.table.refresh();
   	},
-  	detail ({target}) {
-  		this.$router.push({ path: `/fee/${this.feeType ? 'income' : 'pay'}`,  params: { target_id: target.id } });
+  	detail ({id, target}) {
+  		const query = { id: id, name: target.name };
+  		this.$router.push({ path: `/fee/${this.feeType ? 'income' : 'pay'}`, query });
   	},
   	editPop (row) {
   		this.popType='edit';

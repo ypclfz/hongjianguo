@@ -118,7 +118,7 @@ export default {
   mixins: [axiosMixins],
   methods: {
     handleSubmitSuccess () {
-      this.$router.push('/task/finish');
+      this.$router.push('/proposal/list');
     },
     save ( callback=_=>{this.$message({message: '编辑成功', type: 'success'}); this.$router.push('/proposal/list')} ) {
       this.$refs.form.validate(valid=>{
@@ -133,9 +133,7 @@ export default {
         }else {
           this.$message({message: '请正确填写提案字段', type: 'error'});
         }
-      });
-
-          
+      });         
     },
     submit () {      
       this.save(d=>{

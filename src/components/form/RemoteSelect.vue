@@ -74,7 +74,20 @@ const map = new Map([
 		DATA_KEY: 'projects',
 		PLACEHOLDER: '请输入版权关键词',
 		PARAMS: { category: 3 },
-	}]
+	}],
+  ['bill', {
+    URL: '/api/invoices',
+    DATA_KEY: 'invoices',
+    PLACEHOLDER: '请输入请款单关键词',
+    PARAMS: { debit: 1 },
+  }],
+  ['pay', {
+    URL: '/api/invoices',
+    DATA_KEY: 'invoices',
+    PLACEHOLDER: '请输入付款单关键词',
+    PARAMS: { debit: 0 },
+  }],
+
 ]);
 
 export default {
