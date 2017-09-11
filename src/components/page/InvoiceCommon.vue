@@ -2,7 +2,7 @@
   <div class="main">
   <strainer v-model="filter" @refresh="refresh"></strainer>
 	<table-component @refreshTableData="refreshTableData" :tableOption="option" :data="tableData" ref="table"></table-component>
-	<pop :feeType="feeType" :popType="popType" ref="pop"></pop>
+	<pop :feeType="feeType" :popType="popType" ref="pop" @refresh="update"></pop>
   </div>
 </template>
 
@@ -36,9 +36,9 @@ export default {
 		  		// { type: 'text', label: '付款绝限', prop: 'deadline',width: '200' },
 		  		{ type: 'text', label: '付款时间', prop: 'pay_time',width: '200' },
 		  		{ type: 'text', label: '金额', prop: 'amount', width: '200' },
-		  		{ type: 'text', label: '货币', prop: 'currency', width: '200' },
+		  		{ type: 'text', label: '币种', prop: 'currency', width: '200' },
 		  		{ type: 'text', label: '汇率', prop: 'roe', width: '200' },
-		  		{ type: 'text', label: '人民币金额', prop: 'rmb', width: '200' },
+		  		{ type: 'text', label: '人民币', prop: 'rmb', width: '200' },
 		  		{ type: 'text', label: '状态', prop: 'status', render_simple: 'name', width: '200' },
 		  		{ type: 'text', label: '备注', prop: 'remark',width: '200' },
 		  		// { type: 'text', label: '收入/支出类型', prop: 'debit',width: '200' },
@@ -69,7 +69,7 @@ export default {
 		  		{ type: 'text', label: '汇率', prop: 'roe', width: '80' },
 		  		{ type: 'text', label: '货币', prop: 'currency', width: '80' },
 		  		{ type: 'text', label: '人民币', prop: 'amount', width: '100' },
-		  		{ type: 'text', label: '费用备注', prop: 'remark', width: '160' },
+		  		{ type: 'text', label: '备注', prop: 'remark', width: '160' },
 		  	]
 		  },
 		  tableData: [],
@@ -105,6 +105,9 @@ export default {
   	refresh () {
 
   		this.$refs.table.refresh();
+  	},
+  	update () {
+  		this.$refs.table.update();
   	},
   	detail ({id, target}) {
   		const query = { id: id, name: target.name };

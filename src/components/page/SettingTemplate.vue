@@ -1,6 +1,6 @@
 <template>
   <div class="main">
-	<table-component :tableOption="option" :data="tableData" ref="table"></table-component>
+	<table-component :tableOption="option" :data="tableData" ref="table" @refreshTableData="refreshTableData"></table-component>
   </div>
 </template>
 
@@ -45,7 +45,7 @@ export default {
   		this.$router.push({path: '/setting/template/edit', query: {id} });
   	},
   	refresh () {
-  		this.$refs.table.refresh()
+  		this.$refs.table.refresh();
   	}
   },
   mounted () {

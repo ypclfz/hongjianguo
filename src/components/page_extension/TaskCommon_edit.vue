@@ -3,8 +3,8 @@
     <el-form-item label="关联案件" prop="project_id" v-if="type == 'add'">
       <remote-select type="project" v-model="form.project_id" ref="project"></remote-select>
     </el-form-item>
-    <el-form-item label="任务流程" prop="flow_node_id" v-if="type == 'add' && category != ''">
-      <el-select v-model="form.flow_node_id" placeholder="请选择任务流程">
+    <el-form-item label="任务流程" prop="flow_id" v-if="type == 'add' && category != ''">
+      <el-select v-model="form.flow_id" placeholder="请选择任务流程">
         <el-option
           v-for="item in flowOptions"
           :key="item.value"
@@ -48,8 +48,8 @@
       <upload v-model="form.attachments" :file-list="attachments"></upload>
     </el-form-item>
 		<el-form-item style="margin-bottom: 0;">
-      <el-button type="primary" @click="add" v-if="type == 'add'">新增</el-button>
-			<el-button type="primary" @click="edit" v-if="type == 'edit'">保存</el-button>
+      <el-button type="primary" @click="add" v-if="type == 'add'" :disabled="btn_disabled">新增</el-button>
+			<el-button type="primary" @click="edit" v-if="type == 'edit'" :disabled="btn_disabled">保存</el-button>
 		</el-form-item>
 	</el-form>  
 </template>
@@ -70,17 +70,46 @@ export default {
     add () {
       const url = URL;
       const data = this.$tool.shallowCopy(this.form, {'date': true});
-      const success = _=>{ this.$emit('addSuccess') };
+      const success = _=>{ 
+        this.dialogVisible  = false;
+        this.$emit('addSuccess');
+      };
+      const complete = _=>{ this.btn_disabled = false };
 
-      this.axiosPost({url, data, success});  
+      this.btn_disabled = true;
+      this.axiosPost({url, data, success, complete});  
     },
     edit () {
       const url = `${URL}/${this.row.id}`;
-      const data = this.$tool.shallowCopy(this.form, {'date': true, 'skip': ['project_id', 'flow_node_id', 'task_def_id']});
+      const data = this.$tool.shallowCopy(this.form, {'date': true, 'skip': ['project_id', 'flow_id', 'task_def_id']});
       const success = _=>{ this.$emit('editSuccess') };
+      const complete = _=>{ this.btn_disabled = false };
       
-      this.axiosPut({url, data, success});
+      this.btn_disabled = true;
+      this.axiosPut({url, data, success, complete });
     },
+    refreshRow () {
+      if(this.type == 'edit') {
+
+        for( let k in this.form) {
+          const d = this.row[k];
+          
+          if(k == 'attachments') {
+            this.form[k] = d.map(_=>_.id);
+            this.attachments = d;
+          }else if(k == 'person_in_charge') {
+            this.form[k] = {id: d, name: this.row['person_in_charge_name']};
+            console.log(this.form[k]);
+          }else {
+            if(d) {
+              this.form[k] = d;  
+            }else {
+              this.form[k] = "";
+            }
+          }
+        }
+      }
+    }
     // handleProductChange (d) {
     //   this.category = d.category;
     // }
@@ -89,7 +118,7 @@ export default {
   	return {
   	  form: {
         project_id: '',
-        flow_node_id: '',
+        flow_id: '',
         task_def_id: '',
         person_in_charge: '',
         due_time: '',
@@ -99,6 +128,7 @@ export default {
       },
       attachments: [],
       category: '',
+      btn_disabled: false,
   	}
   },
   computed: {
@@ -119,7 +149,7 @@ export default {
       }     
     },
     defOptions () {
-      const f = this.form.flow_node_id;
+      const f = this.form.flow_id;
       const arr = [];
 
       this.taskDefsData.forEach(_=>{
@@ -139,29 +169,15 @@ export default {
           })
         }
       }
+    },
+    'row.id': {
+      handler () {
+        this.refreshRow();
+      }
     }
   },
   mounted () {
-    if(this.type == 'edit') {
-
-      for( let k in this.form) {
-        const d = this.row[k];
-        
-        if(k == 'attachments') {
-          this.form[k] = d.map(_=>_.id);
-          this.attachments = d;
-        }else if(k == 'person_in_charge') {
-          this.form[k] = {id: d, name: this.row['person_in_charge_name']};
-          console.log(this.form[k]);
-        }else {
-          if(d) {
-            this.form[k] = d;  
-          }else {
-            this.form[k] = "";
-          }
-        }
-      }
-    }
+    this.refreshRow();
   },
   components: { Member, Upload, RemoteSelect }
 }

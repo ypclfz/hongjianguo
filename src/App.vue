@@ -1,7 +1,7 @@
 <template>
   <div id="app">
     <nav>
-        <img src="./images/cvte_log.png" style="vertical-align: middle; height: 28px;">
+        <img src="/static/static_img/cvte_log.png" style="vertical-align: middle; height: 28px;">
         <el-dropdown  trigger="click" style="float: right; margin-right: 40px;" @command="handleCommond">
           <span class="el-dropdown-link" style="color: #20a0ff; cursor: pointer;">
             {{ username }}<i class="el-icon-caret-bottom el-icon--right"></i>
@@ -12,15 +12,15 @@
         </el-dropdown>
     </nav>
       <span class="nav-left-btn" @click="navToggle"><span class="nav-left-btn-arrow el-icon-arrow-left"></span></span>
-      <div class="nav-left" :style="navL_height">
+      <div class="nav-left" :style="`height: ${navL_height}px`">
         
         <el-menu theme="dark" router unique-opened>
           <app-menu v-for="item in menu_data" :data="item" :key="item.path"></app-menu>
         </el-menu>
       </div>
-    <div class="container" v-loading="loading">
+    <div class="container" v-loading="loading" :style="`min-height: ${navL_height-40}px; padding: 20px; background-color: #F9FAFC;`">
       <!-- <h1 class="container-menu"><i :class="select.icon"></i><span>{{ select.text }}</span></h1> -->
-      <div class="container-nav" style="margin-top: 20px">
+      <div class="container-nav">
         <el-breadcrumb separator=">">
           <el-breadcrumb-item v-for="item in select_arr" :to="item.path" :key="item.path">
             <i :class="item.icon"></i>{{ item.text }}
@@ -83,7 +83,7 @@ export default {
       return this.$store.getters.screen_label;
     },
     navL_height () {
-      return "height:" + (window.innerHeight - 50) + "px";
+      return  window.innerHeight - 50;
     },
     loading () {
       return this.$store.getters.loading;  
@@ -176,8 +176,8 @@ export default {
     const success2 = _=>{
       this.axiosGet({url, success, error, catchFunc});
     }
-    this.axiosGet({url, success, error, catchFunc});
-    // this.axiosPost({url: '/api/login', success: success2, data: {username: 'cvte', password: 'Z9jgM6FhdKWEqbbpJePv/6qeTO/Yk2b6lx7zF4tiBncRubwf0fz93hkqGXCiWvqXCDIq7x+kAH3TK5zhjDZ53jgt1Gx1vvBPHn3ga7HTqPrnc+VhhuVGeTefHShJBx32rnbhL6LbEqCAMGqtQXaovCtuJGY6uWYAPfecAOGMuadnxTigTTBwKtW2oVP4J/EwAroYKuy4MK4Pd7YGtFoJAhlpKVOponsgsYQ8EKGOSVxcZgcgnOw8LhPy28N+xoFCh0OBkMyjM80Ybjq+H8BO6CacnDzQReZL5wQZqBdTtW7CUBi6S4+JWDPBahqNgz7jD73UhEIeG0ivFLEdCWtlVw=='}});
+    // this.axiosGet({url, success, error, catchFunc});
+    this.axiosPost({url: '/api/login', success: success2, data: {username: 'liman', password: 'Z9jgM6FhdKWEqbbpJePv/6qeTO/Yk2b6lx7zF4tiBncRubwf0fz93hkqGXCiWvqXCDIq7x+kAH3TK5zhjDZ53jgt1Gx1vvBPHn3ga7HTqPrnc+VhhuVGeTefHShJBx32rnbhL6LbEqCAMGqtQXaovCtuJGY6uWYAPfecAOGMuadnxTigTTBwKtW2oVP4J/EwAroYKuy4MK4Pd7YGtFoJAhlpKVOponsgsYQ8EKGOSVxcZgcgnOw8LhPy28N+xoFCh0OBkMyjM80Ybjq+H8BO6CacnDzQReZL5wQZqBdTtW7CUBi6S4+JWDPBahqNgz7jD73UhEIeG0ivFLEdCWtlVw=='}});
   },
   mounted () {
 
@@ -250,9 +250,6 @@ nav {
   left: -2px;
   color: #324157;
   transform: translate(0, -50%);
-}
-.container {
-  padding: 0 $container_padding
 }
 .nav-left .iconfont {
   position: relative;

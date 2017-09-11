@@ -117,21 +117,21 @@
 
       <template v-else-if="col.type == 'text'">
         <template v-if="col.render ? true : false">
-          <el-table-column :label="col.label" :prop="col.prop" :width="col.width ? col.width : ''" v-if="tableControl[index]['show']" :sortable="col.sortable ? 'custom' : false" >
+          <el-table-column :label="col.label" :prop="col.prop" :width="col.width ? col.width : ''" v-if="tableControl[index]['show']" :sortable="col.sortable ? 'custom' : false" :show-overflow-tooltip="col.overflow !== undefined ? col.overflow : true">
             <template scope="scope">
               <table-render :render="col.render" :scope="scope" :prop="col.prop"></table-render>
             </template>
           </el-table-column>
         </template>
         <template v-else-if="col.render_simple ? true : false ">
-          <el-table-column :label="col.label" :prop="col.prop" :width="col.width ? col.width : ''" v-if="tableControl[index]['show']" :sortable="col.sortable ? 'custom' : false" >
+          <el-table-column :label="col.label" :prop="col.prop" :width="col.width ? col.width : ''" v-if="tableControl[index]['show']" :sortable="col.sortable ? 'custom' : false" :show-overflow-tooltip="col.overflow !== undefined ? col.overflow : true">
             <template scope="scope">
               <span class="table-column-render">{{ scope.row[col.prop][col.render_simple] }}</span>
             </template>
           </el-table-column>
         </template>
         <template v-else>
-          <el-table-column :label="col.label" :prop="col.prop" :width="col.width ? col.width : ''" v-if="tableControl[index]['show']" :sortable="col.sortable ? 'custom' : false" :show-overflow-tooltip="col.overflow ? true : false">
+          <el-table-column :label="col.label" :prop="col.prop" :width="col.width ? col.width : ''" v-if="tableControl[index]['show']" :sortable="col.sortable ? 'custom' : false" :show-overflow-tooltip="col.overflow !== undefined ? col.overflow : true">
           </el-table-column>
         </template>
       </template>
@@ -141,10 +141,8 @@
         </el-table-column>
       </template>
 
-
-      
       <template v-else-if="col.type == 'array'">
-        <el-table-column :label="col.label" :prop="col.prop" :width="col.width ? col.width : ''" v-if="tableControl[index]['show']" :sortable="col.sortable ? 'custom' : false">
+        <el-table-column :label="col.label" :prop="col.prop" :width="col.width ? col.width : ''" v-if="tableControl[index]['show']" :sortable="col.sortable ? 'custom' : false" :show-overflow-tooltip="col.overflow !== undefined ? col.overflow : true">
           <template scope="scope">
             <el-tag v-for="(item, i) in arrayRender(scope['row'],col)" style="margin-left: 5px;" close-transition :key="i">{{ item }}</el-tag>
           </template>
@@ -216,6 +214,7 @@ import AppImport from '@/components/common/AppImport'
 import FileUpload from '@/components/common/FileUpload'
 const methods = Object.assign({}, tableConst.methods, {
   handleRowClick (a,b,c) {
+    if(c.fixed) return false;
     const func = this.tableOption.rowClick;
     if(func) func(a,b,c);
   },

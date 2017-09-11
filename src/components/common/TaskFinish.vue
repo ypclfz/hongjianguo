@@ -43,7 +43,7 @@
       <el-input type="textarea" v-model="form.remark"></el-input>
     </el-form-item>
     <el-form-item prop="attachments" label="附件" v-if="fields.attachments">
-      <upload v-model="form.attachments"></upload>
+      <upload v-model="form.attachments" :file-list="attachments"></upload>
     </el-form-item>
     <el-form-item prop="rank" label="评分" v-if="fields.rank">
       <el-rate 
@@ -96,6 +96,7 @@ export default {
 			'fields': {},
       'loading': false,
       'btn_disabled': false,
+      'attachments': [],
 		}
   },
 	created () {
@@ -139,7 +140,12 @@ export default {
   	},
   	clear () {
   		this.$refs.form.resetFields();
-  	}
+  	},
+    proposalFinish ({remark, attachments}) {
+      this.form.remark = remark;
+      this.form.attachments = attachments.map(_=>_.id);
+      this.attachments = attachments;
+    }
 	},
 	watch: {
 		id () {
@@ -152,12 +158,15 @@ export default {
 				for (let d of this.data.next) {
 					if(d.id == val) {
 						this.fields = d.fields;
+						this.defaultVal = d.default;
+            
             if(this.fields.agent) this.form.agent = this.data.agent;
             if(this.fields.agency) this.form.agency = this.data.agency;
             if(this.fields.agency_type) this.form.agency_type = 1;
-						this.defaultVal = d.default;
-						if(this.defaultVal) this.form.person_in_charge = this.data[d.default];
-            if(this.defaultVal == 'ipr') this.form.person_in_charge = this.data[d.defaultVal]['id'];
+
+						if(this.defaultVal != 'ipr') this.form.person_in_charge = this.data[d.default];
+            if(this.defaultVal == 'ipr') this.form.person_in_charge = this.data[d.default]['id'];
+            
 						break;
 					}
 				}

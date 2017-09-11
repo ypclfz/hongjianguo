@@ -20,9 +20,9 @@
 				<el-date-picker placeholder="请选择快递寄送日期"></el-date-picker>
 			</el-form-item> -->
 			<el-form-item label="备注" prop="remark">
-        <el-input type="textarea" placeholder="请填写备注"></el-input>
+        <el-input type="textarea" placeholder="请填写备注" v-model="form.remark"></el-input>
 			</el-form-item>
-      <el-form-item label="备注" prop="attachments">
+      <el-form-item label="附件" prop="attachments">
         <upload v-model="form.attachments"></upload>
       </el-form-item>
 			<el-form-item style="margin-bottom: 0px">
@@ -53,13 +53,10 @@ export default {
       loading: false,
 		  dialogVisible: false,
 		  form: {
-		  	invoice_entity_id: '',
 		  	due_time: '',
 		  	pay_time: '',
-		  	company: '',
-		  	number: '',
-		  	date: '',
 		  	remark: '',
+        attachments: [],
 		  },
 		}
   },
@@ -71,30 +68,25 @@ export default {
   	},
   	submitForm () {
   		const form = this.form;
-      const copy = {}
-      
-      for(let k in form) {
-        const d = form[k];
-        if( d instanceof Date ) {
-          copy[k] = this.$tool.getDate(d);
-        }else {
-          copy[k] = d; 
-        }
-      }
+
   	}
   },
   methods: {
   	show (row) { 		
   		this.dialogVisible = true;
-  		this.$nextTick(()=>{
+      if(this.$refs.form) {
+        this.$refs.form.resetFields();
+      }
+      this.$nextTick(()=>{
   			if( this.popType == 'edit' ) {
-  				this.$tool.coverObj(this.form, row);  			
+  				this.$tool.coverObj(this.form, row);
+          this.id = row.id; 			
 	  		}
   		});
   	},
   	edit () {
   		const url = `${URL}/${this.id}`;
-  		const data = this.submitForm;
+  		const data = this.$tool.shallowCopy(this.form, {date: true});
   		const success = _=>{ this.$emit('refresh'); this.dialogVisible = false; };
       const complete = _=>{ this.loading = false }; 
 

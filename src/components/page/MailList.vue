@@ -1,6 +1,5 @@
 <template>
   <div class="main">
-			<strainer v-model="filter" @refresh="refresh"></strainer>
   		<table-component :tableOption="tableOption" :data="tableData" @refreshTableData="refreshTableData" ref="table" >
         <el-select v-model="mailbox" slot="mailbox" style="width: 150px">
           <el-option v-for="item in options.mailbox" :label="item.label" :value="item.value" :key="item.value"></el-option>
@@ -44,8 +43,16 @@ export default {
 		  	// 'is_search': false,
 		  	'columns': [
 		  		{ type: 'selection', width: '50' },
-		  		{ type: 'array', label: '发件人邮箱', prop: 'from', render: _=>[_.value ? _.value : _], sortable: true, width: '200' },
-		  		{ type: 'array', label: '收件人邮箱', prop: 'to', render: arr=>arr.map(_=>_.value ? _.value : _), sortable: true, width: '200' },
+		  		{ type: 'text', label: '发件人邮箱', prop: 'from', render_simple: 'label', sortable: true, overflow: true, width: '200' },
+		  		{ type: 'array', label: '收件人邮箱', prop: 'to', sortable: true, overflow: true, width: '200',
+            render: _=>{
+              if(_ instanceof Array) {
+                return _.map(_=>_.label)
+              }else {
+                return []
+              }
+            },  
+          },
 		  		{ type: 'text', label: '邮件标题', prop: 'subject', overflow: true },
 		  		{ type: 'text', label: '发送时间', prop: 'mail_date', sortable: true, width: '200' },
 		  		{ 
@@ -83,6 +90,9 @@ export default {
     refresh () {
       this.$refs.table.refresh();
     },
+    update () {
+      this.$refs.table.update();
+    },
     handleCurrentChange (data) {
       this.setCurrent(data.value);
     },
@@ -92,7 +102,10 @@ export default {
     },
   	mailDelete ({id}) {
   		const url = `${URL}/${id}`;
-  		const success = _=>{ this.$message({message: '删除邮件成功', type: 'success'}) };
+  		const success = _=>{ 
+        this.update();
+        this.$message({message: '删除邮件成功', type: 'success'}) 
+      };
 
   		this.axiosDelete({url, success});
   	},

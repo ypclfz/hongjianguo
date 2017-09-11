@@ -9,9 +9,9 @@
     <other ref="other" :type="type"></other>
     
     <div style="margin-bottom: 20px;">
-      <el-button @click="add" v-if="type == 'add'">添加</el-button>
-      <el-button @click="edit" v-if="type == 'edit'">编辑</el-button>
-      <el-button>取消</el-button>
+      <el-button @click="add" type="primary" v-if="type == 'add'" :disabled="btn_disabled">添加</el-button>
+      <el-button @click="edit" type="primary" v-if="type == 'edit'" :disabled="btn_disabled">编辑</el-button>
+      <el-button @click="cancel" :disabled="btn_disabled">取消</el-button>
     </div>
   </div>
 </template>
@@ -44,6 +44,7 @@ export default {
     return {
       id: '',
       pop_type: '',
+      btn_disabled: false,
     }
   },
   mixins: [ AxiosMixins ],
@@ -55,8 +56,12 @@ export default {
         this.$message({message: '添加专利成功', type: 'success'});
         this.$router.push('/patent/list'); 
       };
+      const complete = _=>{
+        this.btn_disabled = false;
+      }
 
-      this.axiosPost({url, data, success});
+      this.btn_disabled = true;
+      this.axiosPost({url, data, success, complete});
 
     },
     edit () {
@@ -66,8 +71,15 @@ export default {
         this.$message({message: '编辑专利成功', type: 'success'});
         this.$router.push('/patent/list');
       };
+      const complete = _=>{
+        this.btn_disabled = false;
+      }
 
-      this.axiosPut({url, data, success});
+      this.btn_disabled = true;
+      this.axiosPut({url, data, success, complete});
+    },
+    cancel () {
+      this.$router.push('/patent/list');
     },
     refreshForm (val) {
       if( this.type == 'edit' && this.$tool.getObjLength(val) != 0) {

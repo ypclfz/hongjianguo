@@ -109,10 +109,11 @@ export default {
   	save () {
   		const url = `${URL}/${this.id}/config`;
   		const success = _=>{ this.$message({message: '保存成功', type: 'success'}) };
+  		const data = this.form;
   		const complete = _=>{ this.btn_disabled = false };
 
   		this.btn_disabled = true;
-  		this.axiosPut({url, success, complete});
+  		this.axiosPut({url, data, success, complete});
   	}
   },
   watch: {

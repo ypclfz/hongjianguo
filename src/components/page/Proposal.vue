@@ -173,7 +173,7 @@ export default {
           { type: 'text', label: '技术分类', prop: 'classification', render_simple: 'name', sortable: true, width: '200' },
           { type: 'array', label: '产品分类', prop: 'products', render: _=>_.map(_=>_.name), width: '200' },
           { type: 'text', label: '提案人', prop: 'proposer', render_simple: 'name', sortable: true, width: '200' },
-          { type: 'array', label: '发明人', prop: 'inventors', render: _=>_.map(_=>`${_.name}：${_.share}%`), width: '200' },
+          { type: 'array', label: '发明人', prop: 'inventors', render: _=>_.map(_=>`${_.name}：${_.share}%；`), overflow: true, width: '200' },
           { type: 'array', label: '标签', prop: 'tags', width: '200' },
           { type: 'text', label: '备注', prop: 'remark', width: '400' },
           {

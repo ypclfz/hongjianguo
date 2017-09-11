@@ -28,8 +28,6 @@ Vue.use(ElementUI);
 Vue.use(VueResource);
 Vue.use(VueQuillEditor);
 
-
-
 /* eslint-disable no-new */
 new Vue({
   el: '#app',

@@ -5,7 +5,7 @@
           <branch v-model="form.branch"></branch>
         </el-form-item>
       	<el-form-item label="IPR">
-          <static-select type="ipr" v-model="form.ipr"></static-select>
+          {{ user.name }}
       	</el-form-item>
       	<el-form-item label="申请人">
           <remote-select type="applicant" v-model="form.applicants" multiple></remote-select>
@@ -33,10 +33,11 @@ import RemoteSelect from '@/components/form/RemoteSelect'
 export default {
   name: 'patentAddPerson',
   data () {
+    const ipr = this.$store.getters.getUser.id;
 		return {
 			form: {
         branch: '',
-			  ipr: '',
+			  ipr,
 			  applicants: [],
 			  inventors: [
           {id: '', share: ''}
@@ -54,7 +55,6 @@ export default {
           this.form[k] = data[k];
         }
       }
-      console.log(this.form);
   	},
     submitForm () {
       return this.form;
@@ -65,6 +65,11 @@ export default {
   	deleteInventor (index) {
   		this.form.inventor.splice( index, 1 );
   	}
+  },
+  computed: {
+    user () {
+      return this.$store.getters.getUser;
+    }
   },
   components: { AppCollapse, Inventors, Ipr, Applicant, Member, Branch, StaticSelect, RemoteSelect }
 }

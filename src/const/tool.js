@@ -2,7 +2,7 @@ export default {
 	deepCopy (obj) {
 		return JSON.parse(JSON.stringify(obj));
 	},
-	shallowCopy (obj, {date, array,skip}) {
+	shallowCopy (obj, {date, array, skip}) {
 		
 		const data = {};
 		if( date === undefined ) date = false;

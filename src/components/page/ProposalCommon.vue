@@ -48,7 +48,7 @@
               <el-input type="textarea" v-model="formData.remark" :disabled="pageType == 'detail'"></el-input>
             </el-form-item>
 						<el-form-item label="附件" prop="attachments" v-if="pageType != 'detail'">
-               <upload v-model="formData.attachments" :file-list="attachments"></upload>
+               <upload v-model="formData.attachments" :file-list="attachments" ref="upload"></upload>
 						</el-form-item>
             <el-form-item label="附件" v-else>
               <table-component :data="attachmentsData" :tableOption="tableOption"></table-component>
@@ -57,8 +57,8 @@
               <table-component :data="patent" :tableOption="patentOption"></table-component>
             </el-form-item>
 						<el-form-item  v-if="pageType != 'detail'">
-						   <el-button @click="submit()" type="primary" :disabled="btn_disabled">提交</el-button>
-               <el-button @click="save()" :disabled="btn_disabled">暂存</el-button>
+						   <el-button @click="submit" type="primary" :disabled="btn_disabled">提交</el-button>
+               <el-button @click="save" :disabled="btn_disabled">暂存</el-button>
 						   <el-button @click="cancel" :disabled="btn_disabled">取消</el-button>
 						</el-form-item>
 			  	</el-form>
@@ -83,8 +83,7 @@
       <el-dialog title="提交任务" :visible.sync="dialogVisible">
         <task-finish 
            
-          :id="update_id" 
-          
+          :id="update_id"          
           @submitSuccess="handleSubmitSuccess"
           @cancel="dialogVisible=false"
           ref="task"
@@ -137,13 +136,22 @@ export default {
     },
     submit () {      
       this.save(d=>{
-        this.pageType = 'edit';
-        this.id = d.proposal_id;
-        this.update_id = d.task_id;
-        this.dialogVisible = true;
-        this.$nextTick(_=>{
-          this.$refs.task.clear();
-        })
+          if(this.pageType != 'edit') {
+            this.pageType = 'edit';
+            this.id = d.proposal_id;  
+          }
+          
+          this.update_id = d.task_id;
+          this.dialogVisible = true;//触发组件内部的created和mounted函数,因为id不会变化,理论上只会触发一次任务完成面板请求
+
+          // //这里调用为提案编写的任务完成接口，主要目的是填充当前备注与附件
+          const remark = this.formData.remark;
+          const attachments = this.$refs.upload.getFileList();
+          // console.log(remark, attachments);
+          this.$nextTick(_=>{
+            this.$refs.task.proposalFinish({remark, attachments});  
+          });
+
       });        
     },
     cancel () {
@@ -312,7 +320,7 @@ export default {
             label: '详情',
             btns: [
               {type: 'view', click: ({viewUrl})=>{window.open(viewUrl)}},
-              {type: 'download', click: ({downloadUr})=>{window.open(downloadUr)}},
+              {type: 'download', click: ({downloadUrl})=>{window.location.href = downloadUrl}},
             ],
           }
         ]
@@ -342,7 +350,6 @@ export default {
       btn_disabled: false,
       dialogVisible: false,
       update_id: '',
-
     }
   },
   created () {

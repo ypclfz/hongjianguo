@@ -22,11 +22,11 @@ export default {
 		  tableOption: {
 		  	'is_search': false,
 		  	'columns': [
-		  		{ type: 'array', label: '发件人地址', prop: 'from', render: _=>[_.value ? _.value : _], sortable: true, width: '200' },
-		  		{ type: 'array', label: '收件人地址', prop: 'to', render: arr=>arr.map(_=>_.value ? _.value : _), sortable: true, width: '200' },
-		  		{ type: 'text', label: '标题', prop: 'subject', overflow: true },
-		  		{ type: 'text', label: '内容', prop: 'content', overflow: true, width: '400' },
+		  		// { type: 'array', label: '发件人地址', prop: 'from', render: _=>[_.value ? _.value : _], sortable: true, width: '200' },
+		  		// { type: 'array', label: '收件人地址', prop: 'to', render: arr=>arr.map(_=>_.value ? _.value : _), sortable: true, width: '200' },
 		  		{ type: 'text', label: '发送时间', prop: 'mail_date', sortable: true, width: '200' },
+          { type: 'text', label: '标题', prop: 'subject', overflow: true, width: '300' },
+          { type: 'text', label: '内容', prop: 'content', overflow: true, overflow: true },
 		  	],
         rowClick: this.handleRowClick,
 
