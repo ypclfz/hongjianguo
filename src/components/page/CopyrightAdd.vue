@@ -1,13 +1,13 @@
 <template>
   <div class="main">
-  	<el-form :model="form" ref="form" label-width="80px">
+  	<el-form :model="form" ref="form" label-width="120px" :rules="rules">
 		<el-form-item label="案件名称" prop="title">
 			<el-input v-model="form.title" placeholder="请填写案件名称"></el-input>
 		</el-form-item>
 		<el-form-item label="案件摘要" prop="abstract">
 			<el-input type="textarea" v-model="form.abstract" placeholder="请填写案件摘要" ></el-input>
 		</el-form-item>
-		<el-form-item label="案件类型" prop="type">
+		<el-form-item label="著作权类型" prop="type">
 			<el-select v-model="form.type" placeholder="请选择案件类型">
 				<el-option v-for="item in options.type" :key="item.value" :label="item.label" :value="item.value"></el-option>
 			</el-select>
@@ -106,6 +106,10 @@ export default {
 		  		{label: '影视作品著作权', value: 4},
 		  	]
 		  },
+		  rules: {
+		  	title: { required: true, message: '版权名称不能为空', trigger: 'blur' },
+		  	type: { type: 'number', required: true, message: '著作权不能为空', trigger: 'change' },
+		  },
 		  attachments: [],
 		  btn_disabled: false,
 		}
@@ -120,6 +124,8 @@ export default {
   },
   methods: {
   	add () {
+  		if(this.checkForm()) return;
+
   		this.btn_disabled = true;
   		const url = URL;
   		const data = this.$tool.shallowCopy(this.form, {'date': true});
@@ -129,6 +135,8 @@ export default {
   		this.axiosPost({url, data, success, complete});
   	},
   	edit () {
+  		if(this.checkForm()) return;
+
   		this.btn_disabled = true;
   		const url = `${URL}/${this.id}`;
   		const data = this.$tool.shallowCopy(this.form, {'date': true});
@@ -139,6 +147,16 @@ export default {
   		const complete = _=>{ this.btn_disabled = false };
 
   		this.axiosPut({url, data, success, complete})
+  	},
+  	checkForm () {
+  		let flag = false;
+  		this.$refs.form.validate(_=>{flag = !_});
+
+  		if(flag) {
+  			this.$message({message: '请正确填写版权字段', type: 'warning'});
+  		}
+
+  		return flag;
   	},
   	refreshForm () {
   		const data = this.detail;

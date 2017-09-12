@@ -49,7 +49,10 @@ export default {
   	},
     submitForm () {
       return this.form;
-    }
+    },
+    checkForm () {
+
+    },
   },
   components: { AppCollapse, Upload }
 }

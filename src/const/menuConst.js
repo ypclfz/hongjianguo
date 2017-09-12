@@ -189,6 +189,18 @@ menu.data = [
 		}]
 	},
 	{
+		text: '发文',
+		path: '/dispatch',
+		icon: 'iconfont icon-email',
+		type: 'submenu',
+		children: [{
+			text: '发文管理',
+			path: '/dispatch/administration',
+			icon: '',
+			type: 'item'
+		}]
+	},
+	{
 		text: '设置',
 		path: '/setting',
 		icon: 'iconfont icon-setting',

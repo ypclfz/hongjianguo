@@ -38,7 +38,10 @@ export default {
     },
     submitForm () {
       return this.form;
-    }
+    },
+    checkForm () {
+
+    },
   },
   components: { AppCollapse, Priorities, RelativeProjects, Proposal, RemoteSelect }
 }

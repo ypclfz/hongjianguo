@@ -6,7 +6,7 @@
         <el-row>
           <el-col :span="12">
             <el-form-item label="提案标题">
-              <el-input v-model="title"></el-input>
+              <el-input v-model="title" placeholder="请输入需要搜索的提案标题"></el-input>
             </el-form-item>
             <el-form-item label="技术分类">
               <classification v-model="classification" multiple></classification>
@@ -17,10 +17,10 @@
           </el-col>
           <el-col :span="12">
             <el-form-item label="发明人">
-              <inventor-select v-model="inventors" multiple></inventor-select>
+              <remote-select type="inventor" v-model="inventors" multiple></remote-select>
             </el-form-item>
             <el-form-item label="提案人">
-              <member v-model="proposer" multiple></member>
+              <remote-select type="member" v-model="proposer" multiple></remote-select>
             </el-form-item>
             <el-form-item label="标签">
               <tag v-model="tags" multiple></tag>
@@ -51,9 +51,9 @@ import AppFilter from '@/components/common/AppFilter'
 import AppCollapse from '@/components/common/AppCollapse'
 import Classification from '@/components/form/Classification'
 import Product from '@/components/form/Product'
-import InventorSelect from '@/components/form/InventorSelect'
-import Member from '@/components/form/Member'
+
 import Tag from '@/components/form/Tag'
+import RemoteSelect from '@/components/form/RemoteSelect'
 import AxiosMixins from '@/mixins/axios-mixins'
 
 const URL = '/api/proposals';
@@ -152,11 +152,13 @@ export default {
     }
   },
   data () {
+    const height = this.$store.getters.getInnerHeight - 390; 
     return {
       tableOption: {
         'name': 'proposalList',
         'url': URL,
         'is_filter': true,
+        height,
         'header_btn': [
           { type: 'add', click: this.add },
           { type: 'delete', click: this.deleteMul },
@@ -184,9 +186,7 @@ export default {
           },
         ]
       },
-      tableData: [
-
-      ],
+      tableData: [],
       filter: {},
       title: '',
       classification: [],
@@ -200,7 +200,7 @@ export default {
   mounted () {
     this.refresh();
   },
-  components: { TableComponent, AppFilter, AppCollapse, Classification, Product, InventorSelect, Member, Tag, AppFilter }, 
+  components: { TableComponent, AppFilter, AppCollapse, Classification, Product, RemoteSelect, Tag, AppFilter }, 
 }
 </script>
 

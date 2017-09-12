@@ -21,6 +21,7 @@ import UserList from '@/components/page/UserList'
 import Technology from '@/components/page/Technology'
 import Branch from '@/components/page/Branch'
 import FeeCommon from '@/components/page/FeeCommon'
+import DispatchAdministration from '@/components/page/DispatchAdministration'
 import InvoiceCommon from '@/components/page/InvoiceCommon'
 import ClassificationCommon from '@/components/page/ClassificationCommon'
 import MailList from '@/components/page/MailList'
@@ -72,6 +73,7 @@ const router = new Router({
     { path: '/trademark', redirect: '/trademark/list' },
     { path: '/copyright', redirect: '/copyright/list' },
     { path: '/news', redirect: '/news/mailList' },
+    { path: '/dispatch', redirect: '/dispatch/administration' },
     //###重定向###
     {
       path: '/statistics',
@@ -241,6 +243,11 @@ const router = new Router({
       path: '/fee/income',
       name: 'FeeIncome',
       component: FeeCommon,
+    },
+    {
+      path: '/dispatch/administration',
+      name: 'DispatchAdministration',
+      component: DispatchAdministration,
     },
     {
       path: '/fee/pay',

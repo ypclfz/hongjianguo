@@ -131,6 +131,18 @@ export default {
 	      document.cookie= name + "="+cval+";expires="+exp.toGMTString();
 	    }
 	},
+	setLocal (name, value) {
+		if( name === undefined || !(typeof name === 'string') ) return;
+
+		window.localStorage[name] = escape(value);
+	},
+	getLocal (name) {
+		if(window.localStorage[name]) {
+			return unescape(window.localStorage[name]);
+		}else {
+			return null;
+		}
+	},
 	windowChangeUrl (string) {
 		if (!window.location.origin) {
         	window.location.origin = window.location.protocol + "//" + window.location.hostname + (window.location.port ? ':' + window.location.port: '');

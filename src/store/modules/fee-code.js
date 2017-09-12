@@ -8,7 +8,7 @@ const getters = {
 	feeCodeMap: state=>{
 		const map = new Map();
 		state.data.forEach(d=>{
-			map.set(d.value, d );
+			map.set(d.id, d );
 		});
 		
 		return map;

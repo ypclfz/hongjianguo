@@ -1,11 +1,11 @@
 <template>
   <el-dialog :title=title :visible.sync="dialogVisible">
 		<el-form :model="form" ref="form" label-width="80px">
-			<el-form-item label="相关案件" prop="project_id">
-				<patent v-model="form.project_id"></patent>
+			<el-form-item label="相关案件" prop="project">
+				<remote-select type="patent" v-model="form.project"></remote-select>
 			</el-form-item>
-			<el-form-item label="费用对象" prop="target_id">
-				<member v-model="form.target_id"></member>
+			<el-form-item label="费用对象" prop="target">
+				<remote-select type="member" v-model="form.target"></remote-select>
 			</el-form-item>
 			<el-form-item label="费用代码" prop="code">
 				<fee-code v-model="form.code" @change="codeChange"></fee-code>
@@ -46,9 +46,9 @@
 			<el-form-item label="支付时间" prop="pay_time">
 				<el-date-picker v-model="form.pay_time" type="date" placeholder="请选择费用"></el-date-picker>
 			</el-form-item>
-			<el-form-item label="开票主体" prop="invoice_entity_id">
+<!-- 			<el-form-item label="开票主体" prop="invoice_entity_id">
 				<invoice-entity v-model="form.invoice_entity_id"></invoice-entity>
-			</el-form-item>
+			</el-form-item> -->
 			<el-form-item label="备注" prop="remark">
 				<el-input type="textarea" placeholder="请填写备注" v-model="form.remark"></el-input>
 			</el-form-item>
@@ -69,6 +69,7 @@ import Member from '@/components/form/Member'
 import FeeCode from '@/components/form/FeeCode'
 import FeeStatus from '@/components/form/FeeStatus'
 import InvoiceEntity from '@/components/form/InvoiceEntity'
+import RemoteSelect from '@/components/form/RemoteSelect'
 
 const URL = '/api/fees'
 
@@ -85,8 +86,8 @@ export default {
 		  dialogVisible: false,
 		  feeAnnual: false,
 		  form: {
-		  	project_id: '',
-		  	target_id: '',
+		  	project: '',
+		  	target: '',
 		  	code: '',
 		  	status: '',
 		  	money: {
@@ -135,7 +136,8 @@ export default {
   					Object.assign(o, d);
   				}else if(d instanceof Date) {
   					o[k] = this.$tool.getDate(d);
-  				}else {
+  				}
+  				else {
   					o[k] = d;
   				}
   			}
@@ -148,6 +150,10 @@ export default {
 
   			this.id = val.id;
   			this.$tool.coverObj(this.form, val);
+  			if(this.form.code) {
+  				this.form.code = this.form.code.id;
+  			}
+  			this.form.status = this.form.status.id;
   			arr.forEach( d=>{this.form.money[d] = val[d] });
   		}
   	}
@@ -175,7 +181,11 @@ export default {
   	edit () {
   		const url = `${URL}/${this.id}`;
   		const data = this.submitForm;
-  		const success = ()=>{ this.$emit('refresh') };
+  		const success = ()=>{ 
+  			this.$message({message: '编辑成功', type: 'warning'});
+  			this.dialogVisible = false;
+  			this.$emit('refresh') 
+  		};
 
   		this.axiosPut({url, data, success});
   	},
@@ -191,7 +201,7 @@ export default {
   		this.feeAnnual = reg.test(label); 
   	},
   },
-  components: { Patent, Member, FeeCode, FeeStatus, InvoiceEntity },
+  components: { Patent, Member, FeeCode, FeeStatus, InvoiceEntity, RemoteSelect },
 }
 </script>
 

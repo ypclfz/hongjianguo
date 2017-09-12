@@ -13,7 +13,10 @@ export default {
 			const tex = this.$options.REMINDER_TEXT;
 
 			return t == 'add' ? `新增${tex}` : `编辑${tex}`;
-		}
+		},
+    url () {
+      return this.$options.URL ? this.$options.URL : '';
+    }
 	},
 	methods: {
 		show ( type='add', data ) {
@@ -21,14 +24,18 @@ export default {
       this.dialogVisible = true;
      	
      	this.$nextTick(_=>{
-     		if(type == 'add') {
-          this.$refs.form.resetFields();  
-      	}
-
+     		
+        this.$refs.form.resetFields();  
+      	
 	      if(type == 'edit') {
-	        const copy = this.$tool.deepCopy(data);
-	        this.id = copy.id; 
-	        this.setForm ? this.setForm(data) : this.$tool.coverObj(this.form, copy);
+          if(data instanceof Object) {
+            const copy = this.$tool.deepCopy(data);
+            this.id = copy.id; 
+            this.setForm ? this.setForm(data) : this.$tool.coverObj(this.form, copy);  
+          }else if(data instanceof String || data instanceof Number) {
+            data -= 0;
+          }
+	        
 	      }
      	});
   	},
@@ -50,7 +57,7 @@ export default {
     },
     edit () {
       this.btn_disabled = true;
-      const url = `${this.$options.URL}/${this.id}`;
+      const url = `${this.url}/${this.id}`;
       const tex = this.$options.REMINDER_TEXT;
       const data = this.submitForm ? this.submitForm() : this.form;
       const success = _=>{

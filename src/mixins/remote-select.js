@@ -18,8 +18,10 @@ export default {
   },
   computed: {
     value2 () {
+      console.log(this.value);
       if(!this.multiple) {
-        return this.value == "" ? [] : [ this.value ];
+        console.log(this.value == "" || (this.value instanceof Object && this.$tool.getObjLength(this.value) == 0 ) ? [] : [ this.value ]);
+        return this.value == "" || (this.value instanceof Object && this.$tool.getObjLength(this.value) == 0 ) ? [] : [ this.value ];
       }else {
         return this.value;
       }

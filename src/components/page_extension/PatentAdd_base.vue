@@ -1,16 +1,19 @@
 <template>
   <app-collapse col-title="基本信息">
-		<el-form label-width="120px">
+		<el-form label-width="120px" :model="form" :rules="rules" ref="form">
       <el-form-item label="案号">
         <el-input v-model="form.serial" placeholder="请填写案号"></el-input>
       </el-form-item>
-			<el-form-item label="标题">
-				<el-input v-model="form.title" placeholder="请填写案件标题"></el-input>
+			<el-form-item label="标题" prop="title">
+				<el-input v-model="form.title" placeholder="请填写案件标题" ></el-input>
 			</el-form-item>
-	    <el-form-item label="申请地区">
-	    	<region v-model="form.area" :multiple="type == 'add'"></region>
+	    <el-form-item label="申请地区" prop="area" :rules="{ type: type=='add' ? 'array' : 'string',required: true, message: '地区不能为空', trigger: 'change'}">
+	    	<region 
+          v-model="form.area" 
+          :multiple="type == 'add'"
+        ></region>
 	    </el-form-item>
-	    <el-form-item label="专利类型">
+	    <el-form-item label="专利类型" prop="type">
 	      <static-select type="patent_type" v-model="form.type"></static-select>
 	    </el-form-item>
       <el-form-item label="摘要">
@@ -169,6 +172,11 @@ export default {
           {name:"俄文-Russian",id:"RU"},
           {name:"西班牙-Spanish",id:"ES"}
         ]
+      },
+      rules: {
+        'title': { required: true, message: '标题不能为空', trigger: 'blur' },
+        
+        'type': { type: 'number', required: true, message: '专利类型不能为空', trigger: 'change' },
       }
 		}
   },
@@ -201,7 +209,9 @@ export default {
   },
   methods: {
   	checkForm () {
-
+      let flag = false;
+      this.$refs.form.validate(_=>{flag = !_});
+      return flag;
   	},
   	setForm (data) {
   		for (let k in this.form) {

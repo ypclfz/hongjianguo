@@ -28,6 +28,7 @@ const store = new Vuex.Store({
     axios,
     status: 0, //这里进行地址代理控制, 为1时去掉/api, 为0时保留
     loading: false,
+    inner_height: 0,
   },
   modules: {
     filter,
@@ -61,11 +62,15 @@ const store = new Vuex.Store({
     },
     cancelLoading (state) {
       state.loading = false;
+    },
+    setInnerHeight (state, number) {
+      state.inner_height = number;
     }
   },
   getters: {
     getDragId: state=>state.dragId,
     loading: state=>state.loading,
+    getInnerHeight: state=>state.inner_height,
   },
 });
 

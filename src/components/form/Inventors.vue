@@ -1,6 +1,6 @@
 <template>
   <div>
-  	<inventor v-for="(item, index) in value" :key="index" style="margin-bottom: 5px" :value="value[index]" @input="(val)=>{handleInput({val, index})}" :isDelete="index != 0" @deleteInventor="dataDelete(index)" :disabled="disabled"></inventor>
+  	<inventor v-for="(item, index) in value" :key="index" style="margin-bottom: 5px" :value="value[index]" @input="(val)=>{handleInput({val, index})}" is-delete @deleteInventor="dataDelete(index)" :disabled="disabled"></inventor>
 
     <el-row>
       <el-button type='text' @click="add({'share': '', 'id': ''})" v-if="!disabled">添加发明人</el-button>

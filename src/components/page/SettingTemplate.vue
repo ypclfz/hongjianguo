@@ -37,9 +37,9 @@ export default {
   	refreshTableData (option) {
   		const url = URL;
   		const data = option;
-  		const success = _=>{ _.tableDate = _.data };
+  		const success = _=>{ this.tableData = _.tasks };
 
-  		this.axiosPost({url, data, success});
+  		this.axiosGet({url, data, success});
   	},
   	edit ({id}) {
   		this.$router.push({path: '/setting/template/edit', query: {id} });

@@ -98,6 +98,7 @@
     :style="tableStyle"
     :row-class-name="handleRowClassName"
     @row-click="handleRowClick"
+    :height="tableOption.height ? tableOption.height : ''"
 
   >
     <template v-for="(col, index) in tableOption.columns">
@@ -132,6 +133,7 @@
         </template>
         <template v-else>
           <el-table-column :label="col.label" :prop="col.prop" :width="col.width ? col.width : ''" v-if="tableControl[index]['show']" :sortable="col.sortable ? 'custom' : false" :show-overflow-tooltip="col.overflow !== undefined ? col.overflow : true">
+            <template v-if="col.default !== undefined" scope="scope">{{ scope.row[col.prop] ? scope.row[col.prop] : col.default }}</template>
           </el-table-column>
         </template>
       </template>
@@ -356,7 +358,7 @@ const methods = Object.assign({}, tableConst.methods, {
   handleControlChange () {
     const name = this.tableOption.name;
     const value = JSON.stringify(this. tableControl);
-    this.$tool.setCookie(name, value);
+    this.$tool.setLocal(name, value);
   },
   handleRowClassName (row, index) {
 
@@ -465,7 +467,7 @@ export default {
     const d = this;
     const cols = d.tableOption.columns;
     let tableControl = [];
-    const cookieControl = this.$tool.getCookie(this.tableOption.name);
+    const cookieControl = this.$tool.getLocal(this.tableOption.name);
     if(cookieControl) {
       tableControl = JSON.parse(cookieControl);
     }else {
@@ -496,14 +498,8 @@ export default {
   },
   components: {
     'TableRender': {
-      render: function(h) {
-        if( !this.simple ) {
-          return this.render(h, this.scope.row[this.prop], this.scope.row, this.prop);
-        }else {
-
-          const str = this.render(this.scope.row[this.prop]);
-          return h('span', { class: { 'table-column-render': true} }, str)
-        }
+      render: function(h) { 
+        return this.render(h, this.scope.row[this.prop], this.scope.row, this.prop);
       },
       props: {
         'render': null, 

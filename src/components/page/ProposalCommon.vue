@@ -14,17 +14,17 @@
               {{ update_time }}
             </el-form-item>
             <el-form-item label="案件名称" prop="title">
-              <el-input v-model="formData.title" placeholder="请输入案件名称" :disabled="pageType == 'detail'">
+              <span v-if="pageType == 'detail'" class="form-detail-item">{{ formData.title }}</span>
+              <el-input v-model="formData.title" placeholder="请输入案件名称" v-else>
               </el-input>
             </el-form-item>
             <el-form-item label="案件摘要" prop="abstract">
-              <el-input type="textarea" v-model="formData.abstract" placeholder="请输入案件摘要" :disabled="pageType == 'detail'"></el-input>
+              <span v-if="pageType == 'detail'" class="form-detail-item">{{ formData.abstract }}</span>
+              <el-input type="textarea" v-model="formData.abstract" placeholder="请输入案件摘要" v-else></el-input>
             </el-form-item>
             
             <el-form-item label="发明人" prop="inventors">
-
-              <inventors v-model="formData.inventors" @addInventor="addInventor" @deleteInventor="deleteInventor" :disabled="pageType == 'detail'"></inventors>
-
+              <inventors v-model="formData.inventors" :disabled="pageType == 'detail'"></inventors>
             </el-form-item>
 
 
@@ -58,7 +58,7 @@
             </el-form-item>
 						<el-form-item  v-if="pageType != 'detail'">
 						   <el-button @click="submit" type="primary" :disabled="btn_disabled">提交</el-button>
-               <el-button @click="save" :disabled="btn_disabled">暂存</el-button>
+               <el-button @click="save()" :disabled="btn_disabled">暂存</el-button>
 						   <el-button @click="cancel" :disabled="btn_disabled">取消</el-button>
 						</el-form-item>
 			  	</el-form>
@@ -130,7 +130,7 @@ export default {
           const complete = _=>{ this.btn_disabled = false };
           flag ? this.axiosPost({url, data, success, complete}) : this.axiosPut({url, data, success, complete});
         }else {
-          this.$message({message: '请正确填写提案字段', type: 'error'});
+          this.$message({message: '请正确填写提案字段', type: 'warning'});
         }
       });         
     },
@@ -263,12 +263,18 @@ export default {
             let number = 0;
             const reg = /^[1-9][0-9]*$/;
             
-            for(let d of b) {
-              if( !d.id || !d.share ) {
-                msg = '请完整填写发明人字段';
-                break;
-              }
+            console.log(b);
+            if(b.length == 0) {
+              msg = '发明人字段不能为空';
+            }else {
+              for(let d of b) {
+                if( !d.id || !d.share ) {
+                  msg = '请完整填写发明人字段';
+                  break;
+                }
+              }  
             }
+            
 
             if( !msg ) {
               for(let d of b) {

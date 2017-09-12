@@ -25,10 +25,13 @@ export default {
     }
   },
   data () {
+    const height = this.$store.getters.getInnerHeight - 500;
     return {
+
       tableOption: {
         'name': 'patentList',
         'url': URL,
+        height,
         'is_filter': true,
         'import_type': 'patent',
         'upload_type': 'patent',

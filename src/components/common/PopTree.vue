@@ -15,7 +15,7 @@
           node-key="id"
           ref="tree"
           @check-change='treeChange'
-          style="border-radius: 5px;"
+          style="border-radius: 5px; height: 250px; overflow: auto;"
           :render-content="action ? renderContent : undefined"
           :expand-on-click-node="false"
           @node-click="handleClick"

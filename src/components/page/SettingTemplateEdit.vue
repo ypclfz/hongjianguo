@@ -1,6 +1,6 @@
 <template>
   <div class="main">
-		<el-form>
+		<el-form label-width="100px">
 			<el-form-item label="模板名称">
 				<el-input v-model="form.name"></el-input>
 			</el-form-item>
@@ -51,6 +51,12 @@ export default {
   	},
   	cancel () {
   		this.$router.push({path: '/setting/template'});
+  	},
+  	refreshForm () {
+  		const url = `${URL}/${this.id}`;
+  		const success = _=>{this.$tool.coverObj(this.form, _.info)};
+
+  		this.axiosGet({url, success})
   	}
   },
   computed: {
@@ -58,6 +64,9 @@ export default {
   		return this.$route.query.id;
   	}
   },
+  created () {
+  	this.refreshForm();
+  }
 }
 </script>
 

@@ -2,7 +2,7 @@
   <div class="main">
     
     <pa-base ref="base" :type="type"></pa-base>
-    <person ref="person"></person>
+    <person ref="person" :type="type"></person>
     <classification ref="classification"></classification>
     <agent ref="agent" v-if="type == 'edit'"></agent>
     <case ref="case"></case>
@@ -50,6 +50,8 @@ export default {
   mixins: [ AxiosMixins ],
   methods: {
     add () {
+      if(this.formCheck()) return;
+
       const url = URL;
       const data = Object.assign( ...getKeys.map(_=>this.$refs[_].submitForm()) );
       const success = _=>{ 
@@ -65,11 +67,13 @@ export default {
 
     },
     edit () {
+      if(this.formCheck()) return;
+
       const url = `${URL}/${this.id}`;
       const data = Object.assign( ...getKeys.map(d=>this.$refs[d].submitForm()) );
       const success = _=>{ 
         this.$message({message: '编辑专利成功', type: 'success'});
-        this.$router.push('/patent/list');
+        // this.$router.push('/patent/list');
       };
       const complete = _=>{
         this.btn_disabled = false;
@@ -77,6 +81,23 @@ export default {
 
       this.btn_disabled = true;
       this.axiosPut({url, data, success, complete});
+    },
+    formCheck () {
+      let key = "";
+      let flag = false;
+      for(let d of getKeys) {
+        if(this.$refs[d].checkForm()) {
+          flag = true;
+          key = d;
+          break;
+        }
+      }
+
+      if(key) {
+        this.$message({message: map.get(key), type: 'warning'})
+      }
+
+      return flag;
     },
     cancel () {
       this.$router.push('/patent/list');

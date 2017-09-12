@@ -111,6 +111,7 @@ export default {
   	},
     refreshSelected (val) {
       if( val[0] && val[0] instanceof Object ) {
+        
         this.static_map = val;
         const arr = val.map(_=>_.id);
         if(this.multiple) {
@@ -155,7 +156,7 @@ export default {
   		return this.$tool.singleObject(arr,'id');
   	},
   	map () {
-  		//map分为静态和动态俩部分，静态部分由value类型Object时提供
+  		//map分为静态和动态俩部分，静态部分由value类型为Object时提供，之后将value转换为数值类型
   		const map = new Map();
   		this.static_map.forEach(_=>map.set(_.id, _));
   		this.options.forEach(_=>map.set(_.id, _));
@@ -164,8 +165,10 @@ export default {
   },
   watch: {
   	value2 (val) {
-      //value类型为对象时，添加静态映射，并将其值转为id
-      
+      // console.log('-------------val');
+      // console.log(val);
+      // console.log('-------------val');
+      //value类型为对象时，添加静态映射，并将其值转为id 
       this.refreshSelected(val);
   	}
   },
