@@ -10,6 +10,8 @@
 	  	:current-node-key="currentNodeKey"
 	  	default-expand-all
 	  	@current-change="handleCurrentChange"
+      style="height: 500px; overflow: auto;"
+
 	  >
 	  </el-tree>
 	  <app-collapse :col-title="colTitle" v-if="currentNodeKey != ''" style="margin-top: 15px;">
@@ -76,7 +78,7 @@ export default {
             <span>
             
               <span>{node.label}</span>
-              <el-badge value={ data.projects_count } />
+              <em style="color: #20a0ff; font-style: normal;"> ({ data.projects_count })</em>
             </span>
             <span style="float: right; margin-right: 20px">
               <el-button size="mini" on-click={ () => this.addPop(data.id) }>新建</el-button>

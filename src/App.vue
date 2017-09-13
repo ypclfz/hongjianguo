@@ -1,5 +1,22 @@
 <template>
   <div id="app">
+    <el-popover
+      ref="popover"
+      placement="bottom"
+      title="系统消息"
+      width="400"
+      trigger="click"
+      v-model="sysPopVisible"
+    >
+    <div>
+      <ul style="list-style-type: decimal;">
+        <li class="sysmesg-item">消息1</li>
+        <li class="sysmesg-item">消息2</li>
+      </ul>
+      <a href="javascript::void(0)" @click="$router.push('/news/systemMessage');sysPopVisible = false">查看更多...</a>
+    </div>
+    </el-popover>
+
     <nav>
         <img src="/static/static_img/cvte_log.png" style="vertical-align: middle; height: 28px;">
         <el-dropdown  trigger="click" style="float: right; margin-right: 40px;" @command="handleCommond">
@@ -10,6 +27,7 @@
             <el-dropdown-item command="login_out">登出</el-dropdown-item>
           </el-dropdown-menu>
         </el-dropdown>
+        <i v-popover:popover class="iconfont icon-news" style="cursor: pointer; float: right; color: #72b0de; margin-right: 20px; font-size: 24px;" title="系统消息"></i>
     </nav>
       <span class="nav-left-btn" @click="navToggle"><span class="nav-left-btn-arrow el-icon-arrow-left"></span></span>
       <div class="nav-left" :style="`height: ${navL_height}px`">
@@ -18,7 +36,7 @@
           <app-menu v-for="item in menu_data" :data="item" :key="item.path"></app-menu>
         </el-menu>
       </div>
-    <div class="container" v-loading="loading" :style="`min-height: ${navL_height-40}px; padding: 20px; background-color: #F9FAFC;`">
+    <div class="container" v-loading="loading" :style="`min-height: ${navL_height-20}px; padding: 20px 20px 0; background-color: #F9FAFC;`">
       <!-- <h1 class="container-menu"><i :class="select.icon"></i><span>{{ select.text }}</span></h1> -->
       <div class="container-nav">
         <el-breadcrumb separator=">">
@@ -39,8 +57,10 @@
           </el-breadcrumb-item>
         </el-breadcrumb>
       </div>
+
       <router-view :key="$route.path.split('__')[0]" ></router-view>
     </div>
+    
   </div>
 </template>
 
@@ -83,7 +103,7 @@ export default {
       return this.$store.getters.screen_label;
     },
     navL_height () {
-      this.$store.commit('setInnerHeight', window.innerHeight - 50);
+      
       return  window.innerHeight - 50;
     },
     loading () {
@@ -92,12 +112,23 @@ export default {
     username () {
       const user = this.$store.getters.getUser; 
       return user ? user.name : '';
+    },
+    sysmesg () {
+      let s = this.$store.getters.sysmesg;
+      if(s === undefined) {
+        s = [];
+        this.$store.dispatch('refreshMesg'); 
+      }
+
+      return s;
     }
   },
   data () {
     return {
       
-      menu_data: menu.data
+      menu_data: menu.data,
+      resize_lock: false,
+      sysPopVisible: false,
     };
   },
   methods: {
@@ -177,11 +208,16 @@ export default {
     const success2 = _=>{
       this.axiosGet({url, success, error, catchFunc});
     }
-    this.axiosGet({url, success, error, catchFunc});
-    // this.axiosPost({url: '/api/login', success: success2, data: {username: 'liman', password: 'Z9jgM6FhdKWEqbbpJePv/6qeTO/Yk2b6lx7zF4tiBncRubwf0fz93hkqGXCiWvqXCDIq7x+kAH3TK5zhjDZ53jgt1Gx1vvBPHn3ga7HTqPrnc+VhhuVGeTefHShJBx32rnbhL6LbEqCAMGqtQXaovCtuJGY6uWYAPfecAOGMuadnxTigTTBwKtW2oVP4J/EwAroYKuy4MK4Pd7YGtFoJAhlpKVOponsgsYQ8EKGOSVxcZgcgnOw8LhPy28N+xoFCh0OBkMyjM80Ybjq+H8BO6CacnDzQReZL5wQZqBdTtW7CUBi6S4+JWDPBahqNgz7jD73UhEIeG0ivFLEdCWtlVw=='}});
+    // this.axiosGet({url, success, error, catchFunc});
+    this.axiosPost({url: '/api/login', success: success2, data: {username: 'admin', password: 'Z9jgM6FhdKWEqbbpJePv/6qeTO/Yk2b6lx7zF4tiBncRubwf0fz93hkqGXCiWvqXCDIq7x+kAH3TK5zhjDZ53jgt1Gx1vvBPHn3ga7HTqPrnc+VhhuVGeTefHShJBx32rnbhL6LbEqCAMGqtQXaovCtuJGY6uWYAPfecAOGMuadnxTigTTBwKtW2oVP4J/EwAroYKuy4MK4Pd7YGtFoJAhlpKVOponsgsYQ8EKGOSVxcZgcgnOw8LhPy28N+xoFCh0OBkMyjM80Ybjq+H8BO6CacnDzQReZL5wQZqBdTtW7CUBi6S4+JWDPBahqNgz7jD73UhEIeG0ivFLEdCWtlVw=='}});
   },
   mounted () {
+    window.onresize = _=>{
+      this.$store.commit('setInnerHeight', window.innerHeight - 50);
+      this.$store.commit('set')
+    }
 
+    console.log(this.sysmesg);
   },
   components: { AppMenu }
 }

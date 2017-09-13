@@ -217,6 +217,12 @@ export default {
       this.refresh();
     },
     titleRender (h,item,data) {
+      let str = item;
+      if(data.flag == 1) {
+        str += ' (代)';
+      }else if(data.flag == 1) {
+        str += ' (移)';
+      }
       return h('a', {
         attrs: {
           href: 'javascript:void(0)',
@@ -224,7 +230,7 @@ export default {
         on: {
           click: _=>{ this.titleClick(data) }
         }
-      }, item)
+      }, str)
     },
     titleClick (data) {
       if(data.category == 0) {
@@ -245,7 +251,7 @@ export default {
       filter: {},
       filters: {},
       expandOldType: '',
-      expandType: '',
+      expandType: 'edit',
       checkedTest: [],
       tableOption: {
         'name': 'taskList',
@@ -278,7 +284,7 @@ export default {
         'columns': [
           { type: 'expand' },
           { type: 'selection', fixed: false},
-          { type: 'text', label: '案号', prop: 'serial', sortable: true, width: '150', render: this.titleRender },
+          { type: 'text', label: '案号', prop: 'serial', sortable: true, width: '150', show_option: false, render: this.titleRender },
           { type: 'text', label: '案件名称', prop: 'title', sortable: true, width: '200', overflow: true },
           { type: 'text', label: '管制事项', prop: 'name', sortasble: true, width: '134' },
           { type: 'text', label: '当前节点', prop: 'flow_node', show: false, width: '159'},

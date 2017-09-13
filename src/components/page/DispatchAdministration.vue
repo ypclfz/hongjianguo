@@ -25,18 +25,18 @@ export default {
 		  	],
 		  	'columns': [
 		  		{ type: 'text', label: '快递公司', prop: 'company' },
-		  		{ type: 'text', label: '发文描述', prop: 'title' },
-          { type: 'text', label: '发件人', render_simple: 'name', prop: 'from' },
-          { type: 'text', label: '发件日期', prop: 'mail_date' },
           { type: 'text', label: '快递单号', prop: 'number' },
+          { type: 'text', label: '发件日期', prop: 'mail_date' },
+          { type: 'text', label: '收件日期', default: '暂未收件', prop: 'receipt_date' },
+          { type: 'text', label: '收件人', render_simple: 'name', prop: 'to' },
+          { type: 'text', label: '发件人', render_simple: 'name', prop: 'from' },
           { type: 'array', label: '文件信息', prop: 'projects', 
             render (array) {
               return array.map(_=>`${_.name}: ${_.type.join(";")}`);
             }
           },
-          { type: 'text', label: '收件日期', default: '暂未收件', prop: 'receipt_date' },
-          { type: 'text', label: '收件人', render_simple: 'name', prop: 'to' },
-		  		{ 
+          { type: 'text', label: '发文描述', prop: 'description' },
+          { 
 		  			type: 'action', 
 		  			btns: [
 		  				{ type: 'edit', click: this.editPop },
@@ -89,7 +89,7 @@ export default {
   			.catch(_=>{})
   	},
   	handlePopRefresh (t) {
-  		t === 'add' ? this.refresh : this.update;
+  		t === 'add' ? this.refresh() : this.update();
   	}
   },
   mounted () {

@@ -14,7 +14,7 @@
               {{ btn.label ? btn.label : '字段'}}<i class="el-icon-caret-bottom el-icon--right"></i>
             </el-button>
             <el-dropdown-menu slot="dropdown" style="max-height: 500px; overflow-y: auto; overflow-x:  hidden;">
-              <el-dropdown-item style="padding: 0 20px; line-height: 25px;" v-for="(col, index) in tableControl" :key="index" v-if="col.type != 'selection' && col.type != 'action' && col.type != 'expand'">
+              <el-dropdown-item style="padding: 0 20px; line-height: 25px;" v-for="(col, index) in tableControl" :key="index" v-if="col.type != 'selection' && col.type != 'action' && col.type != 'expand' && col.show_option">
                 <el-checkbox :label="col.label" v-model="col.show" @change=handleControlChange></el-checkbox>
               </el-dropdown-item>
             </el-dropdown-menu>
@@ -475,7 +475,9 @@ export default {
         let show = c.show == undefined ? true : c.show;
         let type = c.type;
         let label = c.label;
-        tableControl.push({show, type, label});
+        let show_option = c.show_option !== undefined ? c.show_option : true;
+        tableControl.push({show, type, label, show_option});
+        
       }
     }
 

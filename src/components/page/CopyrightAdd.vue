@@ -22,7 +22,8 @@
 			<tag v-model="form.tags" multiple></tag>
 		</el-form-item>
 		<el-form-item label="IPR" prop="ipr">
-			<static-select type="ipr" v-model="form.ipr"></static-select>
+			<span class="form-item-text" v-if="pageType == 'add'">{{ user ? user.name : '暂未读取到当前用户数据' }}</span>
+			<static-select type="ipr" v-model="form.ipr" v-else></static-select>
 		</el-form-item>
 		<el-form-item label="提案人" prop="proposer">
 			<remote-select type="member" v-model="form.proposer"></remote-select>
@@ -120,6 +121,9 @@ export default {
   	},
   	detail () {
       return this.$store.getters.detailBase;
+    },
+    user () {
+    	return this.$store.getters.getUser;
     }
   },
   methods: {
@@ -129,6 +133,7 @@ export default {
   		this.btn_disabled = true;
   		const url = URL;
   		const data = this.$tool.shallowCopy(this.form, {'date': true});
+  		data.ipr = this.user ? this.user.id : '';
   		const success = _=>{ this.$router.push('/copyright/list') };
   		const complete = _=>{ this.btn_disabled = false };
 

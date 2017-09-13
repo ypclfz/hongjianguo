@@ -6,12 +6,16 @@
   			<remote-select type="member" v-model="form.from"></remote-select>
   		</el-form-item> -->
 
-			<el-form-item label="收货人" prop="to">
+			<el-form-item label="收件人" prop="to">
 				<remote-select type="member" v-model="form.to"></remote-select>
 			</el-form-item>
 
 			<el-form-item label="快递公司" prop="company">
-				<el-input v-model="form.company" placeholder="请填写快递公司名称"></el-input>
+				<el-autocomplete
+          v-model="form.company"
+          :fetch-suggestions="querySearch"
+          placeholder="请输入快递公司名称"
+        ></el-autocomplete>
 			</el-form-item>
 
 			<el-form-item label="快递单号" prop="number">
@@ -22,7 +26,7 @@
 				<el-date-picker v-model="form.mail_date" type="date" placeholder="请选择发文日期"></el-date-picker>
 			</el-form-item>
 
-      <el-form-item label="收文日期" prop="receipt_date">
+      <el-form-item label="收文日期" prop="receipt_date" v-if="type != 'add'">
         <el-date-picker v-model="form.receipt_date" type="date" placeholder="请选择收件日期"></el-date-picker>
       </el-form-item>
 
@@ -64,8 +68,32 @@ export default {
       },
       rules: {
       
-      }
+      },
+      queryData: [
+        { "value": '顺丰'},
+        { "value": '邮政EMS'},
+        { "value": '圆通快递'},
+        { "value": '申通快递'},
+        { "value": '韵达快运'},
+        { "value": '中通快递'},
+        { "value": '汇通快递'},
+        { "value": '天天快递'},
+        { "value": '宅急送'},
+      ],
 		}
+  },
+  methods: {
+    querySearch(queryString, cb) {
+      var queryData = this.queryData;
+      var results = queryString ? queryData.filter(this.createFilter(queryString)) : queryData;
+      // 调用 callback 返回建议列表的数据
+      cb(results);
+    },
+    createFilter(queryString) {
+      return _ => {
+        return (_.value.indexOf(queryString.toLowerCase()) === 0);
+      };
+    }
   },
   components: {  ExpressList, RemoteSelect  },
   URL: '/api/expresses',

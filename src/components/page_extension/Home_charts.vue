@@ -8,6 +8,13 @@
       <el-radio-group v-model="xAxis" size="small" v-if="!!config.xAxis">
         <el-radio-button size="small" v-for="item in config.xAxis" :label="item.value" :key="item.value">{{ item.label }}</el-radio-button>
       </el-radio-group>
+      <el-date-picker
+        v-model="date"
+        type="daterange"
+        placeholder="选择日期范围"
+        size="small"
+      >
+      </el-date-picker>
     </div>
     <div :id="type" style="width: 100%; height: 300px;"></div>
   </el-card>
@@ -135,7 +142,7 @@ const config_map = [
     title: '申请统计',
     type: 'application',
     chart: 'pie',
-    xAxis: [
+    group: [
       { label: '按地区统计', value: 'area', default: true },
       { label: '按类型统计', value: 'patent_type'},
     ]
@@ -158,6 +165,7 @@ export default {
       option: '',
       chart: null,
       loading: true,
+      date: [],
     }
 
     function getDefault(key) {
@@ -188,6 +196,9 @@ export default {
       }
       if(this.group) {
         data.group = this.group;
+      }
+      if(this.date[0] && this.date[1]) {
+        data.date = this.date.map(_=>this.$tool.getDate(_)).join(",");
       }
       const success = _=>{
         this.loading = false;
@@ -228,6 +239,9 @@ export default {
       this.refreshCharts();
     },
     group () {
+      this.refreshCharts();
+    },
+    date (val) {
       this.refreshCharts();
     }
   },
