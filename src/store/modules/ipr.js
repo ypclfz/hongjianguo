@@ -28,7 +28,7 @@ const actions = {
 				if(d.status){
 					commit('setIpr', d.members);
 				}else {
-					alert('请求Ipr数据失败');
+					// alert('请求Ipr数据失败');
 				}
 			})
 			.catch(error=>{console.log(error)});

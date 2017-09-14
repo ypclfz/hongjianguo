@@ -5,9 +5,9 @@
 	    <el-form-item label="用户名" prop="username" >
 	    	<el-input v-model="form.username" :disabled="popType == 'edit'"></el-input>
 	    </el-form-item>
-		<el-form-item label="用户角色" prop="userrole" >
+		<!-- <el-form-item label="用户角色" prop="userrole" >
 			<user-role v-model="form.role" :disabled="popType == 'edit'"></user-role>
-		</el-form-item>
+		</el-form-item> -->
 	    <template v-if="popType == 'add'">
 		    <el-form-item label="密码" prop="password">
 		    	<el-input type="password" v-model="form.password"></el-input>

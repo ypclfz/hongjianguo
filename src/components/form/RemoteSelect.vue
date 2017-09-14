@@ -94,7 +94,8 @@ export default {
   name: 'remoteSelect',
   mixins: [ AxiosMixins, RemoteSelect ],
   props: {
-  	'type': [String, Object]
+  	'type': [String, Object],
+    'para': Object,
   },
   data () {
   	return { 
@@ -104,7 +105,9 @@ export default {
   },
   methods: {
   	initialization () {
-  		this.remoteMethod('');
+
+      this.remoteMethod('');  
+      
   	},	
   	getSelected () {
   		return this.selected;
@@ -126,6 +129,32 @@ export default {
           return this.map.get(_);
         });
       }
+    },
+    remoteMethod (keyword) {
+     
+      const s = { keyword, listOnly: '1' };
+      const os = this.PARAMS;
+      const key = this.DATA_KEY;
+      const url = this.URL;
+      const data = os ? Object.assign({}, s, os) : s;
+      const success = _=>{
+        this.loading = false;
+        _[key] = _[key].map(_=>{
+          if(!_.name) _.name = _.label;
+          if(!_.id) _.id = _.value;
+          return _;
+        });
+        this.options = _[key];
+      }
+
+      this.loading = true;
+      this.axiosGet({url, data, success});
+    },
+    clear () {
+      this.selected = [];
+      this.static_map = [];
+      this.multiple ? this.$emit('input', []) : this.$emit('input', '');
+      this.remoteMethod(''); 
     }
   },
   computed: {
@@ -146,12 +175,22 @@ export default {
   		return this.choose.PLACEHOLDER;
   	},
   	PARAMS () {
-  		return this.choose.PARAMS;
+      let obj = {};
+
+      if(this.para) {
+        Object.assign(obj, this.para);
+      }
+      if(this.choose.PARAMS) {
+        Object.assign(obj, this.choose.PARAMS);
+      }
+
+  		return obj;
   	},
   	option_in () {
   		//由于一部分的val可能是通过object传入,单纯的options只含有动态部分
   		//所以取selected和options的并集,取得selected的静态部分选项
   		const arr = [ ...this.selected, ...this.options ];
+      console.log(this.selected, this.options, arr);
   		// console.log(arr);
   		return this.$tool.singleObject(arr,'id');
   	},

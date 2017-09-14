@@ -26,6 +26,7 @@ import InvoiceCommon from '@/components/page/InvoiceCommon'
 import ClassificationCommon from '@/components/page/ClassificationCommon'
 import MailList from '@/components/page/MailList'
 import SystemMessage from '@/components/page/SystemMessage'
+import SystemMessageDetail from '@/components/page/SystemMessageDetail'
 import MailAdd from '@/components/page/MailAdd'
 //###################
 import CommonDetail from '@/components/page/CommonDetail'
@@ -211,6 +212,11 @@ const router = new Router({
       path: '/news/systemMessage',
       name: 'SystemMessage',
       component: SystemMessage,
+    },
+    {
+      path: '/news/systemMessage/detail',
+      name: 'SystemMessageDetail',
+      component: SystemMessageDetail,
     },
     {
       path: '/news/mailList/mailAdd',

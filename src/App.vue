@@ -9,11 +9,13 @@
       v-model="sysPopVisible"
     >
     <div>
-      <ul style="list-style-type: decimal;">
-        <li class="sysmesg-item">消息1</li>
-        <li class="sysmesg-item">消息2</li>
+      <template v-if="sysmesg.length != 0">
+      <ul style="list-style-type: decimal;" >
+        <li class="sysmesg-item"  v-for="item in sysmesg" @click="$router.push(`/news/systemMessage/detail?id=${item.id}`)">{{ item.subject }}</li>
       </ul>
       <a href="javascript::void(0)" @click="$router.push('/news/systemMessage');sysPopVisible = false">查看更多...</a>
+      </template>
+      <div v-else style="color: #ccc; margin-top: 10px; margin-left: 20px;">暂无系统消息...</div>      
     </div>
     </el-popover>
 
@@ -36,7 +38,7 @@
           <app-menu v-for="item in menu_data" :data="item" :key="item.path"></app-menu>
         </el-menu>
       </div>
-    <div class="container" v-loading="loading" :style="`min-height: ${navL_height-20}px; padding: 20px 20px 0; background-color: #F9FAFC;`">
+    <div class="container" v-loading="loading" :element-loading-text="loadingText" :style="`min-height: ${navL_height-20}px; padding: 20px 20px 0; background-color: #F9FAFC;`">
       <!-- <h1 class="container-menu"><i :class="select.icon"></i><span>{{ select.text }}</span></h1> -->
       <div class="container-nav">
         <el-breadcrumb separator=">">
@@ -103,11 +105,14 @@ export default {
       return this.$store.getters.screen_label;
     },
     navL_height () {
-      
+      this.$store.commit('setInnerHeight', window.innerHeight - 50);
       return  window.innerHeight - 50;
     },
     loading () {
       return this.$store.getters.loading;  
+    },
+    loadingText () {
+      return this.$store.getters.loadingText;
     },
     username () {
       const user = this.$store.getters.getUser; 
@@ -119,7 +124,7 @@ export default {
         s = [];
         this.$store.dispatch('refreshMesg'); 
       }
-
+      if(s.length > 3) s = s.slice(0,3);
       return s;
     }
   },
@@ -209,7 +214,7 @@ export default {
       this.axiosGet({url, success, error, catchFunc});
     }
     // this.axiosGet({url, success, error, catchFunc});
-    this.axiosPost({url: '/api/login', success: success2, data: {username: 'admin', password: 'Z9jgM6FhdKWEqbbpJePv/6qeTO/Yk2b6lx7zF4tiBncRubwf0fz93hkqGXCiWvqXCDIq7x+kAH3TK5zhjDZ53jgt1Gx1vvBPHn3ga7HTqPrnc+VhhuVGeTefHShJBx32rnbhL6LbEqCAMGqtQXaovCtuJGY6uWYAPfecAOGMuadnxTigTTBwKtW2oVP4J/EwAroYKuy4MK4Pd7YGtFoJAhlpKVOponsgsYQ8EKGOSVxcZgcgnOw8LhPy28N+xoFCh0OBkMyjM80Ybjq+H8BO6CacnDzQReZL5wQZqBdTtW7CUBi6S4+JWDPBahqNgz7jD73UhEIeG0ivFLEdCWtlVw=='}});
+    this.axiosPost({url: '/api/login', success: success2, data: {username: 'liucheng1', password: 'Z9jgM6FhdKWEqbbpJePv/6qeTO/Yk2b6lx7zF4tiBncRubwf0fz93hkqGXCiWvqXCDIq7x+kAH3TK5zhjDZ53jgt1Gx1vvBPHn3ga7HTqPrnc+VhhuVGeTefHShJBx32rnbhL6LbEqCAMGqtQXaovCtuJGY6uWYAPfecAOGMuadnxTigTTBwKtW2oVP4J/EwAroYKuy4MK4Pd7YGtFoJAhlpKVOponsgsYQ8EKGOSVxcZgcgnOw8LhPy28N+xoFCh0OBkMyjM80Ybjq+H8BO6CacnDzQReZL5wQZqBdTtW7CUBi6S4+JWDPBahqNgz7jD73UhEIeG0ivFLEdCWtlVw=='}});
   },
   mounted () {
     window.onresize = _=>{
@@ -376,6 +381,26 @@ nav {
 }
 .ql-container.ql-snow {
   height: 300px;
+}
+.table-item-read, .table-item-unread {
+  display: inline-block;
+
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+}
+.table-item-read {
+  background-color: #ccc;
+}
+.table-item-unread {
+  background-color: #58B7FF;
+}
+.sysmesg-item {
+  cursor: pointer;
+  margin-bottom: 5px; 
+}
+.sysmesg-item:hover {
+  color: #58B7FF;
 }
 /*这里放入重写element-ui样式的内容*/
 #app {

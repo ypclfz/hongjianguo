@@ -6,6 +6,7 @@
 	:disabled="disabled"
 	filterable
   placeholder="请选择标签"
+  default-first-option
   >
   	<el-option
 		v-for="item in tagOptions"

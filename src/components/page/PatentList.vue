@@ -26,6 +26,7 @@ export default {
   },
   data () {
     const height = this.$store.getters.getInnerHeight - 500;
+    console.log(height);
     return {
 
       tableOption: {

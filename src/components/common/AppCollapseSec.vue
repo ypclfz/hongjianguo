@@ -5,7 +5,7 @@
 
 <script>
 export default {
-  name: 'hello',
+  name: 'AppCollapseSec',
   data () {
     return {
       msg: 'Welcome to Your Vue.js App'

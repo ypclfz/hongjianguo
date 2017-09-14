@@ -106,7 +106,7 @@ export default {
       const data = {rules: this.group_rules};
       const success = _=>{
         this.$message({message: '保存权限设置成功', type: 'success'});
-        this.powerPop = false;
+        this.dialogPowerVisible = false;
       }
 
       this.axiosPut({url, data, success});
@@ -130,7 +130,7 @@ export default {
               <span style="font-size: 12px">{ node.label} <em style="color: #20a0ff; font-style: normal;">{ data.memberCount !== undefined ? `(${data.memberCount})` : '' }</em></span>
             </span>
             <span style="float: right; margin-right: 20px">
-              {data.id !== 0 ? <el-button size="mini" on-click={ () => this.powerPop(store, data) }>权限</el-button> : ''}
+              {data.id !== 0 && data.id !== 1 ? <el-button size="mini" on-click={ () => this.powerPop(store, data) }>权限</el-button> : ''}
             </span>
           </span>); 
     },

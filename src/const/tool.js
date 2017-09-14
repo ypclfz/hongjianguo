@@ -166,8 +166,8 @@ export default {
 	singleObject (arr, key) {
 		if(arr.length == 0 || !key ) return arr;
 
-		const obj = {};
-		arr.forEach( _=>{obj[_[key]] = _} );
-		return Object.values(obj); 
+		const map = new Map();
+		arr.forEach( _=>{map.set(_[key],_)} );
+		return [...map.values()]; 
 	}
 }

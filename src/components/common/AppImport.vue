@@ -192,6 +192,7 @@ export default {
   			this.$message({message: '导入数据不能为空', type: 'warning'});
   			return;
   		}
+      if(this.config.url === '/notices/import')
         if( this.tableData.filter(_=>_.serial == '').length != 0 ) {
           this.$message({message: '必须指定关联案件', type: 'warning'});
           return;

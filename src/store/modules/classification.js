@@ -37,7 +37,7 @@ const actions = {
 				if(d.status){
 					commit('setClassification', d.classifications);
 				}else {
-					alert('请求技术分类数据失败');
+					// alert('请求技术分类数据失败');
 				}
 			})
 			.catch(error=>{console.log(error)});

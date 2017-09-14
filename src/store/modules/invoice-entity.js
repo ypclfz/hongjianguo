@@ -24,7 +24,7 @@ const actions = {
 				if(d.status){
 					commit('setEntity', d.entities);
 				}else {
-					alert('请求企业数据失败');
+					// alert('请求企业数据失败');
 				}
 			})
 			.catch(error=>{console.log(error)});

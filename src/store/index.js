@@ -29,7 +29,9 @@ const store = new Vuex.Store({
     axios,
     status: 0, //这里进行地址代理控制, 为1时去掉/api, 为0时保留
     loading: false,
+    loadingText: '',
     inner_height: 0,
+    inner_width: 0,
   },
   modules: {
     filter,
@@ -59,7 +61,8 @@ const store = new Vuex.Store({
     AXIOS_FAILURE () {
       alert('网络错误');
     },
-    onLoading (state) {
+    onLoading (state, text="加载中...") {
+      state.loadingText = text;
       state.loading = true;
     },
     cancelLoading (state) {
@@ -67,12 +70,17 @@ const store = new Vuex.Store({
     },
     setInnerHeight (state, number) {
       state.inner_height = number;
+    },
+    setInnerWidth (state, number) {
+      state.inner_width = number;
     }
   },
   getters: {
     getDragId: state=>state.dragId,
     loading: state=>state.loading,
+    loadingText: state=>state.loadingText,
     getInnerHeight: state=>state.inner_height,
+    getInnerWidth: state=>state.inner_width,
   },
 });
 

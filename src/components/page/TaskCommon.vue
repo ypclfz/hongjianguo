@@ -2,7 +2,7 @@
   <div class="main">
      <strainer @query="strainerQuery" @clear="strainerClear"></strainer>
     <table-component :tableOption="tableOption" :data="tableData" @refreshTableData="refreshTableData" ref="table">
-      <el-select slot="toggle" v-model="task_toggle" style="width: 110px; margin-left: 5px;">
+      <el-select v-if="taskAll" slot="toggle" v-model="task_toggle" style="width: 110px; margin-left: 5px;">
         <el-option key="mine" label="我的任务" value="personal"></el-option>
         <el-option key="all" label="所有任务" value="all"></el-option>
       </el-select>
@@ -18,8 +18,8 @@
         <el-form-item label="代理机构" prop="agency_id">
           <remote-select type="agency" v-model="agen.agency_id"></remote-select>
         </el-form-item>
-        <el-form-item label="代理人" prop="agency_agent">
-          <remote-select type="agent" v-model="agen.agency_agent"></remote-select>
+        <el-form-item label="代理人" prop="agency_agent" v-show="agen.agency_id !== '' ? true : false">
+          <remote-select type="agent" v-model="agen.agency_agent" :para="{'agency': agen.agency_id}" ref="agent"></remote-select>
         </el-form-item>
         <el-form-item label="备注" prop="remark">
           <el-input v-model="agen.remark" type="textarea"></el-input>
@@ -120,7 +120,7 @@ export default {
       const data = Object.assign({}, this.agen, { ids });
       const success = _=>{
         this.dialogAgenVisible = false; 
-        this.$message({type: 'success', message: '委案成功'});
+        this.$message({type: 'success', message: '申请委案成功'});
         this.update();
       };
       const complete = _=>{this.btn_disabled = false};
@@ -265,7 +265,7 @@ export default {
           { type: 'delete' },
           { type: 'export' },
           {},
-          { type: 'custom', label: '委案', click: this.agenPop },
+          { type: 'custom', label: '申请委案', click: this.agenPop },
           // { type: 'custom', label: '转出', icon: '', click: ()=>{ this.dialogTurnoutVisible = true; } },
           { type: 'control', label: '字段'},
           // { type: 'custom', label: '设定', icon: '', click: ()=>{ this.dialogSettingVisible = true; } }
@@ -341,6 +341,19 @@ export default {
   computed: {
     task_status () {
       return this.$route.meta.status;
+    },
+    menusMap () {
+      return this.$store.getters.menusMap;
+    },
+    taskAll () {
+      console.log(this.menusMap);
+    
+      let flag = true;
+      if( this.menusMap.get('/tasks/all') ) {
+        flag = false;
+      }
+  
+      return flag;
     }
   },  
   watch: {
@@ -350,6 +363,17 @@ export default {
     task_toggle () {
       this.refresh();
     },
+    'agen.agency_id': {
+      handler (val) {
+        if(val !== '') {
+          this.$nextTick(_=>{
+            this.$refs.agent.clear()
+          });  
+        }else {
+          this.agen.agency_id = '';
+        }
+      }
+    }
   },
   mounted () {
 

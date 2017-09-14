@@ -25,8 +25,8 @@
     >
   		<remote-select type="agency" v-model="form.agency"></remote-select>
   	</el-form-item>
-    <el-form-item prop="agent" label="代理人" v-if="fields.agent">
-      <remote-select type="agent" v-model="form.agent" ></remote-select>
+    <el-form-item prop="agent" label="代理人" v-if="fields.agent" v-show="form.agency !== ''">
+      <remote-select type="agent" v-model="form.agent" :para="{'agency': form.agency}" ref="agent"></remote-select>
     </el-form-item>
     <el-form-item prop="agency_type" label="代理类型" v-if="fields.agency_type"
       :rules="{ required: true, message: '代理类型不能为空'}"
@@ -160,8 +160,12 @@ export default {
 						this.fields = d.fields;
 						this.defaultVal = d.default;
             
-            if(this.fields.agent) this.form.agent = this.data.agent;
             if(this.fields.agency) this.form.agency = this.data.agency;
+            this.$nextTick(_=>{
+              console.log('aaaa');
+              if(this.fields.agent) this.form.agent = this.data.agent;
+            })
+            
             if(this.fields.agency_type) this.form.agency_type = 1;
 
 						if(this.defaultVal != 'ipr') this.form.person_in_charge = this.data[d.default];
@@ -172,7 +176,20 @@ export default {
 				}
 				this.$refs.form.resetFields();
 			}
-		}
+		},
+    'form.agency': {
+      handler (val) {
+
+        if(val !== '' && !(val instanceof Object)) {
+          if(this.$refs.agent) {
+            this.$refs.agent.clear();
+          }
+              
+        }else {
+          this.form.agent = '';
+        }
+      }
+    }
 	},
 	computed: {
     ifNext () {

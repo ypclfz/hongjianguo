@@ -20,6 +20,7 @@ const actions = {
 			page: 1,
 			listRows: 100,
 			mailbox: 3,
+			read: 0,
 		};
 		rootState.axios
 			.get(url, { params })

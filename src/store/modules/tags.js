@@ -25,7 +25,7 @@ const actions = {
 			if(d.status){
 				commit('setTags', d.tags);
 			}else {
-				alert('请求标签数据失败');
+				// alert('请求标签数据失败');
 			}
 		})
 		.catch(error=>{console.log(error)});

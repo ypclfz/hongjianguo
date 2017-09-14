@@ -26,7 +26,7 @@ const actions = {
 				if(d.status){
 					commit('setData', d.list);
 				}else {
-					alert('请求file数据失败');
+					// alert('请求file数据失败');
 				}
 			})
 			.catch(error=>{console.log(error)});

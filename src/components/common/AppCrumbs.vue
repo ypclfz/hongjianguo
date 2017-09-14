@@ -6,7 +6,7 @@
 <script>
 import menu from '@/const/menuConst'
 export default {
-  name: 'hello',
+  name: 'AppCrumbs',
   data () {
 	return {
 	  msg: 'Welcome to Your Vue.js App'

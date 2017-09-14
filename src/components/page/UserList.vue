@@ -157,6 +157,7 @@ export default {
 			const success = _=>{
 				this.$message({message: '添加用户至用户组成功', type: 'success'});
 				this.dialogVisible = false;
+				this.refresh();
 			}
 
 			this.axiosPut({url, success});

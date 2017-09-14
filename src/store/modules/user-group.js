@@ -31,7 +31,7 @@ const actions = {
 				if(d.status){
 					commit('setGroup', d.groups);
 				}else {
-					alert('请求用户组数据失败');
+					// alert('请求用户组数据失败');
 				}
 			})
 			.catch(error=>{console.log(error)});

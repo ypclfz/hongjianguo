@@ -51,7 +51,7 @@ const actions = {
 	          if(func) func();
 	          
 	          console.log(err);
-	          alert('网络错误');
+	          // alert('网络错误');
 	      })
 		
 	}
