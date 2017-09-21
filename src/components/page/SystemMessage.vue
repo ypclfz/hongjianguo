@@ -27,7 +27,7 @@ export default {
 		  		{ type: 'text', label: '发送时间', prop: 'mail_date', sortable: true, width: '200' },
           { type: 'text', label: '标题', prop: 'subject', overflow: true, width: '300',
             render: (h,item,row)=>{
-              return ( <span>{ row.read ? <i class="table-item-read"></i> : <i class="table-item-unread"></i> }<span style="margin-left: 5px;">{ item }</span></span> );
+              return ( <span>{ row.read ? <i class="table-flag table-flag-read"></i> : <i class="table-flag table-flag-unread"></i> }<span style="margin-left: 5px;">{ item }</span></span> );
             } 
           },
           { type: 'text', label: '内容', prop: 'content', overflow: true, overflow: true },

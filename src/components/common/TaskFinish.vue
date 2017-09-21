@@ -1,7 +1,18 @@
 <template>
-  <el-form :model="form" label-width="150px" ref="form" v-loading="loading" style="min-height: 300px;" element-loading-text="数据加载中">
-  	<el-form-item label="下一节点" v-if="ifNext">
-  		<el-select v-model="next">
+  <el-form :model="form" label-width="100px" ref="form" v-loading="loading" style="min-height: 300px;" element-loading-text="数据加载中">
+  	<el-form-item :label="data.procedure.label" v-if="data.fields && data.fields.procedure">
+      <el-select v-model="next">
+        <el-option
+          v-for="item in data.procedure.items"
+          :key="item.id"
+          :label="item.name"
+          :value="item.id"
+        >
+        </el-option>
+      </el-select>
+    </el-form-item>
+    <el-form-item label="下一节点" v-if="ifNext">
+  		<el-select v-model="next" :disabled="data.fields.procedure ? true : false">
   		 <el-option
 				v-for="item in data.next"
 				:key="item.id"
@@ -39,6 +50,12 @@
   	<el-form-item prop="dealine" label="法限" v-if="fields.deadline">
 			<el-date-picker v-model="form.dealine" type="date" placeholder="选择法限"></el-date-picker>
   	</el-form-item>
+    <el-form-item prop="area" label="申请地区" v-if="fields.area" :rules="{type: 'array', required: true, message: '申请地区不能为空'}">
+      <static-select type="area" v-model="form.area"  multiple></static-select>
+    </el-form-item>
+    <el-form-item prop="type" label="专利类型" v-if="fields.type" :rules="{type: 'number', required: true, message: '专利类型不能为空', trigger: 'change'}">
+      <static-select type="patent_type" v-model="form.type" ></static-select>
+    </el-form-item>
     <el-form-item prop="remark" label="任务备注" v-if="fields.remark">
       <el-input type="textarea" v-model="form.remark"></el-input>
     </el-form-item>
@@ -90,7 +107,9 @@ export default {
 				deadline: '',
 				remark: '',
 				attachments: [],
-        rank: '',
+        rank: 5,
+        area: [],
+        type: '',
 			},
 			'defaultVal': '',
 			'fields': {},
@@ -105,6 +124,7 @@ export default {
 	methods: {
   	refreshData () {
       this.loading = true; 
+      this.next = "";
   		const url = `${URL}/${this.id}/form`;
   		const success = d=>{
   			this.data = d.data;
@@ -154,22 +174,29 @@ export default {
 		},
 		'next': {
 			handler: function (val) {
+        console.log('-----------------val--------------------')
+        console.log(val);
+        console.log('-----------------val--------------------')
         if(val == "") return;
 				for (let d of this.data.next) {
 					if(d.id == val) {
-						this.fields = d.fields;
+						
+            this.fields = d.fields;
 						this.defaultVal = d.default;
             
             if(this.fields.agency) this.form.agency = this.data.agency;
-            this.$nextTick(_=>{
-              console.log('aaaa');
-              if(this.fields.agent) this.form.agent = this.data.agent;
-            })
-            
             if(this.fields.agency_type) this.form.agency_type = 1;
-
-						if(this.defaultVal != 'ipr') this.form.person_in_charge = this.data[d.default];
-            if(this.defaultVal == 'ipr') this.form.person_in_charge = this.data[d.default]['id'];
+            const person_in_charge = this.data[d.default] ? this.data[d.default] : '';
+        
+            this.$nextTick(_=>{
+              // console.log('aaaa');
+              if(this.fields.agent) this.form.agent = this.data.agent;
+              if(this.defaultVal == 'ipr') {
+                this.form.person_in_charge = person_in_charge['id'];
+              }else {
+                this.form.person_in_charge = person_in_charge;
+              }
+            })
             
 						break;
 					}
@@ -194,7 +221,7 @@ export default {
 	computed: {
     ifNext () {
       return this.data.next && this.data.next.length != 0 ? true : false;
-    },
+    }
 	},
 	components: { Member, Agent, Agency, Ipr, Upload, RemoteSelect, StaticSelect }
 }

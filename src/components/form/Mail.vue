@@ -7,7 +7,7 @@
     :multiple-limit="multiple ? 0 : 1"
    	filterable
    	allow-create
-   	value-key="id"
+   	value-key="value"
    	default-first-option
 	>
 		<el-option v-for="item in option_in" :key="item.value" :label="item.label" :value="item.value"></el-option>
@@ -15,10 +15,14 @@
 </template>
 
 <script>
+import AxiosMixins from '@/mixins/axios-mixins'
 
+const URL = '/api/mailAddress';
+let options = undefined;
 
 export default {
   name: 'mail',
+  mixins: [ AxiosMixins ],
   props: {
     'value': null,
     'multiple': {
@@ -30,6 +34,21 @@ export default {
 		return {
 			options: [],
 		}
+  },
+  created () {
+    if(options) {
+      this.options = options;
+    }else {
+      options = [];
+      const url = URL;
+      const success = _=>{ 
+        options = _.list;
+        this.options = options;
+      };
+
+      this.axiosGet({url, success});
+    }
+    console.log(this.options);
   },
   computed: {
   	value2 () {

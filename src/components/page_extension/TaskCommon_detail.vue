@@ -15,7 +15,7 @@
         </el-form>
       </el-collapse-item>
     </el-collapse>
-    <div v-else>暂无相关任务的数据...</div>
+    <div v-else style="padding: 20px; font-size: 18px;">暂无相关任务的数据...</div>
   </div>
 </template>
 

@@ -16,7 +16,6 @@ export default {
       }else if(array && d instanceof Array) {
       	data[k] = d.join(',');
       }else if(skip.length != 0 && skip.indexOf(k) >= 0) {
-      	console.log(k);
       	continue;
       }else {
         data[k] = d;
@@ -151,11 +150,17 @@ export default {
     	window.location.href = `${window.location.origin}/${string}`;
 	},
 	detectionTime (time) {
-		const now_time = new Date().getTime();
-		const in_time = new Date(time.split(' ')[0]).getTime() + 8.64e7;
-		const n = in_time - now_time;
+		let str = '';
+		if(time) {
 
-		return (n > 8.64e7 && n < 3*8.64e7 && 'table-warning') || (n < 8.64e7 && 'table-error') || '';
+			const now_time = new Date().getTime();
+			const in_time = new Date(time.split(' ')[0]).getTime() + 8.64e7;
+			const n = in_time - now_time;
+
+			str = (n > 8.64e7 && n < 3*8.64e7 && 'danger') || (n < 8.64e7 && 'warning') || 'safety';
+		}
+
+		return str;
 	},
 	getObjLength (obj) {
 		let i = 0;

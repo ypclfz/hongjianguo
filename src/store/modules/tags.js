@@ -1,11 +1,16 @@
 let url = '/api/tags';
 const state = {
-  data: [],
+  data: undefined,
 }
 
 const getters = {
 	tagOptions: state=>{
-		return state.data.map( d=>{return {label: d.tag, value: d.tag} } );
+		let d = state.data;
+		if(d) {
+			d = d.map( d=>{return {id: d.tag, name: d.tag} } );
+		}
+
+		return d;
 	},
 }
 

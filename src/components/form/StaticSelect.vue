@@ -5,6 +5,10 @@
   	:multiple="multiple"
   	:disabled="disabled"
     :placeholder="config.placeholder"
+    filterable
+    :allow-create="config.allowCreate !== undefined ? config.allowCreate : false"
+    :default-first-option="config.defaultFirstOption !== undefined ? config.defaultFirstOption : false"
+    clearable
   >
   	<el-option
   		v-for="item in options"
@@ -41,6 +45,7 @@ const config = [
       { name: '发明专利', id: 1 },
       { name: '实用新型', id: 2 },
       { name: '外观设计', id: 3 },
+      { name: '发明+新型', id: 4 },
     ]
   }],
   ['agency_type', {
@@ -57,6 +62,28 @@ const config = [
   ['file_type', {
     placeholder: '请选择文件类型',
     options: 'fileTypeOptions',
+  }],
+  ['group', {
+    placeholder: '请选择用户组',
+    options: 'groupOptions',
+  }],
+  ['mail', {
+    placeholder: '请输入邮箱地址',
+    options: 'mailOptions',
+    refresh: 'refreshMail',
+    allowCreate: true,
+    defaultFirstOption: true,
+  }],
+  ['tag', {
+    placeholder: '请输入或选择标签',
+    options: 'tagOptions',
+    refresh: 'refreshTags',
+    allowCreate: true,
+    defaultFirstOption: true,
+  }],
+  ['area', {
+    placeholder: '请选择地区',
+    options: 'areaData',
   }]
 ];
 const map = new Map(config);
@@ -72,7 +99,15 @@ export default {
   	},
     options () {
       let op = this.config.options;
-      op = op instanceof Array ? op : this.$store.getters[op];
+      
+      if( typeof op == 'string') {
+        op = this.$store.getters[op];
+        if(op === undefined) {
+          this.$store.commit('setMail', []);
+          op = [];
+          if(this.config.refresh) this.$store.dispatch(this.config.refresh);
+        }
+      }
       return op;
     },
   },

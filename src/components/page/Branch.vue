@@ -22,18 +22,10 @@
 		  			{{ description ? description : '暂无描述' }}
 		  			</el-form-item>
 		  			<el-form-item label="默认IPR">
-		  				<el-select v-model="ipr" placeholder="请选择IPR">
-		  					<el-option
-									v-for="item in iprOptions"
-									:key="item.value"
-									:label="item.label"
-									:value="item.value"
-		  					>
-		  					</el-option>
-		  				</el-select>
+		  				<static-select type="ipr" v-model="ipr"></static-select>
 		  			</el-form-item>
 		  			<el-form-item label="默认Reviewer">
-		  				<inventor-select v-model="reviewer" default></inventor-select>
+		  				<remote-select type="inventor" v-model="reviewer" default></remote-select>
 		  			</el-form-item>
 		  			<el-form-item label="">
 		  				<el-button type="primary" @click="save">保存设置</el-button>
@@ -46,7 +38,8 @@
 </template>
 
 <script>
-import InventorSelect from '@/components/form/InventorSelect'
+import RemoteSelect from '@/components/form/RemoteSelect'
+import StaticSelect from '@/components/form/StaticSelect'
 
 const url = '/api/branches';
 export default {
@@ -97,8 +90,8 @@ export default {
   		this.id = a.id;
   		this.name = a.name;
   		this.description = a.description;
-  		this.ipr = a.ipr.uid;
-  		this.reviewer = a.reviewer.uid;
+  		this.ipr = a.ipr.id;
+  		this.reviewer = a.reviewer;
   	}
   },
   computed: {
@@ -110,11 +103,11 @@ export default {
   	},
   	iprOptions () {
   		const arr = [...this.$store.getters.iprOptions];
-  		arr.unshift({label: '未选择', value: ''});
+  		arr.unshift({name: '未选择', id: ''});
   		return arr;
   	},
   },
-  components: { InventorSelect }
+  components: { RemoteSelect, StaticSelect }
 }
 </script>
 

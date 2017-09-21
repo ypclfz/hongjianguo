@@ -1,7 +1,7 @@
 <template>
   <div class="main">
     <strainer v-model="filter" @refresh="refresh"></strainer>
-    <table-component :tableOption="tableOption" :data="tableData" @refreshTableData="refreshTableData" ref="table"></table-component>
+    <table-component :tableOption="tableOption" :data="tableData" @refreshTableData="refreshTableData" ref="table" :refresh-proxy="refreshProxy"></table-component>
   </div>
 </template>
 
@@ -25,10 +25,10 @@ export default {
     }
   },
   data () {
-    const height = this.$store.getters.getInnerHeight - 500;
-    console.log(height);
+    let height = this.$store.getters.getInnerHeight - 250;
+    height = height < 300 ? 300 : height; 
     return {
-
+      refreshProxy: '',
       tableOption: {
         'name': 'patentList',
         'url': URL,
@@ -51,7 +51,7 @@ export default {
           // { type: 'text', label: '专利状态', prop: 'status', render: (h,item)=>h('span', item ? '正常' : '暂停处理') },
           { type: 'text', label: '案号', prop: 'serial', sortable: true, width: '142' },
           { type: 'text', label: '专利类型', prop: 'type', render_simple: 'name', sortable: true, is_import: true, width: '142',  },
-          { type: 'text', label: '地区', prop: 'area', render_simple: 'name', is_import: true, width: '142' },
+          { type: 'text', label: '地区', prop: 'area', render_simple: 'name', sortable: true, is_import: true, width: '142' },
           { type: 'text', label: '专利标题', prop: 'title', sortable: true, is_import: true, width: '142' },
           { type: 'text', label: '当前状态', prop: 'progress', render_simple: 'name', sortable: true, width: '180' },
           { type: 'text', label: '专利摘要', prop: 'abstract', sortable: true, width: '500'},
@@ -167,14 +167,14 @@ export default {
       const data = Object.assign({}, option, this.filter);
       const success = d=>{
         if(data['format'] == 'excel') {
-          window.open(d.patents.downloadUrl);
+          window.location.href = d.patents.downloadUrl;
         }else {
-          this.tableData = d.patents;  
+          this.tableData = d.patents;
         }
         
       };
-      
-      this.axiosGet({url, data, success});
+
+      this.refreshProxy = this.axiosGet({url, data, success});
     },
     refresh () {
       this.$refs.table.refresh();

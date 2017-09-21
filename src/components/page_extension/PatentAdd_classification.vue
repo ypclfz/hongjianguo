@@ -8,7 +8,7 @@
 					<classification v-model="form.classification"></classification>
 				</el-form-item>
 				<el-form-item label="标签">
-					<tag v-model="form.tags" multiple></tag>
+          <static-select type="tag" v-model="form.tags" multiple></static-select>
 				</el-form-item>
 				<el-form-item label="主国际分类号">
 					<el-input v-model="form.main_ipc" placeholder="请填写主国际分类号"></el-input>
@@ -21,7 +21,7 @@
 import AppCollapse from '@/components/common/AppCollapse'
 import Product from '@/components/form/Product'
 import Classification from '@/components/form/Classification'
-import Tag from '@/components/form/Tag'
+import StaticSelect from '@/components/form/StaticSelect'
 
 export default {
   name: 'patentAddClassification',
@@ -54,7 +54,7 @@ export default {
 
     },
   },
-  components: { AppCollapse, Product, Classification, Tag }
+  components: { AppCollapse, Product, Classification, StaticSelect }
 }
 </script>
 

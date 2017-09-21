@@ -8,9 +8,7 @@ import menu from '@/const/menuConst'
 export default {
   name: 'AppCrumbs',
   data () {
-	return {
-	  msg: 'Welcome to Your Vue.js App'
-	}
+	return {}
   },
   computed: {
   	select_arr () {

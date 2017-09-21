@@ -1,18 +1,18 @@
 <template>
 <app-collapse col-title="任务筛选" default-close>
   <el-form label-width="100px" :model="form" ref="form">   
-  	<el-form-item label="指定期限" prop="due_time">
-  		<date-area v-model="form.due_time"></date-area>
-  	</el-form-item>
-  	<el-form-item label="法定期限" prop="deadline">
-  		<date-area v-model="form.deadline"></date-area>
-  	</el-form-item>
-  	<el-form-item label="完成时间" prop="end_time">
-  		<date-area v-model="form.end_time"></date-area>
-  	</el-form-item>
+  	
+  	
+  	
     <el-row>
       <el-col :span="12">
-        <el-form-item label="案件类型" prop="categoey">
+        <el-form-item label="指定期限" prop="due_time">
+          <el-date-picker type="daterange" placeholder="请选择指定期限" v-model="form.due_time"></el-date-picker>
+        </el-form-item>
+        <el-form-item label="法定期限" prop="deadline">
+          <el-date-picker type="daterange" placeholder="请选择法定期限" v-model="form.deadline"></el-date-picker>
+        </el-form-item>
+        <el-form-item label="案件类型" prop="category">
           <el-select v-model="form.category">
             <el-option
               v-for="item in options.project_type"
@@ -26,13 +26,16 @@
         <el-form-item label="代理机构" prop="agency">
           <remote-select type="agency" v-model="form.agency"></remote-select>
         </el-form-item>
-        <el-form-item label="流程节点" prop="task_def_id">
-          <flow-nodes v-model="form.task_def_id"></flow-nodes>
+        <el-form-item label="流程节点" prop="flow_node_id">
+          <flow-nodes v-model="form.flow_node_id"></flow-nodes>
         </el-form-item>
       </el-col>
       <el-col :span="12">
+        <el-form-item label="完成时间" prop="end_time">
+          <el-date-picker type="daterange" placeholder="请选择完成时间" v-model="form.end_time"></el-date-picker>
+        </el-form-item>
         <el-form-item label="IPR" prop="ipr">
-          <ipr v-model="form.ipr"></ipr>
+          <ipr type="ipr" v-model="form.ipr"></ipr>
         </el-form-item>
         <el-form-item label="代理人" prop="agent">
           <remote-select type="agent" v-model="form.agent"></remote-select>
@@ -55,7 +58,7 @@ import AppCollapse from '@/components/common/AppCollapse'
 import Agency from '@/components/form/Agency'
 import FlowNodes from '@/components/form/FlowNodes'
 import Agent from '@/components/form/Agent'
-import Ipr from '@/components/form/Ipr'
+import Ipr from '@/components/form/StaticSelect'
 import Member from '@/components/form/Member'
 import DateArea from '@/components/form/DateArea'
 import RemoteSelect from '@/components/form/RemoteSelect'
@@ -69,11 +72,11 @@ export default {
 		  	'ipr': '',
     		'agency': '',
 				'agent': '',
-				'task_def_id': '',
+				'flow_node_id': '',
 				'person_in_charge': '',
-		  	'due_time': ['',''],
-		  	'deadline': ['',''],
-		  	'end_time': ['',''],
+		  	'due_time': [],
+		  	'deadline': [],
+		  	'end_time': [],
 		  },
 		  options: {
 		  	'project_type': [
@@ -87,7 +90,19 @@ export default {
   },
   methods: {
   	query () {
-  		const copy = this.$tool.deepCopy(this.form);
+      const copy = {};
+  		for(let k in this.form) {
+        const d = this.form[k]
+        if(d instanceof Array) {
+          if(d[0]) {
+            copy[k] = d.map(_=>this.$tool.getDate(_)).join(",");  
+          }
+        }else {
+          if(d) {
+            copy[k] = d;  
+          }
+        }
+      }
   		this.$emit('query', copy);
   	},
   	clear () {

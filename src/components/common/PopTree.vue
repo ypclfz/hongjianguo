@@ -199,7 +199,7 @@ export default {
         return (
           <span>
             <span>
-              <span>{node.label}</span>
+              <span>{node.label}</span><span style="color: rgb(32, 160, 255);"> ({data.projects_count})</span>
             </span>
                
                 <span style="float: right; margin-right: 20px" >

@@ -1,13 +1,17 @@
 <template>
   <el-dialog :title="popType == 'add' ? '添加用户' : '编辑用户'" :visible.sync="dialogVisible">
 		<el-form :model="form" label-width="100px" ref="form" :rules="rules">
-		
-	    <el-form-item label="用户名" prop="username" >
-	    	<el-input v-model="form.username" :disabled="popType == 'edit'"></el-input>
+			<el-form-item label="用户组" v-if="popType == 'add'">
+				<span class="form-item-text">{{ group && group.id !== 0  ? group.name : '未分配用户组' }}</span>
+			</el-form-item>
+
+	    <el-form-item label="用户名" prop="username" v-if="popType == 'add'">
+	    	<el-input v-model="form.username" ></el-input>
 	    </el-form-item>
-		<!-- <el-form-item label="用户角色" prop="userrole" >
-			<user-role v-model="form.role" :disabled="popType == 'edit'"></user-role>
-		</el-form-item> -->
+	    <el-form-item label="用户名" v-if="popType == 'edit'">
+				<span class="form-item-text">{{ form.username }}</span>
+	    </el-form-item>
+
 	    <template v-if="popType == 'add'">
 		    <el-form-item label="密码" prop="password">
 		    	<el-input type="password" v-model="form.password"></el-input>
@@ -16,6 +20,17 @@
 		    	<el-input type="password" v-model="form.password_again"></el-input>	
 		    </el-form-item>
 	    </template>
+	    <template v-if="popType == 'edit'">
+	    	<el-form-item label="密码">
+					<el-button v-if="!editPsd" type="text" @click="editPsd = true">点击修改</el-button>
+					<template v-if="editPsd">
+						<el-input type="password" v-model="form.password" placeholder="请输入新密码..."></el-input>
+						<el-input type="password" v-model="form.password_again" placeholder="请再次输入新密码..." style="margin-top: 5px;"></el-input>
+						<el-button type="text" @click="clearEditPsd">取消</el-button>
+					</template>
+	    	</el-form-item>
+	    </template>
+
 	    <el-form-item label="昵称" prop="name">
 	    	<el-input v-model="form.name"></el-input>	
 	    </el-form-item>
@@ -32,7 +47,7 @@
 	    	<el-input v-model="form.qq"></el-input>
 	    </el-form-item>
 
-	    <el-form-item>
+	    <el-form-item style="margin-bottom: 0;">
 	    	<el-button type="primary" @click="add" v-if="popType == 'add'">确定</el-button>
 	    	<el-button type="primary" @click="edit" v-if="popType == 'edit'">编辑</el-button>
 	    	<el-button @click="dialogVisible = false">取消</el-button>
@@ -55,13 +70,13 @@ export default {
   		type: String, 
   		default: 'add',
   	},
-  	'groupId': null,
+  	'group': null,
   },
   data () {
 		return {
 			'id': '',
 		  'form': {
-		  	role: '',
+		  	groups: [],
 		  	username: '',
 		  	password: '',
 		  	password_again: '',
@@ -82,11 +97,12 @@ export default {
 		  	'password_again': [
 		  		{ required: true, message: '确认密码不能为空', triggrt: 'blur'},
 		  	],
-		  	'email': { pattern: /^[a-z0-9]+([._\\-]*[a-z0-9])*@([a-z0-9]+[-a-z0-9]*[a-z0-9]+.){1,63}[a-z0-9]+$/, message: '邮箱格式不正确', trigger: 'blur' },
-		  	'mobile': { pattern: /^1[3|4|5|7|8][0-9]{9}$/, message: '手机号码不正确', trigger: 'blur'},
+		  	'email': { pattern: /^[a-z0-9]+([._\\-]*[a-z0-9])*@([a-z0-9]+[-a-z0-9]*[a-z0-9]+.){1,63}[a-z0-9]+$/, message: '邮箱格式错误', trigger: 'blur' },
+		  	'mobile': { pattern: /^1[3|4|5|7|8][0-9]{9}$/, message: '手机号码格式错误', trigger: 'blur'},
 		  	'qq': { pattern: /^[1-9][0-9]{4,9}$/, message: 'qq号码格式错误', trigger: 'blur'},
 		  },
 		  dialogVisible: false,
+		  editPsd: false,
 		}
   },
   computed: {
@@ -95,21 +111,40 @@ export default {
   	},
   },
   methods: {
+  	clearEditPsd () {
+  		this.editPsd = false; 
+  		this.form.password = ''; 
+  		this.form.password_again = '';
+  	},
   	show (row) {
   		this.dialogVisible = true;
+  		if(this.$refs.form) {
+				this.$refs.form.resetFields();
+				this.form.username = "";
+				this.form.password = "";
+				this.form.password_again = "";
+			}	
+  		// console.log("----------------------------------")
+  		// console.log(this.$refs.form.fields);
   		this.$nextTick(()=>{
-  			const t = this.popType;
-  			if(t == 'add') {
-  				this.$refs.form.resetFields();
-  			}else {
+  		// console.log(this.$refs.form.fields);
+  		// console.log("------------------------------------")
+  			
+  			if(this.popType == 'edit') {
+  				this.editPsd = false;
   				this.$tool.coverObj(this.form, row);
   				this.id = row.id;
   			}
+  				
   		});
   	},
   	add () {
+  		let flag = false;
+  		this.$refs.form.validate(_=>{ flag = !_ });
+  		if( flag || this.psdCheck() ) return;
+
   		const url = URL;
-  		const data = Object.assign({}, this.form, { group_id: this.groupId });
+  		const data = Object.assign({}, this.form, { group_id: this.group.id });
   		const success = _=>{
   			this.$message({message: '添加用户成功', type: 'success'});
   			this.dialogVisible = false;
@@ -119,6 +154,10 @@ export default {
   		this.axiosPost({url, data, success});
   	},
   	edit () {
+  		let flag = false;
+  		this.$refs.form.validate(_=>{ flag = !_ })
+  		if( flag || ( this.editPsd && this.psdCheck() ) ) return;
+
   		const url = `${URL}/${this.id}`;
   		const data = this.form;
   		const success = _=>{
@@ -128,6 +167,28 @@ export default {
   		}
 
   		this.axiosPut({url, data, success});
+  	},
+  	psdCheck () {
+  		const psd = this.form.password;
+  		const psd_ag = this.form.password_again;
+
+  		let message = "";
+  		let flag = false;
+
+  		if(psd == "" || psd_ag == "") {
+  			message = "请完整填写密码与确认密码";
+  		}else if(psd !== psd_ag) {
+  			message = "两次密码输入不一致，请重新输入";
+  		}
+
+  		if(message) {
+  			this.$message({message, type: 'warning'});
+  			flag = true;
+  		}
+
+  		return flag;
+
+
   	}
   },
   components: { UserRole }

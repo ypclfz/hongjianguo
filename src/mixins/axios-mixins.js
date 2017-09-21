@@ -4,20 +4,24 @@ export default {
   methods: {
   	axiosGet ({url='', data={}, success=()=>{}, error=(d)=>{this.$alert(d.info)}, catchFunc=(err)=>{console.log(err); this.$alert('网络错误', {type: 'error'})}, complete=_=>{} }) {
       url = status ? url.replace(/\/api/, '') : url;
-      this.$axios
-        .get(url, { params: data })
+      
+      const res = this.$axios.get(url, { params: data });
+      res
         .then(response=>{
           const d = response.data;
           if(d.status == -1) {
             window.location.href = '/login';
-            return;
+            return false;
             // console.log(url);
           }
           d.status > 0 ? success(d) : error(d);
       
           complete(d);
+
         })
         .catch(error=>{catchFunc(error); complete(error);});
+
+      return res;
     },
     axiosPost ({ url='', data={}, success=()=>{}, error=(d)=>{this.$alert(d.info)}, catchFunc=(err)=>{console.log(err); this.$alert('网络错误')}, complete=()=>{} }) {
       url = status ? url.replace(/\/api/, '') : url;

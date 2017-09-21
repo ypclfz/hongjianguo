@@ -29,11 +29,14 @@ export default {
   name: 'feeCommon',
   mixins: [ AxiosMixins ],
   data () {
+    let height = this.$store.getters.getInnerHeight - 250;
+    height = height < 300 ? 300 : height; 
 		return {
 			popType: '',
 		  	option: {
         'name': 'fees',
         'url': URL,
+        height,
 		  	'header_btn': [
 		  		{ type: 'add', click: this.addPop },
 		  		{ 
@@ -52,7 +55,7 @@ export default {
 		  		{ type: 'control' },
 		  	],
         'import_type': '',
-		  	'header_slot': [ 'status', 'invoice'],
+		  	'header_slot': [ 'status', 'invoice' ],
 		  	'columns': [
 		  		{ type: 'selection' },
 		  		{ type: 'text', label: '案号', prop: 'serial', width: '192' },
@@ -98,6 +101,7 @@ export default {
       fee_invoice_scope: '',
       fee_invoice_pop: '',
       dialogVisible: false,
+      totalAmount: '',
 		}
   },
   computed: {
@@ -141,8 +145,7 @@ export default {
           }
         }else {
           this.tableData = d.fees;  
-        }
-         
+        } 
       };
 
   		this.axiosGet({url, data, success});
@@ -162,7 +165,10 @@ export default {
   		this.$confirm(`删除后不可恢复，确认删除‘${name}’吗？`, { type: 'warning' })
   			.then(()=>{
   				const url = `${URL}/${id}`;
-		  		const success = ()=>{ this.$refs.table.update() };
+		  		const success = ()=>{ 
+            this.$message({message: '删除费用成功', type: 'success'});
+            this.$refs.table.update() 
+          };
 		  		this.axiosDelete({url, success});		
   			})
   			.catch(()=>{}); 		

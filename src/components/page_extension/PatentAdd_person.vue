@@ -46,8 +46,9 @@ export default {
       ipr_name: '',
       inventor_rule: { 
           type: 'array',
-          trigger: 'blur',
+          trigger: 'change',
           validator: (a,b,c)=>{ 
+            console.log(b);
             let msg = '';
             let number = 0;
             const reg = /^[1-9][0-9]*$/;
@@ -117,7 +118,7 @@ export default {
       }
   	},
     submitForm () {
-      if(this.type == 'add') this.form.id = user.id;
+      if(this.type == 'add') this.form.ipr = this.user.id;
       return this.form;
     },
     checkForm () {

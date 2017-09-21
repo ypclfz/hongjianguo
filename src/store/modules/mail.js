@@ -1,36 +1,41 @@
-let url = '/api/userinfo'
-
+let url = '/api/mailAddress';
 const state = {
-	data: null,
+	data: undefined,
 }
 
 const getters = {
-	getUser: state=>state.data,
-	menusMap: state=>{
+	mailData: state=>state.data,
+	mailOptions: state=>{
+		return state.data;
+	},
+	mailMap: state=>{
+		const d = state.data;
 		const map = new Map();
-		const menus = state.data && state.data.menus ? state.data.menus : [];
-		menus.forEach(_=>{map.set(_, true)});
+		if(d) {
+			d.forEach( _=>{ map.set(_.id, _.name) } );
+		}
 
-		return map;
+		return map
 	}
 }
 
 const mutations = {
-	setUser (state, d) {
+	setMail (state, d) {
 		state.data = d;
 	}
 }
 
 const actions = {
-	refreshUser ({commit, rootState, state}) {
+
+	refreshMail ({commit, rootState, state}) {
+		const params = { };
 		url = rootState.status ? url.replace(/\/api/, '') : url;
-		const params = {};
 		rootState.axios
 			.get(url, { params })
 			.then(response=>{
 				const d = response.data;
 				if(d.status){
-					commit('setUser', d.member);
+					commit('setMail', d.list.map( _=>{ return {id: _.value, name: _.label } } ));
 				}else {
 					// alert('请求Ipr数据失败');
 				}

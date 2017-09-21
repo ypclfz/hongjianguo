@@ -104,9 +104,10 @@ export default {
   	},
   	add () {
   		const url = this.url;
-  		const data = Object.assign({}, this.pop_form, this.add_id);
+  		const data = Object.assign({}, this.pop_form, {parent: this.add_id});
   		const success = _=>{
   			this.$message({message: '新建成功', type: 'success'});
+        this.dialogVisible = false;
   			this.refresh();
   		}
 
@@ -117,6 +118,7 @@ export default {
   		const data = this.form;
   		const success = _=>{
   			this.$message({message: '保存成功', type: 'success'});
+        this.dialogVisible = false;
   			this.refresh();
   		}
 
@@ -126,7 +128,7 @@ export default {
   		const d = this.optionMap.get(id);
   		this.$confirm(`删除后不可恢复，确认删除${d.name}？`, {type: 'warning'})
   			.then(_=>{
-  				const url = `${this.url}/id`;
+  				const url = `${this.url}/${id}`;
 		  		const success = _=>{
 		  			this.$message({message: '删除成功', type: 'success'});
 		  			this.refresh();

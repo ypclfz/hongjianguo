@@ -34,10 +34,10 @@
       </el-form>
     
     </app-collapse>
-    		<table-component :tableOption="tableOption" :data="tableData" ref="table" @refreshTableData="refreshTableData">
+    		<table-component :tableOption="tableOption" :data="tableData" ref="table" @refreshTableData="refreshTableData" :refresh-proxy="refreshProxy">
           <template slot="action" scope="scope">
-            <el-button icon="information" size="mini" @click="detail(scope.row)" v-if="scope.row.status">详情</el-button>
-            <el-button icon="edit" size="mini" @click="edit(scope.row)" v-else>编辑</el-button>
+            <el-button icon="information" size="mini" @click="detail(scope.row)">详情</el-button>
+            <el-button icon="edit" size="mini" @click="edit(scope.row)" v-if="!scope.row.status">编辑</el-button>
             <el-button icon="delete" size="mini" @click="deleteSingle(scope.row)" v-if="!scope.row.status">删除</el-button>
           </template>
         </table-component>
@@ -135,14 +135,14 @@ export default {
       const data = Object.assign({}, option, this.filter, this.screen_value);
       const success = _=>{
         if(data.format == 'excel') {
-          window.open(_.proposals.downloadUrl);
+          window.location.href = _.proposals.downloadUrl;
         }else {
           this.tableData = _.proposals;
           this.filters = _.proposals.filters;
         }
       }
       
-      this.axiosGet({url, data, success});
+      this.refreshProxy = this.axiosGet({url, data, success});
     },
     refresh () {
       this.$refs.table.refresh();
@@ -152,8 +152,10 @@ export default {
     }
   },
   data () {
-    const height = this.$store.getters.getInnerHeight - 390; 
+    let height = this.$store.getters.getInnerHeight - 250;
+    height = height < 300 ? 300 : height; 
     return {
+      refreshProxy: '',
       tableOption: {
         'name': 'proposalList',
         'url': URL,
@@ -169,8 +171,9 @@ export default {
           { type: 'selection'},
           { type: 'text', label: '案号', prop: 'serial', sortable: true, width: '200' },
           { type: 'text', label: '提案标题', prop: 'title', sortable: true, width: '300' },
+          { type: 'text', label: '当前节点', prop: 'flow_node', sortable: true, width: '300' },
           { type: 'text', label: '提案摘要', prop: 'abstract', sortable: true, width: '400' },
-          { type: 'text', label: '创建时间', prop: 'creat_time', sortable: true, width: '250' },
+          { type: 'text', label: '创建时间', prop: 'create_time', sortable: true, width: '250' },
           { type: 'text', label: '部门', prop: 'branch', render_simple: 'name', sortable: true, width: '200' },
           { type: 'text', label: '技术分类', prop: 'classification', render_simple: 'name', sortable: true, width: '200' },
           { type: 'array', label: '产品分类', prop: 'products', render: _=>_.map(_=>_.name), width: '200' },
@@ -182,7 +185,7 @@ export default {
             type: 'action',
             label: '操作', 
             btns_render: 'action',
-            width: '161',
+            width: '250',
           },
         ]
       },

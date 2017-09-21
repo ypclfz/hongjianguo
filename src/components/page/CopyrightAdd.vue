@@ -84,7 +84,7 @@ export default {
 		  form: {
 		  	title: '',
 		  	abstract: '',
-		  	type: '',
+		  	type: 1,
 		  	classification: '',
 		  	products: [],
 		  	tags: [],

@@ -1,7 +1,10 @@
 <template>
   <div class="main">
   <strainer v-model="filter" @refresh="refresh"></strainer>
-	<table-component @refreshTableData="refreshTableData" :tableOption="option" :data="tableData" ref="table"></table-component>
+	<table-component @refreshTableData="refreshTableData" :tableOption="option" :data="tableData" ref="table">
+		<el-tag v-if="curTotal !== ''" slot="cur_total" style="margin-left: 15px;">当前页费用：{{ curTotal }}</el-tag>
+		<el-tag v-if="allTotal !== ''" slot="all_total" style="margin-left: 10px;">所有费用：{{ allTotal }}</el-tag>
+	</table-component>
 	<pop :feeType="feeType" :popType="popType" ref="pop" @refresh="update"></pop>
   </div>
 </template>
@@ -18,16 +21,20 @@ export default {
   name: 'invoiceCommon',
   mixins: [ AxiosMixins ],
   data () {
+  	let height = this.$store.getters.getInnerHeight - 250;
+    height = height < 300 ? 300 : height; 
 		return {
 		  option: {
 		  	'name': 'invoice',
 		  	'url': URL,
+		  	height,
 		  	'header_btn': [
 		  		{ type: 'export' },
 		  		{ type: 'delete' },
 		  		{},
 		  		{ type: 'control' },
 		  	],
+		  	'header_slot': ['cur_total', 'all_total'],
 		  	'columns': [
 		  		{ type: 'selection' },
 		  		{ type: 'text', label: '账单对象', prop: 'target', render_simple: 'name', width: '200' },
@@ -75,13 +82,14 @@ export default {
 		  tableData: [],
 		  filter: {},
 		  popType: 'edit',
+		  curTotal: '',
+		  allTotal: '',
 		}
   },
   computed: {
   	feeType () {
   		//'bill'|'payment'
   		const path = this.$route.path;
-
   		return /bill/.test(path) ? 1 : 0; 
   	}
   },
@@ -93,10 +101,18 @@ export default {
   		const success = d=>{ 
   			if(data['format'] == 'excel') {
   				if(d.invoices.downloadUrl) {
-	          window.location.href = d.invoices.downloadUrl;	
+  					window.location.href = d.invoices.downloadUrl;	
   				}
 	      }else {
 	        this.tableData = d.invoices;  
+	      }
+
+	      if(d.invoices.sum_allpage) {
+	      	this.allTotal = d.invoices.sum_allpage;
+	      }
+
+	      if(d.invoices.sum_curpage) {
+	      	this.curTotal = d.invoices.sum_curpage;
 	      }
   		};
 
@@ -118,10 +134,13 @@ export default {
   		this.$refs.pop.show(row);
   	},
   	invoiceDelete ({id, target}) {
-  		this.$confirm(`删除后不可恢复, 确认删除‘${target}’的账单？`)
+  		this.$confirm(`删除后不可恢复, 确认删除‘${target.name}’的账单？`)
   			.then(()=>{
   				const url = `${URL}/${id}`;
-  				const success = ()=>{ this.$refs.table.update() };
+  				const success = ()=>{ 
+  					this.$message({message: '删除账单成功', type: 'success'});
+  					this.$refs.table.update() 
+  				};
   				this.axiosDelete({url, success});
   			})
   			.catch(()=>{});

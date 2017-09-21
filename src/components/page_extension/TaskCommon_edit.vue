@@ -1,5 +1,5 @@
 <template>  
-	<el-form label-width="80px" :model="form" ref="form">
+	<el-form label-width="100px" :model="form" ref="form">
     <el-form-item label="关联案件" prop="project_id" v-if="type == 'add'">
       <remote-select type="project" v-model="form.project_id" ref="project"></remote-select>
     </el-form-item>
@@ -26,7 +26,7 @@
       </el-select>
     </el-form-item>
 
-		<el-form-item label="承办人" prop="person_in_charge">
+		<el-form-item label="承办人" prop="person_in_charge" v-if="type == 'add' && category != ''">
       <remote-select type="member" v-model="form.person_in_charge"></remote-select>
 		</el-form-item>
     <el-row> 
@@ -71,7 +71,7 @@ export default {
       const url = URL;
       const data = this.$tool.shallowCopy(this.form, {'date': true});
       const success = _=>{ 
-        this.dialogVisible  = false;
+        // this.dialogVisible  = false;
         this.$emit('addSuccess');
       };
       const complete = _=>{ this.btn_disabled = false };
@@ -82,6 +82,7 @@ export default {
     edit () {
       const url = `${URL}/${this.row.id}`;
       const data = this.$tool.shallowCopy(this.form, {'date': true, 'skip': ['project_id', 'flow_id', 'task_def_id']});
+      data.person_in_charge = data.person_in_charge.id;
       const success = _=>{ this.$emit('editSuccess') };
       const complete = _=>{ this.btn_disabled = false };
       

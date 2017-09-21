@@ -9,9 +9,8 @@
 					<el-form-item label="申请地区" prop="area">
 						<region v-model="form.area"></region>
 					</el-form-item>
-					<el-form-item label="当前进度" prop="progress"></el-form-item>
 					<el-form-item label="申请日" prop="apd">
-						<el-date-picker type="date" placeholder="请选择申请日" v-model="form.apd"></el-date-picker>
+						<el-date-picker type="daterange" placeholder="请选择申请日" v-model="form.apd"></el-date-picker>
 					</el-form-item>
 					<el-form-item label="代理机构" prop="agency">
 						<remote-select type="agency" v-model="form.agency" multiple></remote-select>
@@ -40,13 +39,13 @@
 						<branch v-model="form.branch" multiple></branch>
 					</el-form-item>
 					<el-form-item label="立案时间" prop="create_time">
-						<el-date-picker type="date" placeholder="请选择立案时间" v-model="form.create_time"></el-date-picker>
+						<el-date-picker type="daterange" placeholder="请选择立案时间" v-model="form.create_time"></el-date-picker>
 					</el-form-item>
 					<el-form-item label="授权日" prop="issue_date">
-						<el-date-picker type="date" placeholder="请选择授权日" v-model="form.issue_date"></el-date-picker>
+						<el-date-picker type="daterange" placeholder="请选择授权日" v-model="form.issue_date"></el-date-picker>
 					</el-form-item>
 					<el-form-item label="公开日" prop="public_date">
-						<el-date-picker type="date" placeholder="请选择公开日" v-model="form.public_date"></el-date-picker>
+						<el-date-picker type="daterange" placeholder="请选择公开日" v-model="form.public_date"></el-date-picker>
 					</el-form-item>
 					<el-form-item label="申请人" prop="applicants">
 						<remote-select type="applicant" v-model="form.applicants" multiple></remote-select>
@@ -83,6 +82,7 @@ export default {
 				type: '',
 				area: '',
 				apd: '',
+				create_time: [],
 				agency: [],
 				agent: [],
 				proposer: [],
@@ -91,9 +91,8 @@ export default {
 				classification: [],
 				product: [],
 				branch: [],
-				create_date: '',
-				issue_date: '',
-				public_date: '',
+				issue_date: [],
+				public_date: [],
 				applicants: [],
 				inventors: [],
 			},
@@ -111,8 +110,14 @@ export default {
   		const filter = {};
   		for(let k in f) {
   			const d = f[k];
-  			if( d.constructor == Array ) {
-  				if(d.length != 0) filter[k] = d.join(",");
+  			if( d instanceof Array ) {
+  				if(d[0]) {
+  					if(d[0] instanceof Date) {
+  						filter[k] = d.map(_=>this.$tool.getDate(_)).join(",")
+  					}else {
+  						filter[k] = d.join(",")
+  					}
+  				}
   			}else {
   				if(d != "") filter[k] = d;
   			}

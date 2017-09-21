@@ -86,8 +86,7 @@ const map = new Map([
     DATA_KEY: 'invoices',
     PLACEHOLDER: '请输入付款单关键词',
     PARAMS: { debit: 0 },
-  }],
-
+  }]
 ]);
 
 export default {
@@ -190,7 +189,7 @@ export default {
   		//由于一部分的val可能是通过object传入,单纯的options只含有动态部分
   		//所以取selected和options的并集,取得selected的静态部分选项
   		const arr = [ ...this.selected, ...this.options ];
-      console.log(this.selected, this.options, arr);
+      // console.log(this.selected, this.options, arr);
   		// console.log(arr);
   		return this.$tool.singleObject(arr,'id');
   	},

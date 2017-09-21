@@ -171,7 +171,6 @@ export default {
   	},
   	editPop () {
   		const id = this.value.id;
-  		console.log(id);
   		if( !id ) {
   			this.$message({message: '不可编辑，不可删除？', type: 'error'});
   			return false;
@@ -222,6 +221,7 @@ export default {
 		  			this.$message({message: '删除用户组成功', type: 'success'});
 		  			this.$emit('input', '');
 		  			this.refreshData();
+            
 		  		}
 
 		  		this.axiosDelete({url, success});

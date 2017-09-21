@@ -15,7 +15,7 @@
 			</el-form-item>
 
 			<el-form-item label="手机" prop="mobile">
-				<el-input v-model="form.mobile" placeholder="情输入手机号码"></el-input>
+				<el-input v-model="form.mobile" placeholder="请输入手机号码"></el-input>
 			</el-form-item>
 
 			<el-form-item label="邮箱" prop="email">

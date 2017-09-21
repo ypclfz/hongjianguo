@@ -2,13 +2,13 @@
   <div class="main">
   	<el-form :model="form" ref="form" label-width="80px">
   		<el-form-item label="收件人" prop="to">
-				<mail v-model="form.to" multiple></mail>
+				<static-select type="mail" v-model="form.to" multiple></static-select>
   		</el-form-item>
   		<el-form-item label="抄送" prop="cc">
-  			<mail v-model="form.cc" multiple></mail>
+  			<static-select type="mail" v-model="form.cc" multiple></static-select>
   		</el-form-item>
   		<el-form-item label="密送" prop="bcc">
-				<mail v-model="form.bcc" multiple></mail>
+				<static-select type="mail" v-model="form.bcc" multiple></static-select>
   		</el-form-item>
   		<el-form-item label="主题" prop="subject">
   			<el-input v-model="form.subject" placeholder="请输入邮件主题"></el-input>
@@ -39,7 +39,7 @@
 <script>
 import AxiosMixins from '@/mixins/axios-mixins'
 import Upload from '@/components/form/Upload'
-import Mail from '@/components/form/Mail'
+import StaticSelect from '@/components/form/StaticSelect'
 
 const URL = '/api/mails';
 
@@ -86,6 +86,15 @@ export default {
 		send () {
 			const url = URL;
 			const data = Object.assign({}, this.form, {mailbox: 2}, this.from);
+			for(let d in data) {
+				if(d == 'to' || d == 'cc' || d == 'bcc') {
+					data[d] = data[d].map( _=>{ 
+						let label = this.map.get(_);
+						label = label ? label : _;
+						return { label, value:_, } 
+					});
+				}
+			}
 			const success = _=>{
 				this.$message({message: '发送成功', type: 'success'});
 				this.back();
@@ -96,13 +105,22 @@ export default {
 		},
 		save () {
 			const data = Object.assign({}, this.form, {mailbox: 0}, this.from);
+			for(let d in data) {
+				if(d == 'to' || d == 'cc' || d == 'bcc') {
+					data[d] = data[d].map( _=>{ 
+						let label = this.map.get(_);
+						label = label ? label : _;
+						return { label, value:_, } 
+					});
+				}
+			}
 			const success = _=>{
 				this.$message({message: '保存成功', type: 'success'});
 			}
 			const complete = _=>{ this.btn_disabled = false };
 
 			this.btn_disabled = true;
-			if(type == 'add') {
+			if(this.type == 'add') {
 				const url = URL;
 				this.axiosPost({url, data, success, complete});	
 			}else {
@@ -111,7 +129,7 @@ export default {
 			}
 		},
 		back () {
-			this.$router.push('/mailList');
+			this.$router.push('/news/mailList');
 		},
 		onEditorBlur () {
 
@@ -130,8 +148,11 @@ export default {
 		from () {
 			const email = this.$store.getters.getUser.email;
 
-			return {label: email, value: email};
-		}
+			return { 'from': { label: email, value: email } };
+		},
+		map () {
+			return this.$store.getters.mailMap;	
+		},
 	},
 	created () {
 
@@ -157,7 +178,7 @@ export default {
 			this.axiosGet({url, success, complete});
 		}
 	},
-	components: { Upload, Mail },
+	components: { Upload, StaticSelect },
 }
 </script>
 

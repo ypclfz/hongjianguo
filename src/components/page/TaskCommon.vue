@@ -1,16 +1,11 @@
 <template>
   <div class="main">
      <strainer @query="strainerQuery" @clear="strainerClear"></strainer>
-    <table-component :tableOption="tableOption" :data="tableData" @refreshTableData="refreshTableData" ref="table">
+    <table-component :tableOption="tableOption" :data="tableData" @refreshTableData="refreshTableData" :refresh-proxy="refreshProxy" ref="table">
       <el-select v-if="taskAll" slot="toggle" v-model="task_toggle" style="width: 110px; margin-left: 5px;">
         <el-option key="mine" label="我的任务" value="personal"></el-option>
         <el-option key="all" label="所有任务" value="all"></el-option>
       </el-select>
-      <template scope="scope" slot="expand">
-        <edit :row="scope.row" type="edit" v-if="expandType == 'edit'" @editSuccess="editSuccess"></edit>
-        <detail :row="scope.row" v-if="expandType  == 'detail'"></detail>
-        <task-finish :id="scope.row.id" v-if="expandType  == 'finish'" @submitSuccess="finishSuccess"></task-finish>
-      </template>
     </table-component>
 
     <el-dialog title="申请委案" :visible.sync="dialogAgenVisible">
@@ -45,8 +40,21 @@
       </el-form>
     </el-dialog>
 
-    <el-dialog title="新增任务" :visible.sync="dialogAddVisible" class="dialog-small">
+    <el-dialog title="新增任务" :visible.sync="dialogAddVisible" class="dialog-medium">
       <edit type="add" @addSuccess="addSuccess"></edit>
+    </el-dialog>
+    <el-dialog title="编辑任务" :visible.sync="dialogEditVisible" class="dialog-medium">
+      <edit :row="currentRow" type="edit" @editSuccess="editSuccess"></edit>
+    </el-dialog>
+    <el-dialog title="移交任务" :visible.sync="dialogTranserVisible" class="dialog-medium">
+      <el-form label-width="80px">
+        <el-form-item label="承办人">
+          <remote-select type="member" v-model="transfer_person"></remote-select>
+        </el-form-item>
+        <el-form-item style="margin-bottom: 0px;">
+          <el-button type="primary" @click="transferTask" style="margin-bottom: 0px;">提交</el-button>
+        </el-form-item>
+      </el-form>
     </el-dialog>
     
     <el-dialog title="将选中任务转给以下任务处理人" :visible.sync="dialogTurnoutVisible" class="dialog-mini">
@@ -65,6 +73,29 @@
         </el-form-item>
       </el-form>
     </el-dialog>
+
+    <app-shrink :visible.sync="dialogShrinkVisible" :title="shrinkTitle" @close="handleShrinkClose">
+      <span slot="header" style="margin-left: 10px;">
+        <el-tag>{{ currentRow.flow_node }}</el-tag>
+        <el-tag>{{ currentRow.serial }}</el-tag>
+      </span>
+      <span slot="header" style="float: right">
+        <el-button size="small" type="primary" @click="dialogEditVisible = true" v-if="menusMap.get('/tasks/update') ? false : true">编辑</el-button>
+        <el-button size="small" style="margin-left: 0px;" v-if="menusMap.get('/tasks/transfer') ? false : true" @click="dialogTranserVisible = true; transfer_person = {id: currentRow.person_in_charge, name: currentRow.person_in_charge_name }">移交</el-button>
+      </span>
+      <el-tabs v-model="activeName">        
+        <el-tab-pane label="详细信息" name="edit">          
+          <information :row="currentRow"></information>          
+        </el-tab-pane>
+        <el-tab-pane label="线上完成" name="finish" v-if="task_status == 0">
+          <task-finish :id="currentRow.id" @submitSuccess="finishSuccess"></task-finish>
+        </el-tab-pane>
+        <el-tab-pane label="相关任务" name="detail">
+          <detail :row="currentRow"></detail>
+        </el-tab-pane>
+      </el-tabs>
+    </app-shrink>
+
   </div>
 </template>
 
@@ -76,17 +107,27 @@ import AppCollapse from '@/components/common/AppCollapse'
 import TableComponent from '@/components/common/TableComponent'
 import AppDatePicker from '@/components/common/AppDatePicker'
 import Edit from '@/components/page_extension/TaskCommon_edit'
+import Information from '@/components/page_extension/TaskCommon_information'
 import Detail from '@/components/page_extension/TaskCommon_detail'
 import TaskFinish from '@/components/common/TaskFinish'
 import Strainer from '@/components/page_extension/TaskCommon_strainer'
+import AppShrink from '@/components/common/AppShrink'
 import $ from 'jquery'
 
 const URL = '/api/tasks';
+const colorMap = new Map([
+  [0, '#3c3'],
+  [1, '#f90'],
+  [2, '#c03'],
+]);
 
 export default {
   name: 'taskList',
   mixins: [ AxiosMixins ],
   methods: {
+    handleShrinkClose () {
+      this.$refs.table.setCurrentRow();
+    },
     agenPop () {
       const s = this.$refs.table.getSelect();
       let confirm = false;
@@ -112,7 +153,6 @@ export default {
           pop();
         }
       }
-
     }, 
     agenSubmit () {
       const ids = this.$refs.table.getSelect().map(_=>_.id);
@@ -145,10 +185,6 @@ export default {
         .catch(()=>{});
     },
     strainerQuery (form) {
-      const arr = ['due_time', 'deadline', 'end_time'];
-      arr.forEach(d=>{
-        form[d] = form[d][0] == ''&&form[d][0] == '' ? '' : form[d].join(',');
-      })
       this.filter = form;
     },
     strainerClear () {
@@ -159,15 +195,14 @@ export default {
       const data = Object.assign({}, this.filter, option, this.screen_value, {status: this.task_status}, {scope: this.task_toggle});
       const success = d=>{
         if( data['format'] == 'excel' ) {
-          window.open(d.tasks.downloadUrl);
+          window.location.href = d.tasks.downloadUrl;
         }else {
           this.tableData = d.tasks;
           this.filters = d.tasks.filters; 
-        }
-         
+        }        
       };
 
-      this.axiosGet({url, data, success}); 
+      this.refreshProxy = this.axiosGet({url, data, success}); 
     },
     refresh () {
       this.$refs.table.refresh();
@@ -175,12 +210,30 @@ export default {
     update () {
       this.$refs.table.update();
     },
+    transferTask () {
+      const url = `${URL}/${this.currentRow.id}`
+      const data = {'person_in_charge': this.transfer_person};
+      const success = _=>{
+        this.dialogTranserVisible = false;
+        this.dialogShrinkVisible = false;
+        this.$message({message: '移交成功', type: 'success'});
+
+        this.update();        
+      }
+
+      this.axiosPut({url, data, success});
+    },
     addSuccess () {
+      this.dialogAddVisible = false;
+      this.$message({message: '添加成功', type: 'success'});
       this.refresh();
     },
     editSuccess () {
-      this.update();
+      this.dialogEditVisible = false;
+      this.dialogShrinkVisible = false;
       this.$message({message: '编辑成功', type: 'success'});
+
+      this.update();
     },
     refreshOption () {
       const t = this.task_status;
@@ -189,14 +242,15 @@ export default {
         h.header_btn.splice(3,1,{type: 'custom', label: '暂停处理', click: _=>{ this.handleTask('/api/tasks/pause') }});
       }else if( t === -1 ) {
         h.header_btn.splice(3,1,{type: 'custom', label: '恢复处理', click: _=>{ this.handleTask('/api/tasks/resume') }});
-      }
+      }else if( t === 1 ) {
+        h.header_btn.splice(4,1,{});
+      } 
 
       this.$forceUpdate();
     },
     handleTask(url) {
       const s = this.$refs.table.getSelect();
       if(s) {
-        
         const data = { ids: this.$tool.splitObj(s, 'id') };
         const success = _=>{ 
           this.$message({type: 'success', message: '操作成功'})
@@ -210,27 +264,29 @@ export default {
       this.$router.push({path: '/proposal/edit', query: {id: project_id}});
     },
     patentEdit ({id}) {
-      console.log('patentEdit')
+      // console.log('patentEdit')
     },
     finishSuccess () {
-      this.$message({message: '操作成功', type: 'success'});
+      this.$message({message: '完成任务成功', type: 'success'});
+      this.dialogShrinkVisible = false;
       this.refresh();
     },
     titleRender (h,item,data) {
-      let str = item;
+      const color = colorMap.get(data['color']);
+      let str = '';
       if(data.flag == 1) {
-        str += ' (代)';
-      }else if(data.flag == 1) {
-        str += ' (移)';
+        str += '(代) ';
+      }else if(data.flag == 2) {
+        str += ' (移) ';
       }
-      return h('a', {
-        attrs: {
-          href: 'javascript:void(0)',
-        },
-        on: {
-          click: _=>{ this.titleClick(data) }
-        }
-      }, str)
+      str += item;
+
+      return ( 
+        <span>
+          <i class="table-flag" style={`background-color: ${color}; margin-right: 10px;`}></i> 
+          <span>{ str }</span>
+        </span>
+      );
     },
     titleClick (data) {
       if(data.category == 0) {
@@ -240,25 +296,42 @@ export default {
       }else if(data.category == 3) {
         this.$router.push(`/copyright/list/detail/${data.project_id}`);
       }
+    },
+    handleRowClick (row) {
+      this.shrinkTitle = row.title; 
+      this.currentRow = row;
+      if( !this.dialogShrinkVisible ) this.dialogShrinkVisible = true;
     }
   },
   data () {
+    let height = this.$store.getters.getInnerHeight - 250;
+    height = height < 300 ? 300 : height;
+
     return {
       dialogScreenVisible: false,
       dialogTurnoutVisible: false,
       dialogAddVisible: false,
+      dialogEditVisible: false,
+      dialogTranserVisible: false,
       dialogSettingVisible: false,
+      dialogShrinkVisible: false,
       filter: {},
       filters: {},
+      activeName: 'edit',
+      shrinkTitle: '',
       expandOldType: '',
       expandType: 'edit',
       checkedTest: [],
+      currentRow: {},
+      transfer_person: '',
+      refreshProxy: '',
       tableOption: {
         'name': 'taskList',
         'url': URL,
+        height,
         'is_filter': true,
         'row_class': ({due_time}, index)=> {
-          return this.$tool.detectionTime(due_time);
+          return ;
         },
         'header_btn': [
           { type: 'add', click: ()=>{ this.dialogAddVisible = true; } },
@@ -271,22 +344,24 @@ export default {
           // { type: 'custom', label: '设定', icon: '', click: ()=>{ this.dialogSettingVisible = true; } }
         ],
         'header_slot': [ 'toggle' ],
-        'expandFun': (row, expanded)=>{ 
-          const expands = this.$refs.table.expands;
-          const old_id = expands.shift();
-          if(old_id != row.id) { 
-            expands.push(row.id);
-          }else if( this.expandType != this.expandOldType) {
-            expands.push(row.id);
-          }
-          this.expandOldType = this.expandType;
-        },
+        'highlightCurrentRow': true, 
+        'rowClick': this.handleRowClick,
+        // 'expandFun': (row, expanded)=>{ 
+        //   const expands = this.$refs.table.expands;
+        //   const old_id = expands.shift();
+        //   if(old_id != row.id) { 
+        //     expands.push(row.id);
+        //   }else if( this.expandType != this.expandOldType) {
+        //     expands.push(row.id);
+        //   }
+        //   this.expandOldType = this.expandType;
+        // },
         'columns': [
-          { type: 'expand' },
-          { type: 'selection', fixed: false},
+          // { type: 'expand' },
+          { type: 'selection' },
           { type: 'text', label: '案号', prop: 'serial', sortable: true, width: '150', show_option: false, render: this.titleRender },
           { type: 'text', label: '案件名称', prop: 'title', sortable: true, width: '200', overflow: true },
-          { type: 'text', label: '管制事项', prop: 'name', sortasble: true, width: '134' },
+          { type: 'text', label: '管制事项', prop: 'name', sortable: true, width: '134' },
           { type: 'text', label: '当前节点', prop: 'flow_node', show: false, width: '159'},
           { type: 'text', label: 'IPR', prop: 'ipr', sortable: true, width: '200'},
           { type: 'text', label: '承办人', prop: 'person_in_charge_name', show: false, sortable: true, width: '118'},
@@ -302,9 +377,8 @@ export default {
           { type: 'text', label: '备注', prop: 'remark', sortable: true, width: '250',overflow: true},
           { 
             type: 'action',
-            fixed: false,
             label: '操作',
-            min_width: '250',
+            min_width: '150',
             align: 'left',
             btns: [
               // { 
@@ -317,9 +391,6 @@ export default {
               //     { text: '委案处理' },
               //   ],
               // },
-              { btn_type: 'text', label: '详情', click: this.dropGenerator('edit') },
-              { btn_type: 'text', label: '相关', click: this.dropGenerator('detail') },
-              { btn_type: 'text', label: '完成', click: this.dropGenerator('finish') },
               { btn_type: 'text', label: '删除', click: this.taskDelete },
               { btn_type: 'text', label: '编辑提案', click: this.proposalEdit, btn_if: _=>_.action == 'proposals/edit' },
               { btn_type: 'text', label: '编辑专利', click: this.patentEdit, btn_if: _=>_.action == 'patents/edit'},
@@ -346,7 +417,6 @@ export default {
       return this.$store.getters.menusMap;
     },
     taskAll () {
-      console.log(this.menusMap);
     
       let flag = true;
       if( this.menusMap.get('/tasks/all') ) {
@@ -383,7 +453,7 @@ export default {
 
     this.refreshOption();
   },
-  components: { RemoteSelect, AppFilter, TableComponent, AppDatePicker, Edit, Detail, Strainer, AppCollapse, TaskFinish },
+  components: { RemoteSelect, AppFilter, TableComponent, AppDatePicker, Edit, Detail, Strainer, AppCollapse, TaskFinish, AppShrink, Information },
 } 
 </script>
 <style>

@@ -35,13 +35,13 @@
 				<el-input v-model="form.smtp_port"></el-input>
 			</el-form-item>
 			<el-form-item prop="is_ssl">
-				<el-checkbox label="连接使用SSL" v-model="form.is_ssl" :true-label="1" :false-label="0"></el-checkbox>
+				<el-checkbox label="连接使用SSL (若POP端口为110不需要勾选，若POP端口为995必须勾选)" v-model="form.is_ssl" :true-label="1" :false-label="0"></el-checkbox>
 			</el-form-item>
 			<el-form-item label="邮件签名" prop="signature">
 				<el-input v-model="form.signature" type="textarea"></el-input>
 			</el-form-item>
 			<el-form-item style="margin-bottom: 0">
-				<el-button @click="save" type="primary" :disable="btn_disabled">保存</el-button>
+				<el-button @click="save" type="primary" :disabled="btn_disabled">保存</el-button>
 			</el-form-item>
 		</el-form>
 	</div>
@@ -92,11 +92,7 @@ export default {
   			const success = _=>{ 
   				for(let k in this.form) {
   					const d = _.data[k];
-  					if(k == 'agent') {
-  						this.form[k] = d.id;
-  					}else {
-  						this.form[k] = d;
-  					}
+  					this.form[k] = d;
   				} 
   			};
   			const complete = _=>{
@@ -108,7 +104,10 @@ export default {
   	},
   	save () {
   		const url = `${URL}/${this.id}/config`;
-  		const success = _=>{ this.$message({message: '保存成功', type: 'success'}) };
+  		const success = _=>{ 
+  			this.$message({message: '保存成功', type: 'success'});
+  			this.$store.dispatch('refreshUser'); 
+  		};
   		const data = this.form;
   		const complete = _=>{ this.btn_disabled = false };
 

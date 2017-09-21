@@ -18,12 +18,12 @@
 				</table-component>
   		</div>
 	
-  	<pop :popType="popType" :groupId="group_id" @refresh="refresh" ref="pop"></pop>
+  	<pop :popType="popType" :group="current_group" @refresh="refresh" ref="pop"></pop>
   	
   	<el-dialog title="将所选用户添加至用户组" :visible.sync="dialogVisible" :close-on-click-modal="false">
 			<el-form label-width="100px">
 				<el-form-item label="用户组">
-					<select-group v-model="to_group"></select-group>
+					<static-select type="group" v-model="to_group"></static-select>
 				</el-form-item>
 				<el-form-item style="margin-bottom: 0;">
 					<el-button type="primary" @click="toGroup">添加</el-button>
@@ -43,7 +43,7 @@ import TableComponent from '@/components/common/TableComponent'
 import Group from '@/components/page_extension/UserList_group'
 import Pop from '@/components/page_extension/UserList_pop'
 import UserRole from '@/components/form/UserRole'
-import SelectGroup from '@/components/form/Group'
+import StaticSelect from '@/components/form/StaticSelect'
 
 const URL = 'api/members'
 const URL_GROUP = 'api/groups'
@@ -210,6 +210,9 @@ export default {
 		refresh () {
  			this.$refs.table.refresh();
 		},
+		update () {
+			this.$refs.table.update();
+		}
 	},
   watch: {
   	group_id (val) {
@@ -222,7 +225,7 @@ export default {
   },
   created () {
   },
-  components: { AppTree, TableComponent, Group, Pop, AppCollapse, SelectGroup, UserRole },
+  components: { AppTree, TableComponent, Group, Pop, AppCollapse, StaticSelect, UserRole },
 }
 </script>
 

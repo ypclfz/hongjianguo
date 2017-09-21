@@ -182,7 +182,7 @@ export default {
   		const url = `${URL}/${this.id}`;
   		const data = this.submitForm;
   		const success = ()=>{ 
-  			this.$message({message: '编辑成功', type: 'warning'});
+  			this.$message({message: '编辑成功', type: 'success'});
   			this.dialogVisible = false;
   			this.$emit('refresh') 
   		};

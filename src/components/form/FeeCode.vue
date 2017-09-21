@@ -5,6 +5,7 @@
   	:multiple="multiple"
   	:disabled="disabled"
     placeholder="请选择费用代码"
+    filterable
   >
   	<el-option
 			v-for="item in options"

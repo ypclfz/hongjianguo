@@ -1,5 +1,5 @@
 <template>
-  <div id="app">
+  <div id="app" v-loading.fullscreen.lock="userinfoLoading" element-loading-text="初始化中...">
     <el-popover
       ref="popover"
       placement="bottom"
@@ -106,7 +106,7 @@ export default {
     },
     navL_height () {
       this.$store.commit('setInnerHeight', window.innerHeight - 50);
-      return  window.innerHeight - 50;
+      return  this.$store.getters.getInnerHeight;
     },
     loading () {
       return this.$store.getters.loading;  
@@ -129,11 +129,13 @@ export default {
     }
   },
   data () {
-    return {
-      
+    return {      
       menu_data: menu.data,
       resize_lock: false,
       sysPopVisible: false,
+      windowLock: false,
+      navShow: true,
+      userinfoLoading: true,
     };
   },
   methods: {
@@ -152,11 +154,11 @@ export default {
       }
     },
     navToggle () {
-      console.log($('.nav-left').css('width'));
       let i = 32;
-      let n = Number.parseInt($('.nav-left').css('width')) > 0 ? 160 : 0;
-
-      i = n == 0 ? i : -i;
+      let n = this.navShow ? 160 : 0;
+      i = this.navShow ? -i : i;
+      
+      this.navShow = !this.navShow;
 
       const left = $('.nav-left');
       const app = $('#app');
@@ -177,9 +179,7 @@ export default {
         }else {
           window.requestAnimationFrame(animation);
         }
-      }
-      
-      
+      }     
     }
   },
   beforeCreated () {
@@ -188,9 +188,10 @@ export default {
   created () {
     const url = '/api/userinfo';
     const success = _=>{
+      this.userinfoLoading = false;
       this.$store.commit('setUser', _.member);
 
-      this.$store.dispatch('refreshTags');
+      // this.$store.dispatch('refreshTags');
       this.$store.dispatch('refreshProduct');
       this.$store.dispatch('refreshClassification');
       this.$store.dispatch('refreshBranch');
@@ -202,6 +203,7 @@ export default {
       this.$store.dispatch('refreshGroup');
       this.$store.dispatch('refreshFlowNodes');
       this.$store.dispatch('refreshFileType');
+      // this.$store.dispatch('refreshMail');
     };
     const error = _=>{
       window.location.href = '/login';
@@ -214,15 +216,27 @@ export default {
       this.axiosGet({url, success, error, catchFunc});
     }
     // this.axiosGet({url, success, error, catchFunc});
-    this.axiosPost({url: '/api/login', success: success2, data: {username: 'liucheng1', password: 'Z9jgM6FhdKWEqbbpJePv/6qeTO/Yk2b6lx7zF4tiBncRubwf0fz93hkqGXCiWvqXCDIq7x+kAH3TK5zhjDZ53jgt1Gx1vvBPHn3ga7HTqPrnc+VhhuVGeTefHShJBx32rnbhL6LbEqCAMGqtQXaovCtuJGY6uWYAPfecAOGMuadnxTigTTBwKtW2oVP4J/EwAroYKuy4MK4Pd7YGtFoJAhlpKVOponsgsYQ8EKGOSVxcZgcgnOw8LhPy28N+xoFCh0OBkMyjM80Ybjq+H8BO6CacnDzQReZL5wQZqBdTtW7CUBi6S4+JWDPBahqNgz7jD73UhEIeG0ivFLEdCWtlVw=='}});
+    this.axiosPost({url: '/api/login', success: success2, data: {username: 'ipr2', password: 'Z9jgM6FhdKWEqbbpJePv/6qeTO/Yk2b6lx7zF4tiBncRubwf0fz93hkqGXCiWvqXCDIq7x+kAH3TK5zhjDZ53jgt1Gx1vvBPHn3ga7HTqPrnc+VhhuVGeTefHShJBx32rnbhL6LbEqCAMGqtQXaovCtuJGY6uWYAPfecAOGMuadnxTigTTBwKtW2oVP4J/EwAroYKuy4MK4Pd7YGtFoJAhlpKVOponsgsYQ8EKGOSVxcZgcgnOw8LhPy28N+xoFCh0OBkMyjM80Ybjq+H8BO6CacnDzQReZL5wQZqBdTtW7CUBi6S4+JWDPBahqNgz7jD73UhEIeG0ivFLEdCWtlVw=='}});
   },
   mounted () {
-    window.onresize = _=>{
+    
+    const refreshWindow =  _=> {
       this.$store.commit('setInnerHeight', window.innerHeight - 50);
-      this.$store.commit('set')
+      this.$store.commit('setInnerWidth', window.innerWidth);
     }
 
-    console.log(this.sysmesg);
+    refreshWindow();
+    window.onresize = _=>{
+      if( !this.windowLock ) {
+        this.windowLock = true;
+         
+        window.setTimeout(_=>{
+          refreshWindow(); 
+          this.windowLock = false;
+        },100)
+      }
+    }
+
   },
   components: { AppMenu }
 }
@@ -262,6 +276,7 @@ nav {
   width: 100%;
   color: #fff;
   padding-left: 20px;
+  box-shadow: 0 1px 2px rgba(0,0,0,.5);
   z-index: 10;
 }
 .nav-left {
@@ -382,17 +397,17 @@ nav {
 .ql-container.ql-snow {
   height: 300px;
 }
-.table-item-read, .table-item-unread {
+.table-flag {
   display: inline-block;
 
   width: 10px;
   height: 10px;
   border-radius: 50%;
 }
-.table-item-read {
+.table-flag-read {
   background-color: #ccc;
 }
-.table-item-unread {
+.table-flag-unread {
   background-color: #58B7FF;
 }
 .sysmesg-item {
@@ -443,6 +458,18 @@ nav {
   }
   .el-step.is-vertical .el-step__main {
     padding-left: 40px;
+  }
+  .form-information .el-form-item {
+    margin-bottom: 0px;
+    border-bottom: 1px solid #f2f2f2; 
+  }
+  .form-information .el-form-item__label {
+    color: #92a3b7;
+    font-size: 12px;  
+  }
+  .form-information .el-form-item__content {
+    font-size: 12px;
+    min-height: 36px;
   }
 }
 </style>

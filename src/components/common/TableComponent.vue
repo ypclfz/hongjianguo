@@ -1,7 +1,19 @@
 <template>
   <div class="hjg-table">
-    <app-filter :data="filters" v-if="tableOption.is_filter ? true : false"></app-filter>
+    
   	<div class="table-header">
+      <el-popover
+        placement="right"
+        width="800"
+        trigger="click"
+        v-model="filterVisible"
+        :open-delay="300"
+        v-if="tableOption.is_filter ? true : false"
+      >
+        <app-filter :data="filters" v-if="tableOption.is_filter ? true : false"></app-filter>
+        <el-button slot="reference" type="primary">快速筛选</el-button>
+      </el-popover>
+
       <template v-for="btn in tableOption.header_btn">
         
         <template v-if="btn.type == 'custom'">
@@ -56,11 +68,11 @@
         </template>
 
         <template v-else-if="btn.type == 'export'">
-          <el-button class="table-header-btn" type="primary" icon="upload2" @click="handelExport(btn.click, $event)">导出</el-button>
+          <el-button class="table-header-btn" type="primary" icon="upload2" :loading="exportLoading" @click="handelExport(btn.click, $event)">{{ exportLoading ? '导出中...' : '导出' }}</el-button>
         </template>
 
         <template v-else-if="btn.type == 'import'">
-          <el-button class="table-header-btn" type="primary" icon="document" @click="handleImport(btn.click, $event)">导入</el-button>
+          <el-button class="table-header-btn" type="primary" icon="document"  @click="handleImport(btn.click, $event)">导入</el-button>
         </template>
 
         <template v-else-if="btn.type == 'batch_upload'">
@@ -72,17 +84,15 @@
       <template v-if="tableOption.header_slot ? true : false">
         <slot v-for="item in tableOption.header_slot" :name="item"></slot>
       </template>
-	  	<el-input
+	  	<search-input
         v-model="search_value"
         placeholder="搜索..."
         style="width: 200px;"
-        icon="search"
-        :class="searchClass"
-        @focus="searchClass='table-search table-search-focus'"
-        @blur="searchClass='table-search'"
+        class="table-search"
         @click="handleSearch"
+        @enter="handleSearch"
         v-if="tableOption.is_search == undefined ? true : tableOption.is_search"
-	    ></el-input>
+	    ></search-input>
     </div>
     
 	<el-table 
@@ -98,7 +108,9 @@
     :style="tableStyle"
     :row-class-name="handleRowClassName"
     @row-click="handleRowClick"
+    :highlight-current-row="tableOption.highlightCurrentRow ? tableOption.highlightCurrentRow : false"
     :height="tableOption.height ? tableOption.height : ''"
+    ref="table"
 
   >
     <template v-for="(col, index) in tableOption.columns">
@@ -214,6 +226,7 @@ import AxiosMixins from '@/mixins/axios-mixins'
 import AppFilter from '@/components/common/AppFilter'
 import AppImport from '@/components/common/AppImport'
 import FileUpload from '@/components/common/FileUpload'
+import SearchInput from '@/components/common/SearchInput'
 const methods = Object.assign({}, tableConst.methods, {
   handleRowClick (a,b,c) {
     if(c.fixed) return false;
@@ -221,10 +234,31 @@ const methods = Object.assign({}, tableConst.methods, {
     if(func) func(a,b,c);
   },
   handelExport(func, e) {
+    const fields = this.tableControl.filter(_=>{
+      if(_.show && _.prop) {
+        return true;  
+      }
+    }).map(_=>_.prop);
+
     if(func) {
       func(e)
     }else {
-      this.$emit('refreshTableData', Object.assign({}, this.getRequestOption(), {format: 'excel'}) );
+      
+      this.$emit('refreshTableData', Object.assign({}, this.getRequestOption(), {format: 'excel'}, {'fields': JSON.stringify(fields) } ) );
+      
+      this.$nextTick(_=>{
+        if(this.refreshProxy) {
+          this.exportLoading = true;
+          this.refreshProxy.then(
+            _=>{
+              window.setTimeout(_=>{this.exportLoading = false;}, 500);
+            }
+          );  
+        }
+      })
+      
+      
+      // if(a) { a.then(_=>{console.log('exportExcess')}) };
     }
   },
   handleImport(func, e) {
@@ -373,13 +407,16 @@ const methods = Object.assign({}, tableConst.methods, {
     this.$message({message: '导入成功', type: 'success'});
     this.dialogImportVisible = false;
     this.refresh();
+  },
+  setCurrentRow (row) {
+    this.$refs.table.setCurrentRow(row);
   }
 });
 export default {
   name: 'tableComponent',
   methods,
   mixins: [ AxiosMixins ],
-  props: ['tableOption', 'data', 'tableStyle'],
+  props: ['tableOption', 'data', 'tableStyle', 'refreshProxy'],
   computed: {
     screen_obj () {
       return this.$store.getters.screen_obj;
@@ -459,6 +496,7 @@ export default {
       deep: true,
     },
     screen_obj (val) {
+      this.filterVisible = false;
       this.refresh();    
     }
   },
@@ -476,8 +514,8 @@ export default {
         let type = c.type;
         let label = c.label;
         let show_option = c.show_option !== undefined ? c.show_option : true;
-        tableControl.push({show, type, label, show_option});
-        
+        let prop = c.prop !== undefined ? c.prop : '';
+        tableControl.push({show, type, label, show_option, prop});        
       }
     }
 
@@ -494,6 +532,8 @@ export default {
       page: 1,
       sort: {field: null, order: null},
       dialogImportVisible: false,
+      filterVisible: false,
+      exportLoading: false,
     };
 
     return Object.assign({}, tableConst.data, data);
@@ -520,6 +560,7 @@ export default {
     AppFilter,
     AppImport,
     FileUpload,
+    SearchInput,
   },
   mounted () {},
 }

@@ -1,5 +1,7 @@
 <template>
-  <div class="app-filter" style="margin-bottom: 20px;" v-show="show">
+  <div>
+  <div v-if="!show" style="padding: 5px; padding-left: 20px; font-size: 12px; color: #ccc;">暂时没有快速筛选项...</div>
+  <div class="app-filter" v-show="show">
   	<div :class="index === multipled_index ? 'app-filter-row app-filter-row-multipled' : 'app-filter-row'" v-for="(row, index) in filterList" :key="row.key" v-if=" !control.get(row.key) && row.items.length != 0 ">
   		<div class="app-filter-label">
   			{{ row.label }}
@@ -42,6 +44,7 @@
 				</div>
   		</template>
   	</div> 		
+  </div>
   </div>
 </template>
 
@@ -111,7 +114,7 @@ export default {
   	show () {
   		let flag = false;
   		for(let d of this.data) {
-  			if( !this.control.get(d["key"]) ) {
+  			if( !this.control.get(d["key"]) && d.items && d.items.length != 0 ) {
   				flag = true;
   				break;
   			}

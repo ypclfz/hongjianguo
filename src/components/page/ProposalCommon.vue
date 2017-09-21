@@ -35,14 +35,7 @@
               <product v-model="formData.products" multiple :disabled="pageType == 'detail'"></product>
             </el-form-item>
 						<el-form-item label="标签" prop="tags">
-							<el-select  multiple filterable allow-create placeholder="请选择标签" v-model="formData.tags" :disabled="pageType == 'detail'">
-		            <el-option
-		              v-for="item in tagOptions"
-		              :key="item.value"
-		              :label="item.label"
-		              :value="item.value">
-		            </el-option>
-		          </el-select>
+							<static-select type='tag' v-model="formData.tags" :disabled="pageType == 'detail'" multiple></static-select>
 						</el-form-item>
             <el-form-item label="备注" prop="remark">
               <el-input type="textarea" v-model="formData.remark" :disabled="pageType == 'detail'"></el-input>
@@ -66,16 +59,16 @@
 		  	<el-col :span="6" style="padding-left: 40px;">
           <template v-if="pageType=='detail'">
   					<h3 style="margin-top: 0;">提案流程</h3>
-  					<el-steps :space="100" direction="vertical" :active="tasks.length" finish-status="success">
-              <el-step v-for="item in tasks" :key="item.id" :title="item.node_name" :description="`承办人：${item.person_in_charge_name}，开始时间：${item.start_time}， 完成时间：${item.end_time}，备注：${item.remark}`"></el-step>
+  					<el-steps :space="100" direction="vertical">
+              <el-step v-for="(item, index) in tasks" :key="item.id" :icon="item.status ? '' : 'loading'" :status="item.status ? 'success' : 'finish'" :title="item.node_name" :description="`承办人：${item.person_in_charge_name}；开始时间：${item.start_time}；完成时间：${item.end_time}；备注：${item.remark}`"></el-step>
   					</el-steps>
           </template>
           <template v-else>
             <h3 style="margin-top: 40px;">提案模板</h3>
             <ul class="proposal-model">
-              <li><i class="iconfont icon-docx"></i><a href="javascript:void(0)">技术交底书范例(结构类).docx</a></li>
-              <li><i class="iconfont icon-docx"></i><a href="javascript:void(0)">技术交底书范例(软件类).doc</a></li>
-              <li><i class="iconfont icon-ppt"></i><a href="javascript:void(0)">15分钟如何写一个专利底稿.pptx</a></li>
+              <li><i class="iconfont icon-docx"></i><a href="/files/204 ">交底书模板.doc</a></li>
+              <!-- <li><i class="iconfont icon-docx"></i><a href="javascript:void(0)">技术交底书范例(软件类).doc</a></li>
+              <li><i class="iconfont icon-ppt"></i><a href="javascript:void(0)">15分钟如何写一个专利底稿.pptx</a></li> -->
             </ul>
           </template>
 		  	</el-col>
@@ -105,6 +98,7 @@ import Proposer from '@/components/form/Proposer'
 import Member from '@/components/form/Member'
 import Upload from '@/components/form/Upload'
 import TaskFinish from '@/components/common/TaskFinish'
+import StaticSelect from '@/components/form/StaticSelect'
 
 
 const typeMap = new Map([['/proposal/add', 'add'], ['/proposal/edit', 'edit'], ['/proposal/detail', 'detail']]);
@@ -120,7 +114,13 @@ export default {
       this.$router.push('/proposal/list');
     },
     save ( callback=_=>{this.$message({message: '编辑成功', type: 'success'}); this.$router.push('/proposal/list')} ) {
+      
+      if(this.pageType == 'add' && !this.formData.proposer) {
+        this.formData.proposer = this.userId;
+      }
+
       this.$refs.form.validate(valid=>{
+        
         if(valid) {
           this.btn_disabled = true;
           const flag = this.pageType == 'add';
@@ -175,15 +175,17 @@ export default {
     },
     refreshCommon () {
       const t = this.pageType;
+      
       if( t == 'detail' || t== 'edit' ) {
         const id = this.$route.query.id;
         this.id = id;
+        
         this.$store.commit('onLoading');
         this.$axios.get(`${URL}/${id}`).then(response=>{
           this.$store.commit('cancelLoading');
           const data = response.data.proposal;
           const { inventors, proposer, classification, products, attachments } = data;
-          
+           
           data.inventors = inventors.map((d)=>{return {id: d.id, share: d.share, name: d.name}});
           data.proposer = proposer.id;
           this.proposer_name = proposer.name;
@@ -193,6 +195,7 @@ export default {
             this.update_time = data.update_time;
             this.tasks = data.tasks;
             this.patent = data.patents;
+            this.status = data.status;
           }
           
           if(classification) {
@@ -214,16 +217,18 @@ export default {
           this.$tool.coverObj(this.formData, data);
         });
       }else {
-        this.id = "";
-        this.$refs.form.resetFields();
-        this.classificationText = this.productText = '';
-        this.proposer_name = this.user ? this.user.name : '';
+        this.proposer_name = this.userName;
+        if(this.userId && this.userName) {
+          this.formData.inventors = [{id: { id: this.userId, name: this.userName }, share: '100'}];  
+        }
+        
       }
     }
   },
   data () {
     return {
       id: '',
+      status: 0,
       pageType: '',
       tasks: [],
       patent: [],
@@ -232,9 +237,7 @@ export default {
         abstract: '',
         proposer: '',
         remark: '',
-        inventors: [
-          { id: '', share: '' },
-        ],
+        inventors: [],
         tags: [],
         attachments: [],
         classification: '',
@@ -360,9 +363,7 @@ export default {
   },
   created () {
     this.pageType = typeMap.get(this.$route.path);
-    if(this.pageType == 'add') {
-      this.formData.proposer = this.user.id;
-    } 
+    
   },
   mounted () {
     this.refreshCommon();
@@ -370,6 +371,14 @@ export default {
   computed: {
     user () {
       return this.$store.getters.getUser;
+    },
+    userId () {
+      const user = this.$store.getters.getUser;
+      return user ? user.id : ''; 
+    },
+    userName () {
+      const user = this.$store.getters.getUser;
+      return user ? user.name : '';
     },
     tagOptions () {
       return this.$store.getters.tagOptions;
@@ -386,11 +395,11 @@ export default {
     }
   },
   watch: {
-    $route () {
+    userName () {
       this.refreshCommon();
     }
   },
-  components: { PopTree, TableComponent, Inventors, PcSubmit, Upload, Member, Classification, Product, TaskFinish },
+  components: { PopTree, TableComponent, Inventors, PcSubmit, Upload, Member, Classification, Product, TaskFinish, StaticSelect },
 
 }
 </script>

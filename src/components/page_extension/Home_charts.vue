@@ -217,7 +217,7 @@ export default {
         this.option.series[0].data = data.data;
       }
 
-      this.chart.setOption(this.option);
+      this.chart.setOption(this.option, true);
 
       function getBarSeries () {
         const arr = [];

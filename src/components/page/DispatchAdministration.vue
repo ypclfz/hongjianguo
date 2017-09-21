@@ -80,7 +80,7 @@ export default {
   			.then(_=>{
   				const url = `${URL}/${id}`;
   				const success = _=>{
-  					this.$message('删除成功', { type: 'success' });
+  					this.$message({message: '删除成功', type: 'success' });
   					this.update();
   				}
 
