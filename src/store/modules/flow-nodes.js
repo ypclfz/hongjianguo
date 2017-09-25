@@ -1,6 +1,6 @@
 let url = '/api/flownodes';
 const state = {
-	data: [],
+	data: undefined,
 }
 
 const getters = {
@@ -21,7 +21,7 @@ const actions = {
 			.then(response=>{
 				const d = response.data;
 				if(d.status) {
-					commit('setFlowNodes', d.flownodes);
+					commit('setFlowNodes', d.flownodes.map(_=>{return {id: _.value, name: _.label}}));
 				}
 			})
 			.catch(error=>{console.log(error)});

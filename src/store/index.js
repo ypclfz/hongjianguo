@@ -33,6 +33,7 @@ const store = new Vuex.Store({
     loadingText: '',
     inner_height: 0,
     inner_width: 0,
+    leftNavVisible: true, 
   },
   modules: {
     filter,
@@ -60,6 +61,9 @@ const store = new Vuex.Store({
     setDragId (state, id) {
       state.dragId = id;
     },
+    toggleLeftVisible (state) {
+      state.leftNavVisible = !state.leftNavVisible;
+    },
     AXIOS_FAILURE () {
       alert('网络错误');
     },
@@ -82,7 +86,8 @@ const store = new Vuex.Store({
     loading: state=>state.loading,
     loadingText: state=>state.loadingText,
     getInnerHeight: state=>state.inner_height,
-    getInnerWidth: state=>state.inner_width,
+    getInnerWidth: state=>state.leftNavVisible ? state.inner_width - 160 : state.inner_width, 
+    leftVisible: state=>state.leftNavVisible,
   },
 });
 

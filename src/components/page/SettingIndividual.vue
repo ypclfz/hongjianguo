@@ -19,6 +19,9 @@
 			<el-form-item label="邮箱地址" prop="email">
 				<el-input v-model="form.email"></el-input>
 			</el-form-item>
+			<el-form-item label="邮箱密码" prop="email_password">
+				<edit-password v-model="form.email_password" ref="psd"></edit-password>
+			</el-form-item>
 <!-- 			<el-form-item label="邮箱密码" prop="email_password">
 				<el-input v-model="form.email_password" type="password"></el-input>
 			</el-form-item> -->
@@ -50,6 +53,7 @@
 <script>
 import AppTag from '@/components/common/AppTag'
 import RemoteSelect from '@/components/form/RemoteSelect'
+import EditPassword from '@/components/form/EditPassword'
 import AxiosMixins from '@/mixins/axios-mixins'
 
 const URL = '/api/members';
@@ -73,7 +77,6 @@ export default {
 		    "smtp_port": "",
 		    "is_ssl": 0,
 		    "signature": ""
-
 		  },
 		  loading: true,
 		  btn_disabled: false,
@@ -91,6 +94,7 @@ export default {
   			const url = `${URL}/${this.id}/config`;
   			const success = _=>{ 
   				for(let k in this.form) {
+  					if(k == 'email_password') continue;
   					const d = _.data[k];
   					this.form[k] = d;
   				} 
@@ -103,16 +107,22 @@ export default {
   		}
   	},
   	save () {
+  		if(this.checkForm()) return;
+
   		const url = `${URL}/${this.id}/config`;
   		const success = _=>{ 
   			this.$message({message: '保存成功', type: 'success'});
-  			this.$store.dispatch('refreshUser'); 
+  			this.$store.dispatch('refreshUser');
+  			this.$refs.psd.clearEditPsd();
   		};
   		const data = this.form;
   		const complete = _=>{ this.btn_disabled = false };
 
   		this.btn_disabled = true;
   		this.axiosPut({url, data, success, complete});
+  	},
+  	checkForm () {
+  		return this.$refs.psd.check();
   	}
   },
   watch: {
@@ -123,7 +133,10 @@ export default {
   mounted () {
   	this.refreshForm();
   },
-  components: { RemoteSelect },
+  components: { 
+  	RemoteSelect,
+  	EditPassword,
+  },
 }
 </script>
 

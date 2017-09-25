@@ -2,6 +2,9 @@
   <div class="main">
     <strainer v-model="filter" @refresh="refresh"></strainer>
     <table-component :tableOption="tableOption" :data="tableData" @refreshTableData="refreshTableData" ref="table" :refresh-proxy="refreshProxy"></table-component>
+    <app-shrink :title="currentRow.title" :visible.sync="shrinkVisible">
+      <common-detail type="patent" :id="currentRow.id"></common-detail>
+    </app-shrink>
   </div>
 </template>
 
@@ -12,6 +15,8 @@ import TableComponent from '@/components/common/TableComponent'
 import AppTree from '@/components/common/AppTree'
 import AppDatePicker from '@/components/common/AppDatePicker'
 import Strainer from '@/components/page_extension/PatentList_strainer'
+import AppShrink from '@/components/common/AppShrink'
+import CommonDetail from '@/components/page_extension/Common_detail'
 
 const URL = '/api/patents';
 const PATENT_TYPE = ['发明专利', '实用新型', '外观设计']; 
@@ -25,14 +30,20 @@ export default {
     }
   },
   data () {
-    let height = this.$store.getters.getInnerHeight - 250;
+    let height = this.$store.getters.getInnerHeight - 200;
+    console.log(this.$store.getters.getInnerHeight);
+    console.log(height);
     height = height < 300 ? 300 : height; 
     return {
       refreshProxy: '',
+      currentRow: '',
+      shrinkVisible: false,
       tableOption: {
         'name': 'patentList',
         'url': URL,
-        height,
+        'height': 'default',
+        'highlightCurrentRow': true, 
+        'rowClick': this.handleRowClick,
         'is_filter': true,
         'import_type': 'patent',
         'upload_type': 'patent',
@@ -143,7 +154,7 @@ export default {
             type: 'action',
             width: '145',
             btns: [
-              { type: 'detail', click: this.detail },
+              // { type: 'detail', click: this.detail },
               { type: 'delete', click: this.deletePatent },
             ], 
           },
@@ -191,12 +202,16 @@ export default {
     detail ({id}) {
       const path = `/patent/list/detail/${id}`; 
       this.$router.push( path );
-    }
+    },
+    handleRowClick (row) {
+      this.currentRow = row;
+      if(!this.shrinkVisible) this.shrinkVisible = true;
+    },
   },
   mounted () {
     this.$refs.table.refresh();
   },
-  components: {  AppFilter, TableComponent, AppTree, AppDatePicker, Strainer }
+  components: {  AppFilter, TableComponent, AppTree, AppDatePicker, Strainer, AppShrink, CommonDetail },
 }
 </script>
 <style>

@@ -1,5 +1,5 @@
 <template>
-  <el-dialog :title="popType == 'add' ? '添加用户' : '编辑用户'" :visible.sync="dialogVisible">
+  <el-dialog :title="popType == 'add' ? '添加用户' : '编辑用户'" :visible.sync="dialogVisible" @close="close">
 		<el-form :model="form" label-width="100px" ref="form" :rules="rules">
 			<el-form-item label="用户组" v-if="popType == 'add'">
 				<span class="form-item-text">{{ group && group.id !== 0  ? group.name : '未分配用户组' }}</span>
@@ -22,12 +22,7 @@
 	    </template>
 	    <template v-if="popType == 'edit'">
 	    	<el-form-item label="密码">
-					<el-button v-if="!editPsd" type="text" @click="editPsd = true">点击修改</el-button>
-					<template v-if="editPsd">
-						<el-input type="password" v-model="form.password" placeholder="请输入新密码..."></el-input>
-						<el-input type="password" v-model="form.password_again" placeholder="请再次输入新密码..." style="margin-top: 5px;"></el-input>
-						<el-button type="text" @click="clearEditPsd">取消</el-button>
-					</template>
+					<edit-password v-model="form.password" ref="psd"></edit-password>
 	    	</el-form-item>
 	    </template>
 
@@ -59,6 +54,7 @@
 <script>
 import UserRole from '@/components/form/UserRole'
 import AxiosMixins from '@/mixins/axios-mixins'
+import EditPassword from '@/components/form/EditPassword'
 
 const URL = 'api/members'
 
@@ -111,11 +107,6 @@ export default {
   	},
   },
   methods: {
-  	clearEditPsd () {
-  		this.editPsd = false; 
-  		this.form.password = ''; 
-  		this.form.password_again = '';
-  	},
   	show (row) {
   		this.dialogVisible = true;
   		if(this.$refs.form) {
@@ -131,7 +122,6 @@ export default {
   		// console.log("------------------------------------")
   			
   			if(this.popType == 'edit') {
-  				this.editPsd = false;
   				this.$tool.coverObj(this.form, row);
   				this.id = row.id;
   			}
@@ -156,7 +146,7 @@ export default {
   	edit () {
   		let flag = false;
   		this.$refs.form.validate(_=>{ flag = !_ })
-  		if( flag || ( this.editPsd && this.psdCheck() ) ) return;
+  		if( flag || this.$refs.psd.check() ) return;
 
   		const url = `${URL}/${this.id}`;
   		const data = this.form;
@@ -188,10 +178,17 @@ export default {
 
   		return flag;
 
-
+  	},
+  	close () {
+  		if(this.$refs.psd) {
+  			this.$refs.psd.clearEditPsd();
+  		}
   	}
   },
-  components: { UserRole }
+  components: { 
+  	UserRole,
+  	EditPassword, 
+  }
 }
 </script>
 

@@ -19,10 +19,10 @@
 			<product v-model="form.products" multiple></product>
 		</el-form-item>
 		<el-form-item label="标签" prop="tags">
-			<tag v-model="form.tags" multiple></tag>
+			<static-select type="tag" v-model="form.tags" multiple></static-select>
 		</el-form-item>
 		<el-form-item label="IPR" prop="ipr">
-			<span class="form-item-text" v-if="pageType == 'add'">{{ user ? user.name : '暂未读取到当前用户数据' }}</span>
+			<span class="form-item-text" v-if="type == 'add'">{{ user ? user.name : '暂未读取到当前用户数据' }}</span>
 			<static-select type="ipr" v-model="form.ipr" v-else></static-select>
 		</el-form-item>
 		<el-form-item label="提案人" prop="proposer">
@@ -53,8 +53,8 @@
 			<el-input v-model="form.issue_number" placeholder="请填写证书号"></el-input>
 		</el-form-item>
 		<el-form-item>
-			<el-button @click="add" v-if="pageType == 'add'" :disabled="btn_disabled" type="primary">添加</el-button>
-			<el-button @click="edit" v-if="pageType == 'edit'" :disable="btn_disabled" type="primary">编辑</el-button>
+			<el-button @click="add" v-if="type == 'add'" :disabled="btn_disabled" type="primary">添加</el-button>
+			<el-button @click="edit" v-if="type == 'edit'" :disable="btn_disabled" type="primary">编辑</el-button>
 		</el-form-item>
   	</el-form>
   </div>
@@ -62,13 +62,11 @@
 
 <script>
 import AxiosMixins from '@/mixins/axios-mixins'
+
 import Classification from '@/components/form/Classification'
 import Product from '@/components/form/Product'
-import Tag from '@/components/form/Tag'
-import Ipr from '@/components/form/Ipr'
-import Member from '@/components/form/Member'
 import Branch from '@/components/form/Branch'
-import Applicant from '@/components/form/Applicant'
+
 import Upload from '@/components/form/Upload'
 import RemoteSelect from '@/components/form/RemoteSelect'
 import StaticSelect from '@/components/form/StaticSelect'
@@ -78,9 +76,10 @@ const URL = '/api/copyrights'
 export default {
   name: 'copyrightAdd',
   mixins: [ AxiosMixins ],
+  props: ['pageType'],
   data () {
 		return {
-			id: '',
+		  id: '',
 		  form: {
 		  	title: '',
 		  	abstract: '',
@@ -116,8 +115,8 @@ export default {
 		}
   },
   computed: {
-  	pageType () {
-  		return this.$route.meta.pageType;
+  	type () {
+  		return this.pageType ? this.pageType : this.$route.meta.pageType;
   	},
   	detail () {
       return this.$store.getters.detailBase;
@@ -165,7 +164,7 @@ export default {
   	},
   	refreshForm () {
   		const data = this.detail;
-  		if(this.pageType == 'edit' && this.$tool.getObjLength(data) != 0) {
+  		if(this.type == 'edit' && this.$tool.getObjLength(data) != 0) {
   			
   			this.id = data.id;
   			for(let k in this.form) {
@@ -190,7 +189,7 @@ export default {
   		this.refreshForm();
   	}
   },
-  components: { Classification, Product, Tag, Ipr, Member, Branch, Applicant, Upload, RemoteSelect, StaticSelect }
+  components: { Classification, Product, Branch, Upload, RemoteSelect, StaticSelect }
 }
 </script>
 

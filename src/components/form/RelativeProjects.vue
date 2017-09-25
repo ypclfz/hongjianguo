@@ -35,6 +35,8 @@ export default {
 				{ label: '要求优先权', value: 1 },
 				{ label: '分案申请', value: 2 },
 				{ label: '部分连续案', value: 3 },
+				{ label: '同套发明与新型', value: 4 },
+				{ label: '不同地区同族', value: 5 },
 				{ label: '要求同日送件', value: 6 },
 			]
 		}

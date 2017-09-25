@@ -9,48 +9,56 @@
 </template>
 <script>
 import AppFilter from '@/components/common/AppFilter'
-import AxiosMixins from '@/mixins/axios-mixins'
 import Chart from '@/components/page_extension/Home_charts'
 
-
-let data;
-const URL = '/api/stats/lists';
 export default {
   name: 'home',
-  mixins: [ AxiosMixins ],
   data () {
     return {
-      arr: 
-      [ 
-        ['application_pie','proposal_bar'],
-        ['issue_bar', 'application_bar'], 
-        ['copyright_bar', ''],
-      ],
       config: '',
     }   
   },
-  methods: {
-    refreshHome () {
-      console.log(data);
-    }
-  },
-  created () {
-    if(data === undefined) {
-      const url = URL;
-      const success = _=>{ 
-        data = _.data;
-        this.refreshHome(); 
-      };
-      const complete = _=>{
-        this.$store.commit('cancelLoading');
+  computed: {
+    innerWidth () {
+      return this.$store.getters.getInnerWidth;
+    },
+    arr () {
+      const user = this.$store.getters.getUser;
+      let charts = user ? user.charts : [];
+
+      if(this.innerWidth < 1200) {
+        const arr = [];
+        charts.forEach(_=>{
+          _.forEach(_=>{arr.push([_])});
+        })
+        charts = arr;
       }
 
-      this.$store.commit('onLoading');
-      this.axiosGet({url, success, complete});
-    }else {
-      this.refreshHome();
-    }
+      return charts;
+    },
   },
+  // methods: {
+  //   refreshHome () {
+  //     console.log(data);
+  //   }
+  // },
+  // created () {
+  //   if(data === undefined) {
+  //     const url = URL;
+  //     const success = _=>{ 
+  //       data = _.data;
+  //       this.refreshHome(); 
+  //     };
+  //     const complete = _=>{
+  //       this.$store.commit('cancelLoading');
+  //     }
+
+  //     this.$store.commit('onLoading');
+  //     this.axiosGet({url, success, complete});
+  //   }else {
+  //     this.refreshHome();
+  //   }
+  // },
   components: { AppFilter, Chart },
 }
 </script>

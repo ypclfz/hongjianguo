@@ -1,15 +1,18 @@
 let url = '/api/feeCodes';
 const state = {
-	data: [],
+	data: undefined,
 }
 
 const getters = {
 	feeCodeOptions: state=>state.data,
 	feeCodeMap: state=>{
-		const map = new Map();
-		state.data.forEach(d=>{
-			map.set(d.id, d );
-		});
+		let map = new Map();
+		
+		if(state.data) {
+			state.data.forEach(d=>{
+				map.set(d.id, d );
+			});	
+		}
 		
 		return map;
 	}
@@ -25,6 +28,11 @@ const actions = {
 
 	refreshFeeCode ({commit, rootState, state}) {
 		url = rootState.status ? url.replace(/\/api/, '') : url;
+
+		if(state.data === undefined) {
+			commit('setCode', []);
+		}
+
 		rootState.axios
 			.get(url)
 			.then(response=>{

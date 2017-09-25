@@ -3,11 +3,11 @@
   	
 			<div class="left">
 
-				<group v-model="current_group"></group>
+				<group v-model="current_group" ref="group"></group>
 
 			</div>
 			<div class="right">
-				<app-collapse col-title="用户组详情">
+				<app-collapse col-title="用户组详情" default-close>
 					<ul style="margin: 0; padding-left: 15px; list-style: none; font-size: 14px">
 						<li style="margin-bottom: 20px"><span>用户组名称：</span><span>{{ group_name }}</span></li>
 						<li><span>用户组描述：</span><span>{{ group_description }}</span></li>
@@ -51,7 +51,7 @@ const URL_GROUP = 'api/groups'
 export default {
   name: 'userList',
   mixins: [ AxiosMixins ],
-  data () {
+  data () { 
 		return {
 		  formLabelWidth: '100px',
 		  popType: '',
@@ -61,6 +61,7 @@ export default {
 		  		{ type: 'control', label: '字段' },
 		  		{},
 		  	],
+		  	'height': 'default',
 		  	// 'header_slot': [ 'userRole' ],
 		  	columns: [
 		  		{ type: 'selection' },
@@ -121,7 +122,7 @@ export default {
 		}
 	},
 	methods: {
-		//true代表选择全部用户,false代表选择某个用户组
+	//true代表选择全部用户,false代表选择某个用户组
     refreshTableOption (flag) {
     	const h = this.tableOption.header_btn;
     	const one = { type: 'add', label: '添加至用户组',  click: this.toGroupPop };
@@ -189,7 +190,8 @@ export default {
 			const url = `${URL}/${id}`;
 			const success = _=>{ 
 				this.$message({message: '删除用户成功！', type: 'success'});
-				this.update(); 
+				this.update();
+				this.refreshGroup();
 			};
 
 			this.$confirm(`删除后不可恢复，确认删除用户‘${username}’？`)
@@ -207,8 +209,14 @@ export default {
 			
 			this.axiosGet({url, data, success})
 		},
-		refresh () {
+		refresh (str) {
  			this.$refs.table.refresh();
+			if(str != 'noGroup') {
+				this.refreshGroup();
+			}
+		},
+		refreshGroup () {
+			this.$store.dispatch('refreshGroup');
 		},
 		update () {
 			this.$refs.table.update();
@@ -217,13 +225,8 @@ export default {
   watch: {
   	group_id (val) {
   		this.refreshTableOption(val == 0);
-  		this.refresh();
+  		this.refresh('noGroup');
   	},
-  	user_role () {
-  		this.refresh();
-  	}
-  },
-  created () {
   },
   components: { AppTree, TableComponent, Group, Pop, AppCollapse, StaticSelect, UserRole },
 }

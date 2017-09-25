@@ -14,6 +14,7 @@
             <template v-if="uploadText ? true : false">{{ uploadText }}</template>
             <template v-else>将文件拖到此处，或<em>点击上传</em></template>
         </div>
+        <div class="el-upload__tip" slot="tip"><slot></slot></div>
     </el-upload>
     </template>
 

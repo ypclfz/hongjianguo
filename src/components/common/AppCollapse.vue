@@ -93,7 +93,7 @@ export default {
 }*/
 .app-collapse {
 	position: relative;
-    margin-bottom: 15px;
+    margin-bottom: 10px;
     border-radius: 4px;
     border: 0;
     box-shadow: none;
@@ -109,12 +109,12 @@ export default {
     overflow: hidden;
 }
 .app-collapse-title {
-    font-size: 18px;
+    font-size: 14px;
     font-weight: normal;
     float: left;
     margin: 0;
     margin-right: 10px;
-    padding: 12px 0;
+    padding: 8px 0;
     /*min-height: 42px*/
 }
 .app-collapse-content {

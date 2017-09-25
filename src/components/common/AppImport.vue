@@ -99,13 +99,13 @@ const config = [
 		action: 'getPatentNotices',
 		url: '/notices/import',
 		category: 1,
-    model: '',
+    // model: '',
 	}],
 	['copyright_notice', {
 		action: 'getCopyrightNotices',
 		url: '/notices/import',
 		category: 3,
-    model: '',
+    // model: '',
 	}],
   ['feesIncome', {
     action: 'getFeesIncome',
@@ -166,9 +166,6 @@ export default {
   	}
   },
   methods: {
-  	test () {
-  		console.log(this.$refs.project.getSelected());
-  	},
   	design() {
   		const o = this.$tool.deepCopy(this.tableData[this.$index]);
       const serial = this.$refs.project.getSelected()[0].name;

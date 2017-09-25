@@ -1,9 +1,7 @@
 <template>
 <app-collapse col-title="任务筛选" default-close>
   <el-form label-width="100px" :model="form" ref="form">   
-  	
-  	
-  	
+
     <el-row>
       <el-col :span="12">
         <el-form-item label="指定期限" prop="due_time">
@@ -27,7 +25,7 @@
           <remote-select type="agency" v-model="form.agency"></remote-select>
         </el-form-item>
         <el-form-item label="流程节点" prop="flow_node_id">
-          <flow-nodes v-model="form.flow_node_id"></flow-nodes>
+          <static-select type="flow_node" v-model="form.flow_node_id"></static-select>
         </el-form-item>
       </el-col>
       <el-col :span="12">
@@ -56,12 +54,12 @@
 <script>
 import AppCollapse from '@/components/common/AppCollapse'
 import Agency from '@/components/form/Agency'
-import FlowNodes from '@/components/form/FlowNodes'
 import Agent from '@/components/form/Agent'
 import Ipr from '@/components/form/StaticSelect'
 import Member from '@/components/form/Member'
 import DateArea from '@/components/form/DateArea'
 import RemoteSelect from '@/components/form/RemoteSelect'
+import StaticSelect from '@/components/form/StaticSelect'
 
 export default {
   name: 'pendingTaskStrainer',
@@ -98,7 +96,7 @@ export default {
             copy[k] = d.map(_=>this.$tool.getDate(_)).join(",");  
           }
         }else {
-          if(d) {
+          if(d !== '') {
             copy[k] = d;  
           }
         }
@@ -110,7 +108,7 @@ export default {
   		this.$emit('clear');
   	}
   },
-  components: { Agency, FlowNodes, Ipr, Agent, Member, DateArea, AppCollapse, RemoteSelect }
+  components: { Agency, Ipr, Agent, Member, DateArea, AppCollapse, RemoteSelect, StaticSelect }
 }
 </script>
 

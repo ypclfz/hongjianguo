@@ -24,7 +24,6 @@
 <script>
 import AppCollapse from '@/components/common/AppCollapse'
 import Branch from '@/components/form/Branch'
-import Ipr from '@/components/form/Ipr'
 import Applicant from '@/components/form/Applicant'
 import Inventors from '@/components/form/Inventors'
 import Member from '@/components/form/Member'
@@ -138,7 +137,7 @@ export default {
       return this.$store.getters.getUser;
     }
   },
-  components: { AppCollapse, Inventors, Ipr, Applicant, Member, Branch, StaticSelect, RemoteSelect }
+  components: { AppCollapse, Inventors, Applicant, Member, Branch, StaticSelect, RemoteSelect }
 }
 </script>
 

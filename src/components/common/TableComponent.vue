@@ -1,7 +1,7 @@
 <template>
   <div class="hjg-table">
     
-  	<div class="table-header">
+  	<div class="table-header" v-if="tableOption.is_header === undefined ? true : tableOption.is_header">
       <el-popover
         placement="right"
         width="800"
@@ -10,8 +10,8 @@
         :open-delay="300"
         v-if="tableOption.is_filter ? true : false"
       >
-        <app-filter :data="filters" v-if="tableOption.is_filter ? true : false"></app-filter>
-        <el-button slot="reference" type="primary">快速筛选</el-button>
+        <app-filter :data="filters" v-if="tableOption.is_filter === undefined ? true : tableOption.is_filter"></app-filter>
+        <el-button slot="reference" type="primary" style="margin-right: 5px;">快速筛选</el-button>
       </el-popover>
 
       <template v-for="btn in tableOption.header_btn">
@@ -109,7 +109,7 @@
     :row-class-name="handleRowClassName"
     @row-click="handleRowClick"
     :highlight-current-row="tableOption.highlightCurrentRow ? tableOption.highlightCurrentRow : false"
-    :height="tableOption.height ? tableOption.height : ''"
+    :height="tableHeight"
     ref="table"
 
   >
@@ -208,7 +208,7 @@
   	:current-page.sync="page"
   	:page-size="pagesize"
     :page-sizes="pagesizes"
-  	layout="total, sizes, prev, pager, next, jumper"
+  	layout="sizes, prev, pager, next, jumper, total"
   	:total="totalNumber"
   >
   </el-pagination>
@@ -229,7 +229,11 @@ import FileUpload from '@/components/common/FileUpload'
 import SearchInput from '@/components/common/SearchInput'
 const methods = Object.assign({}, tableConst.methods, {
   handleRowClick (a,b,c) {
-    if(c.fixed) return false;
+    // if(c.fixed) return false;
+    b.stopPropagation();
+
+    if(c.type == 'selection') return false;
+    
     const func = this.tableOption.rowClick;
     if(func) func(a,b,c);
   },
@@ -307,6 +311,7 @@ const methods = Object.assign({}, tableConst.methods, {
     }
   },
   handleActionCommand (func, scope, event) {
+    event.stopPropagation();
     if(func) {
       func(scope.row, event);
     }
@@ -489,6 +494,30 @@ export default {
 
       return a;
     },
+    innerHeight () {
+      return this.$store.getters.getInnerHeight;
+    },
+    tableHeight () {
+      let height = '';
+      const hk = this.tableOption.height;
+
+      if(hk !== undefined) {
+        if(hk == 'default') {
+          height = this.innerHeight - 200;
+          height = height < 300 ? 300 : height;
+        }else if(hk == 'default2') {
+          height = this.innerHeight - 150;
+          height = height < 300 ? 300 : height;
+        }else if(hk === 'default3') {
+          height = this.innerHeight - 100;
+          height = height < 300 ? 300 : height;
+        }else {
+          height = hk;
+        }
+      }
+
+      return height;
+    }
   },
   watch: {
     'requesOption': {

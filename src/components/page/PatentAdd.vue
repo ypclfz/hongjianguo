@@ -11,7 +11,7 @@
     <div style="margin-bottom: 20px;">
       <el-button @click="add" type="primary" v-if="type == 'add'" :disabled="btn_disabled">添加</el-button>
       <el-button @click="edit" type="primary" v-if="type == 'edit'" :disabled="btn_disabled">编辑</el-button>
-      <el-button @click="cancel" :disabled="btn_disabled">取消</el-button>
+      <el-button @click="cancel" v-if="!shrink" :disabled="btn_disabled">取消</el-button>
     </div>
   </div>
 </template>
@@ -45,8 +45,10 @@ export default {
       id: '',
       pop_type: '',
       btn_disabled: false,
+      shrink: false,
     }
   },
+  props: ['pageType'],
   mixins: [ AxiosMixins ],
   methods: {
     add () {
@@ -115,7 +117,13 @@ export default {
       return this.$store.getters.detailBase;
     },
     type () {
-      return this.$route.meta.type;
+      if(this.pageType) {
+        this.shrink = true;
+        return this.pageType;
+      }else {
+        this.shrink = false;
+        return this.$route.meta.type;
+      }
     }
   },
   watch: {

@@ -21,13 +21,11 @@ export default {
   name: 'invoiceCommon',
   mixins: [ AxiosMixins ],
   data () {
-  	let height = this.$store.getters.getInnerHeight - 250;
-    height = height < 300 ? 300 : height; 
 		return {
 		  option: {
 		  	'name': 'invoice',
 		  	'url': URL,
-		  	height,
+		  	'height': 'default',
 		  	'header_btn': [
 		  		{ type: 'export' },
 		  		{ type: 'delete' },

@@ -22,6 +22,7 @@ export default {
 		  option: {
         'name': 'inventorList',
         'url': URL,
+        'height': 'default2',
 		  	'header_btn': [
 		  		{ type: 'add', click: this.addPop },
           { type: 'delete' },

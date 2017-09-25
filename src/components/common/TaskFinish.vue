@@ -60,7 +60,11 @@
       <el-input type="textarea" v-model="form.remark"></el-input>
     </el-form-item>
     <el-form-item prop="attachments" label="附件" v-if="fields.attachments">
-      <upload v-model="form.attachments" :file-list="attachments"></upload>
+      <upload v-model="form.attachments" :file-list="attachments">
+        <ul v-if="data.description && data.description.length != 0" style="margin: 0; padding: 0;">
+          <li v-for="(item, index) in data.description" :key="index">{{ item }}</li>
+        </ul>
+      </upload>
     </el-form-item>
     <el-form-item prop="rank" label="评分" v-if="fields.rank">
       <el-rate 
@@ -82,7 +86,6 @@ import axiosMixins from '@/mixins/axios-mixins'
 import Member from '@/components/form/Member'
 import Agent from '@/components/form/Agent'
 import Agency from '@/components/form/Agency'
-import Ipr from '@/components/form/Ipr'
 import Upload from '@/components/form/Upload'
 import RemoteSelect from '@/components/form/RemoteSelect'
 import StaticSelect from '@/components/form/StaticSelect'
@@ -182,11 +185,11 @@ export default {
 					if(d.id == val) {
 						
             this.fields = d.fields;
-						this.defaultVal = d.default;
+						this.defaultVal = d.default == 'agent' && !this.data.agent ? 'ipr' : d.default;
             
             if(this.fields.agency) this.form.agency = this.data.agency;
             if(this.fields.agency_type) this.form.agency_type = 1;
-            const person_in_charge = this.data[d.default] ? this.data[d.default] : '';
+            const person_in_charge = this.data[this.defaultVal] ? this.data[this.defaultVal] : '';
         
             this.$nextTick(_=>{
               // console.log('aaaa');
@@ -223,7 +226,7 @@ export default {
       return this.data.next && this.data.next.length != 0 ? true : false;
     }
 	},
-	components: { Member, Agent, Agency, Ipr, Upload, RemoteSelect, StaticSelect }
+	components: { Member, Agent, Agency, Upload, RemoteSelect, StaticSelect }
 }
 </script>
 

@@ -38,7 +38,7 @@
           <app-menu v-for="item in menu_data" :data="item" :key="item.path"></app-menu>
         </el-menu>
       </div>
-    <div class="container" v-loading="loading" :element-loading-text="loadingText" :style="`min-height: ${navL_height-20}px; padding: 20px 20px 0; background-color: #F9FAFC;`">
+    <div class="container" v-loading="loading" :element-loading-text="loadingText" :style="`min-height: ${navL_height-10}px; padding: 10px 15px 0; background-color: #F9FAFC;`">
       <!-- <h1 class="container-menu"><i :class="select.icon"></i><span>{{ select.text }}</span></h1> -->
       <div class="container-nav">
         <el-breadcrumb separator=">">
@@ -105,7 +105,6 @@ export default {
       return this.$store.getters.screen_label;
     },
     navL_height () {
-      this.$store.commit('setInnerHeight', window.innerHeight - 50);
       return  this.$store.getters.getInnerHeight;
     },
     loading () {
@@ -126,7 +125,10 @@ export default {
       }
       if(s.length > 3) s = s.slice(0,3);
       return s;
-    }
+    },
+    leftVisible () {
+      return this.$store.getters.leftVisible;
+    },
   },
   data () {
     return {      
@@ -134,7 +136,6 @@ export default {
       resize_lock: false,
       sysPopVisible: false,
       windowLock: false,
-      navShow: true,
       userinfoLoading: true,
     };
   },
@@ -155,10 +156,11 @@ export default {
     },
     navToggle () {
       let i = 32;
-      let n = this.navShow ? 160 : 0;
-      i = this.navShow ? -i : i;
-      
-      this.navShow = !this.navShow;
+      let n = this.leftVisible ? 160 : 0;
+      i = this.leftVisible ? -i : i;
+
+
+      this.$store.commit('toggleLeftVisible');
 
       const left = $('.nav-left');
       const app = $('#app');
@@ -195,14 +197,14 @@ export default {
       this.$store.dispatch('refreshProduct');
       this.$store.dispatch('refreshClassification');
       this.$store.dispatch('refreshBranch');
-      this.$store.dispatch('refreshIpr');
+      // this.$store.dispatch('refreshIpr');
       this.$store.dispatch('refreshArea');
       this.$store.dispatch('refreshCity');
-      this.$store.dispatch('refreshFeeCode');
-      this.$store.dispatch('refreshEntity');
-      this.$store.dispatch('refreshGroup');
-      this.$store.dispatch('refreshFlowNodes');
-      this.$store.dispatch('refreshFileType');
+      // this.$store.dispatch('refreshFeeCode');
+      // this.$store.dispatch('refreshEntity');
+      // this.$store.dispatch('refreshGroup');
+      // this.$store.dispatch('refreshFlowNodes');
+      // this.$store.dispatch('refreshFileType');
       // this.$store.dispatch('refreshMail');
     };
     const error = _=>{
@@ -216,10 +218,9 @@ export default {
       this.axiosGet({url, success, error, catchFunc});
     }
     // this.axiosGet({url, success, error, catchFunc});
-    this.axiosPost({url: '/api/login', success: success2, data: {username: 'ipr2', password: 'Z9jgM6FhdKWEqbbpJePv/6qeTO/Yk2b6lx7zF4tiBncRubwf0fz93hkqGXCiWvqXCDIq7x+kAH3TK5zhjDZ53jgt1Gx1vvBPHn3ga7HTqPrnc+VhhuVGeTefHShJBx32rnbhL6LbEqCAMGqtQXaovCtuJGY6uWYAPfecAOGMuadnxTigTTBwKtW2oVP4J/EwAroYKuy4MK4Pd7YGtFoJAhlpKVOponsgsYQ8EKGOSVxcZgcgnOw8LhPy28N+xoFCh0OBkMyjM80Ybjq+H8BO6CacnDzQReZL5wQZqBdTtW7CUBi6S4+JWDPBahqNgz7jD73UhEIeG0ivFLEdCWtlVw=='}});
+    this.axiosPost({url: '/api/login', success: success2, data: {username: 'admin', password: 'Z9jgM6FhdKWEqbbpJePv/6qeTO/Yk2b6lx7zF4tiBncRubwf0fz93hkqGXCiWvqXCDIq7x+kAH3TK5zhjDZ53jgt1Gx1vvBPHn3ga7HTqPrnc+VhhuVGeTefHShJBx32rnbhL6LbEqCAMGqtQXaovCtuJGY6uWYAPfecAOGMuadnxTigTTBwKtW2oVP4J/EwAroYKuy4MK4Pd7YGtFoJAhlpKVOponsgsYQ8EKGOSVxcZgcgnOw8LhPy28N+xoFCh0OBkMyjM80Ybjq+H8BO6CacnDzQReZL5wQZqBdTtW7CUBi6S4+JWDPBahqNgz7jD73UhEIeG0ivFLEdCWtlVw=='}});
   },
-  mounted () {
-    
+  beforeCreate () {
     const refreshWindow =  _=> {
       this.$store.commit('setInnerHeight', window.innerHeight - 50);
       this.$store.commit('setInnerWidth', window.innerWidth);
@@ -236,7 +237,6 @@ export default {
         },100)
       }
     }
-
   },
   components: { AppMenu }
 }
@@ -250,7 +250,7 @@ $navL_width: 160px;
 
 $container_padding: 20px;
 
-$table_margin: 15px;
+$table_margin: 10px;
 
 body {
   margin: 0;
@@ -294,7 +294,7 @@ nav {
   top: 50%;
   margin-top: -50px;
   background-color: #68758a;
-  width: 15px;
+  width: 10px;
   height: 150px;
   border-bottom-right-radius: 20px;
   border-top-right-radius: 20px;
@@ -304,7 +304,7 @@ nav {
 .nav-left-btn-arrow {
   position: absolute;
   top: 50%;
-  left: -2px;
+  left: -4px;
   color: #324157;
   transform: translate(0, -50%);
 }
@@ -331,23 +331,24 @@ nav {
 .container-nav {
   border-radius: 4px;
   background: #f3f5f6;
-  padding: 15px;
-  margin-bottom: 15px;
+  padding: 8px;
+  margin-bottom: 10px;
 }
 .container-nav .el-breadcrumb {
-  font-size: 18px;
+  font-size: 14px;
 }
 .container-nav .iconfont {
-    font-size: 18px;
+    font-size: 14px;
     padding-right: 5px;
 }
 .container-nav-screen .el-tag+.el-tag {
   margin-left: 10px;
 }
 .el-table {
-  margin: $table_margin 0;
+  margin-bottom: 10px;
 }
 .table-header {
+  margin-bottom: 10px;
   overflow: hidden;
 }
 .table-search {
@@ -359,8 +360,8 @@ nav {
   width: 200px;
 }
 .el-pagination {
-  text-align: right;
-  padding-right: 40px;
+/*  text-align: right;
+  padding-right: 40px;*/
 }
 .row {
   overflow: hidden;

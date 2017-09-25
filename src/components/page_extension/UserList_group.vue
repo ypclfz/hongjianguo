@@ -10,7 +10,7 @@
 	  </div>
 	  
 		<el-tree
-		  :data="data"
+		  :data="groupOptions"
 		  node-key="id"
 		  :props="props"
 		  highlight-current
@@ -28,7 +28,7 @@
 				<el-form-item label="描述" prop="description">
 					<el-input v-model="form.description" type="textarea" placeholder="请输入用户组描述"></el-input>
 				</el-form-item>
-				<el-form-item>
+				<el-form-item style="margin-bottom: 0px;">
 					<el-button type="primary" v-if="popType == 'add'" @click="add">添加</el-button>
 					<el-button type="primary" v-if="popType == 'edit'" @click="edit">编辑</el-button>
 					<el-button @click="cancel">取消</el-button>
@@ -53,6 +53,7 @@ import AxiosMixins from '@/mixins/axios-mixins'
 import AppSwitch from '@/components/form/AppSwitch'
 
 const URL = 'api/groups';
+const allUser = {name: '全部用户', description: '该用户组用于存放所有的用户，不可编辑，不可删除', id: 0};
 
 
 export default {
@@ -96,8 +97,24 @@ export default {
   	deleteDisabled () {
   		return this.value && this.value.id != 0 && this.value.isRemovable ? false : true;
   	},
+    groupOptions () {
+      let g = this.$store.getters.groupOptions;
+      
+      if(g == undefined) {
+        this.loading = true
+        this.$store.commit('setGroup',[]);
+        this.$store.dispatch('refreshGroup', _=>{ this.loading = false });
+        g = [];
+      }
+
+      g = [allUser, ...g];
+
+      return g;
+    },
     groupMap () {
-      return this.$store.getters.groupMap;
+      const map = this.$store.getters.groupMap;
+      map.set(0, allUser);
+      return map;
     },
   },
   methods: {
@@ -135,33 +152,30 @@ export default {
           </span>); 
     },
   	handleCurrentChange (data) {
-  		this.setCurrent = data.id;
+    
+      if(typeof data == 'number') {
+        data = this.groupMap.get(data);
+      }
+      
+      this.setCurrent = data.id;
   		this.$emit('input', data);
   	},
   	refreshData () {
-      this.loading = true;
-  		// this.$store.dispatch('', );
-  		const url = URL;
-  		const def = {name: '全部用户', description: '该用户组用于存放所有的用户，不可编辑，不可删除', id: 0};
-  		const success = _=>{ 
-  			_.groups.unshift(def);
-  			this.data = _.groups;
-  			this.$nextTick(()=>{
-  				
-  				if(this.value == '') {
-  					this.handleCurrentChange(def);
-  				}else {
-  					this.handleCurrentChange(this.$refs.tree.store.getNode(this.value.id).data);
-  				}
-  			})
-  		};
-
-      const complete = _=>{
-        this.loading = false;
+      
+      const callback = _=>{
+        this.loading = false
+        const def = {name: '全部用户', description: '该用户组用于存放所有的用户，不可编辑，不可删除', id: 0};
+        this.$nextTick(()=>{  
+          if(this.value == '') {
+            this.handleCurrentChange(0);
+          }else {
+            this.handleCurrentChange(this.value.id);
+          }
+        })
       }
 
-  		this.axiosGet({url, success, complete});
-  	},	
+      this.$store.dispatch('refreshGroup', callback);  		
+    },	
   	addPop () {
   		this.popType = 'add';
   		this.dialogVisible = true;
@@ -178,7 +192,10 @@ export default {
 
   		this.popType = 'edit';
   		this.dialogVisible = true;
-  		this.$tool.coverObj(this.form, this.value);
+      this.$nextTick(_=>{
+        this.$tool.coverObj(this.form, this.value);
+      })
+  		
   	},
   	cancel () {
   		this.dialogVisible = false;
@@ -229,9 +246,6 @@ export default {
   			})
   			.catch(_=>{})
   	}
-  },
-  created () {
-  	this.refreshData();
   },
   components: { AppSwitch },
 

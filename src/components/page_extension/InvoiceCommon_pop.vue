@@ -35,7 +35,6 @@
 
 <script>
 import AxiosMixins from '@/mixins/axios-mixins'
-import InvoiceEntity from '@/components/form/InvoiceEntity'
 import Upload from '@/components/form/Upload'
 
 const URL = '/api/invoices';
@@ -98,7 +97,7 @@ export default {
   		this.dialogVisible = false;
   	},
   },
-  components: { InvoiceEntity, Upload },
+  components: { Upload },
 }
 </script>
 

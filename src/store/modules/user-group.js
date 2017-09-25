@@ -1,14 +1,17 @@
 let url = '/api/groups';
 const state = {
-	data: [],
+	data: undefined,
 }
 
 const getters = {
 	groupOptions: state=>state.data,
 	groupMap: state=>{
 		const map = new Map();
-		for(let d of state.data) {
-			map.set(d.id, d);
+
+		if(state.data) {			
+			for(let d of state.data) {
+				map.set(d.id, d);
+			}
 		}
 
 		return map;
@@ -22,7 +25,7 @@ const mutations = {
 }
 
 const actions = {
-	refreshGroup ({commit, rootState}) {
+	refreshGroup ({commit, rootState}, callback) {
 		url = rootState.status ? url.replace(/\/api/, '') : url;
 		rootState.axios
 			.get(url)
@@ -30,7 +33,10 @@ const actions = {
 				const d = response.data;
 				if(d.status){
 					commit('setGroup', d.groups);
+					
+					if( callback ) callback(d);
 				}else {
+					console.log(d);
 					// alert('请求用户组数据失败');
 				}
 			})

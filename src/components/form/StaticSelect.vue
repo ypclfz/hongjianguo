@@ -70,6 +70,7 @@ const config = [
   ['mail', {
     placeholder: '请输入邮箱地址',
     options: 'mailOptions',
+    // set: 'setMail',
     refresh: 'refreshMail',
     allowCreate: true,
     defaultFirstOption: true,
@@ -77,6 +78,7 @@ const config = [
   ['tag', {
     placeholder: '请输入或选择标签',
     options: 'tagOptions',
+    // set: 'setTags',
     refresh: 'refreshTags',
     allowCreate: true,
     defaultFirstOption: true,
@@ -84,6 +86,17 @@ const config = [
   ['area', {
     placeholder: '请选择地区',
     options: 'areaData',
+  }],
+  ['flow_node', {
+    placeholder: '请选择流程节点',
+    options: 'flowNodesData',
+    // set: 'setFlowNodes',
+    refresh: 'refreshFlowNodes',
+  }],
+  ['fee_code', {
+    placeholder: '请选择费用代码',
+    options: 'feeCodeOptions',
+    refresh: 'refreshFeeCode',
   }]
 ];
 const map = new Map(config);
@@ -103,13 +116,35 @@ export default {
       if( typeof op == 'string') {
         op = this.$store.getters[op];
         if(op === undefined) {
-          this.$store.commit('setMail', []);
           op = [];
           if(this.config.refresh) this.$store.dispatch(this.config.refresh);
         }
       }
+
       return op;
     },
+    map () {
+      const map = new Map ();
+      this.options.forEach(_=>{map.set(_.id, _)});
+
+      return map;
+    }
+  },
+  methods: {
+    getSelected () {
+      const arr = [];
+      if(this.multiple) {
+        this.value.forEach(_=>{
+          const val = this.map.get(_)
+          if(val) arr.push(val);
+        })
+      }else {
+        const val = this.map.get(this.value);
+        if(val) arr.push(val);
+      }
+
+      return arr;
+    }
   },
 }
 </script>

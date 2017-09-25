@@ -2,6 +2,9 @@
   <div class="main">
     <strainer v-model="filter" @refresh="refresh"></strainer>
     <table-component :tableOption="tableOption" :data="tableData" @refreshTableData="refreshTableData" ref="table"></table-component>
+    <app-shrink :title="currentRow.title" :visible.sync="shrinkVisible">
+      <common-detail type="copyright" :id="currentRow.id"></common-detail>
+    </app-shrink>
   </div>
 </template>
 
@@ -9,19 +12,24 @@
 import AxiosMixins from '@/mixins/axios-mixins'
 import TableComponent from '@/components/common/TableComponent'
 import Strainer from '@/components/page_extension/CopyrightList_strainer'
+import AppShrink from '@/components/common/AppShrink'
+import CommonDetail from '@/components/page_extension/Common_detail'
+
 const URL = '/api/copyrights';
 
 export default {
   name: 'copyrightList',
   mixins: [ AxiosMixins ],
   data () {
-    let height = this.$store.getters.getInnerHeight - 250;
-    height = height < 300 ? 300 : height;
     return {
+      currentRow: '',
+      shrinkVisible: false,
       tableOption: {
         'name': 'copyrightList',
         'url': URL,
-        height,
+        'height': 'default',
+        'highlightCurrentRow': true, 
+        'rowClick': this.handleRowClick,
         'is_filter': true,
         'import_type': 'copyright',
         'upload_type': 'copyright',
@@ -56,7 +64,7 @@ export default {
             type: 'action',
             width: '150',
             btns: [
-              { type: 'detail', click: this.detail },
+              // { type: 'detail', click: this.detail },
               { type: 'delete', click: this.deleteSingle },
             ], 
           },
@@ -97,12 +105,21 @@ export default {
     detail ({id}) {
       const path = `/copyright/list/detail/${id}`; 
       this.$router.push( path );
-    }
+    },
+    handleRowClick (row) {
+      this.currentRow = row;
+      if(!this.shrinkVisible) this.shrinkVisible = true;
+    },
   },
   mounted () {
     this.$refs.table.refresh();
   },
-  components: { TableComponent, Strainer }
+  components: { 
+    TableComponent, 
+    Strainer, 
+    AppShrink, 
+    CommonDetail 
+  }
 }
 </script>
 <style>

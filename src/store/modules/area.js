@@ -22,6 +22,11 @@ const mutations = {
 const actions = {
 	refreshArea ({commit, rootState, state}) {
 		url = rootState.status ? url.replace(/\/api/, '') : url;
+
+		if(state.data === undefined) {
+			commit('setArea', []);
+		}
+
 		rootState.axios
 			.get(url)
 			.then(response=>{

@@ -85,7 +85,7 @@
       </span>
       <el-tabs v-model="activeName">        
         <el-tab-pane label="详细信息" name="edit">          
-          <information :row="currentRow"></information>          
+          <information :row="currentRow" @more="handleMore"></information>          
         </el-tab-pane>
         <el-tab-pane label="线上完成" name="finish" v-if="task_status == 0">
           <task-finish :id="currentRow.id" @submitSuccess="finishSuccess"></task-finish>
@@ -94,6 +94,10 @@
           <detail :row="currentRow"></detail>
         </el-tab-pane>
       </el-tabs>
+    </app-shrink>
+
+    <app-shrink :title="currentRow.title" :visible.sync="moreVisible">
+      <common-detail type="patent" :id="currentRow.project_id"></common-detail>
     </app-shrink>
 
   </div>
@@ -112,6 +116,7 @@ import Detail from '@/components/page_extension/TaskCommon_detail'
 import TaskFinish from '@/components/common/TaskFinish'
 import Strainer from '@/components/page_extension/TaskCommon_strainer'
 import AppShrink from '@/components/common/AppShrink'
+import CommonDetail from '@/components/page_extension/Common_detail'
 import $ from 'jquery'
 
 const URL = '/api/tasks';
@@ -125,6 +130,11 @@ export default {
   name: 'taskList',
   mixins: [ AxiosMixins ],
   methods: {
+    handleMore (type) {
+      if(type == 'patent') {
+        this.moreVisible = true;
+      }
+    },
     handleShrinkClose () {
       this.$refs.table.setCurrentRow();
     },
@@ -304,8 +314,6 @@ export default {
     }
   },
   data () {
-    let height = this.$store.getters.getInnerHeight - 250;
-    height = height < 300 ? 300 : height;
 
     return {
       dialogScreenVisible: false,
@@ -315,6 +323,7 @@ export default {
       dialogTranserVisible: false,
       dialogSettingVisible: false,
       dialogShrinkVisible: false,
+      moreVisible: false,
       filter: {},
       filters: {},
       activeName: 'edit',
@@ -328,7 +337,7 @@ export default {
       tableOption: {
         'name': 'taskList',
         'url': URL,
-        height,
+        'height': 'default',
         'is_filter': true,
         'row_class': ({due_time}, index)=> {
           return ;
@@ -453,7 +462,20 @@ export default {
 
     this.refreshOption();
   },
-  components: { RemoteSelect, AppFilter, TableComponent, AppDatePicker, Edit, Detail, Strainer, AppCollapse, TaskFinish, AppShrink, Information },
+  components: { 
+    RemoteSelect, 
+    AppFilter, 
+    TableComponent, 
+    AppDatePicker, 
+    Edit, 
+    Detail, 
+    Strainer, 
+    AppCollapse, 
+    TaskFinish, 
+    AppShrink, 
+    Information,
+    CommonDetail, 
+  },
 } 
 </script>
 <style>

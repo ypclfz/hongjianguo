@@ -1,7 +1,7 @@
 <template>
   <div class="main">
   	
-  		 <el-row :gutter="40">
+  		 <el-row>
 				<el-col :span="8">
 					<el-tree
 						:data="branchData"
@@ -13,7 +13,7 @@
 					>
 					</el-tree>
 				</el-col>
-  		 	<el-col :span="16">
+  		 	<el-col :span="16" style="padding-left: 20px;">
 		  		<el-form label-width="100px">
 		  			<el-form-item label="部门名称">
 		  			{{ name ? name : '暂未选择' }}

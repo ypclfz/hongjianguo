@@ -29,14 +29,12 @@ export default {
   name: 'feeCommon',
   mixins: [ AxiosMixins ],
   data () {
-    let height = this.$store.getters.getInnerHeight - 250;
-    height = height < 300 ? 300 : height; 
 		return {
 			popType: '',
 		  	option: {
         'name': 'fees',
         'url': URL,
-        height,
+        'height': 'default',
 		  	'header_btn': [
 		  		{ type: 'add', click: this.addPop },
 		  		{ 

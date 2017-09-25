@@ -132,10 +132,17 @@ export default {
   		this.tableData.splice(scope.$index, 1);
   	},
   	importData () {
-  		if(this.tableData.length == 0) {
+  		console.log(this.tableData);
+      if(this.tableData.length == 0) {
   			this.$message({message: '上传数据不能为空', type: 'warning'});
   			return;
   		}
+
+      for(let d of this.tableData) {
+        if( !d.project || !d.type ) {
+          return this.$message({message: '关联案件与文件类型不能为空', type: 'warning'});
+        }
+      }
 
   		const url = this.config.url;
   		const data = {file: this.file, list: this.tableData};

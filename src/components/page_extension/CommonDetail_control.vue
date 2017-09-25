@@ -24,7 +24,7 @@ export default {
 		  	'is_search': false,
 		  	'columns': [
 		  		{ type: 'text', label: '管制事项', prop: 'name' },
-		  		{ type: 'text', label: '当前节点', prop: 'node_time' },
+		  		{ type: 'text', label: '当前节点', prop: 'node_name' },
 		  		{ type: 'text', label: '承办人', prop: 'person_in_charge_name' },
 		  		{ type: 'text', label: '开始时间', prop: 'start_time' },
 		  		{ type: 'text', label: '指定期限', prop: 'due_time' },
@@ -40,25 +40,30 @@ export default {
 		  option2: {
 		  	'is_search': false,
 		  	'columns': [
-		  	 	{ type: 'text', label: '子任务名称' },
-		  	 	{ type: 'text', label: '开始时间' },
-		  	 	{ type: 'text', label: '完成时间' },
-		  	 	{ type: 'text', label: '承办人' },
-		  	 	{ type: 'text', label: '附件' },
-		  	 	{ type: 'text', label: '附言' },
-		  	 	{ 
-		  	 		type: 'action', 
-		  	 		label: '操作',
-		  	 		btns: [{
-		  	 			text: '完成任务',
-		  	 			btn_type: 'text',
-		  	 			click: ()=>{alert("完成任务")},
-		  	 		}, {
-		  	 			text: '任务转出',
-		  	 			btn_type: 'text',
-		  	 			click: ()=>{alert("任务转出")},
-		  	 		}]
-		  	 	},
+		  	 	{ type: 'text', label: '子任务名称', prop: 'flow_node' },
+		  	 	{ type: 'text', label: '开始时间', prop: 'start_time' },
+		  	 	{ type: 'text', label: '完成时间', prop: 'end_time' },
+		  	 	{ type: 'text', label: '承办人', prop: 'person_in_charge_name' },
+		  	 	{ type: 'text', label: '备注', prop: 'remark' },
+		  	 	// { 
+		  	 	// 	type: 'text', label: '附件', prop: 'attachments',
+		  	 	// 	render (h, item) {
+		  	 	// 		return h('a', item.name);
+		  	 	// 	}
+		  	 	// },
+		  	 	// { 
+		  	 	// 	type: 'action', 
+		  	 	// 	label: '操作',
+		  	 	// 	btns: [{
+		  	 	// 		text: '完成任务',
+		  	 	// 		btn_type: 'text',
+		  	 	// 		click: ()=>{alert("完成任务")},
+		  	 	// 	}, {
+		  	 	// 		text: '任务转出',
+		  	 	// 		btn_type: 'text',
+		  	 	// 		click: ()=>{alert("任务转出")},
+		  	 	// 	}]
+		  	 	// },
 		  	]
 		  },
 		  tableData2: [],
@@ -71,21 +76,23 @@ export default {
   			const url = `/api/tasks/${id}`;
   			const success = _=>{
   				this.tableData2 = _.task.siblings;
-  				console.log(_)
+  				// console.log(_)
   			};
 
   			this.axiosGet({url, success});	
   		}
 
   		this.show = this.show == id ? null : id;
-
-  		
-
   	}
   },
   computed: {
   	tableData () {
   		return this.$store.getters.detailTasks;
+  	}
+  },
+  watch: {
+  	tableData () {
+  		this.show = null;
   	}
   },
   components: { TableComponent },

@@ -1,7 +1,6 @@
 <template>
 	<div class="main">
-    <app-collapse style="margin-bottom: 20px;" col-title="提案筛选" default-close>
-   
+    <app-collapse col-title="提案筛选" default-close>   
       <el-form label-width="80px">
         <el-row>
           <el-col :span="12">
@@ -32,16 +31,16 @@
           <el-button type="danger" size="small" @click="clear" style="margin-left: 20px">清空</el-button>
         </el-row>
       </el-form>
-    
     </app-collapse>
-    		<table-component :tableOption="tableOption" :data="tableData" ref="table" @refreshTableData="refreshTableData" :refresh-proxy="refreshProxy">
-          <template slot="action" scope="scope">
-            <el-button icon="information" size="mini" @click="detail(scope.row)">详情</el-button>
-            <el-button icon="edit" size="mini" @click="edit(scope.row)" v-if="!scope.row.status">编辑</el-button>
-            <el-button icon="delete" size="mini" @click="deleteSingle(scope.row)" v-if="!scope.row.status">删除</el-button>
-          </template>
-        </table-component>
 
+		<table-component :tableOption="tableOption" :data="tableData" ref="table" @refreshTableData="refreshTableData" :refresh-proxy="refreshProxy">
+      <template slot="action" scope="scope">
+        <el-button type="text" icon="edit" size="mini" @click="edit(scope.row)" :disabled="scope.row.status ? true : false" >编辑</el-button>
+        <el-button type="text" icon="delete" size="mini" @click="deleteSingle(scope.row)" :disabled="scope.row.status ? true : false">删除</el-button>
+      </template>
+    </table-component>
+
+    <app-shrink :title="currentRow.title" :visible.sync="shrinkVisible"><proposal-detail :id="currentRow.id"></proposal-detail></app-shrink>
   </div>
 </template>
 
@@ -51,6 +50,8 @@ import AppFilter from '@/components/common/AppFilter'
 import AppCollapse from '@/components/common/AppCollapse'
 import Classification from '@/components/form/Classification'
 import Product from '@/components/form/Product'
+import AppShrink from '@/components/common/AppShrink'
+import ProposalDetail from '@/components/page_extension/Proposal_detail'
 
 import Tag from '@/components/form/Tag'
 import RemoteSelect from '@/components/form/RemoteSelect'
@@ -149,18 +150,22 @@ export default {
     },
     update () {
       this.$refs.table.update();
+    },
+    handleRowClick (row) {
+      this.currentRow = row;
+      if(!this.shrinkVisible) this.shrinkVisible = true;
     }
   },
   data () {
-    let height = this.$store.getters.getInnerHeight - 250;
-    height = height < 300 ? 300 : height; 
     return {
       refreshProxy: '',
       tableOption: {
         'name': 'proposalList',
         'url': URL,
         'is_filter': true,
-        height,
+        'height': 'default',
+        'highlightCurrentRow': true, 
+        'rowClick': this.handleRowClick,
         'header_btn': [
           { type: 'add', click: this.add },
           { type: 'delete', click: this.deleteMul },
@@ -185,7 +190,7 @@ export default {
             type: 'action',
             label: '操作', 
             btns_render: 'action',
-            width: '250',
+            width: '160',
           },
         ]
       },
@@ -198,12 +203,14 @@ export default {
       tags: [],
       inventors: [],
       filters: {},
+      currentRow: '',
+      shrinkVisible: false,
     }
   },
   mounted () {
     this.refresh();
   },
-  components: { TableComponent, AppFilter, AppCollapse, Classification, Product, RemoteSelect, Tag, AppFilter }, 
+  components: { TableComponent, AppFilter, AppCollapse, Classification, Product, RemoteSelect, Tag, AppFilter, AppShrink, ProposalDetail }, 
 }
 </script>
 

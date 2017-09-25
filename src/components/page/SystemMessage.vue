@@ -20,7 +20,8 @@ export default {
   data () {
 		return {
 		  tableOption: {
-		  	'is_search': false,
+		  	'is_header': false,
+        'height': 'default3',
 		  	'columns': [
 		  		// { type: 'array', label: '发件人地址', prop: 'from', render: _=>[_.value ? _.value : _], sortable: true, width: '200' },
 		  		// { type: 'array', label: '收件人地址', prop: 'to', render: arr=>arr.map(_=>_.value ? _.value : _), sortable: true, width: '200' },

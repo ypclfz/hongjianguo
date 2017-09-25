@@ -3,17 +3,21 @@
 	<transition name="slide-fade">
 	<div class="app-shrink" v-show="visible">
 		<div class="app-shrink-head">
-		<span style="font-size: 18px; font-weight: bold;">{{ title }}</span>
-		<el-button icon="close" style="float: right; border: 0; height: 40px;" @click="close" title="关闭"></el-button>
-		<slot name="header"></slot>
+			<span style="font-size: 18px; font-weight: bold;">{{ title }}</span>
+			<el-button icon="close" style="float: right; border: 0; height: 40px;" @click="close" title="关闭"></el-button>
+			<slot name="header"></slot>
 		</div>
-		<div class="app-shrink-body" :style="`height: ${innerHeight - 80}px; overflow: auto;`" v-if="rendered" ><slot></slot></div>
+		<div class="app-shrink-body" :style="`height: ${innerHeight - 80}px; overflow: auto;`" v-if="rendered">
+			<slot></slot>
+		</div>
 	</div>
 	</transition>
 
 </template>
 
 <script>
+import $ from 'jquery'
+
 export default {
 	name: 'appShrink',
 	props: {
@@ -35,6 +39,13 @@ export default {
 		close () {
 			this.$emit('update:visible', false);
 			this.$emit('close');
+		},
+		fire (e) {
+			console.log(e.target);
+			const _con = $('.app-shrink');   // 设置目标区域
+		  if(!_con.is(e.target) && _con.has(e.target).length === 0){ // Mark 1
+		    this.close();
+		  }
 		}
 	}, 
 	computed: {
@@ -45,13 +56,24 @@ export default {
 	mounted () {
 		if (this.visible) {
       this.rendered = true;
+      // this.$root.$el.addEventListener('click', this.fire);
     }
 	},
 	watch: {
-		visible () {
-			if( !this.rendered && this.visible) {
+		visible (val) {
+			console.log('toggle');
+
+			if( !this.rendered && val) {
 				this.rendered = true;
 			}
+
+			// window.setTimeout(_=>{
+			// 	if(val) {
+			// 		this.$root.$el.addEventListener('click', this.fire);
+			// 	}else {
+			// 		this.$root.$el.removeEventListener('click', this.fire);
+			// 	}	
+			// }, 0);
 		}
 	}
 }

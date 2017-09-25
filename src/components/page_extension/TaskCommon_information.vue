@@ -48,7 +48,10 @@
 	    	</el-row>
 	    </el-form>
 	  </el-collapse-item>
-	  <el-collapse-item title="专利详情" name="2" v-else-if="row.category == 1">
+	  <el-collapse-item  name="2" v-else-if="row.category == 1">
+      <template slot="title">
+        专利详情<el-button size="mini" type="text" style="margin-left: 10px;" @click.stop="editPatent">更多...</el-button>
+      </template>
 	    <el-form label-width="70px" label-position="left" class="form-information" v-loading="loading" element-loading-text="加载专利信息中...">
 	    	<el-row :gutter="20">
 	    		<el-col :span="12">
@@ -171,7 +174,10 @@ export default {
   		}
 
   		this.axiosGet({url, success});
-  	}
+  	},
+    editPatent () {
+      this.$emit('more', 'patent');
+    }
   },
   created () {
   	this.refresh();

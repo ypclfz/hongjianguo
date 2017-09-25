@@ -35,7 +35,15 @@ export default {
   },	
   computed: {
   	options () {
-  		return this.$store.getters.cityData;
+      let op = this.$store.getters.cityData;
+
+      if(op == undefined) {
+        this.$store.commit('setCity', []);
+        this.$store.dispatch('refreshCity');
+        op = [];
+      }
+
+  		return op; 
   	}
   },
   methods: {

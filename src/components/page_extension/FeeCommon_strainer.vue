@@ -21,8 +21,8 @@
 
         <el-col :span="12">
         <el-form-item label="费用代码" prop="code">
-            <fee-code multiple v-model="form.code"></fee-code>
-          </el-form-item>
+          <static-select type="fee_code" v-model="form.code" multiple></static-select>
+        </el-form-item>
           
           <el-form-item label="费用期限" prop="due_time">
             <el-date-picker type="daterange" placeholder="请选择费用期限" v-model="form.due_time"></el-date-picker>
@@ -46,7 +46,7 @@ import AppCollapse from '@/components/common/AppCollapse'
 import Strainer from '@/mixins/strainer'
 import FeeStatus from '@/components/form/FeeStatus'
 import RemoteSelect from '@/components/form/RemoteSelect'
-import FeeCode from '@/components/form/FeeCode'
+import StaticSelect from '@/components/form/StaticSelect'
 
 export default {
   name: 'FeeCommonStrainer',
@@ -66,7 +66,7 @@ export default {
 		}
   },
   watch: {},
-  components: { AppCollapse, FeeStatus, RemoteSelect, FeeCode },
+  components: { AppCollapse, FeeStatus, RemoteSelect, StaticSelect },
 }
 </script>
 

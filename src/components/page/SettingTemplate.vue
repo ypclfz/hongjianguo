@@ -16,7 +16,8 @@ export default {
   data () {
 		return {
 		  option: {
-		  	'is_search': false,
+		  	'is_header': false,
+        'height': 'default3',
 		  	'columns': [
 		  		{ type: 'selection' },
 		  		{ type: 'text', label: '模板名称', prop: 'name' },

@@ -36,6 +36,7 @@ export default {
 					// { type: 'custom', label: '上传', icon: '', click: ()=>{alert("上传")} },
 					// { type: 'custom', label: '批量上传', icon: '', click: ()=>{alert("批量上传")}},
 				],
+				'height': 'default2',
 				'import_type': '',				
 				'columns': [
 					{ type: 'selection' },
@@ -88,15 +89,23 @@ export default {
 		refreshTableData (option) {
 			const url = this.config.URL;
 			const data = option;
-			const success = _=>{this.tableData = _.list};
+			const success = _=>{
+				if(option.format == 'excel') {
+
+					window.location.href = _.list.downloadUrl;
+				}
+				else {
+					this.tableData = _.list;	
+				}
+				
+			};
 
 			this.axiosGet({url, data, success});
 		}
 	},
 	components: { TableComponent, Strainer },
 	created () {
-		this.tableOption.import_type = this.type == 'patent' ? 'patent_notice' : 'copyright_notice';
-		
+		this.tableOption.import_type = this.type == 'patent' ? 'patent_notice' : 'copyright_notice';		
 	},
 	mounted () {
 		this.refresh();

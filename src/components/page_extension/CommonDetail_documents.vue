@@ -15,8 +15,11 @@ export default {
 		  	'is_search': false,
 		  	'columns': [
 		  		{ type: 'text', label: '文件名称', prop: 'name' },
+		  		{ type: 'text', label: '文件类型', prop: 'type' },
 		  		{ type: 'text', label: '文件格式', prop: 'ext' },
 		  		{ type: 'text', label: '文件大小', prop: 'size' },
+		  		{ type: 'text', label: '上传人', prop: 'uploader' },
+		  		{ type: 'text', label: '上传时间', prop: 'create_time' },
 		  		{ type: 'action',
 		  			width: '134',
 		  			btns: [

@@ -219,7 +219,7 @@ export default {
       }else {
         this.proposer_name = this.userName;
         if(this.userId && this.userName) {
-          this.formData.inventors = [{id: { id: this.userId, name: this.userName }, share: '100'}];  
+          this.formData.inventors = [{id: '', share: '100'}];  
         }
         
       }

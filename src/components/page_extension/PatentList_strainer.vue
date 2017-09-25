@@ -4,10 +4,12 @@
   		<el-row>
 				<el-col :span="12">
 					<el-form-item label="专利类型" prop="type">
-						<patent-type v-model="form.type"></patent-type>
+						<!-- <patent-type v-model="form.type"></patent-type> -->
+						<static-select type="patent_type" v-model="form.type" multiple></static-select>
 					</el-form-item>
 					<el-form-item label="申请地区" prop="area">
-						<region v-model="form.area"></region>
+						<!-- <region v-model="form.area"></region> -->
+						<static-select type="area" v-model="form.area" multiple></static-select>
 					</el-form-item>
 					<el-form-item label="申请日" prop="apd">
 						<el-date-picker type="daterange" placeholder="请选择申请日" v-model="form.apd"></el-date-picker>
@@ -22,10 +24,10 @@
 						<remote-select type="member" v-model="form.proposer" multiple></remote-select>
 					</el-form-item>
 					<el-form-item label="IPR" prop="ipr">
-						<ipr v-model="form.ipr" multiple></ipr>
+						<static-select type="ipr" v-model="form.ipr" multiple></static-select>
 					</el-form-item>
 					<el-form-item label="标签" prop="tags">
-						<tag v-model="form.tags" multiple></tag>
+						<static-select type="tag" v-model="form.tags" multiple></static-select>
 					</el-form-item>					
 				</el-col>
 				<el-col :span="12">
@@ -68,11 +70,9 @@ import AppCollapse from '@/components/common/AppCollapse'
 import Classification from '@/components/form/Classification'
 import Product from '@/components/form/Product'
 import Branch from '@/components/form/Branch'
-import PatentType from '@/components/form/PatentType'
-import Ipr from '@/components/form/Ipr'
-import Tag from '@/components/form/Tag'
-import Region from '@/components/form/Region'
+
 import RemoteSelect from '@/components/form/RemoteSelect'
+import StaticSelect from '@/components/form/StaticSelect'
 export default {
   name: 'patentListStrainer',
   props: ['value'],
@@ -131,7 +131,15 @@ export default {
   		this.$emit('refresh');
   	}
   },
-  components: { AppCollapse, Classification, Product, Branch, PatentType, Ipr, Tag, Region, RemoteSelect },
+  components: { 
+  	AppCollapse, 
+  	Classification, 
+  	Product, 
+  	Branch, 
+
+  	RemoteSelect, 
+  	StaticSelect,
+  },
 }
 </script>
 

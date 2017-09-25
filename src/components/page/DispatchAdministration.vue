@@ -20,9 +20,9 @@ export default {
 		  option: {
 		  	'header_btn': [
 		  		{ type: 'add', click: this.addPop },
-		  		{ type: 'control' },
-		  		
+		  		{ type: 'control' },		  		
 		  	],
+        'height': 'default2',
 		  	'columns': [
 		  		{ type: 'text', label: '快递公司', prop: 'company' },
           { type: 'text', label: '快递单号', prop: 'number' },

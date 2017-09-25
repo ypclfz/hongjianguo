@@ -15,7 +15,7 @@ const getters = {
   detailNotices: state=>state.data ? state.data.notices : [],
   detailFees: state=>state.data ? state.data.fees : [],
   detailMails: state=>state.data ? state.data.mails : [],
-  detailDocuments: state=>state.data ? state.data.attachments : [],
+  detailDocuments: state=>state.data ? state.data.documents : [],
 }
 
 const mutations = {

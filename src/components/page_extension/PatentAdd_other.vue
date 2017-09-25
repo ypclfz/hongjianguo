@@ -2,7 +2,7 @@
   <app-collapse col-title="其他信息及附件">
       <el-form label-width="120px">
         <el-form-item label="状态" v-if="type == 'edit'">
-          {{ form.status ? '暂停' : '处理中' }}
+          {{ form.progress.name }}
         </el-form-item>
         <el-form-item label="说明书字数">
           <el-input v-model="form.words" placeholder="请填写说明书字数"></el-input>
@@ -27,7 +27,7 @@ export default {
   data () {
 		return {
 			form: {
-        status: '',
+        progress: '',
         words: '',
         remark: '',
         attachments: [],

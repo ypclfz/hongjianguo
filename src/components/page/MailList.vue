@@ -39,6 +39,7 @@ export default {
 		  		{ type: 'custom', label: '写邮件', icon: 'edit', click: this.add },
 		  		{ type: 'delete' },
 		  	],
+        'height': 'default2',
         'header_slot': [ 'mailbox' ],
 		  	// 'is_search': false,
 		  	'columns': [

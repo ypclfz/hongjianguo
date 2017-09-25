@@ -78,6 +78,21 @@ const pieOption = {
 
 };
 const config_map = [
+  ['task_bar', {
+    title: '任务统计',
+    type: 'proposal',
+    chart: 'bar',
+    xAxis: [
+      {label:'年', value: 'year', default: true },
+      {label:'月', value: 'month' },
+      {label:'日', value: 'day' },
+      {label:'周', value: 'week' },
+    ],
+    group: [
+      {label: '按地区分组', value: 'area', default: true },
+      {label: '按类型分组', value: 'patent_type'},
+    ]
+  }],
   ['proposal_bar', {
     title: '提案统计',
     type: 'proposal',

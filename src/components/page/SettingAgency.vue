@@ -23,7 +23,8 @@ export default {
   data () {
 		return {
 		  option: {
-				'name': 'agency',
+			'name': 'agency',
+			'height': 'default2',
 		  	'header_btn': [
 		  		{'type': 'control'}
 				],

@@ -1,5 +1,5 @@
 <template>
-  <el-dialog :title="title" :visible.sync="dialogVisible" class="dialog-medium">
+  <el-dialog :title="title" :visible.sync="dialogVisible" class="dialog-medium" :modal="false">
   	<div style="height: 600px; overflow-y: auto" v-loading="loading" element-loading-text="加载详情中...">
 			<div style="font-size: 20px; margin-bottom: 20px; font-weight: bold;">{{ form.subject }}</div>
       

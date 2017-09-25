@@ -8,7 +8,7 @@
 				<remote-select type="member" v-model="form.target"></remote-select>
 			</el-form-item>
 			<el-form-item label="费用代码" prop="code">
-				<fee-code v-model="form.code" @change="codeChange"></fee-code>
+				<static-select type="fee_code" v-model="form.code" ref="fee_code"></static-select>
 			</el-form-item>
 			<el-form-item label="费用状态" prop="status" v-if="popType == 'add'">
 				<fee-status v-model="form.status" :feeAnnual="feeAnnual"></fee-status>
@@ -44,7 +44,7 @@
 				<el-date-picker v-model="form.deadline" type="date" placeholder="请选择官方期限"></el-date-picker>
 			</el-form-item>
 			<el-form-item label="支付时间" prop="pay_time">
-				<el-date-picker v-model="form.pay_time" type="date" placeholder="请选择费用"></el-date-picker>
+				<el-date-picker v-model="form.pay_time" type="date" placeholder="请选择支付时间"></el-date-picker>
 			</el-form-item>
 <!-- 			<el-form-item label="开票主体" prop="invoice_entity_id">
 				<invoice-entity v-model="form.invoice_entity_id"></invoice-entity>
@@ -66,10 +66,9 @@ import AxiosMixins from '@/mixins/axios-mixins'
 
 import Patent from '@/components/form/Patent'
 import Member from '@/components/form/Member'
-import FeeCode from '@/components/form/FeeCode'
 import FeeStatus from '@/components/form/FeeStatus'
-import InvoiceEntity from '@/components/form/InvoiceEntity'
 import RemoteSelect from '@/components/form/RemoteSelect'
+import StaticSelect from '@/components/form/StaticSelect'
 
 const URL = '/api/fees'
 
@@ -192,16 +191,30 @@ export default {
   	cancel () {
   		this.dialogVisible = false;
   	},
-  	codeChange ({amount, label}) {
+  	codeChange ({amount, name}) {
   		this.form.money.amount = amount;
   		this.form.money.currency = 'CNY';
   		this.form.money.roe = "1";
 
   		const reg = /年费/;
-  		this.feeAnnual = reg.test(label); 
+  		this.feeAnnual = reg.test(name); 
   	},
   },
-  components: { Patent, Member, FeeCode, FeeStatus, InvoiceEntity, RemoteSelect },
+  watch: {
+		'form.code': {
+			handler () {
+				console.log('aaaaa');
+				this.$nextTick(_=>{
+					const val = this.$refs.fee_code.getSelected()[0];
+					if(val) {
+						this.codeChange(val);
+					}	
+				})
+				
+			}
+		}
+	},
+  components: { Patent, Member, FeeStatus, RemoteSelect, StaticSelect },
 }
 </script>
 
