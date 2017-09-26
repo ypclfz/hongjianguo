@@ -4,27 +4,30 @@
 			<el-form-item label="用户组" v-if="popType == 'add'">
 				<span class="form-item-text">{{ group && group.id !== 0  ? group.name : '未分配用户组' }}</span>
 			</el-form-item>
+      <el-form-item label="用户名" prop="username" v-if="popType == 'add'">
+        <el-input v-model="form.username" ></el-input>
+      </el-form-item>
+      <el-form-item label="用户名" v-if="popType == 'edit'">
+        <span class="form-item-text">{{ form.username }}</span>
+      </el-form-item>
 
-	    <el-form-item label="用户名" prop="username" v-if="popType == 'add'">
-	    	<el-input v-model="form.username" ></el-input>
-	    </el-form-item>
-	    <el-form-item label="用户名" v-if="popType == 'edit'">
-				<span class="form-item-text">{{ form.username }}</span>
-	    </el-form-item>
-
-	    <template v-if="popType == 'add'">
-		    <el-form-item label="密码" prop="password">
-		    	<el-input type="password" v-model="form.password"></el-input>
-		    </el-form-item>
-		    <el-form-item label="确认密码" prop="password_again">
-		    	<el-input type="password" v-model="form.password_again"></el-input>	
-		    </el-form-item>
-	    </template>
-	    <template v-if="popType == 'edit'">
-	    	<el-form-item label="密码">
-					<edit-password v-model="form.password" ref="psd"></edit-password>
-	    	</el-form-item>
-	    </template>
+      <template v-if="popType == 'add'">
+        <el-form-item label="密码" prop="password">
+          <el-input type="password" v-model="form.password"></el-input>
+        </el-form-item>
+        <el-form-item label="确认密码" prop="password_again">
+          <el-input type="password" v-model="form.password_again"></el-input> 
+        </el-form-item>
+      </template>
+      <template v-if="popType == 'edit'">
+        <el-form-item label="密码">
+          <edit-password v-model="form.password" ref="psd"></edit-password>
+        </el-form-item>
+      </template>
+      
+      <el-form-item label="代理所" v-if="group.id == 6">
+        <remote-select type="agency" v-model="form.parent"></remote-select>
+      </el-form-item>
 
 	    <el-form-item label="昵称" prop="name">
 	    	<el-input v-model="form.name"></el-input>	
@@ -55,6 +58,7 @@
 import UserRole from '@/components/form/UserRole'
 import AxiosMixins from '@/mixins/axios-mixins'
 import EditPassword from '@/components/form/EditPassword'
+import RemoteSelect from '@/components/form/RemoteSelect'
 
 const URL = 'api/members'
 
@@ -81,6 +85,7 @@ export default {
 		  	mobile: '',
 		  	weixin: '',
 		  	qq: '',
+        parent: '',
 		  },
 		  'rules': {
 		  	'username': [
@@ -187,7 +192,8 @@ export default {
   },
   components: { 
   	UserRole,
-  	EditPassword, 
+  	EditPassword,
+    RemoteSelect
   }
 }
 </script>

@@ -8,6 +8,7 @@
       <el-radio-group v-model="xAxis" size="small" v-if="!!config.xAxis">
         <el-radio-button size="small" v-for="item in config.xAxis" :label="item.value" :key="item.value">{{ item.label }}</el-radio-button>
       </el-radio-group>
+      <static-select v-if="!!config.target" :type="config.target" v-model="target" size="small" style="width: 200px;"></static-select>
       <el-date-picker
         v-model="date"
         type="daterange"
@@ -23,6 +24,7 @@
 <script>
 import AppFilter from '@/components/common/AppFilter'
 import AxiosMixins from '@/mixins/axios-mixins'
+import StaticSelect from '@/components/form/StaticSelect'
 import echarts from 'echarts'
 
 
@@ -80,7 +82,27 @@ const pieOption = {
 const config_map = [
   ['task_bar', {
     title: '任务统计',
-    type: 'proposal',
+    type: 'task',
+    chart: 'bar',
+    xAxis: [
+      {label:'月', value: 'month', default: true },
+    ],
+  }],
+  ['agency_bar', {
+    title: '代理所统计',
+    type: 'agency',
+    chart: 'bar',
+    type: 'agency',
+    xAxis: [
+      {label:'年', value: 'year', default: true },
+      {label:'月', value: 'month' },
+      {label:'日', value: 'day' },
+      {label:'周', value: 'week' },
+    ],
+  }],
+  ['income_bar', {
+    title: '收入统计',
+    type: 'income',
     chart: 'bar',
     xAxis: [
       {label:'年', value: 'year', default: true },
@@ -88,10 +110,19 @@ const config_map = [
       {label:'日', value: 'day' },
       {label:'周', value: 'week' },
     ],
-    group: [
-      {label: '按地区分组', value: 'area', default: true },
-      {label: '按类型分组', value: 'patent_type'},
-    ]
+    target: 'fee_target_income',
+  }],
+  ['expenditure_bar', {
+    title: '支出统计',
+    type: 'expenditure',
+    chart: 'bar',
+    xAxis: [
+      {label:'年', value: 'year', default: true },
+      {label:'月', value: 'month' },
+      {label:'日', value: 'day' },
+      {label:'周', value: 'week' },
+    ],
+    target: 'fee_target_expenditure',
   }],
   ['proposal_bar', {
     title: '提案统计',
@@ -164,8 +195,11 @@ const config_map = [
   }],
 ]
 const map = new Map(config_map);
+
+//---------------------------配置数据分界线---------------------------------------
+
 export default {
-  name: 'home',
+  name: 'homeCharts',
   mixins: [ AxiosMixins ],
   props: ['type'],
   data () {
@@ -176,6 +210,7 @@ export default {
     return {
       xAxis,
       group,
+      target: '',
       config,
       option: '',
       chart: null,
@@ -256,7 +291,10 @@ export default {
     group () {
       this.refreshCharts();
     },
-    date (val) {
+    date () {
+      this.refreshCharts();
+    },
+    target () {
       this.refreshCharts();
     }
   },
@@ -274,7 +312,7 @@ export default {
     this.chart = echarts.init(document.getElementById(this.type));
     this.refreshCharts();
   },
-  components: { AppFilter }
+  components: { AppFilter, StaticSelect }
 }
 </script>
 

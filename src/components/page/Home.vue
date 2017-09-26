@@ -16,6 +16,10 @@ export default {
   data () {
     return {
       config: '',
+      // arr: [
+      //   ["proposal_bar", "application_bar"],
+      //   ["issue_bar", "copyright_bar"],
+      // ],
     }   
   },
   computed: {

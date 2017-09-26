@@ -61,7 +61,7 @@
 		 	<div class="el-upload__text">将文件拖到此处，或<em>点击上传</em></div>
 		</el-upload>
 
-		<el-button style="margin-top: 20px;" type="primary" @click="importData">导入当前数据</el-button>
+		<el-button style="margin-top: 10px;" type="primary" @click="importData">导入当前数据</el-button>
 		
 		<el-dialog title="指定案件" :visible.sync="dialogVisible" :modal-append-to-body="false" :modal="false">
 			<el-form label-width="100px" label-position="top">

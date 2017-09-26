@@ -18,9 +18,7 @@ import flows from '@/store/modules/flows.js'
 import flowNodes from '@/store/modules/flow-nodes.js'
 import taskDef from '@/store/modules/task-def.js'
 import currentUser from '@/store/modules/current-user.js'
-import fileType from '@/store/modules/file-type.js'
 import sysmesg from '@/store/modules/sysmesg.js'
-import mail from '@/store/modules/mail.js'
 Vue.use(Vuex);
 
 const store = new Vuex.Store({
@@ -53,9 +51,7 @@ const store = new Vuex.Store({
     flowNodes,
     taskDef,
     currentUser,
-    fileType,
     sysmesg,
-    mail,
   },
   mutations: {
     setDragId (state, id) {

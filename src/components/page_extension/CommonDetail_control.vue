@@ -22,6 +22,7 @@ export default {
 		return {
 		  option: {
 		  	'is_search': false,
+		  	'is_pagination': false,
 		  	'columns': [
 		  		{ type: 'text', label: '管制事项', prop: 'name' },
 		  		{ type: 'text', label: '当前节点', prop: 'node_name' },
@@ -39,11 +40,32 @@ export default {
 		  },
 		  option2: {
 		  	'is_search': false,
+		  	'is_pagination': false,
 		  	'columns': [
 		  	 	{ type: 'text', label: '子任务名称', prop: 'flow_node' },
 		  	 	{ type: 'text', label: '开始时间', prop: 'start_time' },
 		  	 	{ type: 'text', label: '完成时间', prop: 'end_time' },
 		  	 	{ type: 'text', label: '承办人', prop: 'person_in_charge_name' },
+		  	 	{ 
+		  	 		type: 'text', label: '附件', prop: 'attachments',
+		  	 		render (h,item) {
+		  	 		
+		  	 			return h(
+		  	 				'span', 
+		  	 				item.map(function (g) {
+      							return h('a', 
+      							{
+      								style: {
+									    	marginRight: '2px',
+											},
+											attrs: {
+												href: g.downloadUrl,
+											},
+      							},g.name)
+    						})
+    					)
+		  	 		} 
+		  	 	},
 		  	 	{ type: 'text', label: '备注', prop: 'remark' },
 		  	 	// { 
 		  	 	// 	type: 'text', label: '附件', prop: 'attachments',

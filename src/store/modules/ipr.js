@@ -1,6 +1,6 @@
 let url = '/api/iprs';
 const state = {
-	data: [],
+	data: undefined,
 }
 
 const getters = {
@@ -21,6 +21,11 @@ const actions = {
 	refreshIpr ({commit, rootState, state}) {
 		const params = { listRows:"100" };
 		url = rootState.status ? url.replace(/\/api/, '') : url;
+		
+		if(state.data === undefined) {
+			commit('setIpr', []);
+		}
+
 		rootState.axios
 			.get(url, { params })
 			.then(response=>{

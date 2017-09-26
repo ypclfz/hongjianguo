@@ -121,6 +121,8 @@ import $ from 'jquery'
 
 const URL = '/api/tasks';
 const colorMap = new Map([
+  [-2, '#339'],
+  [-1, '#09C'],
   [0, '#3c3'],
   [1, '#f90'],
   [2, '#c03'],

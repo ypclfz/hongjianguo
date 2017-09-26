@@ -1,6 +1,6 @@
 <template>
 	<div style="position: relative">
-		<input type="text" :placeholder="placeholder" @input="handleInput" class="el-input__inner" style="padding-right: 35px; font-size: 14px;" @keyup.enter="handleEnter"></input>
+		<input type="text" :placeholder="placeholder" @input="handleInput" :value="value" class="el-input__inner" style="padding-right: 35px; font-size: 14px;" @keyup.enter="handleEnter"></input>
 		<i class="el-icon-search" title="点击搜索" style="position: absolute; top: 10px; right: 10px; cursor: pointer; opacity: .5;" @click="handleClick"></i>
 	</div>
 </template>

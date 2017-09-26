@@ -174,5 +174,20 @@ export default {
 		const map = new Map();
 		arr.forEach( _=>{map.set(_[key],_)} );
 		return [...map.values()]; 
+	},
+	funcBefore (fn, beforefn) {
+
+		return function(){
+			beforefn.apply( this, arguments );
+			return fn.apply( this, arguments );
+		}
+	},
+	funcAfter (fn, afterfn) {
+
+		return function() {
+			const result = fn.apply( this, arguments );
+			afterfn.apply( this, arguments );
+			return result;
+		}
 	}
 }

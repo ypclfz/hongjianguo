@@ -202,7 +202,7 @@
 	</el-table>
   <!--v-if="totalNumber > pageSize"-->
 	<el-pagination
-    v-if="tableOption.is_pagination == undefined ? true : tableOption.is_search"
+    v-if="tableOption.is_pagination == undefined ? true : tableOption.is_pagination"
   	@current-change="handleCurrentChange"
     @size-change="handleSizeChange"
   	:current-page.sync="page"

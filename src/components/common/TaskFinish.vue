@@ -28,14 +28,15 @@
   		<static-select type="ipr" v-model="form.person_in_charge" v-else-if="defaultVal == 'ipr'"></static-select>
   		<!-- <span v-else>{{ data[defaultVal]['name'] }}</span> -->
   	</el-form-item>
+    <el-form-item prop="agency" label="代理机构" v-if="fields.agency"
+      :rules="{ required: true, message: '代理机构不能为空'}"
+    >
+      <remote-select v-if="fields.agency == 1" type="agency" v-model="form.agency"></remote-select>
+      <span class="form-item-text">{{ form.agency.name }}</span>
+    </el-form-item>
     <el-form-item prop="agency_serial" label="事务所案号" v-if="fields.agency_serial">
       <el-input placeholder="请填写事务所案号" v-model="form.agency_serial"></el-input>
     </el-form-item>
-  	<el-form-item prop="agency" label="代理机构" v-if="fields.agency"
-      :rules="{ required: true, message: '代理机构不能为空'}"
-    >
-  		<remote-select type="agency" v-model="form.agency"></remote-select>
-  	</el-form-item>
     <el-form-item prop="agent" label="代理人" v-if="fields.agent" v-show="form.agency !== ''">
       <remote-select type="agent" v-model="form.agent" :para="{'agency': form.agency}" ref="agent"></remote-select>
     </el-form-item>
