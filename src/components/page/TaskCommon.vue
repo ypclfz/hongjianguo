@@ -41,7 +41,7 @@
     </el-dialog>
 
     <el-dialog title="新增任务" :visible.sync="dialogAddVisible" class="dialog-medium">
-      <edit type="add" @addSuccess="addSuccess"></edit>
+      <edit type="add" @addSuccess="addSuccess" ref="add"></edit>
     </el-dialog>
     <el-dialog title="编辑任务" :visible.sync="dialogEditVisible" class="dialog-medium">
       <edit :row="currentRow" type="edit" @editSuccess="editSuccess"></edit>
@@ -139,6 +139,12 @@ export default {
     },
     handleShrinkClose () {
       this.$refs.table.setCurrentRow();
+    },
+    addPop () {
+      if(this.$refs.add) {
+        this.$refs.add.clear();
+      }
+      this.dialogAddVisible = true;
     },
     agenPop () {
       const s = this.$refs.table.getSelect();
@@ -345,7 +351,7 @@ export default {
           return ;
         },
         'header_btn': [
-          { type: 'add', click: ()=>{ this.dialogAddVisible = true; } },
+          { type: 'add', click: this.addPop },
           { type: 'delete' },
           { type: 'export' },
           {},
@@ -459,8 +465,14 @@ export default {
   mounted () {
 
     this.refresh();
-    this.$store.dispatch('refreshFlows');
-    this.$store.dispatch('refreshTaskDefs');
+
+    if(this.$store.getters.flowsData === undefined) {
+      this.$store.dispatch('refreshFlows');  
+    }
+    
+    if(this.$store.getters.taskDefsData === undefined) {
+      this.$store.dispatch('refreshTaskDefs');
+    }
 
     this.refreshOption();
   },

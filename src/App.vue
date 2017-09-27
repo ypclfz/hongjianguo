@@ -115,7 +115,9 @@ export default {
     },
     username () {
       const user = this.$store.getters.getUser; 
-      return user ? user.name : '';
+      return user ? 
+              user.name ? user.name : user.username
+              : '';
     },
     sysmesg () {
       let s = this.$store.getters.sysmesg;
@@ -472,5 +474,11 @@ nav {
     font-size: 12px;
     min-height: 36px;
   }
+  .el-select__tags {
+    overflow: auto;
+  }
+}
+.el-tooltip__popper {
+  max-width: 500px;
 }
 </style>

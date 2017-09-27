@@ -89,9 +89,12 @@ export default {
       this.btn_disabled = true;
       this.axiosPut({url, data, success, complete });
     },
+    clear () {
+      this.$refs.form.resetFields();
+    },
     refreshRow () {
       if(this.type == 'edit') {
-
+        
         for( let k in this.form) {
           const d = this.row[k];
           
@@ -141,6 +144,7 @@ export default {
     },
     flowOptions () {
       const c = this.category;
+      this.form.flow_id = '';
       if( !this.flowsData[c] ) {
         return [];
       }else {
@@ -151,6 +155,7 @@ export default {
     },
     defOptions () {
       const f = this.form.flow_id;
+      this.form.task_def_id = '';
       const arr = [];
 
       this.taskDefsData.forEach(_=>{

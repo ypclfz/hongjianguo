@@ -1,6 +1,6 @@
 <template>
   <div>
-	<el-dialog :title="title" :visible.sync="dialogVisible" v-show="false" ref="dialog">
+	<el-dialog :title="title" :visible.sync="dialogVisible" v-show="false" ref="dialog" :modal="false">
         <el-input
           placeholder="输入关键字进行过滤"
           v-model="filterText">

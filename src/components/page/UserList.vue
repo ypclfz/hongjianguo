@@ -217,6 +217,7 @@ export default {
 		},
 		refreshGroup () {
 			this.$store.dispatch('refreshGroup');
+			this.$store.dispatch('refreshIpr');
 		},
 		update () {
 			this.$refs.table.update();

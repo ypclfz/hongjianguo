@@ -85,7 +85,10 @@ const config_map = [
     type: 'task',
     chart: 'bar',
     xAxis: [
-      {label:'月', value: 'month', default: true },
+      {label:'年', value: 'year', default: true },
+      {label:'月', value: 'month' },
+      {label:'日', value: 'day' },
+      {label:'周', value: 'week' },
     ],
   }],
   ['agency_bar', {
@@ -240,6 +243,7 @@ export default {
         'chart': this.config.chart,
         'xAxis': this.xAxis,
         'group': this.group,
+        'target': this.target,
       };
       if(this.xAxis) {
         data.xAxis = this.xAxis;

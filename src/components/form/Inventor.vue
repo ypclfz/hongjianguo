@@ -1,6 +1,6 @@
 <template>
 	<el-row>
-    <el-col :span="12" style="padding-right:5px">
+    <el-col :span="16" style="padding-right:5px">
       <remote-select type="inventor" :value="id" @input="handleInventor" :disabled="disabled"></remote-select>
     </el-col>
     <el-col :span="6" style="padding:0 5px">
@@ -8,8 +8,8 @@
         <template slot="append">%</template>
       </el-autocomplete>
     </el-col>
-    <el-col :span="6" style="padding-left:5px">
-      <el-button size="small" v-if="isDelete && !disabled" @click="deleteInventor">删除</el-button>
+    <el-col :span="2" style="padding-left:5px">
+      <el-button size="small" type="text" v-if="isDelete && !disabled" @click="deleteInventor">删除</el-button>
     </el-col>
   </el-row>  
 </template>

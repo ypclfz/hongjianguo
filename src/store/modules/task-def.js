@@ -1,6 +1,6 @@
 let url = '/api/taskDefs';
 const state = {
-	data: [],
+	data: undefined,
 }
 
 const getters = {

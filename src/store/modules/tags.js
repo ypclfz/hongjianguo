@@ -9,7 +9,6 @@ const getters = {
 		if(d) {
 			d = d.map( d=>{return {id: d.tag, name: d.tag} } );
 		}
-
 		return d;
 	},
 }

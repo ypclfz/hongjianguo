@@ -73,14 +73,18 @@ const config = [
   ['mail', {
     placeholder: '请输入邮箱地址',
     url: '/api/mailAddress',
+    handle (data) {
+      return data.list.map(_=>{return {id: _.value, name: _.label}});
+    },
     allowCreate: true,
     defaultFirstOption: true,
   }],
   ['tag', {
     placeholder: '请输入或选择标签',
-    options: 'tagOptions',
-    // set: 'setTags',
-    refresh: 'refreshTags',
+    url: '/api/tags',
+    handle (data) {
+      return data.tags.map(_=>{return {id: _.tag, name: _.tag}});
+    },
     allowCreate: true,
     defaultFirstOption: true,
   }],
@@ -90,14 +94,21 @@ const config = [
   }],
   ['flow_node', {
     placeholder: '请选择流程节点',
-    options: 'flowNodesData',
+    url: '/api/flownodes',
+    handle (data) {
+      return data.flownodes.map(_=>{
+        return {id: _.value, name: _.label};
+      });
+    },
     // set: 'setFlowNodes',
-    refresh: 'refreshFlowNodes',
+    // refresh: 'refreshFlowNodes',
   }],
   ['fee_code', {
     placeholder: '请选择费用代码',
-    options: 'feeCodeOptions',
-    refresh: 'refreshFeeCode',
+    url: '/api/feeCodes',
+    handle (data) {
+      return data.codes;
+    }
   }],
   ['fee_target_income', {
     placeholder: '请选择收入对象',
@@ -114,13 +125,17 @@ const config = [
     }
   }]
 ];
+
 const map = new Map(config);
-const dataMap = {
-  'mail': {data: null},
-  'fee_target_income': {data: null},
-  'fee_target_expenditure': {data: null},
-  'file_type': {data: null},
-};
+const dataMap = new Map([
+  ['mail', {data: null}],
+  ['fee_target_income', {data: null}],
+  ['fee_target_expenditure', {data: null}],
+  ['file_type', {data: null}],
+  ['fee_code', {data: null}],
+  ['tag', {data: null}],
+  ['flow_node', {data: null}],
+]);
 
 //-----------------------------配置数据分界线-----------------------------------------------
 
@@ -132,9 +147,12 @@ export default {
   mixins: [formSelect, AxiosMixins],
   data () {
 
-    const o = dataMap[this.type] ? dataMap[this.type] : null;
+    let o = dataMap.get(this.type);
+    o = o ? o : null;
+    
     return {
       cacheData: o,
+      options: [],
     }
   },
   props: ['type'],
@@ -143,60 +161,93 @@ export default {
   		const config = map.get(this.type);
   		return config ? config : this.type;
   	},
-    options () {
-      let op = this.config.options;
-      if(op === undefined) {
-        op = this.cacheData.data;
-        if(op === null) {
-          op = [];
-          if(this.config.url) {
-            const url = this.config.url;
-            const data = this.config.params ? this.config.params : {};
-            const success = _=>{
-              if(_.list[0]['label']) {
-                _.list = _.list.map(_=>{return {id: _.value, name: _.label} })
-              }
-
-              this.cacheData.data = _.list;
-            };
-
-            this.cacheData.data = [];
-            this.axiosGet({url,data, success});
-          }
-        }
-      }else if( typeof op == 'string'){
-        op = this.$store.getters[op];
-        if(op === undefined) {
-          op = [];
-          if(this.config.refresh) this.$store.dispatch(this.config.refresh);
-        }
-      }
-
-      return op;
-    },
     map () {
       const map = new Map ();
       this.options.forEach(_=>{map.set(_.id, _)});
 
       return map;
+    },
+    options_vuex () {
+      let op = null;
+      if( typeof this.config.options === 'string') {
+        op = this.$store.getters[this.config.options];
+      }
+
+      return op;
+    }
+  },
+  watch: {
+    options_vuex (val) {
+
+      this.options = val;
     }
   },
   methods: {
     getSelected () {
       const arr = [];
-      if(this.multiple) {
-        this.value.forEach(_=>{
-          const val = this.map.get(_)
-          if(val) arr.push(val);
-        })
-      }else {
-        const val = this.map.get(this.value);
-        if(val) arr.push(val);
-      }
+    
+      let cv = this.multiple ? this.value : [ this.value ];
+      
+      cv.forEach(_=>{
+        const val = this.map.get(_);
+        if(val) {
+          arr.push(val);
+        }else {
+          arr.push({id: _, name: _});
+        }
+      })
 
       return arr;
+    },
+    setOptions () {
+      let op = this.config.options;
+      
+
+      if(op instanceof Array) {
+        
+        //存储在配置项的下拉框数据直接使用
+        this.options = op;
+
+      }else if(typeof op === 'string') {
+        op = this.options_vuex;
+        //存储在vuex中的数据,op代表getters的名字,
+        //当数据不止在Select而是在全局中有多处被使用,或者数据在使用过程中需要保持动态更新,使用vuex存储
+        if(op === undefined) {
+          if(this.config.refresh) {
+            this.$store.dispatch(this.config.refresh);  
+          }
+        }else {
+          this.options = op;
+        }
+
+      }else if(op === undefined && this.cacheData) {
+        
+        //初始化缓存数据,这里利用了对象的索引特性,所以在回掉函数改变cacheData之后,同类型组件的options都会改变
+        //但是这会导致同一类型的组件的options实际上共用一个数组
+        //如果需要每个组件的options数组私有,可使用拷贝函数与watch
+        if(this.cacheData.data == null) {
+          this.cacheData.data = [];
+          if(this.config.url) {
+            const url = this.config.url;
+            const data = this.config.params ? this.config.params : {};
+            const success = _=>{
+              const handle = this.config.handle;
+              const r = handle ? handle(_) : _.list;
+
+              this.cacheData.data.push(...r);
+            }
+
+            this.axiosGet({url, data, success});
+          }
+        }
+        this.options = this.cacheData.data;
+      }
+
     }
   },
+  created () {
+    this.setOptions();
+  }
 }
 </script>
 

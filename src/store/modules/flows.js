@@ -1,6 +1,6 @@
 let url = '/api/flows';
 const state = {
-	data: {},
+	data: undefined,
 }
 
 const getters = {

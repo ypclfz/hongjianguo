@@ -16,7 +16,7 @@
       @after-leave="afterLeave"
     >
     	<div class="app-collapse-content" v-show="show">
-    		<div class="app-collapse-content-inner"><slot style="margin-top: 20px;"></slot></div>
+    		<div v-if="rendered" class="app-collapse-content-inner" ><slot style="margin-top: 20px;"></slot></div>
     	</div>
     </transition>
 	</div>
@@ -69,6 +69,7 @@ export default {
   },
   data () {
     return {
+      rendered: false,
       toggleClass: this.defaultClose ? 'el-icon-plus' : 'el-icon-minus',
       show: !this.defaultClose,
       content_height: 'auto',
@@ -80,7 +81,20 @@ export default {
     const content = this.$el.querySelector(".app-collapse-content");
     
     this.height = content.clientHeight;
+  },
+  created () {
+    if(this.show) {
+      this.rendered = true;
+    }
+  },
+  watch: {
+    show (val) {
+      if(val && !this.rendered) {
+        this.rendered = true;
+      }
+    }
   }
+
 }
 </script>
 

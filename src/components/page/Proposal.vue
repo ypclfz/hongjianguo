@@ -22,7 +22,7 @@
               <remote-select type="member" v-model="proposer" multiple></remote-select>
             </el-form-item>
             <el-form-item label="标签">
-              <tag v-model="tags" multiple></tag>
+              <static-select type="tag" v-model="tags" multiple></static-select>
             </el-form-item>
           </el-col>
         </el-row>
@@ -53,8 +53,8 @@ import Product from '@/components/form/Product'
 import AppShrink from '@/components/common/AppShrink'
 import ProposalDetail from '@/components/page_extension/Proposal_detail'
 
-import Tag from '@/components/form/Tag'
 import RemoteSelect from '@/components/form/RemoteSelect'
+import StaticSelect from '@/components/form/StaticSelect'
 import AxiosMixins from '@/mixins/axios-mixins'
 
 const URL = '/api/proposals';
@@ -210,7 +210,16 @@ export default {
   mounted () {
     this.refresh();
   },
-  components: { TableComponent, AppFilter, AppCollapse, Classification, Product, RemoteSelect, Tag, AppFilter, AppShrink, ProposalDetail }, 
+  components: { 
+    TableComponent, 
+    AppFilter, 
+    AppCollapse, 
+    Classification, 
+    Product, 
+    RemoteSelect,  
+    AppShrink, 
+    ProposalDetail, 
+    StaticSelect }, 
 }
 </script>
 
