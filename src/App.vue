@@ -29,16 +29,23 @@
             <el-dropdown-item command="login_out">登出</el-dropdown-item>
           </el-dropdown-menu>
         </el-dropdown>
-        <i v-popover:popover class="iconfont icon-news" style="cursor: pointer; float: right; color: #72b0de; margin-right: 20px; font-size: 24px;" title="系统消息"></i>
+        
+        <img 
+          v-popover:popover  
+          style="cursor: pointer; float: right; margin-right: 20px; margin-top: 12px; font-size: 24px;" 
+          title="系统消息"
+          :src="sysmesg.length != 0 ? '/static/static_img/news_in.png' : '/static/static_img/news.png'"
+        />
+
     </nav>
       <span class="nav-left-btn" @click="navToggle"><span class="nav-left-btn-arrow el-icon-arrow-left"></span></span>
-      <div class="nav-left" :style="`height: ${navL_height}px`">
+      <div class="nav-left" :style="`height: ${innerHeight}px`">
         
         <el-menu theme="dark" router unique-opened>
           <app-menu v-for="item in menu_data" :data="item" :key="item.path"></app-menu>
         </el-menu>
       </div>
-    <div class="container" v-loading="loading" :element-loading-text="loadingText" :style="`min-height: ${navL_height-10}px; padding: 10px 15px 0; background-color: #F9FAFC;`">
+    <div class="container" v-loading="loading" :element-loading-text="loadingText" :style="`min-height: ${innerHeight-10}px; padding: 10px 15px 0; background-color: #F9FAFC;`">
       <!-- <h1 class="container-menu"><i :class="select.icon"></i><span>{{ select.text }}</span></h1> -->
       <div class="container-nav">
         <el-breadcrumb separator=">">
@@ -62,14 +69,20 @@
 
       <router-view :key="$route.path.split('__')[0]" ></router-view>
     </div>
+
+    <agency-load :visible="agencyLoadVisible"></agency-load>
     
   </div>
 </template>
 
 <script>
+import AxiosMixins from '@/mixins/axios-mixins'
+
+import AgencyLoad from '@/components/form/AgencyLoad'
+
 import menu from '@/const/menuConst'
 import AppMenu from '@/components/common/AppMenu'
-import AxiosMixins from '@/mixins/axios-mixins'
+import { mapGetters } from 'vuex'
 import $ from 'jquery'
 
 export default {
@@ -101,24 +114,6 @@ export default {
 
       return arr;
     },
-    screen_label () {
-      return this.$store.getters.screen_label;
-    },
-    navL_height () {
-      return  this.$store.getters.getInnerHeight;
-    },
-    loading () {
-      return this.$store.getters.loading;  
-    },
-    loadingText () {
-      return this.$store.getters.loadingText;
-    },
-    username () {
-      const user = this.$store.getters.getUser; 
-      return user ? 
-              user.name ? user.name : user.username
-              : '';
-    },
     sysmesg () {
       let s = this.$store.getters.sysmesg;
       if(s === undefined) {
@@ -128,9 +123,15 @@ export default {
       if(s.length > 3) s = s.slice(0,3);
       return s;
     },
-    leftVisible () {
-      return this.$store.getters.leftVisible;
-    },
+    ...mapGetters([
+      'screen_label',
+      'innerHeight',
+      'loading',
+      'loadingText',
+      'username',
+      'leftVisible',
+      'agencyLoadVisible',
+    ]),
   },
   data () {
     return {      
@@ -196,12 +197,20 @@ export default {
       this.$store.commit('setUser', _.member);
 
       // this.$store.dispatch('refreshTags');
+      
+      //避免每次F5都发送请求的方法：
+      //  1.每次使用相关数据的位置添加一个尝试初始化的函数
+      //  2.localStorage动态关联 
       this.$store.dispatch('refreshProduct');
       this.$store.dispatch('refreshClassification');
       this.$store.dispatch('refreshBranch');
+      
       // this.$store.dispatch('refreshIpr');
+      
+      //使用localStorage进行本地缓存
       this.$store.dispatch('refreshArea');
       this.$store.dispatch('refreshCity');
+      
       // this.$store.dispatch('refreshFeeCode');
       // this.$store.dispatch('refreshEntity');
       // this.$store.dispatch('refreshGroup');
@@ -220,7 +229,7 @@ export default {
       this.axiosGet({url, success, error, catchFunc});
     }
     this.axiosGet({url, success, error, catchFunc});
-    // this.axiosPost({url: '/api/login', success: success2, data: {username: 'admin', password: 'Z9jgM6FhdKWEqbbpJePv/6qeTO/Yk2b6lx7zF4tiBncRubwf0fz93hkqGXCiWvqXCDIq7x+kAH3TK5zhjDZ53jgt1Gx1vvBPHn3ga7HTqPrnc+VhhuVGeTefHShJBx32rnbhL6LbEqCAMGqtQXaovCtuJGY6uWYAPfecAOGMuadnxTigTTBwKtW2oVP4J/EwAroYKuy4MK4Pd7YGtFoJAhlpKVOponsgsYQ8EKGOSVxcZgcgnOw8LhPy28N+xoFCh0OBkMyjM80Ybjq+H8BO6CacnDzQReZL5wQZqBdTtW7CUBi6S4+JWDPBahqNgz7jD73UhEIeG0ivFLEdCWtlVw=='}});
+    // this.axiosPost({url: '/api/login', success: success2, data: {username: 'ipr1', password: 'Z9jgM6FhdKWEqbbpJePv/6qeTO/Yk2b6lx7zF4tiBncRubwf0fz93hkqGXCiWvqXCDIq7x+kAH3TK5zhjDZ53jgt1Gx1vvBPHn3ga7HTqPrnc+VhhuVGeTefHShJBx32rnbhL6LbEqCAMGqtQXaovCtuJGY6uWYAPfecAOGMuadnxTigTTBwKtW2oVP4J/EwAroYKuy4MK4Pd7YGtFoJAhlpKVOponsgsYQ8EKGOSVxcZgcgnOw8LhPy28N+xoFCh0OBkMyjM80Ybjq+H8BO6CacnDzQReZL5wQZqBdTtW7CUBi6S4+JWDPBahqNgz7jD73UhEIeG0ivFLEdCWtlVw=='}});
   },
   beforeCreate () {
     const refreshWindow =  _=> {
@@ -240,7 +249,10 @@ export default {
       }
     }
   },
-  components: { AppMenu }
+  components: { 
+    AppMenu,
+    AgencyLoad, 
+  }
 }
 </script>
 <style lang="scss">

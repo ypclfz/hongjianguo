@@ -17,6 +17,7 @@ import flows from '@/store/modules/flows.js'
 import taskDef from '@/store/modules/task-def.js'
 import currentUser from '@/store/modules/current-user.js'
 import sysmesg from '@/store/modules/sysmesg.js'
+import tool from '@/const/tool.js'
 Vue.use(Vuex);
 
 const store = new Vuex.Store({
@@ -24,12 +25,16 @@ const store = new Vuex.Store({
   state: {
     dragId: null,
     axios,
+    tool,
     status: 0, //这里进行地址代理控制, 为1时去掉/api, 为0时保留
     loading: false,
     loadingText: '',
+    shrinkLoading: false,
+    shrinkLoadingText: '',
     inner_height: 0,
     inner_width: 0,
-    leftNavVisible: true, 
+    leftNavVisible: true,
+    agencyLoadVisible: false,
   },
   modules: {
     filter,
@@ -48,6 +53,17 @@ const store = new Vuex.Store({
     taskDef,
     currentUser,
     sysmesg,
+  },
+  getters: {
+    getDragId: state=>state.dragId,
+    loading: state=>state.loading,
+    loadingText: state=>state.loadingText,
+    shrinkLoading: state=>state.shrinkLoading,
+    shrinkLoadingText: state=>state.shrinkLoadingText,
+    innerHeight: state=>state.inner_height,
+    getInnerWidth: state=>state.leftNavVisible ? state.inner_width - 160 : state.inner_width, 
+    leftVisible: state=>state.leftNavVisible,
+    agencyLoadVisible: state=>state.agencyLoadVisible,
   },
   mutations: {
     setDragId (state, id) {
@@ -71,16 +87,34 @@ const store = new Vuex.Store({
     },
     setInnerWidth (state, number) {
       state.inner_width = number;
+    },
+    setShrinkLoading(state, boolean) {
+      state.shrinkLoading = boolean;
+    },
+    setShrinkLoadingText(state, text) {
+      state.shrinkLoadingText = text;
+    },
+    setAgencyLoadVisible(state, boolean) {
+      state.agencyLoadVisible = boolean;
+    },
+    showAgencyLoad(state) {
+      state.agencyLoadVisible = true;
     }
   },
-  getters: {
-    getDragId: state=>state.dragId,
-    loading: state=>state.loading,
-    loadingText: state=>state.loadingText,
-    getInnerHeight: state=>state.inner_height,
-    getInnerWidth: state=>state.leftNavVisible ? state.inner_width - 160 : state.inner_width, 
-    leftVisible: state=>state.leftNavVisible,
-  },
+  actions: {
+    onShrinkLoading({state, commit},text="加载中...") {
+      commit('setShrinkLoadingText', text);
+      commit('setShrinkLoading', true);
+      // state.shrinkLoadingText = text;
+      // state.shrinkLoading = true;
+    },
+    offShrinkLoading({state, commit}) {
+      commit('setShrinkLoadingText', '');
+      commit('setShrinkLoading', false);
+      // state.shrinkLoadingText = '';
+      // state.shrinkLoading = false;
+    }
+  }
 });
 
 export default store;

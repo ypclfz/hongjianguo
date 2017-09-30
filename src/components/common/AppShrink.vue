@@ -7,8 +7,10 @@
 			<el-button icon="close" style="float: right; border: 0; height: 40px;" @click="close" title="关闭"></el-button>
 			<slot name="header"></slot>
 		</div>
-		<div class="app-shrink-body" :style="`height: ${innerHeight - 80}px; overflow: auto;`" v-if="rendered">
-			<slot></slot>
+		<div v-loading="shrinkLoading" :element-loading-text="shrinkLoadingText">
+			<div class="app-shrink-body" :style="`height: ${innerHeight - 80}px; overflow: auto;`" v-if="rendered" >
+				<slot></slot>
+			</div>
 		</div>
 	</div>
 	</transition>
@@ -17,6 +19,7 @@
 
 <script>
 import $ from 'jquery'
+import {mapGetters} from 'vuex'
 
 export default {
 	name: 'appShrink',
@@ -41,7 +44,6 @@ export default {
 			this.$emit('close');
 		},
 		fire (e) {
-			console.log(e.target);
 			const _con = $('.app-shrink');   // 设置目标区域
 		  if(!_con.is(e.target) && _con.has(e.target).length === 0){ // Mark 1
 		    this.close();
@@ -49,9 +51,15 @@ export default {
 		}
 	}, 
 	computed: {
-		innerHeight () {
-			return this.$store.getters.getInnerHeight;
-		}
+		...mapGetters([
+      'innerHeight',
+      'shrinkLoading',
+      'shrinkLoadingText',
+    ]),
+    overflow () {
+    	return this.shrinkLoading ? 'hidden' : 'auto';
+    }
+
 	},
 	mounted () {
 		if (this.visible) {

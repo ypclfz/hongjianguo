@@ -95,127 +95,129 @@
 	    ></search-input>
     </div>
     
-	<el-table 
-    :data="tableData"
-    stripe
-    :border="tableOption.is_border != undefined ? tableOption.is_border : true" 
-    @selection-change="handleselectionChange" 
-    :row-key="getRowKeys" 
-    :default-sort="tableOption.default_sort ? tableOption.default_sort : {}"
-    @sort-change="handleSortChange"
-    :expand-row-keys="expands"
-    @expand="handleExpand"
-    :style="tableStyle"
-    :row-class-name="handleRowClassName"
-    @row-click="handleRowClick"
-    :highlight-current-row="tableOption.highlightCurrentRow ? tableOption.highlightCurrentRow : false"
-    :height="tableHeight"
-    ref="table"
+  	<el-table 
+      :data="tableData"
+      stripe
+      :border="tableOption.is_border != undefined ? tableOption.is_border : true" 
+      @selection-change="handleselectionChange" 
+      :row-key="getRowKeys" 
+      :default-sort="tableOption.default_sort ? tableOption.default_sort : {}"
+      @sort-change="handleSortChange"
+      :expand-row-keys="expands"
+      @expand="handleExpand"
+      :style="tableStyle"
+      :row-class-name="handleRowClassName"
+      @row-click="handleRowClick"
+      :highlight-current-row="tableOption.highlightCurrentRow ? tableOption.highlightCurrentRow : false"
+      :height="tableHeight"
+      ref="table"
 
-  >
-    <template v-for="(col, index) in tableOption.columns">
-      
-      <template v-if="col.type == 'selection'">
-        <el-table-column type="selection" :fixed="col.fixed === false ? false : 'left'"></el-table-column>
-      </template>
+    >
+      <template v-for="(col, index) in tableOption.columns">
+        
+        <template v-if="col.type == 'selection'">
+          <el-table-column type="selection" :fixed="col.fixed === false ? false : 'left'"></el-table-column>
+        </template>
 
-      <template v-else-if="col.type == 'expand'">
-        <el-table-column type="expand">
-          <template scope="scope">
-            <slot name="expand" :row="scope.row">
-            </slot>
-          </template>
-        </el-table-column>
-      </template>
-
-      <template v-else-if="col.type == 'text'">
-        <template v-if="col.render ? true : false">
-          <el-table-column :label="col.label" :prop="col.prop" :width="col.width ? col.width : ''" v-if="tableControl[index]['show']" :sortable="col.sortable ? 'custom' : false" :show-overflow-tooltip="col.overflow !== undefined ? col.overflow : true">
+        <template v-else-if="col.type == 'expand'">
+          <el-table-column type="expand">
             <template scope="scope">
-              <table-render :render="col.render" :scope="scope" :prop="col.prop"></table-render>
-            </template>
-          </el-table-column>
-        </template>
-        <template v-else-if="col.render_simple ? true : false ">
-          <el-table-column :label="col.label" :prop="col.prop" :width="col.width ? col.width : ''" v-if="tableControl[index]['show']" :sortable="col.sortable ? 'custom' : false" :show-overflow-tooltip="col.overflow !== undefined ? col.overflow : true">
-            <template scope="scope">
-              <span class="table-column-render">{{ scope.row[col.prop][col.render_simple] }}</span>
-            </template>
-          </el-table-column>
-        </template>
-        <template v-else>
-          <el-table-column :label="col.label" :prop="col.prop" :width="col.width ? col.width : ''" v-if="tableControl[index]['show']" :sortable="col.sortable ? 'custom' : false" :show-overflow-tooltip="col.overflow !== undefined ? col.overflow : true">
-            <template v-if="col.default !== undefined" scope="scope">{{ scope.row[col.prop] ? scope.row[col.prop] : col.default }}</template>
-          </el-table-column>
-        </template>
-      </template>
-
-      <template v-else-if="col.type == 'date'">
-        <el-table-column :label="col.label" :prop="col.prop" v-if="tableControl[index]['show']">
-        </el-table-column>
-      </template>
-
-      <template v-else-if="col.type == 'array'">
-        <el-table-column :label="col.label" :prop="col.prop" :width="col.width ? col.width : ''" v-if="tableControl[index]['show']" :sortable="col.sortable ? 'custom' : false" :show-overflow-tooltip="col.overflow !== undefined ? col.overflow : true">
-          <template scope="scope">
-            <el-tag v-for="(item, i) in arrayRender(scope['row'],col)" style="margin-left: 5px;" close-transition :key="i">{{ item }}</el-tag>
-          </template>
-        </el-table-column>
-      </template>
-
-      <template v-else-if="col.type == 'action'">
-        <el-table-column :label="col.label ? col.label : '操作'" :align="col.align ? col.align : 'left'" :width="col.width ? col.width : ''" :min-width="col.min_width ? col.min_width : ''" header-align="center" :fixed="col.fixed === false ? false : 'right'">
-          <template scope="scope">
-            <template v-if="col.btns_render ? true : false">
-              <slot :name="col.btns_render" :row="scope.row">
+              <slot name="expand" :row="scope.row">
               </slot>
             </template>
-            <template v-else v-for="(btn, index) in col.btns" v-if="btn.btn_if ? btn.btn_if(scope.row) : true">
+          </el-table-column>
+        </template>
 
-              <el-dropdown v-if="btn.type == 'dropdown'" :key="index" trigger="click" menu-align="start">
-                <el-button class="table-header-btn" :type="btn.btn_type ? btn.btn_type : ''" :size="btn.size ? btn.size : 'mini'" :icon="btn.icon ? btn.icon : ''">
-                  {{ btn.label }}<i class="el-icon-caret-bottom el-icon--right"></i>            
-                </el-button>
-                <el-dropdown-menu v-if="btn.items">
-                  <el-dropdown-item v-for="(item,index2) in btn.items" :key="index2" :divided="item.divided"><div @click="handleCommand(item.click, $event)" style="margin: 0 -10px; padding: 0 10px;">{{ item.text }}</div></el-dropdown-item>
-                </el-dropdown-menu>
-              </el-dropdown>
-
-              <el-button v-else-if="btn.type == 'edit'" :type="btn.btn_type ? btn.btn_type : 'text'" :key="index" :size="btn.size ? btn.size : 'mini'" icon="edit" @click="handleActionCommand(btn.click, scope, $event)">编辑</el-button>
-
-              <el-button v-else-if="btn.type == 'detail'" :type="btn.btn_type ? btn.btn_type : 'text'" :key="index" :size="btn.size ? btn.size : 'mini'" icon="information" @click="handleActionCommand(btn.click, scope, $event)" >详情</el-button>
-
-              <el-button v-else-if="btn.type == 'delete'" :type="btn.btn_type ? btn.btn_type : 'text'" :key="index" :size="btn.size ? btn.size : 'mini'" icon="delete" @click="handleActionCommand(btn.click, scope, $event)" >删除</el-button>
-
-              <el-button v-else-if="btn.type == 'download'" :type="btn.btn_type ? btn.btn_type : 'text'" :key="index" :size="btn.size ? btn.size : 'mini'" icon="share" @click="handleActionCommand(btn.click, scope, $event)" >下载</el-button>
-
-              <el-button v-else-if="btn.type == 'view'" :type="btn.btn_type ? btn.btn_type : 'text'" :key="index" :size="btn.size ? btn.size : 'mini'" icon="view" @click="handleActionCommand(btn.click, scope, $event)" >查看</el-button>
-
-              <el-button v-else :type="btn.btn_type ? btn.btn_type : ''" :key="index" :size="btn.size ? btn.size : 'mini'" :icon="btn.icon" @click="handleActionCommand(btn.click, scope, $event)">{{ btn.label }}</el-button>
-
-            </template>
+        <template v-else-if="col.type == 'text'">
+          <template v-if="col.render ? true : false">
+            <el-table-column :label="col.label" :prop="col.prop" :width="col.width ? col.width : ''" v-if="tableControl[index]['show']" :sortable="col.sortable ? 'custom' : false" :show-overflow-tooltip="col.overflow !== undefined ? col.overflow : true">
+              <template scope="scope">
+                <table-render :render="col.render" :scope="scope" :prop="col.prop"></table-render>
+              </template>
+            </el-table-column>
           </template>
-        </el-table-column>
-      </template>
+          <template v-else-if="col.render_simple ? true : false ">
+            <el-table-column :label="col.label" :prop="col.prop" :width="col.width ? col.width : ''" v-if="tableControl[index]['show']" :sortable="col.sortable ? 'custom' : false" :show-overflow-tooltip="col.overflow !== undefined ? col.overflow : true">
+              <template scope="scope">
+                <span class="table-column-render">{{ scope.row[col.prop][col.render_simple] }}</span>
+              </template>
+            </el-table-column>
+          </template>
+          <template v-else>
+            <el-table-column :label="col.label" :prop="col.prop" :width="col.width ? col.width : ''" v-if="tableControl[index]['show']" :sortable="col.sortable ? 'custom' : false" :show-overflow-tooltip="col.overflow !== undefined ? col.overflow : true">
+              <template v-if="col.default !== undefined" scope="scope">{{ scope.row[col.prop] ? scope.row[col.prop] : col.default }}</template>
+            </el-table-column>
+          </template>
+        </template>
 
-    </template>
-	</el-table>
-  <!--v-if="totalNumber > pageSize"-->
-	<el-pagination
-    v-if="tableOption.is_pagination == undefined ? true : tableOption.is_pagination"
-  	@current-change="handleCurrentChange"
-    @size-change="handleSizeChange"
-  	:current-page.sync="page"
-  	:page-size="pagesize"
-    :page-sizes="pagesizes"
-  	layout="sizes, prev, pager, next, jumper, total"
-  	:total="totalNumber"
-  >
-  </el-pagination>
-  <el-dialog title="导入数据文件" :visible.sync="dialogImportVisible">
-    <app-import :columns="import_columns" :type="tableOption.import_type ? tableOption.import_type : ''" @import-success="handleImportSuccess"></app-import>
-  </el-dialog>
-  <file-upload :type="tableOption.upload_type ? tableOption.upload_type : ''" @upload-success="refresh" ref="file_upload"></file-upload>
+        <template v-else-if="col.type == 'date'">
+          <el-table-column :label="col.label" :prop="col.prop" v-if="tableControl[index]['show']">
+          </el-table-column>
+        </template>
+
+        <template v-else-if="col.type == 'array'">
+          <el-table-column :label="col.label" :prop="col.prop" :width="col.width ? col.width : ''" v-if="tableControl[index]['show']" :sortable="col.sortable ? 'custom' : false" :show-overflow-tooltip="col.overflow !== undefined ? col.overflow : true">
+            <template scope="scope">
+              <el-tag v-for="(item, i) in arrayRender(scope['row'],col)" style="margin-left: 5px;" close-transition :key="i">{{ item }}</el-tag>
+            </template>
+          </el-table-column>
+        </template>
+
+        <template v-else-if="col.type == 'action'">
+          <el-table-column :label="col.label ? col.label : '操作'" :align="col.align ? col.align : 'left'" :width="col.width ? col.width : ''" :min-width="col.min_width ? col.min_width : ''" header-align="center" :fixed="col.fixed === false ? false : 'right'">
+            <template scope="scope">
+              <template v-if="col.btns_render ? true : false">
+                <slot :name="col.btns_render" :row="scope.row">
+                </slot>
+              </template>
+              <template v-else v-for="(btn, index) in col.btns" v-if="btn.btn_if ? btn.btn_if(scope.row) : true">
+
+                <el-dropdown v-if="btn.type == 'dropdown'" :key="index" trigger="click" menu-align="start">
+                  <el-button class="table-header-btn" :type="btn.btn_type ? btn.btn_type : ''" :size="btn.size ? btn.size : 'mini'" :icon="btn.icon ? btn.icon : ''">
+                    {{ btn.label }}<i class="el-icon-caret-bottom el-icon--right"></i>            
+                  </el-button>
+                  <el-dropdown-menu v-if="btn.items">
+                    <el-dropdown-item v-for="(item,index2) in btn.items" :key="index2" :divided="item.divided"><div @click="handleCommand(item.click, $event)" style="margin: 0 -10px; padding: 0 10px;">{{ item.text }}</div></el-dropdown-item>
+                  </el-dropdown-menu>
+                </el-dropdown>
+
+                <el-button v-else-if="btn.type == 'edit'" :type="btn.btn_type ? btn.btn_type : 'text'" :key="index" :size="btn.size ? btn.size : 'mini'" icon="edit" @click="handleActionCommand(btn.click, scope, $event)">编辑</el-button>
+
+                <el-button v-else-if="btn.type == 'detail'" :type="btn.btn_type ? btn.btn_type : 'text'" :key="index" :size="btn.size ? btn.size : 'mini'" icon="information" @click="handleActionCommand(btn.click, scope, $event)" >详情</el-button>
+
+                <el-button v-else-if="btn.type == 'delete'" :type="btn.btn_type ? btn.btn_type : 'text'" :key="index" :size="btn.size ? btn.size : 'mini'" icon="delete" @click="handleActionCommand(btn.click, scope, $event)" >删除</el-button>
+
+                <el-button v-else-if="btn.type == 'download'" :type="btn.btn_type ? btn.btn_type : 'text'" :key="index" :size="btn.size ? btn.size : 'mini'" icon="share" @click="handleActionCommand(btn.click, scope, $event)" >下载</el-button>
+
+                <el-button v-else-if="btn.type == 'view'" :type="btn.btn_type ? btn.btn_type : 'text'" :key="index" :size="btn.size ? btn.size : 'mini'" icon="view" @click="handleActionCommand(btn.click, scope, $event)" >查看</el-button>
+
+                <el-button v-else :type="btn.btn_type ? btn.btn_type : ''" :key="index" :size="btn.size ? btn.size : 'mini'" :icon="btn.icon" @click="handleActionCommand(btn.click, scope, $event)">{{ btn.label }}</el-button>
+
+              </template>
+            </template>
+          </el-table-column>
+        </template>
+
+      </template>
+  	</el-table>
+    <!--v-if="totalNumber > pageSize"-->
+  	<el-pagination
+      v-if="tableOption.is_pagination == undefined ? true : tableOption.is_pagination"
+    	@current-change="handleCurrentChange"
+      @size-change="handleSizeChange"
+    	:current-page.sync="page"
+    	:page-size="pagesize"
+      :page-sizes="pagesizes"
+    	layout="sizes, prev, pager, next, jumper, total"
+    	:total="totalNumber"
+    >
+    </el-pagination>
+  
+    <el-dialog v-if="tableOption.import_type !== undefined" title="导入数据文件" :visible.sync="dialogImportVisible">
+      <app-import :columns="import_columns" :type="tableOption.import_type" @import-success="handleImportSuccess"></app-import>
+    </el-dialog>
+
+    <file-upload v-if="tableOption.upload_type !== undefined" :type="tableOption.upload_type" @upload-success="refresh" ref="file_upload"></file-upload>
   </div>
 </template>
 
@@ -227,6 +229,7 @@ import AppFilter from '@/components/common/AppFilter'
 import AppImport from '@/components/common/AppImport'
 import FileUpload from '@/components/common/FileUpload'
 import SearchInput from '@/components/common/SearchInput'
+import { mapGetters } from 'vuex'
 const methods = Object.assign({}, tableConst.methods, {
   handleRowClick (a,b,c) {
     // if(c.fixed) return false;
@@ -374,13 +377,17 @@ const methods = Object.assign({}, tableConst.methods, {
     const copy = this.$tool.deepCopy(this.requesOption);
     return copy;
   },
-  getSelect () {
+  getSelect (flag=false) {
     const s = this.tableSelect;
-    if(s.length == 0) {
-      this.$message({ message: '请至少选择一项！', type: 'warning' })
-    }else {
-      return s;
+    
+    if(!flag) {
+      if(s.length == 0) {
+        this.$message({ message: '请至少选择一项！', type: 'warning' });
+        return false;
+      }  
     }
+
+    return s;
   },
   update () {
     this.$emit('refreshTableData', Object.assign({}, this.getRequestOption(), this.screen_obj) );
@@ -423,9 +430,11 @@ export default {
   mixins: [ AxiosMixins ],
   props: ['tableOption', 'data', 'tableStyle', 'refreshProxy'],
   computed: {
-    screen_obj () {
-      return this.$store.getters.screen_obj;
-    },
+    ...mapGetters([
+      'screen_obj',
+      'innerHeight',
+      'pagesize',
+    ]),
     tableData () {
       const d = this.data;
       if(d instanceof Array) {
@@ -470,9 +479,6 @@ export default {
 
       return obj;
     },
-    pagesize () {
-      return this.$store.getters.pagesize;
-    },
     url () {
       return this.tableOption.url ? this.tableOption.url : '';
     },
@@ -493,9 +499,6 @@ export default {
       }
 
       return a;
-    },
-    innerHeight () {
-      return this.$store.getters.getInnerHeight;
     },
     tableHeight () {
       let height = '';

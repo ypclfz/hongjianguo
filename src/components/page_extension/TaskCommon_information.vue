@@ -83,9 +83,40 @@
 	    	</el-row>
 	    </el-form>
 	  </el-collapse-item>
-	  <el-collapse-item title="版权详情" name="2" v-else-if="row.category == 2">
-	    <div>用户决策：根据场景可给予用户操作建议或安全提示，但不能代替用户进行决策；</div>
-	    <div>结果可控：用户可以自由的进行操作，包括撤销、回退和终止当前操作等。</div>
+	  <el-collapse-item name="3" v-else-if="row.category == 3">
+	    <template slot="title">
+        版权详情<el-button size="mini" type="text" style="margin-left: 10px;" @click.stop="editCopyright">更多...</el-button>
+      </template>
+      <el-form label-width="70px" label-position="left" class="form-information" v-loading="loading" element-loading-text="加载版权信息中...">
+        <el-row :gutter="20">
+          <el-col :span="12">
+            
+            <el-form-item label="申请人"><span class="form-item-text">{{ row_copyright.applicants.map(_=>_.name).join(';') }}</span></el-form-item>
+            <el-form-item label="技术分类"><span class="form-item-text">{{ row_copyright.classification.name }}</span></el-form-item>
+            <el-form-item label="申请地区"><span class="form-item-text">{{ row_copyright.area.name }}</span></el-form-item>
+            <el-form-item label="版权类型"><span class="form-item-text">{{ row_copyright.type.name }}</span></el-form-item>
+            <el-form-item label="IPR"><span class="form-item-text">{{ row_copyright.ipr.name }}</span></el-form-item>
+          </el-col>
+          <el-col :span="12">
+            <el-form-item label="产品名称"><span class="form-item-text">{{ row_copyright.products.map(_=>_.name).join(';') }}</span></el-form-item>
+            <el-form-item label="标签"><span class="form-item-text">{{ row_copyright.tags.join(';') }}</span></el-form-item>
+            <el-form-item label="申请日"><span class="form-item-text">{{ row_copyright.apd }}</span></el-form-item>
+            <el-form-item label="申请号"><span class="form-item-text">{{ row_copyright.apn }}</span></el-form-item>
+            <el-form-item label="提案人"><span class="form-item-text">{{ row_copyright.proposer.name }}</span></el-form-item>
+          </el-col>
+        </el-row>
+        <el-row>
+          <el-form-item label="案件摘要"><span class="form-item-text">{{ row_copyright.abstract }}</span></el-form-item>
+        </el-row>
+        <el-row>
+            <el-form-item label="备注"><span class="form-item-text">{{ row_copyright.remark }}</span></el-form-item>
+        </el-row>
+        <el-row>
+          <el-form-item label="附件">
+            <table-component :tableOption="attachmentsOption" :data="row_copyright.attachments"></table-component>
+          </el-form-item>
+        </el-row>
+      </el-form>
 	  </el-collapse-item>
 	</el-collapse>
 </template>
@@ -101,7 +132,7 @@ export default {
   props: [ 'row' ],
   data () {
   	return {
-  		activeNames: ['1', '2'],
+  		activeNames: ['1', '2', '3'],
   		loading: true,
   		attachmentsOption: {
         'is_search': false,
@@ -144,8 +175,24 @@ export default {
   			apd: '',
   			apn: '',
         proposals: [],
+        ipr: '',
         proposer: '',
-  		}
+  		},
+      row_copyright: {
+        abstract: '',
+        applicants: [],
+        classification: '',
+        products: [],
+        tags: [],
+        remark: '',
+        attachments: [],
+        area: '',
+        type: '',
+        apd: '',
+        apn: '',
+        ipr: [],
+        proposer: '',
+      },
   	}
   },
   methods: {
@@ -155,7 +202,9 @@ export default {
 	  		this.refreshP();
 	  	}else if(this.row.category == 1) {
 	  		this.refreshPatent();
-	  	}
+	  	}else if(this.row.category == 3) {
+        this.refreshCopyright();
+      }
   	},
   	refreshP () {
   		const url = `/api/proposals/${this.row.project_id}`;
@@ -175,8 +224,19 @@ export default {
 
   		this.axiosGet({url, success});
   	},
+    refreshCopyright () {
+      const url = `/api/copyrights/${this.row.project_id}`;
+      const success = _=>{
+        this.$tool.coverObj(this.row_copyright, _.copyright);
+        this.loading = false;
+      }
+      this.axiosGet({url, success});
+    },
     editPatent () {
       this.$emit('more', 'patent');
+    },
+    editCopyright () {
+      this.$emit('more', 'copyright');
     }
   },
   created () {

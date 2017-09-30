@@ -12,6 +12,14 @@ const getters = {
 		menus.forEach(_=>{map.set(_, true)});
 
 		return map;
+	},
+	currentUser: state=>state.data,
+	username: state=>{
+	  const user = state.data; 
+      return 
+      	user ? 
+          user.name ? user.name : user.username
+          : '';
 	}
 }
 

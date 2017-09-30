@@ -23,17 +23,19 @@ const actions = {
 	refreshArea ({commit, rootState, state}) {
 		url = rootState.status ? url.replace(/\/api/, '') : url;
 
-		if(state.data === undefined) {
-			commit('setArea', []);
-		}
-
-		rootState.axios
+		const d = rootState.tool.getLocal('area');
+		if(d) {
+			commit('setArea', JSON.parse(d));
+		}else {
+			rootState.axios
 			.get(url)
 			.then(response=>{
 				const arr = eval(`${response.data}`);
 				commit('setArea', arr);
+				rootState.tool.setLocal('area', JSON.stringify(arr));
 			})
-			.catch(error=>{console.log(error)});
+			.catch(error=>{console.log(error)});	
+		}
 	}
 }
 

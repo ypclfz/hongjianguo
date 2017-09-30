@@ -8,11 +8,7 @@
 				<el-input v-model="form.title"></el-input>
 			</el-form-item>
 			<el-form-item label="模板内容">
-				<quill-editor 
-					v-model="form.content"
-	        ref="myQuillEditor"	
-	      >
-	  		</quill-editor>
+				<el-input type="textarea" class="model-content" v-model="form.content" :rows="30"></el-input>
 			</el-form-item>
 			<el-form-item>
 				<el-button type="primary" @click="edit">保存</el-button>
@@ -71,5 +67,11 @@ export default {
 </script>
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
+<style>
+#app .model-content textarea {
+  height: auto;
+}
+</style>
 <style scoped lang="scss">
+
 </style>

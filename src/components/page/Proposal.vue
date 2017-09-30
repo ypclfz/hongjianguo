@@ -41,6 +41,17 @@
     </table-component>
 
     <app-shrink :title="currentRow.title" :visible.sync="shrinkVisible"><proposal-detail :id="currentRow.id"></proposal-detail></app-shrink>
+    
+    <el-dialog title="移交提案" :visible.sync="transferVisible">
+      <el-form>
+        <el-form-item label="移交至">
+          <remote-select type="member" v-model="transferProposal"></remote-select>
+        </el-form-item>
+        <el-form-item style="margin-bottom: 0px;">
+          <el-button type="primary" :disabled="transferDisabled" @click="transferAxios">确定</el-button>
+        </el-form-item>
+      </el-form>
+    </el-dialog>
   </div>
 </template>
 
@@ -154,6 +165,30 @@ export default {
     handleRowClick (row) {
       this.currentRow = row;
       if(!this.shrinkVisible) this.shrinkVisible = true;
+    },
+    transferPop () {
+      const s = this.$refs.table.getSelect();
+      if(s) {
+        this.transferIds = this.$tool.splitObj(s, 'id');
+        this.transferVisible = true;
+      }
+    },
+    transferAxios () {
+      if(this.transferProposal == '') {
+        this.$message({message: '请选择需要移交的人员', type: 'warning'});
+        return;
+      }
+
+      const url = '/proposals/proposer';
+      const data = {ids: this.transferIds, proposal: this.transferProposal};
+      const success = _=>{ 
+        this.$message({message: '移交成功', type: 'success'});
+        this.refresh();
+      };
+      const complete = _=>{this.transferDisabled = false};
+
+      this.transferDisabled = true;
+      this.axiosPut({url, data, success, complete});
     }
   },
   data () {
@@ -170,6 +205,7 @@ export default {
           { type: 'add', click: this.add },
           { type: 'delete', click: this.deleteMul },
           { type: 'export' },
+          { type: 'custom', label: '移交', icon: 'd-arrow-right', click: this.transferPop },
           { type: 'control', label: '字段' },
         ],
         'columns': [
@@ -205,6 +241,10 @@ export default {
       filters: {},
       currentRow: '',
       shrinkVisible: false,
+      transferVisible: false,
+      transferIds: [],
+      transferProposal: '',
+      transferDisabled: false,
     }
   },
   mounted () {

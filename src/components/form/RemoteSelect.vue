@@ -8,7 +8,7 @@
 	  :disabled="disabled"
 	  :remote-method="remoteMethod"
 	  :loading="loading"
-	  multiple
+	  :multiple="!single"
 	  :multiple-limit="multiple ? 0 : 1"
 	  ref="select"
 	  @visible-change.once="initialization"
@@ -95,6 +95,10 @@ export default {
   props: {
   	'type': [String, Object],
     'para': Object,
+    'single': {
+      type: Boolean,
+      default: false,
+    }
   },
   data () {
   	return { 
@@ -112,6 +116,7 @@ export default {
   		return this.selected;
   	},
     refreshSelected (val) {
+      val = this.single ? [val] : val;
       if( val[0] && val[0] instanceof Object ) {
         
         this.static_map = val;
@@ -124,9 +129,15 @@ export default {
         
       } else {
         //selected通过map映射
-        this.selected = val.map(_=>{
-          return this.map.get(_);
+        const arr = [];
+        val.forEach(_=>{
+          const v = this.map.get(_);
+          if(v) {
+            arr.push(v);
+          }
         });
+
+        this.selected = arr;
       }
     },
     remoteMethod (keyword) {
@@ -206,7 +217,7 @@ export default {
       // console.log('-------------val');
       // console.log(val);
       // console.log('-------------val');
-      //value类型为对象时，添加静态映射，并将其值转为id 
+      //value类型为对象时，添加静态映射，并将其值转为id
       this.refreshSelected(val);
   	}
   },

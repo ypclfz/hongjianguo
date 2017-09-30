@@ -19,7 +19,7 @@ export default {
   computed: {
     value2 () {
       // console.log(this.value);
-      if(!this.multiple) {
+      if(!this.multiple && !this.single) {
         // console.log(this.value == "" || (this.value instanceof Object && this.$tool.getObjLength(this.value) == 0 ) ? [] : [ this.value ]);
         return this.value == "" || (this.value instanceof Object && this.$tool.getObjLength(this.value) == 0 ) ? [] : [ this.value ];
       }else {
@@ -31,7 +31,7 @@ export default {
   methods: {
   	handleInput (val) {
 
-      if(!this.multiple) {
+      if(!this.multiple && !this.single) {
         this.$emit('input', val[0] ? val[0] : '');  
       }else {
         this.$emit('input', val);
@@ -60,8 +60,10 @@ export default {
   },
   watch: {
     value2 (val) {
-      if( !this.multiple && val.length == 1) {
-        this.$refs.select.visible = false;
+      if( !this.multiple && val.length == 1 && !this.single) {
+        if(this.$refs.select) {
+          this.$refs.select.visible = false;
+        }
       }
     }
   },

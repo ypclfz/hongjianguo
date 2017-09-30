@@ -1,5 +1,5 @@
 <template>
-	<el-dialog title="文件上传" :visible.sync="dialogVisible">  
+	<el-dialog title="文件上传" :visible.sync="dialogVisible" class="dialog-medium">  
 		<el-table
 			height="250"
 			style="width: 100%"
@@ -8,7 +8,7 @@
 		>
 			<el-table-column label="关联案件" prop="project">
         <template scope="scope">
-          <remote-select :type="config.type" v-model="scope.row.project"></remote-select>
+          <remote-select :type="config.type" v-model="scope.row.project" single></remote-select>
         </template>
       </el-table-column>
       <el-table-column label="文件名称" prop="name"></el-table-column>

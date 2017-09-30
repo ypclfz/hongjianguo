@@ -28,10 +28,8 @@
   		<static-select type="ipr" v-model="form.person_in_charge" v-else-if="defaultVal == 'ipr'"></static-select>
   		<!-- <span v-else>{{ data[defaultVal]['name'] }}</span> -->
   	</el-form-item>
-    <el-form-item prop="agency" label="代理机构" v-if="fields.agency"
-      :rules="{ required: true, message: '代理机构不能为空'}"
-    >
-      <remote-select v-if="fields.agency == 1" type="agency" v-model="form.agency"></remote-select>
+    <el-form-item prop="agency" label="代理机构" v-if="fields.agency" :rules="{ required: true, message: '代理机构不能为空'}">
+      <div v-if="fields.agency == 1"><remote-select type="agency" v-model="form.agency"></remote-select><el-button size="mini" type="text" @click="showAgencyLoad">负载</el-button></div>
       <span class="form-item-text">{{ form.agency.name }}</span>
     </el-form-item>
     <el-form-item prop="agency_serial" label="事务所案号" v-if="fields.agency_serial">
@@ -91,6 +89,8 @@ import Upload from '@/components/form/Upload'
 import RemoteSelect from '@/components/form/RemoteSelect'
 import StaticSelect from '@/components/form/StaticSelect'
 
+import {mapMutations} from 'vuex'
+
 const URL = `/api/tasks`;
 
 export default {
@@ -126,6 +126,9 @@ export default {
 		this.refreshData(); 
 	},
 	methods: {
+    ...mapMutations([
+      'showAgencyLoad',
+    ]),
   	refreshData () {
       this.loading = true; 
       this.next = "";

@@ -2,7 +2,7 @@
   <div class="main">
     <strainer v-model="filter" @refresh="refresh"></strainer>
     <table-component :tableOption="tableOption" :data="tableData" @refreshTableData="refreshTableData" ref="table"></table-component>
-    <app-shrink :title="currentRow.title" :visible.sync="shrinkVisible">
+    <app-shrink :title="currentRow.title" :visible.sync="shrinkVisible" @close="close">
       <common-detail type="copyright" :id="currentRow.id"></common-detail>
     </app-shrink>
   </div>
@@ -110,6 +110,9 @@ export default {
       this.currentRow = row;
       if(!this.shrinkVisible) this.shrinkVisible = true;
     },
+    close () {
+      this.$refs.table.setCurrentRow();
+    }
   },
   mounted () {
     this.$refs.table.refresh();

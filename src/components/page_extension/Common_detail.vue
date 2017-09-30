@@ -1,8 +1,8 @@
 <template>
-  <div v-loading.lock='loading' :element-loading-text="config.loadingText">
+  <div>
     <el-tabs v-model="activeName">
       <el-tab-pane label="基本信息" name="base">
-  			<detail-patent page-type="edit" v-if="type == 'patent'" @editSuccess></detail-patent>
+  			<detail-patent page-type="edit" v-if="type == 'patent'"></detail-patent>
         <detail-copyright page-type="edit" v-if="type == 'copyright'"></detail-copyright>
       </el-tab-pane>
       <el-tab-pane label="流程管理" name="control">
@@ -32,6 +32,7 @@ import DetailNotice from '@/components/page_extension/CommonDetail_notice'
 import DetailFee from '@/components/page_extension/CommonDetail_fee'
 import DetailEmail from '@/components/page_extension/CommonDetail_email'
 import DetailDocuments from '@/components/page_extension/CommonDetail_documents'
+import {mapActions} from 'vuex'
 const config = [
 	['patent', {
 		loadingText: '加载专利信息中...',
@@ -58,14 +59,22 @@ export default {
   	}
   },
   methods: {
-  	refreshDetail () {
-  		const type = this.type;
-  		const id = this.id;
-  		const func = ()=>{ this.loading = false };
-  		this.$store.commit('setDetailType', type);
-  		this.loading = true;
-  		this.$store.dispatch('refreshDetailData', { id, func });	
-  	}
+    ...mapActions([
+      'onShrinkLoading', 
+      'offShrinkLoading',
+      'refreshDetailData',
+    ]),
+    refreshDetail () {
+      const type = this.type;
+      const id = this.id;
+      this.$store.commit('setDetailType', type);
+      const func = _=>{ 
+        this.offShrinkLoading();
+      };
+
+      this.onShrinkLoading(this.config.loadingText);
+      this.refreshDetailData({ id, func });
+    },
   },
   created () {
   	this.refreshDetail();

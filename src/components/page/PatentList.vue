@@ -1,10 +1,24 @@
 <template>
   <div class="main">
     <strainer v-model="filter" @refresh="refresh"></strainer>
-    <table-component :tableOption="tableOption" :data="tableData" @refreshTableData="refreshTableData" ref="table" :refresh-proxy="refreshProxy"></table-component>
-    <app-shrink :title="currentRow.title" :visible.sync="shrinkVisible">
+    
+    <table-component :tableOption="tableOption" :data="tableData" @refreshTableData="refreshTableData" ref="table" :refresh-proxy="refreshProxy">
+      <el-button slot="download" :loading="downloadLoading" icon="share" @click="downloadPop" type="primary" style="margin-left: 5px;">批量下载</el-button>
+    </table-component>
+    
+    <app-shrink :title="currentRow.title" :visible.sync="shrinkVisible" @close="close">
       <common-detail type="patent" :id="currentRow.id"></common-detail>
     </app-shrink>
+    <el-dialog title="批量下载" :visible.sync="downloadVisible">
+      <el-form>
+        <el-form-item label="文件类型">
+          <static-select type="file_type" v-model="downloadFileType"></static-select>
+        </el-form-item>
+        <el-form-item style="margin-bottom: 0px;">
+          <el-button type="primary" @click="downloadAxios">下载</el-button>
+        </el-form-item>
+      </el-form>
+    </el-dialog>
   </div>
 </template>
 
@@ -17,6 +31,7 @@ import AppDatePicker from '@/components/common/AppDatePicker'
 import Strainer from '@/components/page_extension/PatentList_strainer'
 import AppShrink from '@/components/common/AppShrink'
 import CommonDetail from '@/components/page_extension/Common_detail'
+import StaticSelect from '@/components/form/StaticSelect'
 
 const URL = '/api/patents';
 const PATENT_TYPE = ['发明专利', '实用新型', '外观设计']; 
@@ -24,20 +39,17 @@ const PATENT_TYPE = ['发明专利', '实用新型', '外观设计'];
 export default {
   name: 'patentList',
   mixins: [ AxiosMixins ],
-  computed: {
-    leftHeight () {
-      return document.querySelector(".row").clientHeight;
-    }
-  },
   data () {
-    let height = this.$store.getters.getInnerHeight - 200;
-    console.log(this.$store.getters.getInnerHeight);
-    console.log(height);
-    height = height < 300 ? 300 : height; 
     return {
       refreshProxy: '',
       currentRow: '',
       shrinkVisible: false,
+      
+      downloadVisible: false,
+      downloadIds: [],
+      downloadFileType: '',
+      downloadLoading: false,
+      
       tableOption: {
         'name': 'patentList',
         'url': URL,
@@ -55,7 +67,7 @@ export default {
           { type: 'batch_upload' },
           { type: 'control', label: '字段' },
         ],
-
+        'header_slot': ['download'],
         'columns': [
 
           { type: 'selection' },
@@ -207,11 +219,45 @@ export default {
       this.currentRow = row;
       if(!this.shrinkVisible) this.shrinkVisible = true;
     },
+    close () {
+      this.$refs.table.setCurrentRow();
+    },
+    downloadPop () {
+      const select = this.$refs.table.getSelect();
+      
+      if(select) {
+        this.downloadIds = this.$tool.splitObj(select, 'id');
+        this.downloadVisible = true;
+      }
+    },
+    downloadAxios () {
+      if(this.downloadFileType == '') {
+        this.$message({message: '请选择文件类型', type: 'warning'});
+        return;
+      }
+
+      const url = '/patents/documents/download';
+      const data = {ids: this.downloadIds, type: this.downloadFileType };
+      const success = _=>{ console.log(_) };
+
+      this.downloadLoading = true;
+      this.downloadVisible = false;
+      this.axiosPost({url, data, success}).then(_=>{ this.downloadLoading = false; });
+    }
   },
   mounted () {
     this.$refs.table.refresh();
   },
-  components: {  AppFilter, TableComponent, AppTree, AppDatePicker, Strainer, AppShrink, CommonDetail },
+  components: {  
+    AppFilter, 
+    TableComponent, 
+    AppTree, 
+    AppDatePicker, 
+    Strainer, 
+    AppShrink, 
+    CommonDetail,
+    StaticSelect,
+  },
 }
 </script>
 <style>

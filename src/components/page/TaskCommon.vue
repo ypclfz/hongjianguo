@@ -8,10 +8,10 @@
       </el-select>
     </table-component>
 
-    <el-dialog title="申请委案" :visible.sync="dialogAgenVisible">
+    <el-dialog title="申请委案" :visible.sync="dialogAgenVisible" class="dialog-small">
       <el-form :form="agen" ref="agen" label-width="80px">
         <el-form-item label="代理机构" prop="agency_id">
-          <remote-select type="agency" v-model="agen.agency_id"></remote-select>
+          <remote-select type="agency" v-model="agen.agency_id"></remote-select><el-button size="mini" type="text" @click="showAgencyLoad">负载</el-button>
         </el-form-item>
         <el-form-item label="代理人" prop="agency_agent" v-show="agen.agency_id !== '' ? true : false">
           <remote-select type="agent" v-model="agen.agency_agent" :para="{'agency': agen.agency_id}" ref="agent"></remote-select>
@@ -44,7 +44,7 @@
       <edit type="add" @addSuccess="addSuccess" ref="add"></edit>
     </el-dialog>
     <el-dialog title="编辑任务" :visible.sync="dialogEditVisible" class="dialog-medium">
-      <edit :row="currentRow" type="edit" @editSuccess="editSuccess"></edit>
+      <edit type="edit" :row="currentRow" @editSuccess="editSuccess"></edit>
     </el-dialog>
     <el-dialog title="移交任务" :visible.sync="dialogTranserVisible" class="dialog-medium">
       <el-form label-width="80px">
@@ -97,19 +97,24 @@
     </app-shrink>
 
     <app-shrink :title="currentRow.title" :visible.sync="moreVisible">
-      <common-detail type="patent" :id="currentRow.project_id"></common-detail>
+      <common-detail :type="moreType" :id="currentRow.project_id"></common-detail>
     </app-shrink>
+
+    
 
   </div>
 </template>
 
 <script>
-import RemoteSelect from '@/components/form/RemoteSelect'
 import AxiosMixins from '@/mixins/axios-mixins'
+
+import RemoteSelect from '@/components/form/RemoteSelect'
+
 import AppFilter from '@/components/common/AppFilter'
 import AppCollapse from '@/components/common/AppCollapse'
 import TableComponent from '@/components/common/TableComponent'
 import AppDatePicker from '@/components/common/AppDatePicker'
+
 import Edit from '@/components/page_extension/TaskCommon_edit'
 import Information from '@/components/page_extension/TaskCommon_information'
 import Detail from '@/components/page_extension/TaskCommon_detail'
@@ -117,7 +122,9 @@ import TaskFinish from '@/components/common/TaskFinish'
 import Strainer from '@/components/page_extension/TaskCommon_strainer'
 import AppShrink from '@/components/common/AppShrink'
 import CommonDetail from '@/components/page_extension/Common_detail'
-import $ from 'jquery'
+
+import { mapMutations } from 'vuex'
+// import $ from 'jquery'
 
 const URL = '/api/tasks';
 const colorMap = new Map([
@@ -132,10 +139,12 @@ export default {
   name: 'taskList',
   mixins: [ AxiosMixins ],
   methods: {
+    ...mapMutations([
+      'showAgencyLoad',
+    ]),
     handleMore (type) {
-      if(type == 'patent') {
-        this.moreVisible = true;
-      }
+      this.moreType = type;
+      this.moreVisible = true;
     },
     handleShrinkClose () {
       this.$refs.table.setCurrentRow();
@@ -186,12 +195,12 @@ export default {
       this.btn_disabled = true;
       this.axiosPost({url, data, success, complete});
     },
-    dropGenerator(str) {
-      return (row, element)=>{       
-        this.expandType = str;
-        $(element.target).parents("tr").find(".el-table__expand-icon").click();  
-      }
-    },
+    // dropGenerator(str) {
+    //   return (row, element)=>{       
+    //     this.expandType = str;
+    //     $(element.target).parents("tr").find(".el-table__expand-icon").click();  
+    //   }
+    // },
     taskDelete ({title, id}) {
       this.$confirm(`此操作将永久删除任务‘${title}’, 是否继续？`)
         .then(()=>{
@@ -210,14 +219,14 @@ export default {
     },
     refreshTableData (option) {
       const url = URL;
-      const data = Object.assign({}, this.filter, option, this.screen_value, {status: this.task_status}, {scope: this.task_toggle});
+      const data = Object.assign({}, this.filter, option, this.screen_value, {status: this.task_status}, {scope: this.task_toggle}, this.urlParams);
       const success = d=>{
         if( data['format'] == 'excel' ) {
           window.location.href = d.tasks.downloadUrl;
         }else {
           this.tableData = d.tasks;
           this.filters = d.tasks.filters; 
-        }        
+        }       
       };
 
       this.refreshProxy = this.axiosGet({url, data, success}); 
@@ -332,6 +341,7 @@ export default {
       dialogSettingVisible: false,
       dialogShrinkVisible: false,
       moreVisible: false,
+      moreType: '',
       filter: {},
       filters: {},
       activeName: 'edit',
@@ -441,6 +451,9 @@ export default {
       }
   
       return flag;
+    },
+    urlParams () {
+      return this.$route.query;
     }
   },  
   watch: {
@@ -488,7 +501,7 @@ export default {
     TaskFinish, 
     AppShrink, 
     Information,
-    CommonDetail, 
+    CommonDetail,
   },
 } 
 </script>
