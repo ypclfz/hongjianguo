@@ -111,7 +111,6 @@
       :highlight-current-row="tableOption.highlightCurrentRow ? tableOption.highlightCurrentRow : false"
       :height="tableHeight"
       ref="table"
-
     >
       <template v-for="(col, index) in tableOption.columns">
         
@@ -156,9 +155,11 @@
         </template>
 
         <template v-else-if="col.type == 'array'">
-          <el-table-column :label="col.label" :prop="col.prop" :width="col.width ? col.width : ''" v-if="tableControl[index]['show']" :sortable="col.sortable ? 'custom' : false" :show-overflow-tooltip="col.overflow !== undefined ? col.overflow : true">
+          <el-table-column :label="col.label" :prop="col.render ? `${col.prop}__render` : col.prop" :width="col.width ? col.width : ''" v-if="tableControl[index]['show']" :sortable="col.sortable ? 'custom' : false" :show-overflow-tooltip="col.overflow !== undefined ? col.overflow : true">
             <template scope="scope">
-              <el-tag v-for="(item, i) in arrayRender(scope['row'],col)" style="margin-left: 5px;" close-transition :key="i">{{ item }}</el-tag>
+
+              <el-tag v-for="(item, i) in scope.row[scope.column.property]" style="margin-left: 5px;" close-transition :key="i">{{ item }}</el-tag>
+
             </template>
           </el-table-column>
         </template>
@@ -437,11 +438,28 @@ export default {
     ]),
     tableData () {
       const d = this.data;
+      let r;
+      
       if(d instanceof Array) {
-        return d;
+        r = d;
       }else {
-        return d.data ? d.data : [];
+        r = d.data ? d.data : [];
       }
+
+      //这里对得到的数据进行一些额外的处理,element-ui中难以操控:
+      
+      //  .暂时将array类型的render处理放到这里,因为如果放到v-for里面会被多次重复执行
+      this.tableOption.columns.forEach(_=>{
+        if(_.type == 'array' && _.render) {
+          r.forEach(d_c=>{
+            const p = _.prop;
+            d_c[`${p}__render`] = _.render(d_c[p]);
+          })
+        }
+      })
+      
+
+      return r;
     },
     totalNumber () {
       const d = this.data;

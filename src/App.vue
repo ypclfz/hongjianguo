@@ -434,6 +434,7 @@ nav {
 }
 /*这里放入重写element-ui样式的内容*/
 #app {
+
   .dialog-mini .el-dialog {
     width: 300px;
   }

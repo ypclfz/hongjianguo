@@ -12,7 +12,7 @@
     <el-dialog title="批量下载" :visible.sync="downloadVisible">
       <el-form>
         <el-form-item label="文件类型">
-          <static-select type="file_type" v-model="downloadFileType"></static-select>
+          <static-select type="file_type" v-model="downloadFileType" multiple></static-select>
         </el-form-item>
         <el-form-item style="margin-bottom: 0px;">
           <el-button type="primary" @click="downloadAxios">下载</el-button>
@@ -47,7 +47,7 @@ export default {
       
       downloadVisible: false,
       downloadIds: [],
-      downloadFileType: '',
+      downloadFileType: [],
       downloadLoading: false,
       
       tableOption: {
@@ -112,7 +112,9 @@ export default {
             prop: 'applicants',
             width: '300',
             is_import: true,
-            render: _=>_.map(_=>_.name),
+            render: _=>{
+              return _.map(_=>_.name);
+            }
           },
           {
             type: 'array',
@@ -238,7 +240,7 @@ export default {
 
       const url = '/patents/documents/download';
       const data = {ids: this.downloadIds, type: this.downloadFileType };
-      const success = _=>{ console.log(_) };
+      // const success = _=>{ console.log(_) };
 
       this.downloadLoading = true;
       this.downloadVisible = false;

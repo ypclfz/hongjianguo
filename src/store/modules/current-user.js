@@ -15,11 +15,12 @@ const getters = {
 	},
 	currentUser: state=>state.data,
 	username: state=>{
-	  const user = state.data; 
-      return 
-      	user ? 
-          user.name ? user.name : user.username
-          : '';
+	  const user = state.data;
+       
+    const name = user 
+    							? user.name ? user.name : user.username
+          				: '';
+    return name;
 	}
 }
 
