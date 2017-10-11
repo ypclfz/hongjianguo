@@ -29,6 +29,7 @@ import Inventors from '@/components/form/Inventors'
 import Member from '@/components/form/Member'
 import StaticSelect from '@/components/form/StaticSelect'
 import RemoteSelect from '@/components/form/RemoteSelect'
+import { checkInventors } from '@/const/validator.js'
 
 export default {
   name: 'patentAddPerson',
@@ -41,60 +42,20 @@ export default {
 			  applicants: [],
 			  inventors: [],
         proposer: '',
+        checkClick: false, //区分手动调用validate的标识符
 			},
       ipr_name: '',
       inventor_rule: { 
           type: 'array',
           trigger: 'change',
-          validator: (a,b,c)=>{ 
-            console.log(b);
-            let msg = '';
-            let number = 0;
-            const reg = /^[1-9][0-9]*$/;
-            if(b.length == 0) {
-              msg = 'success';
+          validator: (a,b,c)=>{
+            if(this.checkClick) {
+              checkInventors(a, b, c, false);
             }else {
-              for(let d of b) {
-                if( !d.id || !d.share ) {
-                  msg = '请完整填写发明人字段';
-                  break;
-                }
-              }  
-            }
-            
-
-            if( !msg ) {
-              for(let d of b) {
-                let n;
-                let flag = !!( reg.test(d.share) && (n = Number.parseInt(d.share)) && n >= 10 && n <= 100 && (number += n) );
-                if( !flag ) { 
-                  msg = '贡献率应为10-100的数字';
-                  break;
-                }
-              }
-            }
-
-            if( !msg ) {
-              if(number !== 100) {
-                msg = '各发明人的贡献率之和应为100';
-              }
-            }
-
-            if( !msg ) {
-              if(b.length > 1) {
-                const arr = b.map(_=>_.id);
-                const set = new Set(arr);
-                if(arr.length != set.size) {
-                  msg = '请不要选择重复的发明人';
-                }
-              }
-            }
-
-            if(msg && msg !== 'success') {
-              c(msg);              
-            }else {
-              c();
-            }            
+              this.$nextTick(_=>{
+                checkInventors(a, this.form.inventors, c, false);
+              })  
+            }       
           },
         },
 		}
@@ -121,8 +82,16 @@ export default {
       return this.form;
     },
     checkForm () {
+      
       let flag = false;
-      this.$refs.form.validate(_=>{flag = !_});
+      
+      this.checkClick = true;//因为代码结构的关系, 避免异步检测
+
+      this.$refs.form.validate(_=>{
+        flag = !_;
+        this.checkClick = false;
+      });
+
       return flag;
     },
   	addInventor () {

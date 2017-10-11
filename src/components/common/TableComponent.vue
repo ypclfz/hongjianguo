@@ -41,7 +41,7 @@
             <el-dropdown-menu v-if="btn.items">
               <el-dropdown-item v-for="(item,index) in btn.items" :key="index" :divided="item.divided">
                 <div @click="handleDelete(item.click, $event)" style="margin: 0 -20px; padding: 0 20px;" v-if="item.type == 'delete'">删除</div>
-                <div @click="handleCommand(item.click, $event)" style="margin: 0 -20px; padding: 0 20px;" v-else>{{ item.text }}</div>
+                <div @click="handleCommand(item.click, $event)" style="margin: 0 -20px; padding: 0 20px; font-size: 14px; line-height: 28px;" v-else><i v-if="!!item.icon" :class="`el-icon-${item.icon}`" style="margin-right: 5px; font-size: 12px; color: #8492A6;"></i>{{ item.text }}</div>
               </el-dropdown-item>
             </el-dropdown-menu>
           </el-dropdown>

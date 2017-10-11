@@ -99,6 +99,7 @@ import Member from '@/components/form/Member'
 import Upload from '@/components/form/Upload'
 import TaskFinish from '@/components/common/TaskFinish'
 import StaticSelect from '@/components/form/StaticSelect'
+import { checkInventors } from '@/const/validator.js'
 
 
 const typeMap = new Map([['/proposal/add', 'add'], ['/proposal/edit', 'edit'], ['/proposal/detail', 'detail']]);
@@ -261,60 +262,17 @@ export default {
           type: 'array',
           required: true,
           trigger: 'change', 
-          validator: (a,b,c)=>{ 
-            let msg = '';
-            let number = 0;
-            const reg = /^[1-9][0-9]*$/;
-            
-            console.log(b);
-            if(b.length == 0) {
-              msg = '发明人字段不能为空';
-            }else {
-              for(let d of b) {
-                if( !d.id || !d.share ) {
-                  msg = '请完整填写发明人字段';
-                  break;
-                }
-              }  
-            }
-            
+          validator: (a,b,c)=>{
 
-            if( !msg ) {
-              for(let d of b) {
-                let n;
-                let flag = !!( reg.test(d.share) && (n = Number.parseInt(d.share)) && n >= 10 && n <= 100 && (number += n) );
-                if( !flag ) { 
-                  msg = '贡献率应为10-100的数字';
-                  break;
-                }
-              }
-            }
+            //这里没有使用插件的传入值,是因为在监测输入框输入事件时,值未正常更新
+            //WTF 不知道什么鬼,手动传入咯
+            this.$nextTick(_=>{
+              checkInventors(a, this.formData.inventors, c);
+            })
 
-            if( !msg ) {
-              if(number !== 100) {
-                msg = '各发明人的贡献率之和应为100';
-              }
-            }
-
-            if( !msg ) {
-              if(b.length > 1) {
-                const arr = b.map(_=>_.id);
-                const set = new Set(arr);
-                if(arr.length != set.size) {
-                  msg = '请不要选择重复的发明人';
-                }
-              }
-            }
-
-            if(msg) {
-              c(msg);              
-            }else {
-              c();
-            }            
           },
         },
-        'attachments': {type: 'array', required: true, message: '附件不能为空', trigger: 'change'}
-      	
+        'attachments': {type: 'array', required: true, message: '附件不能为空', trigger: 'change'}     	
       },
       tableOption: {
         'is_search': false,

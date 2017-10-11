@@ -418,7 +418,7 @@ export default {
               //     { text: '委案处理' },
               //   ],
               // },
-              { btn_type: 'text', label: '删除', click: this.taskDelete },
+              { btn_type: 'text', label: '删除', click: this.taskDelete, btn_if: _=>this.task_status != 1 },
               { btn_type: 'text', label: '编辑提案', click: this.proposalEdit, btn_if: _=>_.action == 'proposals/edit' },
               { btn_type: 'text', label: '编辑专利', click: this.patentEdit, btn_if: _=>_.action == 'patents/edit'},
             ],

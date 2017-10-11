@@ -1,6 +1,6 @@
 <template>
 	<div class="app-collapse" style="width: 100%">
-		<div class="app-collapse-header" :style="headerStyle" @click="toggle">
+		<div class="app-collapse-header" :style="headerStyle" @click="toggle" :title="show ? '点击收缩' : '点击展开'">
 			<h3 class="app-collapse-title">{{ colTitle }}</h3>
 			<div class="app-collapse-control">
 				<i :class="toggleClass"></i>

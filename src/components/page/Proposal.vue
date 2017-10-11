@@ -259,7 +259,8 @@ export default {
     RemoteSelect,  
     AppShrink, 
     ProposalDetail, 
-    StaticSelect }, 
+    StaticSelect 
+  }, 
 }
 </script>
 

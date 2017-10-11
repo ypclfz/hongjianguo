@@ -6,9 +6,24 @@
 			<remote-select v-if="fee_invoice_if" slot='invoice' v-model="fee_invoice" style="width: 280px; margin-left: 10px;" :type="feeType ? 'bill' : 'pay'"></remote-select>
 		</table-component>
 		<pop ref="pop" :feeType="feeType" :popType="popType" @refresh="refresh"></pop>
-    <el-dialog :title="dialogTitle" :visible.sync="dialogVisible" :close-on-click-modal="false">
-      <fee-invoice v-model="fee_invoice_pop" :feeType="feeType" style="margin-bottom: 10px;"></fee-invoice>
-      <el-button type="primary" @click="invoicePut">添加</el-button>
+    <el-dialog :title="dialogTitle" :visible.sync="dialogVisible">
+      <el-switch
+        v-model="invoiceSwitchType"
+        on-color="#13ce66"
+        off-color="#F7BA2A"
+        on-value="all"
+        off-value="selected"
+        on-text="全部"
+        off-text="已选"
+        :disabled="invoiceSwitchDisabled"
+        style="margin-bottom: 10px;"
+      >
+      </el-switch>
+      <remote-select v-if="invoicePopType=='put'" v-model="fee_invoice_pop" style="margin-bottom: 10px;" :type="feeType ? 'bill' : 'pay'"></remote-select>
+      <div>
+      <el-button v-if="invoicePopType=='add'" type="primary" @click="invoiceAdd" :disabled="btn_disabled">确认新建</el-button>
+      <el-button v-if="invoicePopType=='put'" type="primary" @click="invoicePut" :disabled="btn_disabled">确认添加</el-button>
+      </div>
     </el-dialog>
   </div>
 </template>
@@ -18,7 +33,6 @@ import TableComponent from '@/components/common/TableComponent'
 import Strainer from '@/components/page_extension/FeeCommon_strainer'
 import Pop from '@/components/page_extension/feeCommon_pop'
 import FeeStatus from '@/components/form/FeeStatus'
-import FeeInvoice from '@/components/form/FeeInvoice'
 import AxiosMixins from '@/mixins/axios-mixins'
 import RemoteSelect from '@/components/form/RemoteSelect'
 
@@ -40,12 +54,9 @@ export default {
 		  		{ 
 		  			type: 'dropdown',
 		  			label:  '',
-		  			icon: 'plus',
 		  			items: [
-		  				{text: '将选择的费用新建为{key}', click: ()=>{ this.invoiceAdd('selected') } },
-		  				{text: '将所有筛选结果新建为{key}', click: ()=>{ this.invoiceAdd('all') } },
-		  				{text: '将选择的费用添加到已有{key}', click: ()=>{ this.invoicePutPop('selected') } },
-		  				{text: '将所有筛选结果添加到已有{key}', click: ()=>{ this.invoicePutPop('all') } },
+		  				{text: '新建{key}', click: ()=>{ this.invoicePop('add') }, icon: 'plus' },
+		  				{text: '添加到已有{key}', click: ()=>{ this.invoicePop('put') }, icon: 'd-arrow-right'  },
 		  			],
 		  		},
           { type: 'export' },
@@ -97,9 +108,15 @@ export default {
 		  fee_invoice: '',
       fee_invoice_if: false,
       fee_invoice_scope: '',
-      fee_invoice_pop: '',
       dialogVisible: false,
       totalAmount: '',
+
+      invoicePopType: '',
+      invoiceSwitchType: '',
+      invoiceSwitchDisabled: false,
+      invoiceSelected: [],
+      fee_invoice_pop: '',
+      btn_disabled: false,
 		}
   },
   computed: {
@@ -122,9 +139,9 @@ export default {
     feeTypeName () {
       return this.feeType ? '请款单' : '付款单';
     },
-    dialogTitle () {
-      const key = this.fee_invoice_scoope == 'all' ? '筛选费用' : '选择费用' 
-      return  `${key}添加至${this.feeTypeName}`;
+    dialogTitle () { 
+      const str = this.invoicePopType == 'add' ? '新建为' : '添加到已有';
+      return  `将费用${str}${this.feeTypeName}`;
     }
   },
   methods: {
@@ -174,62 +191,72 @@ export default {
   	refresh () {
   		this.$refs.table.refresh();
   	},
-  	invoiceAdd (scope) {
-  		let fees;
-  		
-  		if( scope == "all" ) {
+    invoicePop (type) {
+      this.dialogVisible = true;
+      this.invoicePopType = type;
+      this.fee_invoice_pop = '';
+      this.invoiceSelected = this.$refs.table.getSelect(true);
+      
+      if(this.invoiceSelected != 0) {
+        this.invoiceSwitchType = 'selected';
+        this.invoiceSwitchDisabled = false;
+      }else {
+        this.invoiceSwitchType = 'all';
+        this.invoiceSwitchDisabled = true;
+      }
+    },
+  	invoiceAdd () {
+
+      const scope = this.invoiceSwitchType;
+  		const s = this.invoiceSelected;
+      let fees;
+      
+      if( scope == "all" ) {
+        this.$message({message: '暂未实现新建全部的接口', type: 'warning'});
+        this.dialogVisible = false;
         return false;
-  		}else {
-  			let s = this.$refs.table.tableSelect;
-  			if(s.length == 0) {
-  				this.$message({ message: '请选择需要添加的费用', type: 'warning' });
-  				return false;
-  			}else {
-  				fees = s.map(_=>_.id);
-  			}
+      }else {
+        fees = s.map(_=>_.id); 
   		}
 
   		const url = URL_INVOICE;
   		const data = { debit: this.feeType, scope, fees };
-  		const success = ()=>{this.$alert('新建账单成功', {type: 'success', closeOnClickModal: true})};
+  		const success = ()=>{
+        this.$message({message: `新建${this.feeTypeName}成功`, type: 'success'});
+        this.dialogVisible = false;
+      };
+      const complete = _=>{ this.btn_disabled = false; }
+      this.btn_disabled = true;
+  		this.axiosPost({ url, data, success, complete });
 
-  		this.axiosPost({ url, data, success });
-  	},
-  	invoicePutPop (scope) {
-      if(scope == 'all') {
-        return false;
-      }else {
-        let s = this.$refs.table.tableSelect;
-        if(s.length == 0) {
-          this.$alert('请选择需要添加的费用', {type: 'warning', closeOnClickModal: true});
-          return false;
-        }
-      }
-
-      this.fee_invoice_scope = scope;
-      this.dialogVisible = true; 
-      
   	},
     invoicePut () {
-      const scope = this.fee_invoice_scope;
+
+      const scope = this.invoiceSwitchType;
+      const s = this.invoiceSelected;
       let fees;
-      
+
       if(this.fee_invoice_pop == '') {
-        this.$alert(`请选择${this.feeTypeName}`, {type: 'warning', closeOnClickModal: true});
+        this.$message({message: `请选择${this.feeTypeName}`, type: 'warning'});
         return false;
       }
       
       if(scope == 'all') {
-
+        this.$message({message: '暂未实现添加全部的接口', type: 'warning'});
+        this.dialogVisible = false;
+        return false;
       }else {
-        let s = this.$refs.table.tableSelect;
         fees = s.map(_=>_.id);
       }
 
-
       const url = `${URL_INVOICE}/${this.fee_invoice_pop}/fees`;
       const data = { scope, fees };
-      const success = _=>{ this.$alert('添加费用成功', {type: 'success', closeOnClickModal: true}) };
+      const success = _=>{ 
+        this.$message({message: `添加到已有${this.feeTypeName}成功`, type: 'success'});
+        this.dialogVisible = false;
+      };
+      const complete = _=>{ this.btn_disabled = false; }
+      this.btn_disabled = true;
       this.axiosPut({url, data, success});
     }
   },
@@ -252,17 +279,20 @@ export default {
   },
   mounted () {
     if(this.$route.query.id) {
-      // console.log(this.$router.params);
-      // console.log('aaaa');
       this.fee_status = this.feeType ? 1 : 2;
       this.fee_invoice = {id: this.$route.query.id, name: this.$route.query.name};
-      // console.log(this.fee_status);
     }else {
       this.refresh();  
     }
   },
   
-  components: { TableComponent, Strainer, Pop, FeeStatus, FeeInvoice, RemoteSelect }
+  components: { 
+    TableComponent, 
+    Strainer, 
+    Pop, 
+    FeeStatus, 
+    RemoteSelect 
+  }
 }
 </script>
 

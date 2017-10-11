@@ -1,5 +1,5 @@
 <template>
-  <el-form :model="form" label-width="100px" ref="form" v-loading="loading" style="min-height: 300px;" element-loading-text="数据加载中">
+  <el-form :model="form" label-width="100px" ref="form" v-loading="loading" style="min-height: 150px;" element-loading-text="数据加载中">
   	<el-form-item :label="data.procedure.label" v-if="data.fields && data.fields.procedure">
       <el-select v-model="next">
         <el-option
@@ -55,10 +55,10 @@
     <el-form-item prop="type" label="专利类型" v-if="fields.type" :rules="{type: 'number', required: true, message: '专利类型不能为空', trigger: 'change'}">
       <static-select type="patent_type" v-model="form.type" ></static-select>
     </el-form-item>
-    <el-form-item prop="remark" label="任务备注" v-if="fields.remark">
+    <el-form-item prop="remark" label="任务备注" v-if="fields.remark && !hide_r_a">
       <el-input type="textarea" v-model="form.remark"></el-input>
     </el-form-item>
-    <el-form-item prop="attachments" label="附件" v-if="fields.attachments">
+    <el-form-item prop="attachments" label="附件" v-if="fields.attachments && !hide_r_a">
       <upload v-model="form.attachments" :file-list="attachments">
         <ul v-if="data.description && data.description.length != 0" style="margin: 0; padding: 0;">
           <li v-for="(item, index) in data.description" :key="index">{{ item }}</li>
@@ -120,6 +120,7 @@ export default {
       'loading': false,
       'btn_disabled': false,
       'attachments': [],
+      'hide_r_a': false,
 		}
   },
 	created () {
@@ -171,7 +172,8 @@ export default {
     proposalFinish ({remark, attachments}) {
       this.form.remark = remark;
       this.form.attachments = attachments.map(_=>_.id);
-      this.attachments = attachments;
+
+      this.hide_r_a = true;
     }
 	},
 	watch: {
@@ -181,9 +183,6 @@ export default {
 		},
 		'next': {
 			handler: function (val) {
-        console.log('-----------------val--------------------')
-        console.log(val);
-        console.log('-----------------val--------------------')
         if(val == "") return;
 				for (let d of this.data.next) {
 					if(d.id == val) {
@@ -196,7 +195,6 @@ export default {
             const person_in_charge = this.data[this.defaultVal] ? this.data[this.defaultVal] : '';
         
             this.$nextTick(_=>{
-              // console.log('aaaa');
               if(this.fields.agent) this.form.agent = this.data.agent;
               if(this.defaultVal == 'ipr') {
                 this.form.person_in_charge = person_in_charge['id'];

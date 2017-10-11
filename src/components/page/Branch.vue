@@ -24,7 +24,7 @@
 		  			<el-form-item label="默认IPR">
 		  				<static-select type="ipr" v-model="ipr"></static-select>
 		  			</el-form-item>
-		  			<el-form-item label="默认Reviewer">
+		  			<el-form-item label="部门提案审核人">
 		  				<remote-select type="inventor" v-model="reviewer" default></remote-select>
 		  			</el-form-item>
 		  			<el-form-item label="">

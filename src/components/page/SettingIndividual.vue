@@ -7,7 +7,7 @@
 			<el-form-item label="手机" prop="mobile">
 				<el-input v-model="form.mobile"></el-input>
 			</el-form-item>
-			<el-form-item label="代理人" prop="agent">
+			<el-form-item label="职务代理人" prop="agent">
 				<remote-select type="member" v-model="form.agent"></remote-select>
 			</el-form-item>
 			<el-form-item label="邮件通知" prop="message_subscribe_mail">
