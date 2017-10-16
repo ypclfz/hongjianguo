@@ -80,18 +80,18 @@
         <el-tag>{{ currentRow.serial }}</el-tag>
       </span>
       <span slot="header" style="float: right">
-        <el-button size="small" type="primary" @click="dialogEditVisible = true" v-if="menusMap.get('/tasks/update') ? false : true">编辑</el-button>
-        <el-button size="small" style="margin-left: 0px;" v-if="menusMap.get('/tasks/transfer') ? false : true" @click="dialogTranserVisible = true; transfer_person = {id: currentRow.person_in_charge, name: currentRow.person_in_charge_name }">移交</el-button>
+        <el-button size="small" type="primary" @click="dialogEditVisible = true" v-if="menusMap && menusMap.get('/tasks/update')">编辑</el-button>
+        <el-button size="small" style="margin-left: 0px;" v-if="menusMap && menusMap.get('/tasks/transfer')" @click="dialogTranserVisible = true; transfer_person = {id: currentRow.person_in_charge, name: currentRow.person_in_charge_name }">移交</el-button>
       </span>
       <el-tabs v-model="activeName">        
+        <el-tab-pane label="前往处理" name="finish" v-if="task_status == 0">
+          <task-finish :id="currentRow.id" @submitSuccess="finishSuccess"></task-finish>
+        </el-tab-pane>
         <el-tab-pane label="详细信息" name="edit">          
           <information :row="currentRow" @more="handleMore"></information>          
         </el-tab-pane>
-        <el-tab-pane label="线上完成" name="finish" v-if="task_status == 0">
-          <task-finish :id="currentRow.id" @submitSuccess="finishSuccess"></task-finish>
-        </el-tab-pane>
-        <el-tab-pane label="相关任务" name="detail">
-          <detail :row="currentRow"></detail>
+        <el-tab-pane label="相关任务" name="cccc">          
+          <detail :row="currentRow" style="margin: 10px 0;"></detail>          
         </el-tab-pane>
       </el-tabs>
     </app-shrink>
@@ -107,7 +107,7 @@
 
 <script>
 import AxiosMixins from '@/mixins/axios-mixins'
-
+import Detail from '@/components/page_extension/TaskCommon_detail'
 import RemoteSelect from '@/components/form/RemoteSelect'
 
 import AppFilter from '@/components/common/AppFilter'
@@ -117,7 +117,7 @@ import AppDatePicker from '@/components/common/AppDatePicker'
 
 import Edit from '@/components/page_extension/TaskCommon_edit'
 import Information from '@/components/page_extension/TaskCommon_information'
-import Detail from '@/components/page_extension/TaskCommon_detail'
+
 import TaskFinish from '@/components/common/TaskFinish'
 import Strainer from '@/components/page_extension/TaskCommon_strainer'
 import AppShrink from '@/components/common/AppShrink'
@@ -344,7 +344,7 @@ export default {
       moreType: '',
       filter: {},
       filters: {},
-      activeName: 'edit',
+      activeName: 'finish',
       shrinkTitle: '',
       expandOldType: '',
       expandType: 'edit',
@@ -445,9 +445,9 @@ export default {
     },
     taskAll () {
     
-      let flag = true;
-      if( this.menusMap.get('/tasks/all') ) {
-        flag = false;
+      let flag = false;
+      if( this.menusMap && !this.menusMap.get('/tasks/all') ) {
+        flag = true;
       }
   
       return flag;
@@ -495,13 +495,13 @@ export default {
     TableComponent, 
     AppDatePicker, 
     Edit, 
-    Detail, 
     Strainer, 
     AppCollapse, 
     TaskFinish, 
     AppShrink, 
     Information,
     CommonDetail,
+    Detail,
   },
 } 
 </script>

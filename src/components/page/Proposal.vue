@@ -180,9 +180,10 @@ export default {
       }
 
       const url = '/proposals/proposer';
-      const data = {ids: this.transferIds, proposal: this.transferProposal};
+      const data = {ids: this.transferIds, proposer: this.transferProposal};
       const success = _=>{ 
         this.$message({message: '移交成功', type: 'success'});
+        this.transferVisible = false;
         this.refresh();
       };
       const complete = _=>{this.transferDisabled = false};

@@ -56,10 +56,6 @@ export default {
       'shrinkLoading',
       'shrinkLoadingText',
     ]),
-    overflow () {
-    	return this.shrinkLoading ? 'hidden' : 'auto';
-    }
-
 	},
 	mounted () {
 		if (this.visible) {

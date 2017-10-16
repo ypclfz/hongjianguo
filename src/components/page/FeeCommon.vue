@@ -6,19 +6,11 @@
 			<remote-select v-if="fee_invoice_if" slot='invoice' v-model="fee_invoice" style="width: 280px; margin-left: 10px;" :type="feeType ? 'bill' : 'pay'"></remote-select>
 		</table-component>
 		<pop ref="pop" :feeType="feeType" :popType="popType" @refresh="refresh"></pop>
-    <el-dialog :title="dialogTitle" :visible.sync="dialogVisible">
-      <el-switch
-        v-model="invoiceSwitchType"
-        on-color="#13ce66"
-        off-color="#F7BA2A"
-        on-value="all"
-        off-value="selected"
-        on-text="全部"
-        off-text="已选"
-        :disabled="invoiceSwitchDisabled"
-        style="margin-bottom: 10px;"
-      >
-      </el-switch>
+    <el-dialog :title="dialogTitle" :visible.sync="dialogVisible" class="dialog-small">
+      <div style="margin-bottom: 10px; text-indent: 28px; color: #8492A6; font-size: 14px;">
+        <span v-if="invoicePopType == 'add'">从选取的费用创建一个新的{{ feeTypeName }}，用于批量追踪请款费用，如果需要跨页选取费用，请在窗口左下角将分页数量调整为一个较大的值。</span>
+        <span v-if="invoicePopType == 'put'">将选取的费用添加到一个现有的{{ feeTypeName }}中，如果需要跨页选取费用，请在窗口左下角将分页数量调整为一个较大的值。</span>
+      </div>
       <remote-select v-if="invoicePopType=='put'" v-model="fee_invoice_pop" style="margin-bottom: 10px;" :type="feeType ? 'bill' : 'pay'"></remote-select>
       <div>
       <el-button v-if="invoicePopType=='add'" type="primary" @click="invoiceAdd" :disabled="btn_disabled">确认新建</el-button>
@@ -192,18 +184,17 @@ export default {
   		this.$refs.table.refresh();
   	},
     invoicePop (type) {
-      this.dialogVisible = true;
-      this.invoicePopType = type;
-      this.fee_invoice_pop = '';
-      this.invoiceSelected = this.$refs.table.getSelect(true);
       
-      if(this.invoiceSelected != 0) {
+      const s = this.$refs.table.getSelect();
+      if(s) {
+        this.invoicePopType = type;
+        this.invoiceSelected = s;
         this.invoiceSwitchType = 'selected';
-        this.invoiceSwitchDisabled = false;
-      }else {
-        this.invoiceSwitchType = 'all';
-        this.invoiceSwitchDisabled = true;
+        this.fee_invoice_pop = '';
+
+        this.dialogVisible = true;  
       }
+       
     },
   	invoiceAdd () {
 
@@ -224,6 +215,7 @@ export default {
   		const success = ()=>{
         this.$message({message: `新建${this.feeTypeName}成功`, type: 'success'});
         this.dialogVisible = false;
+        this.refresh();
       };
       const complete = _=>{ this.btn_disabled = false; }
       this.btn_disabled = true;
@@ -254,6 +246,7 @@ export default {
       const success = _=>{ 
         this.$message({message: `添加到已有${this.feeTypeName}成功`, type: 'success'});
         this.dialogVisible = false;
+        this.refresh();
       };
       const complete = _=>{ this.btn_disabled = false; }
       this.btn_disabled = true;

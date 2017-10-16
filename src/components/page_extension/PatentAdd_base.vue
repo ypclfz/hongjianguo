@@ -17,7 +17,7 @@
 	      <static-select type="patent_type" v-model="form.type"></static-select>
 	    </el-form-item>
       <el-form-item label="摘要">
-        <el-input type="textarea" v-model="form.abstract" placeholder="请填写专利摘要"></el-input>
+        <el-input type="textarea" v-model="form.abstract" placeholder="请填写专利摘要" :rows="6" class="custom-textarea"></el-input>
       </el-form-item>
       <el-form-item label="申请方式">
         <el-select v-model="form.manner" value-key="id">

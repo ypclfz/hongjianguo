@@ -7,8 +7,11 @@ const state = {
 const getters = {
 	getUser: state=>state.data,
 	menusMap: state=>{
-		const map = new Map();
-		const menus = state.data && state.data.menus ? state.data.menus : [];
+
+		if(state.data == null) return null;
+
+		let map = new Map();
+		const menus = state.data.menus ? state.data.menus : [];
 		menus.forEach(_=>{map.set(_, true)});
 
 		return map;
@@ -21,6 +24,15 @@ const getters = {
     							? user.name ? user.name : user.username
           				: '';
     return name;
+	},
+	menusStats: state=>{
+		// const user = state.data;
+		// let stats = {};
+		// if(user && user.stats) {
+		// 	stats = user.stats;
+		// }
+		// return stats;
+		return {};
 	}
 }
 

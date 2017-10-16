@@ -9,6 +9,7 @@
     :size="size"
     :allow-create="config.allowCreate !== undefined ? config.allowCreate : false"
     :default-first-option="config.defaultFirstOption !== undefined ? config.defaultFirstOption : false"
+    ref="select"
     clearable
   >
   	<el-option
@@ -139,12 +140,26 @@ const dataMap = new Map([
 
 //-----------------------------配置数据分界线-----------------------------------------------
 
-import formSelect from '@/mixins/form-select'
 import AxiosMixins from '@/mixins/axios-mixins'
 
 export default {
   name: 'staticSelect',
-  mixins: [formSelect, AxiosMixins],
+  mixins: [ AxiosMixins ],
+  props: {
+    'value': null,
+    'multiple': {
+      type: Boolean,
+      default: false,
+    },
+    'disabled': {
+      type: Boolean,
+      default: false,
+    },
+    'size': {
+      type: String,
+    },
+    'type': null,
+  },
   data () {
 
     let o = dataMap.get(this.type);
@@ -155,7 +170,6 @@ export default {
       options: [],
     }
   },
-  props: ['type'],
   computed: {
   	config () {
   		const config = map.get(this.type);
@@ -178,11 +192,16 @@ export default {
   },
   watch: {
     options_vuex (val) {
-
       this.options = val;
+    },
+    value (val) {
+      this.$refs.select.visible = false;
     }
   },
   methods: {
+    handleInput (val) {
+      this.$emit('input', val);
+    },
     getSelected () {
       const arr = [];
     

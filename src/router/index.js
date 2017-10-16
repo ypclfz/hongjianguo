@@ -10,7 +10,6 @@ import TaskCommon from '@/components/page/TaskCommon'
 import PatentList from '@/components/page/PatentList'
 import ApplyingPatent from '@/components/page/ApplyingPatent'
 import PatentAdd from '@/components/page/PatentAdd'
-import PatentStatistics from '@/components/page/PatentStatistics'
 import NoticeCommon from '@/components/page/NoticeCommon'
 import TrademarkList from '@/components/page/TrademarkList'
 import TrademarkNotice from '@/components/page/TrademarkNotice'
@@ -137,11 +136,6 @@ const router = new Router({
       name: 'PatentAdd',
       component: PatentAdd,
       meta: { type: 'add' },
-    },
-    {
-      path: '/patent/statistics',
-      name: 'PatentStatistics',
-      component: PatentStatistics,
     },
     {
       path: '/patent/notice',

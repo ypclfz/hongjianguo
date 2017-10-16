@@ -119,6 +119,13 @@ export default {
 				? this.current_group.description
 					?  this.current_group.description : '暂无用户组描述'
 				: '暂未选择用户组';
+		},
+		groupId () {
+			if(this.$route.params.groupId) {
+				return this.$route.params.groupId;
+			}else {
+				return null;
+			}
 		}
 	},
 	methods: {
@@ -228,6 +235,11 @@ export default {
   		this.refreshTableOption(val == 0);
   		this.refresh('noGroup');
   	},
+  },
+  mounted () {
+  	if(this.groupId) {
+  		this.$refs.group.handleCurrentChange(this.groupId);
+  	}
   },
   components: { AppTree, TableComponent, Group, Pop, AppCollapse, StaticSelect, UserRole },
 }

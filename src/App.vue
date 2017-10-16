@@ -41,9 +41,10 @@
       <span class="nav-left-btn" @click="navToggle"><span class="nav-left-btn-arrow el-icon-arrow-left"></span></span>
       <div class="nav-left" :style="`height: ${innerHeight}px`">
         
-        <el-menu theme="dark" router unique-opened>
-          <app-menu v-for="item in menu_data" :data="item" :key="item.path"></app-menu>
+        <el-menu v-if="menusMap != null" theme="dark" router unique-opened :default-active="select.path">
+          <app-menu-item v-for="item in menu_data" :dd="item" :key="item.path"></app-menu-item>
         </el-menu>
+
       </div>
     <div class="container" v-loading="loading" :element-loading-text="loadingText" :style="`min-height: ${innerHeight-10}px; padding: 10px 15px 0; background-color: #F9FAFC;`">
       <!-- <h1 class="container-menu"><i :class="select.icon"></i><span>{{ select.text }}</span></h1> -->
@@ -81,7 +82,7 @@ import AxiosMixins from '@/mixins/axios-mixins'
 import AgencyLoad from '@/components/form/AgencyLoad'
 
 import menu from '@/const/menuConst'
-import AppMenu from '@/components/common/AppMenu'
+import AppMenuItem from '@/components/common/AppMenuItem'
 import { mapGetters } from 'vuex'
 import $ from 'jquery'
 
@@ -131,6 +132,7 @@ export default {
       'username',
       'leftVisible',
       'agencyLoadVisible',
+      'menusMap',
     ]),
   },
   data () {
@@ -162,7 +164,6 @@ export default {
       let n = this.leftVisible ? 160 : 0;
       i = this.leftVisible ? -i : i;
 
-
       this.$store.commit('toggleLeftVisible');
 
       const left = $('.nav-left');
@@ -186,9 +187,6 @@ export default {
         }
       }     
     }
-  },
-  beforeCreated () {
-
   },
   created () {
     const url = '/api/userinfo';
@@ -250,7 +248,7 @@ export default {
     }
   },
   components: { 
-    AppMenu,
+    AppMenuItem,
     AgencyLoad, 
   }
 }
@@ -471,6 +469,9 @@ nav {
   textarea {
     height: 80px;
     font-family: "Helvetica Neue",Helvetica,Arial,sans-serif;
+  }
+  .custom-textarea textarea{
+    height: auto;
   }
   .el-step.is-vertical .el-step__main {
     padding-left: 40px;

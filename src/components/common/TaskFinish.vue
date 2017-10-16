@@ -1,4 +1,12 @@
 <template>
+<div>
+  
+  <el-steps :space="100" :active="0" finish-status="success" style="padding: 5px 40px;">
+    <el-step title="步骤 1"></el-step>
+    <el-step title="步骤 2"></el-step>
+    <el-step title="步骤 3"></el-step>
+  </el-steps>
+  
   <el-form :model="form" label-width="100px" ref="form" v-loading="loading" style="min-height: 150px;" element-loading-text="数据加载中">
   	<el-form-item :label="data.procedure.label" v-if="data.fields && data.fields.procedure">
       <el-select v-model="next">
@@ -78,6 +86,7 @@
   		<el-button type="primary" @click="submitFunc" :disabled="btn_disabled">提交</el-button>
   	</el-form-item>
   </el-form>
+</div>
 </template>
 
 <script>

@@ -26,6 +26,7 @@ export default {
 			'name': 'agency',
 			'height': 'default2',
 		  	'header_btn': [
+		  		{'type': 'add', click: this.add},
 		  		{'type': 'control'}
 				],
 				'header_slot': [ 'is_core_partner' ],
@@ -76,6 +77,9 @@ export default {
 		}
   },
   methods: {
+  	add () {
+  		this.$router.push({ name: 'UserList', params: { groupId: 5 }});
+  	},
   	edit (row) {
   		this.$refs.pop.show('edit', row);
   	},

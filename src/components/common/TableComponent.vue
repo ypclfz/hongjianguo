@@ -108,7 +108,7 @@
       :style="tableStyle"
       :row-class-name="handleRowClassName"
       @row-click="handleRowClick"
-      :highlight-current-row="tableOption.highlightCurrentRow ? tableOption.highlightCurrentRow : false"
+      :highlight-current-row="tableOption.highlightCurrentRow !== undefined ? tableOption.highlightCurrentRow : false"
       :height="tableHeight"
       ref="table"
     >

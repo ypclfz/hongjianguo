@@ -2,7 +2,7 @@ export default {
 	data: {
 		pageData: [],
 		pageSize: 5,
-    pagesizes: [5, 10, 20, 40],
+    pagesizes: [10, 20, 40, 100, 10000],
 		currentPage: 1,
 		tableSelect: []
 	},

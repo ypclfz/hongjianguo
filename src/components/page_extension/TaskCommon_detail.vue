@@ -1,8 +1,8 @@
 <template>
-  <div class="task-detail" style="min-height: 60px;" v-loading="loading">
+  <div class="task-detail" style="min-height: 44px;" v-loading="loading">
     
   	<el-collapse accordion v-if="collapse.length != 0">
-      <el-collapse-item v-for="item in collapse" :key="item.id" :title="`${item.node_name} | ${item.person_in_charge_name} | ${item.end_time ? item.end_time : '正在处理中'}`">
+      <el-collapse-item v-for="item in collapse" :key="item.id" :title="`流程节点：${item.node_name} | 承办人：${item.person_in_charge_name} | 完成时间：${item.end_time ? item.end_time : '正在处理中'}`">
         <el-form label-width="100px">
           <el-form-item label="流程节点：" style="margin-bottom: 0;">{{ item.node_name }}</el-form-item>
           <el-form-item label="开始时间：" style="margin-bottom: 0;">{{ item.start_time }}</el-form-item>
@@ -15,7 +15,7 @@
         </el-form>
       </el-collapse-item>
     </el-collapse>
-    <div v-else style="padding: 20px; font-size: 18px;">暂无相关任务的数据...</div>
+    <div v-else style="padding: 10px 20px; font-size: 14px;">暂无相关任务的记录...</div>
   </div>
 </template>
 

@@ -240,11 +240,14 @@ export default {
 
       const url = '/patents/documents/download';
       const data = {ids: this.downloadIds, type: this.downloadFileType };
-      // const success = _=>{ console.log(_) };
+      const success = _=>{ 
+        window.location.href = _.url;
+      };
+      const complete = _=>{ this.downloadLoading = false; };
 
-      this.downloadLoading = true;
       this.downloadVisible = false;
-      this.axiosPost({url, data, success}).then(_=>{ this.downloadLoading = false; });
+      this.downloadLoading = true;
+      this.axiosPost({url, data, success, complete})
     }
   },
   mounted () {

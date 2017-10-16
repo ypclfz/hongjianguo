@@ -124,6 +124,7 @@
 <script>
 import AxiosMixins from '@/mixins/axios-mixins'
 import TableComponent from '@/components/common/TableComponent'
+
 const URL = '/api/tasks';
 
 export default {
@@ -249,6 +250,7 @@ export default {
   },
   components: {
   	TableComponent,
+
   }
 }
 </script>

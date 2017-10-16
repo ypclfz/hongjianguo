@@ -60,7 +60,8 @@ export default {
   },
   watch: {
     value2 (val) {
-      if( !this.multiple && val.length == 1 && !this.single) {
+      if( !this.single ) {
+        console.log('watch val')
         if(this.$refs.select) {
           this.$refs.select.visible = false;
         }
