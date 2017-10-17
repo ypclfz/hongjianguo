@@ -26,7 +26,7 @@
         <upload v-model="form.attachments"></upload>
       </el-form-item>
 			<el-form-item style="margin-bottom: 0px">
-				<el-button type="primary" @click="edit" v-if="popType == 'edit'" :loading="loading">{{ loading ? '数据加载中' : '编辑' }}</el-button>
+				<el-button type="primary" @click="edit" v-if="popType == 'edit'" :loading="loading">{{ loading ? '编辑中...' : '编辑' }}</el-button>
 				<el-button @click="cancel">取消</el-button>
 			</el-form-item>
 		</el-form>
@@ -86,7 +86,7 @@ export default {
   	edit () {
   		const url = `${URL}/${this.id}`;
   		const data = this.$tool.shallowCopy(this.form, {date: true});
-  		const success = _=>{ this.$emit('refresh'); this.dialogVisible = false; };
+  		const success = _=>{ this.$emit('refresh', this.form); this.dialogVisible = false; };
       const complete = _=>{ this.loading = false }; 
 
       this.loading = true;

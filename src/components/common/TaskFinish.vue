@@ -1,13 +1,11 @@
 <template>
-<div>
+<div v-loading="loading" element-loading-text="数据加载中" >
   
-  <el-steps :space="100" :active="0" finish-status="success" style="padding: 5px 40px;">
-    <el-step title="步骤 1"></el-step>
-    <el-step title="步骤 2"></el-step>
-    <el-step title="步骤 3"></el-step>
+  <el-steps :space="150" style="padding: 5px 40px;" v-if="data.tips" align-center>
+    <el-step v-for="(item, index) in data.tips" :key="index" :title="item.name" :status="item.current ? 'finish' : 'wait'"></el-step>
   </el-steps>
   
-  <el-form :model="form" label-width="100px" ref="form" v-loading="loading" style="min-height: 150px;" element-loading-text="数据加载中">
+  <el-form :model="form" label-width="100px" ref="form" style="min-height: 150px;" >
   	<el-form-item :label="data.procedure.label" v-if="data.fields && data.fields.procedure">
       <el-select v-model="next">
         <el-option
@@ -82,6 +80,9 @@
         :texts="['20','40','60','80','100']"
       ></el-rate>
     </el-form-item>
+    <el-form-item v-if="next == '20'" prop="pconfirm" label="确认" :rules="confirmValidator">
+      <el-checkbox v-model="form.pconfirm">已确认专利情况</el-checkbox><el-button type="text" size="mini" style="margin-left: 10px;" @click="$emit('more', 'patent')">查看</el-button>
+    </el-form-item>
   	<el-form-item style="margin-bottom: 0px;">
   		<el-button type="primary" @click="submitFunc" :disabled="btn_disabled">提交</el-button>
   	</el-form-item>
@@ -123,6 +124,7 @@ export default {
         rank: 5,
         area: [],
         type: '',
+        pconfirm: false,
 			},
 			'defaultVal': '',
 			'fields': {},
@@ -130,6 +132,19 @@ export default {
       'btn_disabled': false,
       'attachments': [],
       'hide_r_a': false,
+      'confirmValidator': { 
+          required: true,
+          validator: (a,b,c)=>{
+
+            if(b) {
+              c();
+            }else {
+              c('必需确认专利情况');
+            }
+
+          },
+        },
+      
 		}
   },
 	created () {
@@ -217,7 +232,14 @@ export default {
 				}
 				this.$refs.form.resetFields();
 			}
-		},
+    },
+    'form.pconfirm': {
+      handler () {
+        this.$nextTick(_=>{
+          this.$refs.form.validateField('pconfirm');
+        })        
+      }
+    },
     'form.agency': {
       handler (val) {
 

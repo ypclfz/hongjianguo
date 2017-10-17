@@ -25,14 +25,10 @@ const getters = {
           				: '';
     return name;
 	},
-	menusStats: state=>{
-		// const user = state.data;
-		// let stats = {};
-		// if(user && user.stats) {
-		// 	stats = user.stats;
-		// }
-		// return stats;
-		return {};
+	pendingTaskCount: state=>{
+		const user = state.data;
+		const count = user ? user.pendingTaskCount : 0;
+		return count;
 	}
 }
 

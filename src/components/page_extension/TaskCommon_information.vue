@@ -54,8 +54,7 @@
       </template>
 	    <el-form label-width="70px" label-position="left" class="form-information" v-loading="loading" element-loading-text="加载专利信息中...">
 	    	<el-row :gutter="20">
-	    		<el-col :span="12">
-	    			
+	    		<el-col :span="12">	    			
 	    			<el-form-item label="发明人"><span class="form-item-text">{{ row_patent.inventors.map(_=>_.name).join(';') }}</span></el-form-item>
 	    			<el-form-item label="技术分类"><span class="form-item-text">{{ row_patent.classification.name }}</span></el-form-item>
 	    			<el-form-item label="申请地区"><span class="form-item-text">{{ row_patent.area.name }}</span></el-form-item>
@@ -83,7 +82,7 @@
 	    	</el-row>
 	    </el-form>
 	  </el-collapse-item>
-	  <el-collapse-item name="3" v-else-if="row.category == 3">
+	  <el-collapse-item name="2" v-else-if="row.category == 3">
 	    <template slot="title">
         版权详情<el-button size="mini" type="text" style="margin-left: 10px;" @click.stop="editCopyright">更多...</el-button>
       </template>
@@ -118,12 +117,16 @@
         </el-row>
       </el-form>
 	  </el-collapse-item>
+    <el-collapse-item name="2" v-else-if="row.category == 5" title="账单详情">
+      <invoice-detail :id="row.project_id"></invoice-detail>
+    </el-collapse-item>
 	</el-collapse>
 </template>
 
 <script>
 import AxiosMixins from '@/mixins/axios-mixins'
 import TableComponent from '@/components/common/TableComponent'
+import InvoiceDetail from '@/components/page_extension/InvoiceCommon_detail'
 
 const URL = '/api/tasks';
 
@@ -133,7 +136,7 @@ export default {
   props: [ 'row' ],
   data () {
   	return {
-  		activeNames: ['1', '2', '3'],
+  		activeNames: ['1', '2'],
   		loading: true,
   		attachmentsOption: {
         'is_search': false,
@@ -250,7 +253,7 @@ export default {
   },
   components: {
   	TableComponent,
-
+    InvoiceDetail,
   }
 }
 </script>

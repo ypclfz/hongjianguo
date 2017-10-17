@@ -7,7 +7,7 @@
 		</table-component>
 		<pop ref="pop" :feeType="feeType" :popType="popType" @refresh="refresh"></pop>
     <el-dialog :title="dialogTitle" :visible.sync="dialogVisible" class="dialog-small">
-      <div style="margin-bottom: 10px; text-indent: 28px; color: #8492A6; font-size: 14px;">
+      <div style="margin-bottom: 10px; color: #8492A6; font-size: 14px;">
         <span v-if="invoicePopType == 'add'">从选取的费用创建一个新的{{ feeTypeName }}，用于批量追踪请款费用，如果需要跨页选取费用，请在窗口左下角将分页数量调整为一个较大的值。</span>
         <span v-if="invoicePopType == 'put'">将选取的费用添加到一个现有的{{ feeTypeName }}中，如果需要跨页选取费用，请在窗口左下角将分页数量调整为一个较大的值。</span>
       </div>

@@ -263,12 +263,13 @@ menu.data = [
 			path: '/setting/system',
 			icon: '',
 			type: 'item'
-		},{
-			text: '模板管理',
-			path: '/setting/template',
-			icon: '',
-			type: 'item'
 		},
+		// {
+		// 	text: '模板管理',
+		// 	path: '/setting/template',
+		// 	icon: '',
+		// 	type: 'item'
+		// },
 		// {
 		// 	text: '发文规则',
 		// 	path: '/setting/rule',

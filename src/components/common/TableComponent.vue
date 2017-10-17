@@ -298,11 +298,14 @@ const methods = Object.assign({}, tableConst.methods, {
       if(s.length == 0) {
         this.$message({message: '请选择需要删除的列表项', type: 'warning'});
       }else {
-        this.$confirm('删除后不可恢复，确认删除？')
+        this.$confirm('删除后不可恢复，确认删除？', '删除确认', {type: 'warning'})
           .then(_=>{
             const url = this.url;
             const data = { id: this.$tool.splitObj(s, 'id') };
-            const success = _=>{ this.update() };
+            const success = _=>{ 
+              this.$message({type: 'success', message: '批量删除成功'});
+              this.update() 
+            };
             this.axiosDelete({ url, data, success });
           })
           .catch(_=>{console.log(_)});
@@ -458,7 +461,6 @@ export default {
         }
       })
       
-
       return r;
     },
     totalNumber () {

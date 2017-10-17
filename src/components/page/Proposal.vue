@@ -13,6 +13,9 @@
             <el-form-item label="产品分类">
               <product v-model="product" multiple></product>
             </el-form-item>
+            <el-form-item label="部门">
+              <branch v-model="branch" multiple></branch>
+            </el-form-item>
           </el-col>
           <el-col :span="12">
             <el-form-item label="发明人">
@@ -61,6 +64,7 @@ import AppFilter from '@/components/common/AppFilter'
 import AppCollapse from '@/components/common/AppCollapse'
 import Classification from '@/components/form/Classification'
 import Product from '@/components/form/Product'
+import Branch from '@/components/form/Branch'
 import AppShrink from '@/components/common/AppShrink'
 import ProposalDetail from '@/components/page_extension/Proposal_detail'
 
@@ -72,7 +76,7 @@ const URL = '/api/proposals';
 const url = 'http://www.zhiq.wang/proposal/lists';
 const delete_url = 'http://www.zhiq.wang/proposal/lists';
 const tag_url = 'http://www.zhiq.wang/tag/lists';
-const strainerArr = ['classification', 'product', 'proposer', 'tags', 'inventors'];
+const strainerArr = ['classification', 'product', 'proposer', 'tags', 'inventors', 'branch'];
 const map = new Map([['flownodes', 'progress'],['time', 'create_time']]);
 export default {
   name: 'proposalList',
@@ -236,6 +240,7 @@ export default {
       title: '',
       classification: [],
       product: [],
+      branch: [],
       proposer: [],
       tags: [],
       inventors: [],
@@ -260,7 +265,8 @@ export default {
     RemoteSelect,  
     AppShrink, 
     ProposalDetail, 
-    StaticSelect 
+    StaticSelect,
+    Branch,
   }, 
 }
 </script>

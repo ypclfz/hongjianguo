@@ -18,7 +18,7 @@
               <el-input v-model="formData.title" placeholder="请输入案件名称" v-else>
               </el-input>
             </el-form-item>
-            <el-form-item label="案件摘要" prop="abstract">
+            <el-form-item label="提案简介" prop="abstract">
               <span v-if="pageType == 'detail'" class="form-detail-item">{{ formData.abstract }}</span>
               <el-input type="textarea" v-model="formData.abstract" placeholder="请输入案件摘要" v-else></el-input>
             </el-form-item>

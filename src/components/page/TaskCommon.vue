@@ -85,7 +85,7 @@
       </span>
       <el-tabs v-model="activeName">        
         <el-tab-pane label="前往处理" name="finish" v-if="task_status == 0">
-          <task-finish :id="currentRow.id" @submitSuccess="finishSuccess"></task-finish>
+          <task-finish :id="currentRow.id" @submitSuccess="finishSuccess" @more="handleMore"></task-finish>
         </el-tab-pane>
         <el-tab-pane label="详细信息" name="edit">          
           <information :row="currentRow" @more="handleMore"></information>          
