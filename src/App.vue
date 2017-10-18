@@ -234,8 +234,8 @@ export default {
     const success2 = _=>{
       this.axiosGet({url, success, error, catchFunc});
     }
-    // this.axiosGet({url, success, error, catchFunc});
-    this.axiosPost({url: '/api/login', success: success2, data: {username: 'admin', password: 'Z9jgM6FhdKWEqbbpJePv/6qeTO/Yk2b6lx7zF4tiBncRubwf0fz93hkqGXCiWvqXCDIq7x+kAH3TK5zhjDZ53jgt1Gx1vvBPHn3ga7HTqPrnc+VhhuVGeTefHShJBx32rnbhL6LbEqCAMGqtQXaovCtuJGY6uWYAPfecAOGMuadnxTigTTBwKtW2oVP4J/EwAroYKuy4MK4Pd7YGtFoJAhlpKVOponsgsYQ8EKGOSVxcZgcgnOw8LhPy28N+xoFCh0OBkMyjM80Ybjq+H8BO6CacnDzQReZL5wQZqBdTtW7CUBi6S4+JWDPBahqNgz7jD73UhEIeG0ivFLEdCWtlVw=='}});
+    this.axiosGet({url, success, error, catchFunc});
+    // this.axiosPost({url: '/api/login', success: success2, data: {username: 'admin', password: 'Z9jgM6FhdKWEqbbpJePv/6qeTO/Yk2b6lx7zF4tiBncRubwf0fz93hkqGXCiWvqXCDIq7x+kAH3TK5zhjDZ53jgt1Gx1vvBPHn3ga7HTqPrnc+VhhuVGeTefHShJBx32rnbhL6LbEqCAMGqtQXaovCtuJGY6uWYAPfecAOGMuadnxTigTTBwKtW2oVP4J/EwAroYKuy4MK4Pd7YGtFoJAhlpKVOponsgsYQ8EKGOSVxcZgcgnOw8LhPy28N+xoFCh0OBkMyjM80Ybjq+H8BO6CacnDzQReZL5wQZqBdTtW7CUBi6S4+JWDPBahqNgz7jD73UhEIeG0ivFLEdCWtlVw=='}});
   },
   beforeCreate () {
     const refreshWindow =  _=> {
@@ -365,8 +365,9 @@ nav {
   margin-left: 10px;
 }
 .el-table {
-  margin-bottom: 10px;
+  /*margin-bottom: 10px;*/
 }
+
 .table-header {
   margin-bottom: 10px;
   overflow: hidden;
@@ -438,6 +439,9 @@ nav {
 .sysmesg-item:hover {
   color: #58B7FF;
 }
+.hjg-table .el-pagination {
+  margin-top: 10px;
+}
 /*这里放入重写element-ui样式的内容*/
 #app {
 
@@ -508,6 +512,13 @@ nav {
     top: 14px;
     transform: translateY(-50%) translateX(100%) scale(0.8);
   }
+  .el-submenu .el-menu-item {
+    margin-left: -15px;
+  }
+  .empty-top-left .el-table__empty-text {
+    top: 40px;
+    left: 80px;
+  }  
 }
 .el-tooltip__popper {
   max-width: 500px;

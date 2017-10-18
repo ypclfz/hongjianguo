@@ -110,6 +110,7 @@
       @row-click="handleRowClick"
       :highlight-current-row="tableOption.highlightCurrentRow !== undefined ? tableOption.highlightCurrentRow : false"
       :height="tableHeight"
+      :class="tableOption.empty_text_position == 'topLeft' ? 'empty-top-left' : ''"
       ref="table"
     >
       <template v-for="(col, index) in tableOption.columns">
@@ -128,6 +129,7 @@
         </template>
 
         <template v-else-if="col.type == 'text'">
+          
           <template v-if="col.render ? true : false">
             <el-table-column :label="col.label" :prop="col.prop" :width="col.width ? col.width : ''" v-if="tableControl[index]['show']" :sortable="col.sortable ? 'custom' : false" :show-overflow-tooltip="col.overflow !== undefined ? col.overflow : true">
               <template scope="scope">
@@ -135,6 +137,7 @@
               </template>
             </el-table-column>
           </template>
+
           <template v-else-if="col.render_simple ? true : false ">
             <el-table-column :label="col.label" :prop="col.prop" :width="col.width ? col.width : ''" v-if="tableControl[index]['show']" :sortable="col.sortable ? 'custom' : false" :show-overflow-tooltip="col.overflow !== undefined ? col.overflow : true">
               <template scope="scope">
@@ -142,11 +145,13 @@
               </template>
             </el-table-column>
           </template>
+
           <template v-else>
             <el-table-column :label="col.label" :prop="col.prop" :width="col.width ? col.width : ''" v-if="tableControl[index]['show']" :sortable="col.sortable ? 'custom' : false" :show-overflow-tooltip="col.overflow !== undefined ? col.overflow : true">
-              <template v-if="col.default !== undefined" scope="scope">{{ scope.row[col.prop] ? scope.row[col.prop] : col.default }}</template>
+              <!-- <template v-if="col.default !== undefined" scope="scope">{{ scope.row[col.prop] ? scope.row[col.prop] : col.default }}</template> -->
             </el-table-column>
           </template>
+
         </template>
 
         <template v-else-if="col.type == 'date'">
@@ -533,6 +538,9 @@ export default {
           height = height < 300 ? 300 : height;
         }else if(hk === 'default3') {
           height = this.innerHeight - 100;
+          height = height < 300 ? 300 : height;
+        }else if(hk === 'default4') {
+          height = this.innerHeight - 55;
           height = height < 300 ? 300 : height;
         }else {
           height = hk;

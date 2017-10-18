@@ -7,6 +7,7 @@ import ApplicantList from '@/components/page/ApplicantList'
 import ProposalCommon from '@/components/page/ProposalCommon'
 import CheckProposal from '@/components/page/CheckProposal'
 import TaskCommon from '@/components/page/TaskCommon'
+import TaskExpiring from '@/components/page/TaskExpiring'
 import PatentList from '@/components/page/PatentList'
 import ApplyingPatent from '@/components/page/ApplyingPatent'
 import PatentAdd from '@/components/page/PatentAdd'
@@ -120,6 +121,11 @@ const router = new Router({
       name: 'TaskFinish',
       component: TaskCommon,
       meta: { 'status': 1 },
+    },
+    {
+      path: '/task/expiring',
+      name: 'TaskExpiring',
+      component: TaskExpiring,
     },
     {
       path: '/patent/list',

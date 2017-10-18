@@ -56,6 +56,12 @@ menu.data = [
 				path: '/task/finish',
 				icon: 'iconfont icon-task-finish',
 				type: 'item',
+			},
+			{
+				text: '期限管控',
+				path: '/task/expiring',
+				icon: 'iconfont icon-task-pending',
+				type: 'item',
 			}
 		]
 	},

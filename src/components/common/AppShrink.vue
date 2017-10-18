@@ -8,7 +8,7 @@
 			<slot name="header"></slot>
 		</div>
 		<div v-loading="shrinkLoading" :element-loading-text="shrinkLoadingText">
-			<div class="app-shrink-body" :style="`height: ${innerHeight - 80}px; overflow: auto;`" v-if="rendered" >
+			<div class="app-shrink-body" :style="`height: ${shrinkHeight}px; overflow: auto;`" v-if="rendered" >
 				<slot></slot>
 			</div>
 		</div>
@@ -52,7 +52,7 @@ export default {
 	}, 
 	computed: {
 		...mapGetters([
-      'innerHeight',
+      'shrinkHeight',
       'shrinkLoading',
       'shrinkLoadingText',
     ]),

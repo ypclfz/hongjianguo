@@ -4,9 +4,6 @@
         <el-form-item label="相关提案">
           <remote-select type="proposal" v-model="form.proposals" multiple></remote-select>
         </el-form-item>
-        <el-form-item label="优先权">
-          <priorities v-model="form.priorities"></priorities>
-        </el-form-item>
         <el-form-item label="相关案件">
           <relative-projects v-model="form.relative_projects"></relative-projects>
         </el-form-item>
@@ -17,7 +14,7 @@
 <script>
 import AppCollapse from '@/components/common/AppCollapse'
 import Proposal from '@/components/form/Proposal'
-import Priorities from '@/components/form/Priorities'
+
 import RelativeProjects from '@/components/form/RelativeProjects'
 import RemoteSelect from '@/components/form/RemoteSelect'
 
@@ -27,7 +24,6 @@ export default {
     return {
       form: {
         proposals: [],
-        priorities: [],
         relative_projects: [],
       }
     }
@@ -39,11 +35,16 @@ export default {
     submitForm () {
       return this.form;
     },
-    checkForm () {
-
+    checkForm (callback) {
+      callback(true);
     },
   },
-  components: { AppCollapse, Priorities, RelativeProjects, Proposal, RemoteSelect }
+  components: { 
+    AppCollapse, 
+    RelativeProjects, 
+    Proposal, 
+    RemoteSelect 
+  }
 }
 </script>
 

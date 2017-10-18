@@ -10,11 +10,11 @@
 	  	:current-node-key="currentNodeKey"
 	  	default-expand-all
 	  	@current-change="handleCurrentChange"
-      style="height: 500px; overflow: auto;"
+      :style="`height: ${innerHeight - 400}px; overflow: auto; font-size: 14px;`"
 
 	  >
 	  </el-tree>
-	  <app-collapse :col-title="colTitle" v-if="currentNodeKey != ''" style="margin-top: 15px;">
+	  <app-collapse :col-title="colTitle" v-if="currentNodeKey != ''" style="margin-top: 15px; margin-bottom: 0px;">
 		  <el-form ref="form" >
 		  	<el-form-item label="名称" prop="name">
 		  		<el-input v-model="form.name"></el-input>
@@ -47,6 +47,7 @@
 <script>
 import AppCollapse from '@/components/common/AppCollapse'
 import AxiosMixins from '@/mixins/axios-mixins'
+import { mapGetters } from 'vuex'
 
 export default {
   name: 'classificationCommon',
@@ -149,6 +150,9 @@ export default {
   	}
   },
   computed: {
+    ...mapGetters([
+      'innerHeight',
+    ]),
   	pageType () {
   		const path = this.$route.path;
   		return /classification/.test(path) ? 'classification' : 'product';

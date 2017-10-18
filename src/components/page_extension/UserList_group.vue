@@ -107,7 +107,7 @@ export default {
         g = [];
       }
 
-      g = [allUser, ...g];
+      g = [{name: '全部用户', description: '该用户组用于存放所有的用户，不可编辑，不可删除', id: 0}, ...g];
 
       return g;
     },
@@ -141,15 +141,16 @@ export default {
       this.axiosGet({url, success});
     },
     renderContent(h,{node, store, data}) {
+
       return (
-          <span>
+          <span style="white-space: normal;">
             <span>
-              <span style="font-size: 12px">{ node.label} <em style="color: #20a0ff; font-style: normal;">{ data.memberCount !== undefined ? `(${data.memberCount})` : '' }</em></span>
+              <span style="font-size: 12px">{ node.label }</span>
             </span>
-            <span style="float: right; margin-right: 20px">
-              {data.id !== 0 && data.id !== 1 ? <el-button size="mini" on-click={ () => this.powerPop(store, data) }>权限</el-button> : ''}
+            <span style="float: right; margin-right: 20px;">
+              {data.id !== 0 && data.id !== 1 ? <el-button size="mini" on-click={ () => this.powerPop(store, data) }>权限</el-button> : <i></i>}
             </span>
-          </span>); 
+          </span>);
     },
   	handleCurrentChange (data) {
     

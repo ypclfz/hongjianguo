@@ -81,7 +81,7 @@
       ></el-rate>
     </el-form-item>
     <el-form-item v-if="next == '20'" prop="pconfirm" label="确认" :rules="confirmValidator">
-      <el-checkbox v-model="form.pconfirm">已确认专利情况</el-checkbox><el-button type="text" size="mini" style="margin-left: 10px;" @click="$emit('more', 'patent')">查看</el-button>
+      <el-checkbox v-model="form.pconfirm">已确认送件信息完整</el-checkbox><el-button type="text" size="mini" style="margin-left: 10px;" @click="$emit('more', 'patent')">查看</el-button>
     </el-form-item>
   	<el-form-item style="margin-bottom: 0px;">
   		<el-button type="primary" @click="submitFunc" :disabled="btn_disabled">提交</el-button>
@@ -139,7 +139,7 @@ export default {
             if(b) {
               c();
             }else {
-              c('必需确认专利情况');
+              c('必需确认送件信息完整');
             }
 
           },

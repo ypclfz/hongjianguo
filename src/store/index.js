@@ -61,6 +61,7 @@ const store = new Vuex.Store({
     shrinkLoading: state=>state.shrinkLoading,
     shrinkLoadingText: state=>state.shrinkLoadingText,
     innerHeight: state=>state.inner_height,
+    shrinkHeight: state=>state.inner_height - 80,
     getInnerWidth: state=>state.leftNavVisible ? state.inner_width - 160 : state.inner_width, 
     leftVisible: state=>state.leftNavVisible,
     agencyLoadVisible: state=>state.agencyLoadVisible,

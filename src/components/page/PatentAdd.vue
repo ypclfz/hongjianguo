@@ -10,7 +10,7 @@
     
     <div style="margin-bottom: 20px;">
       <el-button @click="add" type="primary" v-if="type == 'add'" :disabled="btn_disabled">添加</el-button>
-      <el-button @click="edit" type="primary" v-if="type == 'edit'" :disabled="btn_disabled">编辑</el-button>
+      <!-- <el-button @click="edit" type="primary" v-if="type == 'edit'" :disabled="btn_disabled">编辑</el-button> -->
       <el-button @click="cancel" v-if="!shrink" :disabled="btn_disabled">取消</el-button>
     </div>
   </div>
@@ -19,7 +19,7 @@
 <script>
 const map = new Map([
   ['base', '请正确填写基本信息！'],
-  ['person', '请正确填写人员信息！'],
+  ['person', '请正确填写扩展信息！'],
   ['classification', '请正确填写分类信息'],
   ['case', '请正确填写相关案件信息'],
   ['other', '请正确填写其他信息及附件'],
@@ -52,54 +52,60 @@ export default {
   mixins: [ AxiosMixins ],
   methods: {
     add () {
-      if(this.formCheck()) return;
+      
+      this.formCheck(_=>{
+        const url = URL;
+        const data = Object.assign( ...getKeys.map(_=>this.$refs[_].submitForm()) );
+        const success = _=>{ 
+          this.$message({message: '添加专利成功', type: 'success'});
+          this.$router.push('/patent/list'); 
+        };
+        const complete = _=>{
+          this.btn_disabled = false;
+        }
 
-      const url = URL;
-      const data = Object.assign( ...getKeys.map(_=>this.$refs[_].submitForm()) );
-      const success = _=>{ 
-        this.$message({message: '添加专利成功', type: 'success'});
-        this.$router.push('/patent/list'); 
-      };
-      const complete = _=>{
-        this.btn_disabled = false;
-      }
-
-      this.btn_disabled = true;
-      this.axiosPost({url, data, success, complete});
-
+        this.btn_disabled = true;
+        this.axiosPost({url, data, success, complete});  
+      })
+      
     },
     edit () {
-      if(this.formCheck()) return;
+      this.formCheck(_=>{
+        const url = `${URL}/${this.id}`;
+        const data = Object.assign( ...getKeys.map(d=>this.$refs[d].submitForm()) );
+        const success = _=>{ 
+          this.$message({message: '编辑专利成功', type: 'success'});
+          // this.$router.push('/patent/list');
+        };
+        const complete = _=>{
+          this.btn_disabled = false;
+        }
 
-      const url = `${URL}/${this.id}`;
-      const data = Object.assign( ...getKeys.map(d=>this.$refs[d].submitForm()) );
-      const success = _=>{ 
-        this.$message({message: '编辑专利成功', type: 'success'});
-        // this.$router.push('/patent/list');
-      };
-      const complete = _=>{
-        this.btn_disabled = false;
-      }
-
-      this.btn_disabled = true;
-      this.axiosPut({url, data, success, complete});
+        this.btn_disabled = true;
+        this.axiosPut({url, data, success, complete});  
+      })
     },
-    formCheck () {
+    formCheck (callback) {
       let key = "";
       let flag = false;
-      for(let d of getKeys) {
-        if(this.$refs[d].checkForm()) {
-          flag = true;
-          key = d;
-          break;
+
+      const check = (index)=>{
+        const key = getKeys[index];
+        if(key) {
+          this.$refs[key].checkForm(_=>{
+            if(_) {
+              check(index+1);
+            }else {
+              this.$message({message: map.get(key), type: 'warning'})      
+            }
+          })  
+        }else {
+          callback();
         }
       }
+      
+      check(0);
 
-      if(key) {
-        this.$message({message: map.get(key), type: 'warning'})
-      }
-
-      return flag;
     },
     cancel () {
       this.$router.push('/patent/list');

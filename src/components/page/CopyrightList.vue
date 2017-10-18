@@ -2,9 +2,14 @@
   <div class="main">
     <strainer v-model="filter" @refresh="refresh"></strainer>
     <table-component :tableOption="tableOption" :data="tableData" @refreshTableData="refreshTableData" ref="table"></table-component>
-    <app-shrink :title="currentRow.title" :visible.sync="shrinkVisible" @close="close">
-      <common-detail type="copyright" :id="currentRow.id"></common-detail>
-    </app-shrink>
+    
+      <common-detail
+        :title="currentRow.title"
+        :visible.sync="shrinkVisible" 
+        type="copyright" 
+        :id="currentRow.id">
+      </common-detail>
+
   </div>
 </template>
 

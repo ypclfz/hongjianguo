@@ -6,9 +6,16 @@
       <el-button slot="download" :loading="downloadLoading" icon="share" @click="downloadPop" type="primary" style="margin-left: 5px;">批量下载</el-button>
     </table-component>
     
-    <app-shrink :title="currentRow.title" :visible.sync="shrinkVisible" @close="close">
-      <common-detail type="patent" :id="currentRow.id"></common-detail>
-    </app-shrink>
+    
+      <common-detail
+        :title="currentRow.title"
+        :visible.sync="shrinkVisible" 
+        type="patent" 
+        :id="currentRow.id" 
+        ref="detail">
+      </common-detail>
+    
+
     <el-dialog title="批量下载" :visible.sync="downloadVisible">
       <el-form>
         <el-form-item label="文件类型">
@@ -248,6 +255,9 @@ export default {
       this.downloadVisible = false;
       this.downloadLoading = true;
       this.axiosPost({url, data, success, complete})
+    },
+    save () {
+      this.$refs.detail.edit();
     }
   },
   mounted () {

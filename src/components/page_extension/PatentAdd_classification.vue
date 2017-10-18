@@ -50,8 +50,8 @@ export default {
     submitForm () {
       return this.form;
     },
-    checkForm () {
-
+    checkForm (callback) {
+      callback(true);
     },
   },
   components: { AppCollapse, Product, Classification, StaticSelect }

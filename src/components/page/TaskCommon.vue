@@ -80,8 +80,8 @@
         <el-tag>{{ currentRow.serial }}</el-tag>
       </span>
       <span slot="header" style="float: right">
-        <el-button size="small" type="primary" @click="dialogEditVisible = true" v-if="menusMap && menusMap.get('/tasks/update')">编辑</el-button>
-        <el-button size="small" style="margin-left: 0px;" v-if="menusMap && menusMap.get('/tasks/transfer')" @click="dialogTranserVisible = true; transfer_person = {id: currentRow.person_in_charge, name: currentRow.person_in_charge_name }">移交</el-button>
+        <el-button size="small" type="primary" @click="dialogEditVisible = true" v-if="menusMap && !menusMap.get('/tasks/update')">编辑</el-button>
+        <el-button size="small" style="margin-left: 0px;" v-if="menusMap && !menusMap.get('/tasks/transfer')" @click="dialogTranserVisible = true; transfer_person = {id: currentRow.person_in_charge, name: currentRow.person_in_charge_name }">移交</el-button>
       </span>
       <el-tabs v-model="activeName">        
         <el-tab-pane label="前往处理" name="finish" v-if="task_status == 0">
@@ -96,8 +96,15 @@
       </el-tabs>
     </app-shrink>
 
-    <app-shrink :title="currentRow.title" :visible.sync="moreVisible">
-      <common-detail :type="moreType" :id="currentRow.project_id"></common-detail>
+    
+    <common-detail 
+      :type="categoryType" 
+      :id="currentRow.project_id" 
+      :visible.sync="moreVisible" 
+      :title="currentRow.title"
+      ref="detail">
+    </common-detail>
+
     </app-shrink>
 
     
@@ -143,7 +150,6 @@ export default {
       'showAgencyLoad',
     ]),
     handleMore (type) {
-      this.moreType = type;
       this.moreVisible = true;
     },
     handleShrinkClose () {
@@ -328,6 +334,9 @@ export default {
       this.shrinkTitle = row.title; 
       this.currentRow = row;
       if( !this.dialogShrinkVisible ) this.dialogShrinkVisible = true;
+    },
+    save () {
+      this.$refs.detail.edit();
     }
   },
   data () {
@@ -454,6 +463,17 @@ export default {
     },
     urlParams () {
       return this.$route.query;
+    },
+    categoryType () {
+      let type = '';
+      if(this.currentRow.category == 1) {
+        type = 'patent';
+      }
+      if(this.currentRow.category == 3) {
+        type = 'copyright';
+      }
+
+      return type;
     }
   },  
   watch: {
@@ -485,6 +505,10 @@ export default {
     
     if(this.$store.getters.taskDefsData === undefined) {
       this.$store.dispatch('refreshTaskDefs');
+    }
+
+    if(this.task_status == 1) {
+      this.activeName = 'edit';
     }
 
     this.refreshOption();

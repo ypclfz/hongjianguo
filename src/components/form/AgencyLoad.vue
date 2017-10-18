@@ -19,13 +19,10 @@ export default {
 				'is_header': false,
 				'is_pagination': false,
 				'columns': [
-					{type: 'text', label: '未这成案件数', props: 'name'},
-					{type: 'text', label: '评分', props: 'count'},
-					{type: 'text', label: '代理所名称', props: 'rank'},
-					{type: 'text', label: '返稿及时率', props: 'ratio'},
-					{type: 'text', label: '初稿撰稿时间', props: 'first_edition_days'},
-					{type: 'text', label: '修改时间', props: 'amending_days'},
-					{type: 'text', label: '服务范围', props: 'available_scopes'},
+					{type: 'text', label: '代理所名称', prop: 'name'},
+					{type: 'text', label: '未完成案件数', prop: 'count'},
+					{type: 'text', label: '返稿及时率', prop: 'ratio'},
+					{type: 'text', label: '评分', prop: 'rank'},
 				],
 			},
 			data: null,
@@ -43,7 +40,9 @@ export default {
 		getData () {
 			this.loading = true;
 			const url = '/api/agencyStats';
-			const success = _=>{console.log(_)};
+			const success = _=>{
+				this.data = _.data;
+			};
 
 			this.axiosGet({url, success}).then(_=>{this.loading = false;});
 		},
