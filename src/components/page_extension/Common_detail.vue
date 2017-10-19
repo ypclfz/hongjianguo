@@ -6,8 +6,8 @@
     <div  v-loading="loading && visible" :element-loading-text="config.loadingText" :style="divStyle">
       <el-tabs v-model="activeName">
         <el-tab-pane label="基本信息" name="base">
-    			<detail-patent page-type="edit" v-if="type == 'patent'" ref="patent"></detail-patent>
-          <detail-copyright page-type="edit" v-if="type == 'copyright'" ref="copyright"></detail-copyright>
+    			<detail-patent page-type="edit" v-if="type == 'patent'" @editSuccess="editSuccess" ref="patent"></detail-patent>
+          <detail-copyright page-type="edit" v-if="type == 'copyright'" @editSuccess="editSuccess" ref="copyright"></detail-copyright>
         </el-tab-pane>
         <el-tab-pane label="流程管理" name="control">
     			<detail-control></detail-control>
@@ -103,6 +103,7 @@ export default {
       this.refreshDetailData({ id, func });
     },
     edit () {
+      
       if(this.$refs.patent) {
         this.$refs.patent.edit();
       }
@@ -110,6 +111,9 @@ export default {
       if(this.$refs.copyright) {
         this.$refs.copyright.edit();
       }
+    },
+    editSuccess () {
+      this.$emit('update:visible', false);
     },
     handleVisible (val) {
       this.$emit('update:visible', val);

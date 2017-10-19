@@ -8,7 +8,7 @@
       <el-radio-group v-model="xAxis" size="small" v-if="!!config.xAxis">
         <el-radio-button size="small" v-for="item in config.xAxis" :label="item.value" :key="item.value">{{ item.label }}</el-radio-button>
       </el-radio-group>
-      <static-select v-if="!!config.target" :type="config.target" v-model="target" size="small" style="width: 200px;"></static-select>
+      <static-select v-if="!!config.target" :type="config.target" v-model="target" size="small" style="width: 150px;"></static-select>
       <el-date-picker
         v-model="date"
         type="daterange"

@@ -3,6 +3,16 @@
   	
   		 <el-row>
 				<el-col :span="8">
+
+          <div class="left-tree-header" style="padding: 0 20px; ">
+            <span style="font-size: 15px; font-weight: bold;">部门</span>
+            <div style="float: right;">
+              <el-button icon="plus" size="mini" title="添加部门" @click="addPop"></el-button>
+              <el-button icon="edit" size="mini" title="编辑部门" style="margin-left: 0;" @click="editPop"></el-button>
+              <el-button icon="delete" size="mini" title="删除部门" style="margin-left: 0;" @click="branchDelete"></el-button>
+            </div>
+          </div>
+
 					<el-tree
 						:data="branchData"
 						:props="props"
@@ -10,104 +20,137 @@
 						highlight-current
 						:expand-on-click-node="false"
 						@node-click="nodeClick"
+            :style="`height: ${innerHeight - 100}px; overflow: auto;`"
 					>
 					</el-tree>
 				</el-col>
   		 	<el-col :span="16" style="padding-left: 20px;">
-		  		<el-form label-width="100px">
-		  			<el-form-item label="部门名称">
-		  			{{ name ? name : '暂未选择' }}
+		  		<el-form label-width="120px">
+		  			
+            <el-form-item label="部门名称">
+		  			  {{ currentNode ? currentNode.name : '' }}
 		  			</el-form-item>
-		  			<el-form-item label="部门描述">
-		  			{{ description ? description : '暂无描述' }}
+		  			
+            <el-form-item label="部门描述">
+		  			  {{ currentNode ? currentNode.description ? currentNode.description : '暂无描述' : ''}}
 		  			</el-form-item>
-		  			<el-form-item label="默认IPR">
-		  				<static-select type="ipr" v-model="ipr"></static-select>
+		  			
+            <el-form-item label="默认IPR">
+		  				<template v-if="currentNode">
+                <el-tooltip v-if="currentNode.ipr">
+                  <div slot="content">{{ currentNode.ipr.name }}<br/>{{ currentNode.ipr.mobile }}<br/>{{ currentNode.ipr.email }}</div>
+                  <el-tag>{{ currentNode.ipr.name }}</el-tag>
+                </el-tooltip>
+                <span v-else>暂未设置默认IPR</span>
+              </template>
 		  			</el-form-item>
-		  			<el-form-item label="部门提案审核人">
-		  				<remote-select type="inventor" v-model="reviewer" default></remote-select>
+
+		  			<el-form-item label="拥有查看权限">
+		  				<template v-if="currentNode">
+                <template v-if="currentNode.board">
+                  <el-tooltip v-for="item in currentNode.board" :key="item.id">
+                    <div slot="content">{{ item.name }}<br/>{{ item.mobile }}<br/>{{ item.email }}</div>
+                    <el-tag style="margin-right: 5px">{{ currentNode.ipr.name }}</el-tag>
+                  </el-tooltip>
+                </template>
+                <span v-else>无人拥有查看权限</span>
+              </template>
 		  			</el-form-item>
-		  			<el-form-item label="">
-		  				<el-button type="primary" @click="save">保存设置</el-button>
-		  			</el-form-item>
-		  		</el-form>
 		  		
+          </el-form>	  		
 	  		</el-col>
-  		</el-row> 	
+  		</el-row>
+
+      <pop ref="pop" @refresh="refresh" :current-id="currentNode.id"></pop> 	
   </div>
 </template>
 
 <script>
+import Pop from '@/components/page_extension/Branch_pop' 
 import RemoteSelect from '@/components/form/RemoteSelect'
 import StaticSelect from '@/components/form/StaticSelect'
+import {mapGetters} from 'vuex'
+import {mapActions} from 'vuex'
 
 const url = '/api/branches';
 export default {
   name: 'branch',
   data () {
 		return {
-			id: '',
-			name: '',
-			description: '',
-		  ipr: '',
-		  reviewer: '',
 		  props: {
 		  	label: 'name',
 		  	children: 'children'
-		  }
+		  },
+      currentNode: '',
 		}
   },
-  methods: {
-  	save () {
-  		const id = this.id;
-
-  		if( !id ) {
-  			this.$alert('请选择需要设置的部门！', {type: 'warn', closeOnClickModal: true});
-  			return false;
-  		}
-
-  		const setting = (url, params, func)=>{
-  			if(params) {
-  				this.$axios.put(url, params).then(func);
-  			}else {
-  				this.$axios.delete(url).then(func);
-  			}
-  		}
-  		// const old = branchMap.get(id);
-  		// const old_ipr = old.ipr.uid;
-  		// const old_reviewer = old.reviewer.uid;
-  		const ipr = this.ipr ? { ipr: this.ipr } : '';
-  		const reviewer = this.reviewer ? { reviewer: this.reviewer } : '';
-
-  		setting(`${url}/${id}/ipr`, ipr, setting(`${url}/${id}/reviewer`, reviewer, ()=>{
-  			this.$alert('设置成功！', {type: 'success', closeOnClickModal: true});
-  			this.$store.dispatch('refreshBranch');
-  		}));
-
-  		
-  	},
-  	nodeClick (a) {
-  		this.id = a.id;
-  		this.name = a.name;
-  		this.description = a.description;
-  		this.ipr = a.ipr.id;
-  		this.reviewer = a.reviewer;
-  	}
-  },
   computed: {
-  	branchData () {
-  		return this.$store.getters.branchData;
-  	},
-  	branchMap () {
-
-  	},
-  	iprOptions () {
-  		const arr = [...this.$store.getters.iprOptions];
-  		arr.unshift({name: '未选择', id: ''});
-  		return arr;
-  	},
+    ...mapGetters([
+      'innerHeight',
+      'branchData',
+    ]),
   },
-  components: { RemoteSelect, StaticSelect }
+  methods: {
+    ...mapActions([
+      'refreshBranch',
+    ]),
+  	nodeClick (a) {
+      this.currentNode = a;
+  	},
+    addPop () {
+      if(!this.currentNode) {
+        this.$message({message: '请选择添加部门的挂载项', type: 'warning'});
+        return;
+      }
+
+      this.$refs.pop.show('add');
+    },
+    editPop () {
+      if(!this.currentNode) {
+        this.$message({message: '请选择需要编辑的部门', type: 'warning'});
+        return;
+      }
+
+      const d = this.$tool.deepCopy(this.currentNode);
+      d.ipr = d.ipr ? d.ipr.id : '';
+      this.$refs.pop.show('edit', d);
+    },
+    branchDelete () {
+      const c = this.currentNode;
+
+      if(!c) {
+        this.$message({message: '请选择需要删除的部门', type: 'warning'});
+        return;
+      }
+
+      if(c.id == 1) {
+        this.$message({message: '根节点不可删除', type: 'warning'});
+        return;
+      }
+
+      this.$confirm(`删除后不可恢复，确认删除‘${c.name}’？`, '提示', {type: 'warning'})
+        .then(_=>{
+          const url = `${url}/${this.currentNode.id}`;
+          const success = _=>{
+            this.$message({message: ``})
+          }
+          this.$axiosDelet({
+            url, 
+            success,
+          })
+        })
+        .catch(_=>{});      
+    },
+    refresh () {
+      this.refreshBranch();
+    }
+  },
+
+  components: { 
+    RemoteSelect, 
+    StaticSelect,
+    Pop, 
+  }
 }
 </script>
 

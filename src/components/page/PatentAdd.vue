@@ -75,6 +75,7 @@ export default {
         const data = Object.assign( ...getKeys.map(d=>this.$refs[d].submitForm()) );
         const success = _=>{ 
           this.$message({message: '编辑专利成功', type: 'success'});
+          this.$emit('editSuccess');
           // this.$router.push('/patent/list');
         };
         const complete = _=>{

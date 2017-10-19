@@ -1,7 +1,7 @@
 <template>
   <div class="user-group" v-loading="loading">
-	  <div class="app-collapse-header" style="line-height: 46px;">
-			<span style="font-size: 18px;">用户组</span>
+	  <div class="app-collapse-header" style="line-height: 35px;">
+			<span style="font-size: 14px;">用户组</span>
 			<div style="float: right;">
 			<el-button icon="plus" size="mini" title="添加用户组" @click="addPop"></el-button>
 			<el-button icon="edit" :disabled="editDisabled" size="mini" title="编辑用户组" style="margin-left: 0;" @click="editPop"></el-button>

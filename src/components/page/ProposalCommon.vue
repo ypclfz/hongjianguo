@@ -100,6 +100,7 @@ import Upload from '@/components/form/Upload'
 import TaskFinish from '@/components/common/TaskFinish'
 import StaticSelect from '@/components/form/StaticSelect'
 import { checkInventors } from '@/const/validator.js'
+import { mapGetters } from 'vuex'
 
 
 const typeMap = new Map([['/proposal/add', 'add'], ['/proposal/edit', 'edit'], ['/proposal/detail', 'detail']]);
@@ -117,7 +118,7 @@ export default {
     save ( callback=_=>{this.$message({message: '编辑成功', type: 'success'}); this.$router.push('/proposal/list')} ) {
       
       if(this.pageType == 'add' && !this.formData.proposer) {
-        this.formData.proposer = this.userId;
+        this.formData.proposer = this.userid;
       }
 
       this.$refs.form.validate(valid=>{
@@ -166,14 +167,6 @@ export default {
   			}
   		});
   	},
-    addInventor () {
-      this.formData.inventors.push({id: '', share: ''});
-      this.$refs.form.validateField('inventors');
-    },
-    deleteInventor (index) {
-      this.formData.inventors.splice(index, 1);
-      this.$refs.form.validateField('inventors');
-    },
     refreshCommon () {
       const t = this.pageType;
       
@@ -218,9 +211,9 @@ export default {
           this.$tool.coverObj(this.formData, data);
         });
       }else {
-        this.proposer_name = this.userName;
-        if(this.userId && this.userName) {
-          this.formData.inventors = [{id: '', share: '100'}];  
+        this.proposer_name = this.username;
+        if(this.userid && this.username) {
+          this.formData.inventors = [{id: {id: this.userid, name: this.username}, share: '100'}];  
         }
         
       }
@@ -327,17 +320,10 @@ export default {
     this.refreshCommon();
   },
   computed: {
-    user () {
-      return this.$store.getters.getUser;
-    },
-    userId () {
-      const user = this.$store.getters.getUser;
-      return user ? user.id : ''; 
-    },
-    userName () {
-      const user = this.$store.getters.getUser;
-      return user ? user.name : '';
-    },
+    ...mapGetters([
+      'username',
+      'userid',
+    ]),
     tagOptions () {
       return this.$store.getters.tagOptions;
     },
@@ -353,7 +339,7 @@ export default {
     }
   },
   watch: {
-    userName () {
+    userid () {
       this.refreshCommon();
     }
   },

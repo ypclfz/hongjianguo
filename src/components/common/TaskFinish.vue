@@ -34,7 +34,7 @@
   		<static-select type="ipr" v-model="form.person_in_charge" v-else-if="defaultVal == 'ipr'"></static-select>
   		<!-- <span v-else>{{ data[defaultVal]['name'] }}</span> -->
   	</el-form-item>
-    <el-form-item prop="agency" label="代理机构" v-if="fields.agency" :rules="{ required: true, message: '代理机构不能为空'}">
+    <el-form-item prop="agency" label="代理机构" v-if="fields.agency" :rules="{ required: true, type: 'number', message: '代理机构不能为空', trigger: 'change'}">
       <div v-if="fields.agency == 1"><remote-select type="agency" v-model="form.agency"></remote-select><el-button size="mini" type="text" @click="showAgencyLoad">负载</el-button></div>
       <span class="form-item-text">{{ form.agency.name }}</span>
     </el-form-item>
@@ -47,7 +47,7 @@
     <el-form-item prop="agency_type" label="代理类型" v-if="fields.agency_type"
       :rules="{ required: true, message: '代理类型不能为空'}"
     >
-      <static-select type="agency_type" v-model="form.agency_type"></static-select>
+      <static-select type="agency_type" key="patent_type" v-model="form.agency_type"></static-select>
     </el-form-item>
   	<el-form-item prop="due_time" label="承办期限" v-if="fields.due_time">
 			<el-date-picker v-model="form.due_time" type="date" placeholder="选择承办期限"></el-date-picker>
@@ -58,8 +58,8 @@
     <el-form-item prop="area" label="申请地区" v-if="fields.area" :rules="{type: 'array', required: true, message: '申请地区不能为空'}">
       <static-select type="area" v-model="form.area"  multiple></static-select>
     </el-form-item>
-    <el-form-item prop="type" label="专利类型" v-if="fields.type" :rules="{type: 'number', required: true, message: '专利类型不能为空', trigger: 'change'}">
-      <static-select type="patent_type" v-model="form.type" ></static-select>
+    <el-form-item prop="type" label="专利类型" v-if="fields.type" :rules="{type: 'number', required: true, message: '专利类型不能为空', trigger: 'blur'}">
+      <static-select type="patent_type" v-model="form.type" key="patent_type"></static-select>
     </el-form-item>
     <el-form-item prop="remark" label="任务备注" v-if="fields.remark && !hide_r_a">
       <el-input type="textarea" v-model="form.remark"></el-input>
@@ -100,6 +100,7 @@ import RemoteSelect from '@/components/form/RemoteSelect'
 import StaticSelect from '@/components/form/StaticSelect'
 
 import {mapMutations} from 'vuex'
+import {mapActions} from 'vuex'
 
 const URL = `/api/tasks`;
 
@@ -154,6 +155,9 @@ export default {
     ...mapMutations([
       'showAgencyLoad',
     ]),
+    ...mapActions([
+      'refreshUser',
+    ]),
   	refreshData () {
       this.loading = true; 
       this.next = "";
@@ -179,7 +183,10 @@ export default {
           const url = `${URL}/${this.id}/nexttask`;
           const data = Object.assign({}, {'flow_node_id': this.next}, this.form);
           if(data.rank) {data.rank *= 20};
-          const success = ()=>{ this.$emit('submitSuccess') };
+          const success = ()=>{ 
+            this.refreshUser();
+            this.$emit('submitSuccess') 
+          };
           const complete = _=>{ this.btn_disabled=false }; 
           this.axiosPost({url, data, success, complete}); 
         }else {
@@ -216,9 +223,11 @@ export default {
             
             if(this.fields.agency) this.form.agency = this.data.agency;
             if(this.fields.agency_type) this.form.agency_type = 1;
+            
             const person_in_charge = this.data[this.defaultVal] ? this.data[this.defaultVal] : '';
-        
             this.$nextTick(_=>{
+              if(this.fields.area) this.form.area.push('CN');
+              if(this.fields.type) this.form.type = 1;
               if(this.fields.agent) this.form.agent = this.data.agent;
               if(this.defaultVal == 'ipr') {
                 this.form.person_in_charge = person_in_charge['id'];

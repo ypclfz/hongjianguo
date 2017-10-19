@@ -1,4 +1,5 @@
 <template>
+  <el-dialog :title="config.title" :visible="visible" @update:visible="handleVisible">
   <div class="app-import">
     <a v-if="config.model ? true : false" :href="config.model">{{ config.model_name }}</a>
 		<el-table
@@ -61,7 +62,7 @@
 		 	<div class="el-upload__text">将文件拖到此处，或<em>点击上传</em></div>
 		</el-upload>
 
-		<el-button style="margin-top: 10px;" type="primary" @click="importData">导入当前数据</el-button>
+		<el-button style="margin-top: 10px;" type="primary" @click="importData">导入</el-button>
 		
 		<el-dialog title="指定案件" :visible.sync="dialogVisible" :modal-append-to-body="false" :modal="false">
 			<el-form label-width="100px" label-position="top">
@@ -74,6 +75,7 @@
 			</el-form>
 		</el-dialog>
   </div>
+  </el-dialog>
 </template>
 
 <script>
@@ -83,6 +85,7 @@ import RemoteSelect from '@/components/form/RemoteSelect'
 const config = [
 	['patent', {
 		action: 'getPatents',
+    title: '导入专利',
 		url: '/api/patents/import',
 		category: 1,
     model: '/static/templates/patent_batch_template.xlsx',
@@ -90,6 +93,7 @@ const config = [
 	}],
 	['copyright', {
 		action: 'getCopyrights',
+    title: '导入版权',
 		url: '/copyrights/import',
 		category: 3,
     model: '/static/templates/copyright_batch_template.xlsx',
@@ -97,18 +101,21 @@ const config = [
 	}],
 	['patent_notice', {
 		action: 'getPatentNotices',
+    title: '导入专利通知书',
 		url: '/notices/import',
 		category: 1,
     // model: '',
 	}],
 	['copyright_notice', {
 		action: 'getCopyrightNotices',
+    title: '导入版权通知书',
 		url: '/notices/import',
 		category: 3,
     // model: '',
 	}],
   ['feesIncome', {
     action: 'getFeesIncome',
+    title: '导入应收明细',
     url: '/fees/import',
     category: '',
     model: '/static/templates/fee_template.xlsx',
@@ -116,6 +123,7 @@ const config = [
   }],
   ['feesPayable', {
     action: 'getFeesPayable',
+    title: '导入应付明细',
     url: '/fees/import',
     category: '',
     model: '/static/templates/fee_template.xlsx',
@@ -123,6 +131,7 @@ const config = [
   }],
   ['invoicePayable', {
     action: 'getFeesPayable',
+    title: '导入付款单',
     url: '/invoices/import',
     category: '',
     model: '/static/templates/fee_template.xlsx',
@@ -140,6 +149,7 @@ export default {
   		default () {return []},
   	},
   	'type': null,
+    'visible': Boolean,
   },
   data () {
 		return {
@@ -166,6 +176,9 @@ export default {
   	}
   },
   methods: {
+    handleVisible (val) {
+      this.$emit('update:visible', val);
+    },
   	design() {
   		const o = this.$tool.deepCopy(this.tableData[this.$index]);
       const serial = this.$refs.project.getSelected()[0].name;

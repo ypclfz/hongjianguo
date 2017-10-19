@@ -1,14 +1,7 @@
 <template>
 	<div class="main">
 	<div class="left">
-		<div style="    
-	padding-left: 2px;
-    font-size: 14px;
-    height: 40px;
-    line-height: 40px;
-    background-color: #eef1f6;
-    border: 1px solid #dfe6ec;
-    border-bottom: none;">
+		<div style="padding-left: 2px;" class="left-tree-header">
 			<!-- <span>期限管控</span> -->
 			<el-select v-model="date" placeholder="请选择期限类型" size="mini" style="width: 70px;">
 				<el-option
@@ -93,7 +86,7 @@ export default {
 					{type: 'text', label: '流程节点', prop: 'node_name',width: '200'},
 					{type: 'text', label: '承办人', prop: 'person_in_charge_name',width: '200'},
 					{type: 'text', label: '指定期限', prop: 'due_time',width: '200'},
-					{type: 'text', label: '内部绝限', prop: 'inner_deadline',width: '200'},
+					{type: 'text', label: '管控期限', prop: 'inner_deadline',width: '200'},
 					{type: 'text', label: '法定期限', prop: 'deadline',width: '200'},
 					{
 						type: 'action',
@@ -130,7 +123,7 @@ export default {
 			],
 			dates: [
 				{label: '指定期限', value: 'due_time'},
-				{label: '内部绝限', value: 'deadlineinner'},
+				{label: '管控期限', value: 'inner_deadline'},
 				{label: '法定期限', value: 'deadline'},
 			],
 			activeName: 'finish',

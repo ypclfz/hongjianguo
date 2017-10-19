@@ -25,6 +25,11 @@ const getters = {
           				: '';
     return name;
 	},
+	userid: state=>{
+		const user = state.data;
+		const id = user ? user.id : '';
+		return id; 
+	},
 	pendingTaskCount: state=>{
 		const user = state.data;
 		const count = user ? user.pendingTaskCount : 0;

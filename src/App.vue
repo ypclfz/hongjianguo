@@ -523,4 +523,12 @@ nav {
 .el-tooltip__popper {
   max-width: 500px;
 }
+.left-tree-header {
+  font-size: 14px;
+  height: 40px;
+  line-height: 40px;
+  background-color: #eef1f6;
+  border: 1px solid #dfe6ec;
+  border-bottom: none;
+}
 </style>

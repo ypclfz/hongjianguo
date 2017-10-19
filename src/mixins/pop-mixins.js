@@ -1,8 +1,8 @@
 export default {
 	data () {
 		return {
-			type: '',
 			id: '',
+      type: '',
       btn_disabled: false,
 		  dialogVisible: false,
 		}
@@ -13,10 +13,7 @@ export default {
 			const tex = this.$options.REMINDER_TEXT;
 
 			return t == 'add' ? `新增${tex}` : `编辑${tex}`;
-		},
-    url () {
-      return this.$options.URL ? this.$options.URL : '';
-    }
+		}
 	},
 	methods: {
 		show ( type='add', data ) {
@@ -34,16 +31,18 @@ export default {
             this.setForm ? this.setForm(data) : this.$tool.coverObj(this.form, copy);  
           }else if(data instanceof String || data instanceof Number) {
             data -= 0;
-          }
-	        
+          }	        
 	      }
      	});
   	},
   	add () {
-      this.btn_disabled = true;
       const url = this.$options.URL;
       const tex = this.$options.REMINDER_TEXT;
-      const data = this.submitForm ? this.submitForm() : this.form;
+      
+      const data = this.addForm 
+                    ? this.addForm() : this.submitForm 
+                      ? this.submitForm() : this.form;
+      
       const success = _=>{
         this.$message({message: `添加${tex}成功`, type: 'success'});
         this.dialogVisible = false;
@@ -52,14 +51,22 @@ export default {
       const complete = _=>{
         this.btn_disabled = false;
       }
-
-      this.axiosPost({url, data, success, complete});
+      this.$refs.form.validate(_=>{
+        if(_) {
+          this.btn_disabled = true;
+          this.$axiosPost({url, data, success, complete});
+        }
+      })
+      
     },
     edit () {
-      this.btn_disabled = true;
-      const url = `${this.url}/${this.id}`;
+      const url = `${this.$options.URL}/${this.id}`;
       const tex = this.$options.REMINDER_TEXT;
-      const data = this.submitForm ? this.submitForm() : this.form;
+      
+      const data = this.editForm 
+                    ? this.editForm() : this.submitForm 
+                      ? this.submitForm() : this.form;
+      
       const success = _=>{
         this.$message({message: `编辑${tex}成功`, type: 'success'});
         this.dialogVisible = false;
@@ -69,7 +76,13 @@ export default {
         this.btn_disabled = false;
       }
 
-      this.axiosPut({url, data, success, complete});
+      this.$refs.form.validate(_=>{
+        if(_) {
+          this.btn_disabled = true;
+          this.$axiosPut({url, data, success, complete});        
+        }
+      })
+
     }
 	}
 }

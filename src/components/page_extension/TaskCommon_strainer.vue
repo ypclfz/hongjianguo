@@ -27,6 +27,9 @@
         <el-form-item label="流程节点" prop="flow_node_id">
           <static-select type="flow_node" v-model="form.flow_node_id"></static-select>
         </el-form-item>
+        <el-form-item label="申请日" prop="apd">
+          <el-date-picker type="daterange" placeholder="请选择申请日" v-model="form.apd"></el-date-picker>
+        </el-form-item>
       </el-col>
       <el-col :span="12">
         <el-form-item label="完成时间" prop="end_time">
@@ -40,6 +43,9 @@
         </el-form-item>
         <el-form-item label="承办人" prop="person_in_charge">
           <remote-select type="member" v-model="form.person_in_charge"></remote-select>
+        </el-form-item>
+        <el-form-item label="管控期限" prop="inner_deadline">
+          <el-date-picker type="daterange" placeholder="请选择管控期限" v-model="form.inner_deadline"></el-date-picker>
         </el-form-item>
       </el-col>
     </el-row>
@@ -75,6 +81,8 @@ export default {
 		  	'due_time': [],
 		  	'deadline': [],
 		  	'end_time': [],
+        'apd': [],
+        'inner_deadline': [],
 		  },
 		  options: {
 		  	'project_type': [

@@ -1,6 +1,6 @@
 <template>
   <div class="main">
-     <strainer @query="strainerQuery" @clear="strainerClear"></strainer>
+    <strainer @query="strainerQuery" @clear="strainerClear"></strainer>
     <table-component :tableOption="tableOption" :data="tableData" @refreshTableData="refreshTableData" :refresh-proxy="refreshProxy" ref="table">
       <el-select v-if="taskAll" slot="toggle" v-model="task_toggle" style="width: 110px; margin-left: 5px;">
         <el-option key="mine" label="我的任务" value="personal"></el-option>
@@ -398,7 +398,7 @@ export default {
           { type: 'text', label: '案号', prop: 'serial', sortable: true, width: '150', show_option: false, render: this.titleRender },
           { type: 'text', label: '案件名称', prop: 'title', sortable: true, width: '200', overflow: true },
           { type: 'text', label: '管制事项', prop: 'name', sortable: true, width: '134' },
-          { type: 'text', label: '当前节点', prop: 'flow_node', show: false, width: '159'},
+          { type: 'text', label: '流程节点', prop: 'flow_node', show: false, width: '159'},
           { type: 'text', label: 'IPR', prop: 'ipr', sortable: true, width: '200'},
           { type: 'text', label: '承办人', prop: 'person_in_charge_name', show: false, sortable: true, width: '118'},
           // { type: 'text', label: '任务来源', prop: 'sender_name', show: false},
@@ -409,6 +409,7 @@ export default {
           { type: 'text', label: '开始时间', prop: 'start_time', show: false, sortable: true, width: '190'},
           { type: 'text', label: '完成时间', prop: 'end_time', sortable: true, width: '190'},
           { type: 'text', label: '指定期限', prop: 'due_time', show: false, sortable: true, width: '190'},
+          { type: 'text', label: '管控期限', prop: 'inner_dealine', show: false, sortable: true, width: '190'},
           { type: 'text', label: '法定期限', prop: 'deadline', show: false, sortable: true, width: '190'},
           { type: 'text', label: '备注', prop: 'remark', sortable: true, width: '250',overflow: true},
           { 
