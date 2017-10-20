@@ -49,17 +49,26 @@
 		  				<template v-if="currentNode">
                 <template v-if="currentNode.board">
                   <el-tooltip v-for="item in currentNode.board" :key="item.id">
-                    <div slot="content">{{ item.name }}<br/>{{ item.mobile }}<br/>{{ item.email }}</div>
-                    <el-tag style="margin-right: 5px">{{ currentNode.ipr.name }}</el-tag>
+                    <div slot="content">{{ item.name.split('-')[0] }}<br/>{{ item.name.split('-')[1] }}</div>
+                    <el-tag style="margin-right: 5px">{{ item.name.split('-')[0] }}</el-tag>
                   </el-tooltip>
                 </template>
                 <span v-else>无人拥有查看权限</span>
               </template>
 		  			</el-form-item>
-		  		
+		  		  
+            <el-form-item v-if="!!currentNode" style="margin-bottom: 0px;">
+              <el-button type="primary" @click="transferPop">移交部门专利</el-button>
+            </el-form-item>
           </el-form>	  		
 	  		</el-col>
   		</el-row>
+
+      <el-dialog title="移交部门专利" :visible.sync="dialogVisible">
+        <div style="margin-bottom: 5px;">将<span style="color: red; font-size: 14px; font-weight: bold; padding: 0 5px;">{{ currentNode.name }}</span>的专利移交至</div>
+        <static-select type="branch" v-model="transfer" style="margin-bottom: 5px;"></static-select>
+        <el-button @click="transferAxios" type="primary">确认移交</el-button>
+      </el-dialog>
 
       <pop ref="pop" @refresh="refresh" :current-id="currentNode.id"></pop> 	
   </div>
@@ -82,6 +91,8 @@ export default {
 		  	children: 'children'
 		  },
       currentNode: '',
+      dialogVisible: false,
+      transfer: '',
 		}
   },
   computed: {
@@ -143,6 +154,30 @@ export default {
     },
     refresh () {
       this.refreshBranch();
+    },
+    transferPop () {
+      if(this.currentNode) {
+        this.transfer = '';
+        this.dialogVisible = true;
+      }
+    },
+    transferAxios () {
+      if(!this.transfer) {
+        this.$message({message: '请选择目标部门', type: 'warning'});
+        return;
+      }
+
+      const url = '/api/branches/transfer';
+      const data = {
+        id: this.currentNode.id,
+        target: this.transfer,
+      }
+      const success = _=>{
+        this.$message({'message': '移交成功'});
+        this.dialogVisible = false;
+      }
+
+      this.$axiosPost({url, data, success});
     }
   },
 

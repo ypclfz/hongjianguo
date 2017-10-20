@@ -124,6 +124,14 @@ const config = [
     params: {
       debit: 0,
     }
+  }],
+  ['progress', {
+    placeholder: '请选择当前进度',
+    url: '/api/progress',
+  }],
+  ['branch', {
+    placeholder: '请选择部门',
+    options: 'branchOptions',
   }]
 ];
 
@@ -136,6 +144,7 @@ const dataMap = new Map([
   ['fee_code', {data: null}],
   ['tag', {data: null}],
   ['flow_node', {data: null}],
+  ['progress',{data: null}]
 ]);
 
 //-----------------------------配置数据分界线-----------------------------------------------

@@ -3,7 +3,7 @@
     <span slot="header" style="float: right">
       <el-button size="small" type="primary" @click="edit">保存</el-button>
     </span>
-    <div  v-loading="loading && visible" :element-loading-text="config.loadingText" :style="divStyle">
+    <div  v-loading="detailLoading && visible" :element-loading-text="config.loadingText" :style="divStyle">
       <el-tabs v-model="activeName">
         <el-tab-pane label="基本信息" name="base">
     			<detail-patent page-type="edit" v-if="type == 'patent'" @editSuccess="editSuccess" ref="patent"></detail-patent>
@@ -63,7 +63,6 @@ export default {
   },
   data () {
 		return {
-		  loading: false,
 		  activeName: 'base',
       rendered: false,
 		}
@@ -71,6 +70,7 @@ export default {
   computed: {
     ...mapGetters([
       'shrinkHeight',
+      'detailLoading'
     ]),
   	config () {
   		const config = map.get(this.type);
@@ -78,7 +78,7 @@ export default {
   	},
     divStyle () {
       let s = '';
-      if(this.loading) {
+      if(this.detailLoading) {
         s=`height: ${this.shrinkHeight}px; overflow: hidden;`;
       }
 
@@ -95,12 +95,8 @@ export default {
       const type = this.type;
       const id = this.id;
       this.$store.commit('setDetailType', type);
-      const func = _=>{ 
-        this.loading = false;
-      };
 
-      this.loading = true;
-      this.refreshDetailData({ id, func });
+      this.refreshDetailData({ id });
     },
     edit () {
       
@@ -113,7 +109,9 @@ export default {
       }
     },
     editSuccess () {
+      this.refreshDetailData();
       this.$emit('update:visible', false);
+      this.$emit('editSuccess');
     },
     handleVisible (val) {
       this.$emit('update:visible', val);
@@ -126,14 +124,7 @@ export default {
       }else {
         this.$emit('update:visible', false);
       }
-  	},
-    visible (val) {
-      if(val && !this.rendered) {
-        console.log('aaa');
-        this.refreshDetail();
-        this.rendered = true;
-      }
-    }
+  	}
   },
   components: {
     AppShrink,

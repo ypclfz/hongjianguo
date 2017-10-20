@@ -94,10 +94,17 @@ export default {
   mixins: [ AxiosMixins, RemoteSelect ],
   props: {
   	'type': [String, Object],
-    'para': Object,
+    'para': {
+      type: Object,
+      default () {return {}},
+    },
     'single': {
       type: Boolean,
       default: false,
+    },
+    'staticMap': {
+      type: Array,
+      default () { return [] },
     }
   },
   data () {
@@ -117,6 +124,11 @@ export default {
   	},
     refreshSelected (val) {
       val = this.single ? [val] : val;
+
+      if(this.staticMap.length > 0) {
+        this.static_map = this.staticMap;
+      }
+
       if( val[0] && val[0] instanceof Object ) {
         
         this.static_map = val;
@@ -126,8 +138,8 @@ export default {
         }else {
           this.$emit('input', arr[0])
         }
-        
-      } else {
+
+      }else {
         //selected通过map映射
         const arr = [];
         val.forEach(_=>{
@@ -160,11 +172,14 @@ export default {
       this.loading = true;
       this.axiosGet({url, data, success});
     },
-    clear () {
+    clear (flag = true) {
       this.selected = [];
       this.static_map = [];
       this.multiple ? this.$emit('input', []) : this.$emit('input', '');
-      this.remoteMethod(''); 
+      if(flag) {
+        this.remoteMethod(''); 
+        
+      }
     }
   },
   computed: {

@@ -18,6 +18,12 @@ const getters = {
 				}
  			}
 		}
+	},
+	branchOptions: (state, getters)=>{
+		const map = getters.branchMap;
+		const arr = [...map.values()];
+
+		return arr;
 	}
 }
 

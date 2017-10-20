@@ -5,7 +5,7 @@
     <el-step v-for="(item, index) in data.tips" :key="index" :title="item.name" :status="item.current ? 'finish' : 'wait'"></el-step>
   </el-steps>
   
-  <el-form :model="form" label-width="100px" ref="form" style="min-height: 150px;" >
+  <el-form :model="form" label-width="100px" ref="form" style="min-height: 150px;" :key="next"><!--这里需要给form加key 保证每个form的验证规则互不影响-->
   	<el-form-item :label="data.procedure.label" v-if="data.fields && data.fields.procedure">
       <el-select v-model="next">
         <el-option
@@ -34,15 +34,18 @@
   		<static-select type="ipr" v-model="form.person_in_charge" v-else-if="defaultVal == 'ipr'"></static-select>
   		<!-- <span v-else>{{ data[defaultVal]['name'] }}</span> -->
   	</el-form-item>
-    <el-form-item prop="agency" label="代理机构" v-if="fields.agency" :rules="{ required: true, type: 'number', message: '代理机构不能为空', trigger: 'change'}">
-      <div v-if="fields.agency == 1"><remote-select type="agency" v-model="form.agency"></remote-select><el-button size="mini" type="text" @click="showAgencyLoad">负载</el-button></div>
-      <span class="form-item-text">{{ form.agency.name }}</span>
+    <el-form-item prop="agency" label="代理机构" v-if="fields.agency"   :rules="{ required: true, type: 'number', message: '代理机构不能为空', trigger: 'change'}">
+      <div v-if="fields.agency == 1">
+        <remote-select type="agency" v-model="form.agency" :static-map="agencyMap"></remote-select>
+        <el-button size="mini" type="text" @click="showAgencyLoad">负载</el-button>
+      </div>
+      <span v-else class="form-item-text">{{ agencyMap[0].name }}</span>
     </el-form-item>
     <el-form-item prop="agency_serial" label="事务所案号" v-if="fields.agency_serial">
       <el-input placeholder="请填写事务所案号" v-model="form.agency_serial"></el-input>
     </el-form-item>
     <el-form-item prop="agent" label="代理人" v-if="fields.agent" v-show="form.agency !== ''">
-      <remote-select type="agent" v-model="form.agent" :para="{'agency': form.agency}" ref="agent"></remote-select>
+      <remote-select type="agent" v-model="form.agent" :static-map="this.agentMap" :para="{'agency': form.agency}" ref="agent"></remote-select>
     </el-form-item>
     <el-form-item prop="agency_type" label="代理类型" v-if="fields.agency_type"
       :rules="{ required: true, message: '代理类型不能为空'}"
@@ -126,8 +129,11 @@ export default {
         area: [],
         type: '',
         pconfirm: false,
+
 			},
 			'defaultVal': '',
+      'agencyMap': [],
+      'agentMap': [],
 			'fields': {},
       'loading': false,
       'btn_disabled': false,
@@ -215,25 +221,34 @@ export default {
 		'next': {
 			handler: function (val) {
         if(val == "") return;
-				for (let d of this.data.next) {
-					if(d.id == val) {
-						
+        for (let d of this.data.next) {
+          if(d.id == val) {
+            
             this.fields = d.fields;
-						this.defaultVal = d.default == 'agent' && !this.data.agent ? 'ipr' : d.default;
-            
-            if(this.fields.agency) this.form.agency = this.data.agency;
-            if(this.fields.agency_type) this.form.agency_type = 1;
-            
+            this.defaultVal = d.default == 'agent' && !this.data.agent ? 'ipr' : d.default;
             const person_in_charge = this.data[this.defaultVal] ? this.data[this.defaultVal] : '';
+                        
             this.$nextTick(_=>{
+              if(this.fields.agency_type) this.form.agency_type = 1;
               if(this.fields.area) this.form.area.push('CN');
+              if(this.fields.agency && this.data.agency) {
+                this.agencyMap = [ this.data.agency ];
+                this.form.agency = this.data.agency.id;
+              }
               if(this.fields.type) this.form.type = 1;
-              if(this.fields.agent) this.form.agent = this.data.agent;
               if(this.defaultVal == 'ipr') {
                 this.form.person_in_charge = person_in_charge['id'];
               }else {
                 this.form.person_in_charge = person_in_charge;
               }
+
+              this.$nextTick(_=>{
+                //这里agent需要在agency的监听事件完成后再进行填充
+                if(this.fields.agent && this.data.agent) {
+                  this.form.agent = this.data.agent.id;
+                  this.agentMap = [this.data.agent];
+                }
+              })
             })
             
 						break;
@@ -254,12 +269,13 @@ export default {
 
         if(val !== '' && !(val instanceof Object)) {
           if(this.$refs.agent) {
-            this.$refs.agent.clear();
-          }
-              
+            this.agentMap = [];
+            this.$refs.agent.clear(false);
+          }      
         }else {
           this.form.agent = '';
         }
+
       }
     }
 	},

@@ -74,10 +74,10 @@
       </el-form>
     </el-dialog>
 
-    <app-shrink :visible.sync="dialogShrinkVisible" :title="shrinkTitle" @close="handleShrinkClose">
+    <app-shrink :visible.sync="dialogShrinkVisible" :title="isCommon ? detailBase.title : shrinkTitle" @close="handleShrinkClose">
       <span slot="header" style="margin-left: 10px;">
         <el-tag>{{ currentRow.flow_node }}</el-tag>
-        <el-tag>{{ currentRow.serial }}</el-tag>
+        <el-tag>{{ isCommon ? detailBase.serial : currentRow.serial }}</el-tag>
       </span>
       <span slot="header" style="float: right">
         <el-button size="small" type="primary" @click="dialogEditVisible = true" v-if="menusMap && !menusMap.get('/tasks/update')">编辑</el-button>
@@ -102,6 +102,7 @@
       :id="currentRow.project_id" 
       :visible.sync="moreVisible" 
       :title="currentRow.title"
+      @editSuccess="editProjectSuccess"
       ref="detail">
     </common-detail>
 
@@ -131,6 +132,7 @@ import AppShrink from '@/components/common/AppShrink'
 import CommonDetail from '@/components/page_extension/Common_detail'
 
 import { mapMutations } from 'vuex'
+import { mapGetters } from 'vuex'
 // import $ from 'jquery'
 
 const URL = '/api/tasks';
@@ -244,7 +246,7 @@ export default {
       this.$refs.table.update();
     },
     transferTask () {
-      const url = `${URL}/${this.currentRow.id}`
+      const url = `${URL}/${this.currentRow.id}/transfer`
       const data = {'person_in_charge': this.transfer_person};
       const success = _=>{
         this.dialogTranserVisible = false;
@@ -254,7 +256,7 @@ export default {
         this.update();        
       }
 
-      this.axiosPut({url, data, success});
+      this.$axiosPost({url, data, success});
     },
     addSuccess () {
       this.dialogAddVisible = false;
@@ -266,6 +268,9 @@ export default {
       this.dialogShrinkVisible = false;
       this.$message({message: '编辑成功', type: 'success'});
 
+      this.update();
+    },
+    editProjectSuccess () {
       this.update();
     },
     refreshOption () {
@@ -308,9 +313,11 @@ export default {
       const color = colorMap.get(data['color']);
       let str = '';
       if(data.flag == 1) {
-        str += '(代) ';
+        str += '(代)';
       }else if(data.flag == 2) {
-        str += ' (移) ';
+        str += '(移)';
+      }else if(data.flag == 3) {
+        str += '@';
       }
       str += item;
 
@@ -409,6 +416,7 @@ export default {
           { type: 'text', label: '开始时间', prop: 'start_time', show: false, sortable: true, width: '190'},
           { type: 'text', label: '完成时间', prop: 'end_time', sortable: true, width: '190'},
           { type: 'text', label: '指定期限', prop: 'due_time', show: false, sortable: true, width: '190'},
+          { type: 'text', label: '定稿期限', prop: 'review_dealine', show: false, sortable: true, width: '190'},
           { type: 'text', label: '管控期限', prop: 'inner_dealine', show: false, sortable: true, width: '190'},
           { type: 'text', label: '法定期限', prop: 'deadline', show: false, sortable: true, width: '190'},
           { type: 'text', label: '备注', prop: 'remark', sortable: true, width: '250',overflow: true},
@@ -447,6 +455,9 @@ export default {
     };
   },
   computed: {
+    ...mapGetters([
+      'detailBase',
+    ]),
     task_status () {
       return this.$route.meta.status;
     },
@@ -475,6 +486,9 @@ export default {
       }
 
       return type;
+    },
+    isCommon () {
+      return this.currentRow.category == 1 || this.currentRow.category == 3;
     }
   },  
   watch: {

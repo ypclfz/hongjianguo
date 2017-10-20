@@ -86,6 +86,7 @@ export default {
 					{type: 'text', label: '流程节点', prop: 'node_name',width: '200'},
 					{type: 'text', label: '承办人', prop: 'person_in_charge_name',width: '200'},
 					{type: 'text', label: '指定期限', prop: 'due_time',width: '200'},
+					{type: 'text', label: '定稿期限', prop: 'review_deadline',width: '200'},
 					{type: 'text', label: '管控期限', prop: 'inner_deadline',width: '200'},
 					{type: 'text', label: '法定期限', prop: 'deadline',width: '200'},
 					{

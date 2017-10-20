@@ -40,9 +40,10 @@
     </app-collapse>
     
 		<table-component :tableOption="tableOption" :data="tableData" ref="table" @refreshTableData="refreshTableData" :refresh-proxy="refreshProxy">
+      <el-button v-if="menusMap && !menusMap.get('/proposals/proposer')" type="primary" icon="d-arrow-right" @click="transferPop" slot="transfer" style="margin-left: 5px;">移交</el-button>
+      
       <template slot="action" scope="scope">
         <el-button type="text" icon="edit" size="mini" @click="edit(scope.row)" :disabled="scope.row.status ? true : false" >编辑</el-button>
-        <el-button type="text" icon="delete" size="mini" @click="deleteSingle(scope.row)" :disabled="scope.row.status ? true : false">删除</el-button>
       </template>
     </table-component>
 
@@ -74,6 +75,8 @@ import ProposalDetail from '@/components/page_extension/Proposal_detail'
 import RemoteSelect from '@/components/form/RemoteSelect'
 import StaticSelect from '@/components/form/StaticSelect'
 import AxiosMixins from '@/mixins/axios-mixins'
+
+import {mapGetters} from 'vuex'
 
 const URL = '/api/proposals';
 const url = 'http://www.zhiq.wang/proposal/lists';
@@ -219,9 +222,10 @@ export default {
           { type: 'add', click: this.add },
           { type: 'delete' },
           { type: 'export' },
-          { type: 'custom', label: '移交', icon: 'd-arrow-right', click: this.transferPop },
+          
           { type: 'control' },
         ],
+        'header_slot': ['transfer'],
         'columns': [
           { type: 'selection'},
           { type: 'text', label: '案号', prop: 'serial', sortable: true, width: '200' },
@@ -262,6 +266,11 @@ export default {
       transferProposal: '',
       transferDisabled: false,
     }
+  },
+  computed: {
+    ...mapGetters([
+      'menusMap',
+    ])
   },
   mounted () {
     this.refresh();
