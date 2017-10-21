@@ -41,7 +41,7 @@
       </div>
       <span v-else class="form-item-text">{{ agencyMap[0].name }}</span>
     </el-form-item>
-    <el-form-item prop="agency_serial" label="事务所案号" v-if="fields.agency_serial">
+    <el-form-item prop="agency_serial" label="事务所案号" v-if="fields.agency_serial" :rules="{required: true, message: '事务所案号不能为空'}">
       <el-input placeholder="请填写事务所案号" v-model="form.agency_serial"></el-input>
     </el-form-item>
     <el-form-item prop="agent" label="代理人" v-if="fields.agent" v-show="form.agency !== ''">

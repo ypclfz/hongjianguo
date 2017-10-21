@@ -9,6 +9,7 @@
 	    :multiple="multiple"
 	    @update:value="handleValue" 
 	    ref="tree"
+	    :disabled="isDisabled"
 	  >
 	  </pop-tree>
 	</div>

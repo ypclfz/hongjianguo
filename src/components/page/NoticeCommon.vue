@@ -41,7 +41,7 @@ export default {
 				'columns': [
 					{ type: 'selection' },
 					// { type: 'text', label: '通知书案件名称', prop: 'title', width: '200', is_import: true },
-					{ type: 'text', label: '关联案件', prop: 'project', render_simple: 'name', width: '200', is_import: true },
+					{ type: 'text', label: '案件名称', prop: 'project', render_simple: 'name', width: '200', is_import: true },
 					{ type: 'text', label: '通知书名称', prop: 'code', render_simple: 'name', width: '200', is_import: true },
 					{ type: 'text', label: '发文日', prop: 'mail_date', width: '200', is_import: true },
 					{ type: 'text', label: '发文序列号', prop: 'notice_serial', width: '200', is_import: true },

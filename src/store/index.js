@@ -35,6 +35,7 @@ const store = new Vuex.Store({
     inner_width: 0,
     leftNavVisible: true,
     agencyLoadVisible: false,
+    importLoading: false,
   },
   modules: {
     filter,
@@ -66,6 +67,7 @@ const store = new Vuex.Store({
     getInnerWidth: state=>state.leftNavVisible ? state.inner_width - 160 : state.inner_width, 
     leftVisible: state=>state.leftNavVisible,
     agencyLoadVisible: state=>state.agencyLoadVisible,
+    importLoading: state=>state.importLoading,
   },
   mutations: {
     setDragId (state, id) {
@@ -101,6 +103,9 @@ const store = new Vuex.Store({
     },
     showAgencyLoad(state) {
       state.agencyLoadVisible = true;
+    },
+    setImportLoading(state, boolean) {
+      state.importLoading = boolean;
     }
   },
   actions: {

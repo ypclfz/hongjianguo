@@ -133,14 +133,17 @@ export default {
 	setLocal (name, value) {
 		if( name === undefined || !(typeof name === 'string') ) return;
 
-		window.localStorage[name] = escape(value);
+		window.localStorage.setItem(name, escape(value));
 	},
 	getLocal (name) {
-		if(window.localStorage[name]) {
-			return unescape(window.localStorage[name]);
+		if(window.localStorage.getItem(name)) {
+			return unescape(window.localStorage.getItem(name));
 		}else {
 			return null;
 		}
+	},
+	deleteLocal (name) {
+		window.localStorage.removeItem(name);
 	},
 	windowChangeUrl (string) {
 		if (!window.location.origin) {

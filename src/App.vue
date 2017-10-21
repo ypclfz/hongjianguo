@@ -39,7 +39,7 @@
 
         
           <el-badge :value="pendingTaskCount" class="task-pending-top">
-            <el-button size="mini" icon="warning" type="primary" @click="$router.push('/task/pending')"></el-button>
+            <el-button size="mini" icon="warning" type="primary" @click="$router.push('/task/pending')" title="待办任务"></el-button>
           </el-badge>
           
         
@@ -518,7 +518,10 @@ nav {
   .empty-top-left .el-table__empty-text {
     top: 40px;
     left: 80px;
-  }  
+  }
+  .input-no-radius input {
+    border-radius: 0px;
+  }
 }
 .el-tooltip__popper {
   max-width: 500px;

@@ -22,6 +22,13 @@ export default {
     data () {
       return this.$store.getters[this.$options.DATA_KEY];
     },
+    isDisabled () {
+      if(this.data && this.data.length == 0) {
+        return true
+      }
+
+      return false;
+    },
     map () {
       return this.$store.getters[this.$options.MAP_KEY];
     },

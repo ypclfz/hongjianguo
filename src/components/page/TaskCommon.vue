@@ -150,6 +150,7 @@ export default {
   methods: {
     ...mapMutations([
       'showAgencyLoad',
+      'addScreen',
     ]),
     handleMore (type) {
       this.moreVisible = true;
@@ -234,7 +235,19 @@ export default {
         }else {
           this.tableData = d.tasks;
           this.filters = d.tasks.filters; 
-        }       
+        }
+
+        //初始化接口
+        //PS:如果以后多个地方有这样的需求,可将filter改为与query全局相关,而不是用存储内部值的方式,这样不需要特别处理这样的需求
+        if(this.install) {
+          //找出对应的对象,然后插入
+          const s1 = this.filters.filter(_=>_.key == 'flow_node_id')[0];
+          const s2 = s1['items'].filter(_=>_.value == this.install);
+          console.log(s1, s2);
+          this.addScreen({name: s1.label, key: s1.key, items: s2 });
+          //只触发一次
+          this.install = '';
+        }     
       };
 
       this.refreshProxy = this.axiosGet({url, data, success}); 
@@ -452,6 +465,7 @@ export default {
       },
       dialogAgenVisible: false,
       btn_disabled: false,
+      install: '',
     };
   },
   computed: {
@@ -512,6 +526,10 @@ export default {
   },
   mounted () {
 
+
+    if(this.$route.params.id) {
+      this.install = this.$route.params.id;
+    }
     this.refresh();
 
     if(this.$store.getters.flowsData === undefined) {

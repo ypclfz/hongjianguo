@@ -80,7 +80,7 @@ export default {
 				'empty_text_position': 'topLeft',
 				'columns': [
 				       
-					{type: 'text', label: '案号', prop: 'apn' ,width: '200'},
+					{type: 'text', label: '案号', prop: 'serial' ,width: '200'},
 					{type: 'text', label: '案件名称', prop: 'title',width: '200'},
 					{type: 'text', label: '管制事项', prop: 'name',width: '200'},
 					{type: 'text', label: '流程节点', prop: 'node_name',width: '200'},
@@ -181,10 +181,11 @@ export default {
 			this.axiosGet({url, data, success});
   	},
   	handleEmail ({id}) {
-  		const url = `tasks/${id}/remind`;
-  		const success = _=>{this.$message({message: '发送邮件提醒成功', type: 'success'})};
+  		this.$message({message: '该功能暂未上线', type: 'warning'});
+  		// const url = `tasks/${id}/remind`;
+  		// const success = _=>{this.$message({message: '发送邮件提醒成功', type: 'success'})};
 
-  		this.axiosPost({url, success});
+  		// this.axiosPost({url, success});
   	}
 	},
 	created () {

@@ -12,7 +12,12 @@
               <el-button icon="delete" size="mini" title="删除部门" style="margin-left: 0;" @click="branchDelete"></el-button>
             </div>
           </div>
-
+          <el-input
+            placeholder="输入关键字进行过滤"
+            v-model="filterText"
+            class="input-no-radius"
+            style="border-radius: 0;">
+          </el-input>
 					<el-tree
 						:data="branchData"
 						:props="props"
@@ -20,7 +25,9 @@
 						highlight-current
 						:expand-on-click-node="false"
 						@node-click="nodeClick"
-            :style="`height: ${innerHeight - 100}px; overflow: auto;`"
+            :style="`height: ${innerHeight - 137}px; overflow: auto;border-top: 0;`"
+            :filter-node-method="filterNode"
+            ref="tree"
 					>
 					</el-tree>
 				</el-col>
@@ -93,6 +100,7 @@ export default {
       currentNode: '',
       dialogVisible: false,
       transfer: '',
+      filterText: '',
 		}
   },
   computed: {
@@ -154,6 +162,7 @@ export default {
     },
     refresh () {
       this.refreshBranch();
+      this.currentNode = '';
     },
     transferPop () {
       if(this.currentNode) {
@@ -178,6 +187,15 @@ export default {
       }
 
       this.$axiosPost({url, data, success});
+    },
+    filterNode(value, data) {
+      if (!value) return true;
+      return data.name.indexOf(value) !== -1;
+    }
+  },
+  watch: {
+    filterText(val) {
+      this.$refs.tree.filter(val);
     }
   },
 

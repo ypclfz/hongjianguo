@@ -128,10 +128,10 @@
           </el-table-column>
         </template>
 
-        <template v-else-if="col.type == 'text'">
+        <template v-else-if="col.type == 'text' && tableControl[index]['show']" >
           
           <template v-if="col.render ? true : false">
-            <el-table-column :label="col.label" :prop="col.prop" :width="col.width ? col.width : ''" v-if="tableControl[index]['show']" :sortable="col.sortable ? 'custom' : false" :show-overflow-tooltip="col.overflow !== undefined ? col.overflow : true">
+            <el-table-column :label="col.label" :prop="col.prop" :width="col.width ? col.width : ''" :sortable="col.sortable ? 'custom' : false" :show-overflow-tooltip="col.overflow !== undefined ? col.overflow : true">
               <template scope="scope">
                 <table-render :render="col.render" :scope="scope" :prop="col.prop"></table-render>
               </template>
@@ -139,7 +139,7 @@
           </template>
 
           <template v-else-if="col.render_simple ? true : false ">
-            <el-table-column :label="col.label" :prop="col.prop" :width="col.width ? col.width : ''" v-if="tableControl[index]['show']" :sortable="col.sortable ? 'custom' : false" :show-overflow-tooltip="col.overflow !== undefined ? col.overflow : true">
+            <el-table-column :label="col.label" :prop="col.prop" :width="col.width ? col.width : ''" :sortable="col.sortable ? 'custom' : false" :show-overflow-tooltip="col.overflow !== undefined ? col.overflow : true">
               <template scope="scope">
                 <span class="table-column-render">{{ scope.row[col.prop][col.render_simple] }}</span>
               </template>
@@ -147,7 +147,7 @@
           </template>
 
           <template v-else>
-            <el-table-column :label="col.label" :prop="col.prop" :width="col.width ? col.width : ''" v-if="tableControl[index]['show']" :sortable="col.sortable ? 'custom' : false" :show-overflow-tooltip="col.overflow !== undefined ? col.overflow : true">
+            <el-table-column :label="col.label" :prop="col.prop" :width="col.width ? col.width : ''" :sortable="col.sortable ? 'custom' : false" :show-overflow-tooltip="col.overflow !== undefined ? col.overflow : true">
               <!-- <template v-if="col.default !== undefined" scope="scope">{{ scope.row[col.prop] ? scope.row[col.prop] : col.default }}</template> -->
             </el-table-column>
           </template>
@@ -412,7 +412,7 @@ const methods = Object.assign({}, tableConst.methods, {
   },
   handleControlChange () {
     const name = this.tableOption.name;
-    const value = JSON.stringify(this. tableControl);
+    const value = JSON.stringify(this.tableControl);
     this.$tool.setLocal(name, value);
   },
   handleRowClassName (row, index) {
@@ -564,18 +564,40 @@ export default {
 
     const d = this;
     const cols = d.tableOption.columns;
+    
+    //获得有配置数据得到的控制器
     let tableControl = [];
-    const cookieControl = this.$tool.getLocal(this.tableOption.name);
+    for (let c of d.tableOption.columns) {
+      let show = c.show == undefined ? true : c.show;
+      let type = c.type;
+      let label = c.label;
+      let show_option = c.show_option !== undefined ? c.show_option : true;
+      let prop = c.prop !== undefined ? c.prop : '';
+      tableControl.push({show, type, label, show_option, prop});        
+    }
+    //或得本地缓存的控制器
+    const cookieControl = JSON.parse(this.$tool.getLocal(this.tableOption.name));
+    
+    //当存在本地缓存时
+    //对两个控制器进行比对(主要针对代码修改阶段,字段不稳定)
     if(cookieControl) {
-      tableControl = JSON.parse(cookieControl);
-    }else {
-      for (let c of d.tableOption.columns) {
-        let show = c.show == undefined ? true : c.show;
-        let type = c.type;
-        let label = c.label;
-        let show_option = c.show_option !== undefined ? c.show_option : true;
-        let prop = c.prop !== undefined ? c.prop : '';
-        tableControl.push({show, type, label, show_option, prop});        
+      const r = (_=>{
+        let i = tableControl.length;
+        
+        while(i--) {
+          if( !cookieControl[i] || tableControl[i]['prop'] != cookieControl[i]['prop'] ) {
+            return false;
+          }
+        }
+
+        return true;
+      })();
+      //比对结果成功时使用缓存值,否则清空已有的无效缓存
+      console.log(r);
+      if(r) {
+        tableControl = cookieControl;
+      }else {
+        this.$tool.deleteLocal(this.tableOption.name);
       }
     }
 

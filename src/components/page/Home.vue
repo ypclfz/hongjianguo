@@ -2,10 +2,18 @@
 	<div class="main">
     
       <el-card v-if="pendingTask">
-        <span  v-for="m in pendingTask" :key="m.label">
-        <span style="font-size: 14px;">{{ m.label }}</span>
-        <span>：</span>
-        <span style="font-size: 18px; font-weight: bold; color: #c23531;">{{ m.count }}</span>
+        <span v-if="pendingTask.length != 0"  v-for="m in pendingTask" :key="m.label"
+          title="点击跳转"
+          style="margin-right: 10px; border: 1px solid #ccc; border-radius: 5px; padding: 6px; cursor: pointer;" @click="toPending(m.value)">
+          <span style="font-size: 14px;">{{ m.label }}</span>
+          <template v-if="m.count">
+            <span>：</span>
+            <span style="font-size: 18px; font-weight: bold; color: #c23531;">{{ m.count }}</span>
+          </template>
+        </span>
+        <span v-else style="font-size: 14px;
+    font-weight: bold;">
+          暂无待办任务...
         </span>
       </el-card>
     
@@ -51,6 +59,11 @@ export default {
 
       return charts;
     },
+  },
+  methods: {
+    toPending (id) {
+      this.$router.push({name: 'TaskPending', params: {id} });
+    }
   },
   // methods: {
   //   refreshHome () {

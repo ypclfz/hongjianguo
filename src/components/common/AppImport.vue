@@ -1,5 +1,5 @@
 <template>
-  <el-dialog :title="config.title" :visible="visible" @update:visible="handleVisible">
+  <el-dialog :title="config.title" :visible="visible" @update:visible="handleVisible" class="dialog-medium">
   <div class="app-import">
     <a v-if="config.model ? true : false" :href="config.model">{{ config.model_name }}</a>
 		<el-table
@@ -11,7 +11,7 @@
       <el-table-column fixed="left" label="序号" width="80">
         <template scope="scope"><span style="color: #20a0ff">{{ scope.$index + 1 }}</span></template>
       </el-table-column>
-			<el-table-column fixed="left" label="关联案号" width="150" prop="serial"></el-table-column>
+			<el-table-column fixed="left" label="案号" width="150" prop="serial"></el-table-column>
 			
 			<template v-for="(col, index) in columns">
 
@@ -44,16 +44,18 @@
 	      </template>
 			</template>
 
-			<el-table-column fixed="right" label="操作" width="150">
+			<el-table-column label="操作" width="150">
 	      <template scope="scope">
 	        <el-button  type="text" size="small" @click="designPop(scope)">指定案号</el-button>
 	        <el-button type="text" size="small" @click="deleteSingle(scope)">删除</el-button>
 	      </template>
     	</el-table-column>
+
 		</el-table>
   	<el-upload
 		  :action="upload_url"
 		  :on-success="handleSuccess"
+      :show-file-list="false"
 		  drag
 		  multiple
 		  style="line-height: 48px;"
@@ -62,7 +64,7 @@
 		 	<div class="el-upload__text">将文件拖到此处，或<em>点击上传</em></div>
 		</el-upload>
 
-		<el-button style="margin-top: 10px;" type="primary" @click="importData">导入</el-button>
+		<el-button style="margin-top: 10px;" type="primary" @click="importData" :disabled="importLoading">导入</el-button>
 		
 		<el-dialog title="指定案件" :visible.sync="dialogVisible" :modal-append-to-body="false" :modal="false">
 			<el-form label-width="100px" label-position="top">
@@ -79,8 +81,9 @@
 </template>
 
 <script>
-import AxiosMixins from '@/mixins/axios-mixins'
 import RemoteSelect from '@/components/form/RemoteSelect'
+import {mapGetters} from 'vuex'
+import {mapMutations} from 'vuex'
 
 const config = [
 	['patent', {
@@ -142,7 +145,6 @@ const map = new Map(config);
 
 export default {
   name: 'appImport',
-  mixins: [ AxiosMixins ],
   props: {
   	'columns': {
   		type: Array,
@@ -161,6 +163,9 @@ export default {
 		}
   },
   computed: {
+    ...mapGetters([
+      'importLoading',
+    ]),
   	config () {
   		const config = map.get(this.type);
   		return config ? config : this.type;
@@ -176,6 +181,9 @@ export default {
   	}
   },
   methods: {
+    ...mapMutations([
+      'setImportLoading',
+    ]),
     handleVisible (val) {
       this.$emit('update:visible', val);
     },
@@ -204,7 +212,7 @@ export default {
   		}
       if(this.config.url === '/notices/import')
         if( this.tableData.filter(_=>_.serial == '').length != 0 ) {
-          this.$message({message: '必须指定关联案件', type: 'warning'});
+          this.$message({message: '必须指定案件名称', type: 'warning'});
           return;
         }
       
@@ -213,10 +221,14 @@ export default {
   		const success = _=>{ 
         this.tableData = [];
         this.$refs.upload.clearFiles();
-        this.$emit('import-success') 
+        this.$emit('import-success'); 
       };
+      complete = _=>{
+        this.setImportLoading(false);
+      }
 
-  		this.axiosPost({url, data, success});
+      this.setImportLoading(true);
+  		this.$axiosPost({url, data, success});
   	},
   	handleSuccess (a,b,c) {
   		if(a.status) {
