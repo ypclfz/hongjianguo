@@ -30,7 +30,6 @@ export default {
   },
   methods: {
   	handleInput (val) {
-
       if(!this.multiple && !this.single) {
         this.$emit('input', val[0] ? val[0] : '');  
       }else {

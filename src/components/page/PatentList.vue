@@ -171,14 +171,14 @@ export default {
             render: _=>_.map(_=>`${_.title}-${_.serial}`),
 
           },
-          {
-            type: 'action',
-            width: '145',
-            btns: [
-              // { type: 'detail', click: this.detail },
-              { type: 'delete', click: this.deletePatent },
-            ], 
-          },
+          // {
+          //   type: 'action',
+          //   width: '145',
+          //   btns: [
+          //     // { type: 'detail', click: this.detail },
+          //     { type: 'delete', click: this.deletePatent },
+          //   ], 
+          // },
         ] 
       },
       tableData: [],

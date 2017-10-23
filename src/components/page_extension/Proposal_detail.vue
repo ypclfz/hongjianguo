@@ -25,12 +25,12 @@
         </el-row>
 	    	<el-row>
 	    		<el-form-item label="附件">
-						<table-component :tableOption="attachmentsOption" :data="row.attachments"></table-component>
+						<table-component style="margin: 10px 0;" :tableOption="attachmentsOption" :data="row.attachments"></table-component>
 	    		</el-form-item>
 	    	</el-row>
 	    	<el-row>
 	    		<el-form-item label="相关专利">
-	    			<table-component :tableOption="patentsOption" :data="row.patents"></table-component>
+	    			<table-component style="margin: 10px 0;" :tableOption="patentsOption" :data="row.patents"></table-component>
 	    		</el-form-item>
 	    	</el-row>
 	    </el-form>
@@ -86,7 +86,7 @@ export default {
   		loading: false,
   		activeName: 'first',
   		attachmentsOption: {
-        'is_search': false,
+        'is_header': false,
         'is_pagination': false,
         'is_border': false,
         'columns': [
@@ -104,7 +104,7 @@ export default {
         ]
       },
       patentsOption: {
-        'is_search': false,
+        'is_header': false,
         'is_pagination': false,
         'is_border': false,
         'columns': [

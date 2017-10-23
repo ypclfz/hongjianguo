@@ -17,7 +17,7 @@
   </el-row>
   <el-row>
     <el-form-item label="费用列表">
-    	<table-component :tableOption="feeOptions" :data="feeData" style="margin-top: 10px;"></table-component>
+    	<table-component :tableOption="feeOptions" :data="feeData" style="margin: 10px 0;"></table-component>
     </el-form-item>
   </el-row>
 </el-form>

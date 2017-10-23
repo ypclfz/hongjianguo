@@ -31,6 +31,11 @@ const getters = {
 		const id = user ? user.id : '';
 		return id; 
 	},
+	useridentity: state=>{
+		const user = state.data;
+		const i = user ? user.identity : '';
+		return i;
+	},
 	pendingTaskCount: state=>{
 		const user = state.data;
 		const count = user ? user.pendingTaskCount : 0;

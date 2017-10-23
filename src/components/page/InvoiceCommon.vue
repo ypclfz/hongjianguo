@@ -68,13 +68,13 @@ export default {
 		  		// { type: 'text', label: '开户行', prop: 'bank',width: '200' },
 		  		// { type: 'text', label: '地址', prop: 'target',width: '200' },
 		  		// { type: 'text', label: '电话', prop: 'telphone',width: '200' },
-		  		{ 
-		  			type: 'action',
-		  			width: '100',
-		  			btns: [
-		  				{ type: 'delete',  click: this.invoiceDelete},
-		  			], 
-		  		},
+		  		// { 
+		  		// 	type: 'action',
+		  		// 	width: '100',
+		  		// 	btns: [
+		  		// 		{ type: 'delete',  click: this.invoiceDelete},
+		  		// 	], 
+		  		// },
 		  	],
 		  	'import_columns': [
 		  		{ type: 'text', label: '费用期限', prop: 'due_time', width: '200' },

@@ -115,9 +115,7 @@ export default {
   },
   methods: {
   	initialization () {
-
-      this.remoteMethod('');  
-      
+      this.remoteMethod('');       
   	},	
   	getSelected () {
   		return this.selected;

@@ -2,19 +2,22 @@
   <div class="main">
     <strainer @query="strainerQuery" @clear="strainerClear"></strainer>
     <table-component :tableOption="tableOption" :data="tableData" @refreshTableData="refreshTableData" :refresh-proxy="refreshProxy" ref="table">
-      <el-select v-if="taskAll" slot="toggle" v-model="task_toggle" style="width: 110px; margin-left: 5px;">
+      <el-select v-if="menusMap && !menusMap.get('/tasks/all')" slot="toggle" v-model="task_toggle" style="width: 110px; margin-left: 5px;">
         <el-option key="mine" label="我的任务" value="personal"></el-option>
         <el-option key="all" label="所有任务" value="all"></el-option>
       </el-select>
     </table-component>
-
+ 
     <el-dialog title="申请委案" :visible.sync="dialogAgenVisible" class="dialog-small">
-      <el-form :form="agen" ref="agen" label-width="80px">
-        <el-form-item label="代理机构" prop="agency_id">
+      <el-form :form="agen" ref="agen" label-width="80px" :model="agen">
+        <el-form-item label="代理机构" prop="agency_id" :rules="{required: true, type: 'number', message: '代理机构必填', trigger: 'change' }">
           <remote-select type="agency" v-model="agen.agency_id"></remote-select><el-button size="mini" type="text" @click="showAgencyLoad">负载</el-button>
         </el-form-item>
         <el-form-item label="代理人" prop="agency_agent" v-show="agen.agency_id !== '' ? true : false">
           <remote-select type="agent" v-model="agen.agency_agent" :para="{'agency': agen.agency_id}" ref="agent"></remote-select>
+        </el-form-item>
+        <el-form-item label="代理类型" prop="agency_type" :rules="{ required: true, type: 'number', message: '代理类型必填', trigger: 'change' }">
+          <static-select type="agency_type" v-model="agen.agency_type"></static-select>
         </el-form-item>
         <el-form-item label="备注" prop="remark">
           <el-input v-model="agen.remark" type="textarea"></el-input>
@@ -117,6 +120,7 @@
 import AxiosMixins from '@/mixins/axios-mixins'
 import Detail from '@/components/page_extension/TaskCommon_detail'
 import RemoteSelect from '@/components/form/RemoteSelect'
+import StaticSelect from '@/components/form/StaticSelect'
 
 import AppFilter from '@/components/common/AppFilter'
 import AppCollapse from '@/components/common/AppCollapse'
@@ -191,18 +195,25 @@ export default {
       }
     }, 
     agenSubmit () {
-      const ids = this.$refs.table.getSelect().map(_=>_.id);
-      const url = '/api/tasks/agency';
-      const data = Object.assign({}, this.agen, { ids });
-      const success = _=>{
-        this.dialogAgenVisible = false; 
-        this.$message({type: 'success', message: '申请委案成功'});
-        this.update();
-      };
-      const complete = _=>{this.btn_disabled = false};
+      this.$refs.agen.validate(_=>{
+        if(_) {
+          const ids = this.$refs.table.getSelect().map(_=>_.id);
+          const url = '/api/tasks/agency';
+          const data = Object.assign({}, this.agen, { ids });
+          const success = _=>{
+            this.dialogAgenVisible = false; 
+            this.$message({type: 'success', message: '申请委案成功'});
+            this.update();
+          };
+          const complete = _=>{this.btn_disabled = false};
 
-      this.btn_disabled = true;
-      this.axiosPost({url, data, success, complete});
+          this.btn_disabled = true;
+          this.axiosPost({url, data, success, complete});
+        }else {
+          this.$message({message: '请认真填写申请委案字段', type: 'warning'});
+        }
+      })
+      
     },
     // dropGenerator(str) {
     //   return (row, element)=>{       
@@ -289,13 +300,16 @@ export default {
     refreshOption () {
       const t = this.task_status;
       const h = this.tableOption;
+      const menusMap = this.menusMap;
+
       if( t === 0 ) {
         h.header_btn.splice(3,1,{type: 'custom', label: '暂停处理', click: _=>{ this.handleTask('/api/tasks/pause') }});
       }else if( t === -1 ) {
         h.header_btn.splice(3,1,{type: 'custom', label: '恢复处理', click: _=>{ this.handleTask('/api/tasks/resume') }});
-      }else if( t === 1 ) {
-        h.header_btn.splice(4,1,{});
-      } 
+      }
+      menusMap && !menusMap.get('/tasks/add_btn') ? h.header_btn.splice(0,1,{ type: 'add', click: this.addPop }) : h.header_btn.splice(0,1,{}); 
+      menusMap && !menusMap.get('/tasks/delete_btn') ? h.header_btn.splice(1,1,{ type: 'delete' }) : h.header_btn.splice(1,1,{});
+      menusMap && !menusMap.get('/tasks/agency_btn') && t != 1 ? h.header_btn.splice(2,1,{type: 'custom', label: '申请委案', click: this.agenPop}) : h.header_btn.splice(2,1,{});
 
       this.$forceUpdate();
     },
@@ -304,8 +318,8 @@ export default {
       if(s) {
         const data = { ids: this.$tool.splitObj(s, 'id') };
         const success = _=>{ 
-          this.$message({type: 'success', message: '操作成功'})
-          this.update() 
+          this.$message({type: 'success', message: '操作成功'});
+          this.update();
         };
 
         this.axiosPut({ url, data, success });
@@ -390,11 +404,11 @@ export default {
           return ;
         },
         'header_btn': [
-          { type: 'add', click: this.addPop },
-          { type: 'delete' },
-          { type: 'export' },
+          {},//部分顶部按钮在refreshOption中渲染
           {},
-          { type: 'custom', label: '申请委案', click: this.agenPop },
+          {},
+          {},
+          { type: 'export' },
           // { type: 'custom', label: '转出', icon: '', click: ()=>{ this.dialogTurnoutVisible = true; } },
           { type: 'control', label: '字段'},
           // { type: 'custom', label: '设定', icon: '', click: ()=>{ this.dialogSettingVisible = true; } }
@@ -435,6 +449,7 @@ export default {
           { type: 'text', label: '备注', prop: 'remark', sortable: true, width: '250',overflow: true},
           { 
             type: 'action',
+            fixed: false,
             label: '操作',
             min_width: '150',
             align: 'left',
@@ -449,7 +464,6 @@ export default {
               //     { text: '委案处理' },
               //   ],
               // },
-              { btn_type: 'text', label: '删除', click: this.taskDelete, btn_if: _=>this.task_status != 1 },
               { btn_type: 'text', label: '编辑提案', click: this.proposalEdit, btn_if: _=>_.action == 'proposals/edit' },
               { btn_type: 'text', label: '编辑专利', click: this.patentEdit, btn_if: _=>_.action == 'patents/edit'},
             ],
@@ -461,6 +475,7 @@ export default {
       agen: {
         agency_id: '',
         agency_agent: '',
+        agency_type: '',
         remark: '',
       },
       dialogAgenVisible: false,
@@ -471,21 +486,10 @@ export default {
   computed: {
     ...mapGetters([
       'detailBase',
+      'menusMap',
     ]),
     task_status () {
       return this.$route.meta.status;
-    },
-    menusMap () {
-      return this.$store.getters.menusMap;
-    },
-    taskAll () {
-    
-      let flag = false;
-      if( this.menusMap && !this.menusMap.get('/tasks/all') ) {
-        flag = true;
-      }
-  
-      return flag;
     },
     urlParams () {
       return this.$route.query;
@@ -522,6 +526,9 @@ export default {
           this.agen.agency_id = '';
         }
       }
+    },
+    menusMap () {
+      this.refreshOption();
     }
   },
   mounted () {
@@ -547,7 +554,8 @@ export default {
     this.refreshOption();
   },
   components: { 
-    RemoteSelect, 
+    RemoteSelect,
+    StaticSelect,
     AppFilter, 
     TableComponent, 
     AppDatePicker, 

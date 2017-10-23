@@ -2,7 +2,7 @@
   	<div class="main">
   		<el-row>
 	  		<el-col :span="18">
-		  		<el-form label-width="100px" :rules="formRules" :model="formData" ref="form">
+		  		<el-form label-width="92px" :rules="formRules" :model="formData" ref="form">
             
             <el-form-item label="提案人">{{ proposer_name }}</el-form-item>
             
@@ -27,6 +27,9 @@
               <inventors v-model="formData.inventors" :disabled="pageType == 'detail'"></inventors>
             </el-form-item>
 
+            <el-form-item label="证件号码(第一发明人)" prop="identity">
+              <el-input v-model="formData.identity" placeholder="请填写第一发明人证件号码"></el-input>
+            </el-form-item>
 
             <el-form-item label="技术分类" prop="classification">
               <classification v-model="formData.classification" :disabled="pageType == 'detail'"></classification>
@@ -213,9 +216,8 @@ export default {
       }else {
         this.proposer_name = this.username;
         if(this.userid && this.username) {
-          this.formData.inventors = [{id: {id: this.userid, name: this.username}, share: '100'}];  
-        }
-        
+          this.formData.inventors = [{ id: this.userid, name: this.username, share: '100', identity: this.useridentity }];  
+        }        
       }
     }
   },
@@ -235,7 +237,8 @@ export default {
         tags: [],
         attachments: [],
         classification: '',
-        products: [], 
+        products: [],
+        identity: '',
       },
       attachments: [],
       create_time: '',
@@ -265,6 +268,7 @@ export default {
 
           },
         },
+        'identity': {required: true, message: '第一发明人证件号码不能为空'},
         'attachments': {type: 'array', required: true, message: '附件不能为空', trigger: 'change'}     	
       },
       tableOption: {
@@ -323,6 +327,7 @@ export default {
     ...mapGetters([
       'username',
       'userid',
+      'useridentity',
     ]),
     tagOptions () {
       return this.$store.getters.tagOptions;
@@ -341,9 +346,27 @@ export default {
   watch: {
     userid () {
       this.refreshCommon();
+    },
+    'formData.inventors': {
+      handler(val) {
+        if(val[0] && val[0]['identity']) {
+          this.formData.identity = val[0]['identity'];
+        }
+      }
     }
   },
-  components: { PopTree, TableComponent, Inventors, PcSubmit, Upload, Member, Classification, Product, TaskFinish, StaticSelect },
+  components: { 
+    PopTree, 
+    TableComponent, 
+    Inventors, 
+    PcSubmit, 
+    Upload, 
+    Member, 
+    Classification, 
+    Product, 
+    TaskFinish, 
+    StaticSelect 
+  },
 
 }
 </script>

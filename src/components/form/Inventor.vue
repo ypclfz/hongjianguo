@@ -1,7 +1,7 @@
 <template>
 	<el-row>
     <el-col :span="16" style="padding-right:5px">
-      <remote-select type="member" :value="id" @input="handleInventor" :disabled="disabled"></remote-select>
+      <remote-select type="member" :value="id" ref="member" :static-map="inventorInstall" @input="handleInventor" :disabled="disabled"></remote-select>
     </el-col>
     <el-col :span="6" style="padding:0 5px">
       <el-autocomplete placeholder="贡献率" :fetch-suggestions="handleFetch"  style="width: 100%" readonly :value="share + ''" @input="handlePercent" :disabled="disabled">
@@ -38,15 +38,12 @@ export default {
 		  	inventors: []
 		  },
       loading: false,
+      inventorInstall: [],
 		}
   },
   computed: {
   	id () {
-      if(this.value.name) {
-        return {id: this.value.id, name: this.value.name};
-      }else {
-  		  return this.value.id;
-      }
+      return this.value.id;
   	},
   	share () {
   		return this.value.share;
@@ -71,28 +68,31 @@ export default {
     	this.$emit('deleteInventor');
     },
     handleInventor (val) {
-    	const id = val;
+    	const selected = this.$refs.member.map.get(val);
+      console.log(selected);
+      const id = selected && selected.id ? selected.id : '';
+      const identity = selected && selected.identity ? selected.identity : '';
     	const share = this.share;
-    	this.$emit('input', { id, share });
+        
+    	this.$emit('input', { id, share, identity });
     },
     handlePercent (val) {
     	const id = this.id;
-    	const share = val;
-    	this.$emit('input', { id, share });
+    	const identity = this.identity;
+      const share = val;
+    	this.$emit('input', { id, share, identity });
     },
-    idSelect (a) {
-      const id = a.name;
-      const share = this.share;
-      this.$emit('input', { id, share });
-    },
-    idBlur () {
-      console.log('blur');
+  },
+  created () {
+    const v = this.value;
+    if(v.name) {
+      this.inventorInstall.push(v);
     }
   },
   watch: {
     value (v) {
       if(v.name) {
-        this.$emit('input', {id: {id: v.id, name: v.name}, share: v.share});
+        this.inventorInstall.push(v);
       }
     }
   },

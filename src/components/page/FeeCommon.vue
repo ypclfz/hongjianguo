@@ -51,6 +51,7 @@ export default {
 		  				{text: '添加到已有{key}', click: ()=>{ this.invoicePop('put') }, icon: 'd-arrow-right'  },
 		  			],
 		  		},
+          { type: 'delete' },
           { type: 'export' },
           { type: 'import' },
 		  		{ type: 'control' },
@@ -86,10 +87,10 @@ export default {
 		  		{ type: 'text', label: '备注', prop: 'remark', is_import: true, width: '160' },
 		  		{ 
 		  			type: 'action',
-            width: '137',
+            width: '80',
 		  			btns: [
 		  				{ type: 'edit', click:  this.editPop},
-		  				{ type: 'delete', click: this.feeDelete },
+		  				// { type: 'delete', click: this.feeDelete },
 		  			]
 		  		}
 		  	],

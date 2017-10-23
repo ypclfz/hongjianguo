@@ -2,7 +2,8 @@
   <app-collapse col-title="扩展信息">
       <el-form label-width="120px" :model="form" ref="form">
         <el-form-item label="部门">
-          <branch v-model="form.branch"></branch>
+          <branch v-model="form.branch" v-if="type == 'add'"></branch>
+          <span v-else>{{ branchName ? branchName : '暂未归属某个部门' }}</span>
         </el-form-item>
       	<el-form-item label="IPR">
           <span class="form-item-text" v-if="type == 'add'">{{ user ? user.name : '暂未取得当前用户信息' }}</span>
@@ -123,6 +124,7 @@ export default {
         board_number: '',
 			},
       ipr_name: '',
+      branchName: '',
       options: {
         manner: [
           {name:"直接申请",id:1},
@@ -150,7 +152,13 @@ export default {
   	setForm (data) {
       for(let k in this.form) {
         if( k == 'branch' ) {
-          this.form[k] = data[k] ? data[k]['id'] : "";
+          if(data[k]) {
+            this.form[k] = data[k]['id'];  
+            this.branchName = data[k]['name'];
+          }else {
+            this.form[k] = '';
+            this.branchName = '';
+          }
         }else if( k == 'ipr' ) {
           this.form.ipr = data[k]['id'];
           this.ipr_name = data[k]['name'];

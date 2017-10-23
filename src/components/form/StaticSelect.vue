@@ -96,11 +96,7 @@ const config = [
   ['flow_node', {
     placeholder: '请选择流程节点',
     url: '/api/flownodes',
-    handle (data) {
-      return data.flownodes.map(_=>{
-        return {id: _.value, name: _.label};
-      });
-    },
+    handle: _=>_.flownodes,
     // set: 'setFlowNodes',
     // refresh: 'refreshFlowNodes',
   }],
