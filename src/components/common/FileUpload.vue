@@ -7,18 +7,18 @@
 			:data="tableData"
 		>
 			<el-table-column label="关联案件" prop="project">
-        <template scope="scope">
+        <template slot-scope="scope">
           <remote-select :type="config.type" v-model="scope.row.project" single></remote-select>
         </template>
       </el-table-column>
       <el-table-column label="文件名称" prop="name"></el-table-column>
 			<el-table-column label="文件类型" prop="type">
-        <template scope="scope">
+        <template slot-scope="scope">
           <static-select type="file_type" v-model="scope.row.type"></static-select>
         </template>
       </el-table-column>
       <el-table-column label="操作">
-        <template scope="scope">
+        <template slot-scope="scope">
           <el-button icon="delete" size="mini" type="text" @click="handleDelete(scope.$index)">删除</el-button>
         </template>
       </el-table-column>

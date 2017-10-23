@@ -119,20 +119,20 @@
           <el-table-column type="selection" :fixed="col.fixed === false ? false : 'left'"></el-table-column>
         </template>
 
-        <template v-else-if="col.type == 'expand'">
+<!--         <template v-else-if="col.type == 'expand'">
           <el-table-column type="expand">
             <template scope="scope">
               <slot name="expand" :row="scope.row">
               </slot>
             </template>
           </el-table-column>
-        </template>
+        </template> -->
 
         <template v-else-if="col.type == 'text' && tableControl[index]['show']" >
           
           <template v-if="col.render ? true : false">
             <el-table-column :label="col.label" :prop="col.prop" :width="col.width ? col.width : ''" :sortable="col.sortable ? 'custom' : false" :show-overflow-tooltip="col.overflow !== undefined ? col.overflow : true">
-              <template scope="scope">
+              <template slot-scope="scope">
                 <table-render :render="col.render" :scope="scope" :prop="col.prop"></table-render>
               </template>
             </el-table-column>
@@ -140,7 +140,7 @@
 
           <template v-else-if="col.render_simple ? true : false ">
             <el-table-column :label="col.label" :prop="col.prop" :width="col.width ? col.width : ''" :sortable="col.sortable ? 'custom' : false" :show-overflow-tooltip="col.overflow !== undefined ? col.overflow : true">
-              <template scope="scope">
+              <template slot-scope="scope">
                 <span class="table-column-render">{{ scope.row[col.prop][col.render_simple] }}</span>
               </template>
             </el-table-column>
@@ -161,7 +161,7 @@
 
         <template v-else-if="col.type == 'array'">
           <el-table-column :label="col.label" :prop="col.render ? `${col.prop}__render` : col.prop" :width="col.width ? col.width : ''" v-if="tableControl[index]['show']" :sortable="col.sortable ? 'custom' : false" :show-overflow-tooltip="col.overflow !== undefined ? col.overflow : true">
-            <template scope="scope">
+            <template slot-scope="scope">
 
               <el-tag v-for="(item, i) in scope.row[scope.column.property]" style="margin-left: 5px;" close-transition :key="i">{{ item }}</el-tag>
 
@@ -171,7 +171,7 @@
 
         <template v-else-if="col.type == 'action'">
           <el-table-column :label="col.label ? col.label : '操作'" :align="col.align ? col.align : 'left'" :width="col.width ? col.width : ''" :min-width="col.min_width ? col.min_width : ''" header-align="center" :fixed="col.fixed === false ? false : 'right'">
-            <template scope="scope">
+            <template slot-scope="scope">
               <template v-if="col.btns_render ? true : false">
                 <slot :name="col.btns_render" :row="scope.row">
                 </slot>

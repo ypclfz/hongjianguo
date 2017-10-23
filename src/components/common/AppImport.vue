@@ -9,7 +9,7 @@
 			:data="tableData"
 		> 
       <el-table-column fixed="left" label="序号" width="80">
-        <template scope="scope"><span style="color: #20a0ff">{{ scope.$index + 1 }}</span></template>
+        <template slot-scope="scope"><span style="color: #20a0ff">{{ scope.$index + 1 }}</span></template>
       </el-table-column>
 			<el-table-column fixed="left" label="案号" width="150" prop="serial"></el-table-column>
 			
@@ -18,14 +18,14 @@
 				<template v-if="col.type == 'text'">
 	        <template v-if="col.render ? true : false">
 	          <el-table-column :label="col.label" :prop="col.prop" :width="col.width ? col.width : ''">
-	            <template scope="scope">
+	            <template slot-scope="scope">
 	              <table-render :render="col.render" :scope="scope" :prop="col.prop"></table-render>
 	            </template>
 	          </el-table-column>
 	        </template>
 	        <template v-else-if="col.render_simple ? true : false">
 	          <el-table-column :label="col.label" :prop="col.prop" :width="col.width ? col.width : ''">
-	            <template scope="scope">
+	            <template slot-scope="scope">
 	              <span class="table-column-render">{{ scope.row[col.prop][col.render_simple] }}</span>
 	            </template>
 	          </el-table-column>
@@ -37,7 +37,7 @@
 
 	      <template v-else-if="col.type == 'array'">
 	        <el-table-column :label="col.label" :prop="col.prop" :width="col.width ? col.width : ''">
-	          <template scope="scope">
+	          <template slot-scope="scope">
 	            <el-tag v-for="(item, i) in arrayRender(scope['row'],col)" style="margin-left: 5px;" close-transition :key="i">{{ item }}</el-tag>
 	          </template>
 	        </el-table-column>
@@ -45,7 +45,7 @@
 			</template>
 
 			<el-table-column label="操作" width="150">
-	      <template scope="scope">
+	      <template slot-scope="scope">
 	        <el-button  type="text" size="small" @click="designPop(scope)">指定案号</el-button>
 	        <el-button type="text" size="small" @click="deleteSingle(scope)">删除</el-button>
 	      </template>

@@ -1,7 +1,7 @@
 <template>
   <div class="main">
 		<table-component :tableOption="option" :data="tableData" @refreshTableData="refreshTableData" ref="table">
-			<template scope="scope" slot="is_core_partner"> 
+			<template slot-scope="scope" slot="is_core_partner"> 
 				<el-select v-model="is_core_partner" style="width: 130px;">
 					<el-option v-for="(item, index) in options.is_core_partner" :label="item.l" :value="item.v" :key=index></el-option>
 				</el-select>

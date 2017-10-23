@@ -29,7 +29,7 @@
     <el-table-column label="字段四" prop="text4" v-if="tableControl.text4"></el-table-column>
 		<el-table-column label="字段五" prop="text5" v-if="tableControl.text5"></el-table-column>
 		<el-table-column label="操作" align="center">
-			<template scope="scope">
+			<template slot-scope="scope">
   	  	<el-button size="small" icon="view" @click="viewPatent(scope.row.id)">查看详情</el-button>
       </template>
 		</el-table-column>
